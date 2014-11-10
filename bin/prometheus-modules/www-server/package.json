@@ -1,0 +1,14 @@
+{
+  "name": "www-server",
+  "version": "0.0.0",
+  "description": "",
+  "main": "www-server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "BSD-2-Clause",
+  "prometheus-module-id": "www-server",
+  "prometheus-requires": ["channel.http"],
+  "prometheus-defines": ["channel.www-server"]
+}
