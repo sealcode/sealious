@@ -1,0 +1,37 @@
+{
+  "name": "prometheus",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/groovy354/Prometheus.git"
+  },
+  "keywords": [
+    "prometheus"
+  ],
+  "author": "Kuba Orlik",
+  "license": "BSD-2-Clause",
+  "bugs": {
+    "url": "https://github.com/groovy354/Prometheus/issues"
+  },
+  "dependencies": {
+    "socket.io": "~1.2.0",
+    "hapi": "~7.5.0",
+    "boom": "~2.6.0",
+    "glue": "~1.0.0",
+    "open": "0.0.5",
+    "ip": "~0.3.2",
+    "socket.io-client": "~1.2.0",
+    "Set": "~0.4.1",
+    "promise": "~6.0.1",
+    "http": "0.0.0",
+    "request": "~2.47.0",
+    "query-string": "~1.0.0",
+    "simpleargs": "0.0.2",
+    "mongodb": "~1.4.19"
+  }
+}
