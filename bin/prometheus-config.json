@@ -1,0 +1,13 @@
+{
+	"mongo_port": 27017,
+	"mongo_host": "127.0.0.1",
+	"mongo_db_name": "myproject",
+	"db_layer_config":{
+		"host": "localhost",
+		"port": "7766"
+	},
+	"biz_layer_config":{
+		"host": "localhost",
+		"port": "7767"
+	}
+}
