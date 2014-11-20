@@ -9,5 +9,10 @@
   "author": "",
   "license": "BSD-2-Clause",
   "prometheus-module-id": "http",
-  "prometheus-defines": ["channel.http"]
+  "prometheus-defines": [
+    "channel.http"
+  ],
+  "dependencies": {
+    "hapi": "^7.5.2"
+  }
 }
