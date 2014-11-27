@@ -9,6 +9,6 @@
   "author": "",
   "license": "BSD-2-Clause",
   "prometheus-module-id": "www-server",
-  "prometheus-requires": ["channel.http"],
+  "prometheus-requires": ["channel.http", "aa"],
   "prometheus-defines": ["channel.www-server"]
 }
