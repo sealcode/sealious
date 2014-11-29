@@ -20,9 +20,8 @@ function construct_service(){
 	var db_view_service =  new Service();
 	db_view_service.on("list", function(payload, callback){
 		console.log("inside the proper service ON LIST event handler");
-		Database_access.query("resources", "find", {}, {}).then(function(response){
-			callback(response);
-		})
+		resourceManager.getResourceByID("5477108203814fc515f86858", callback)
+		
 	})
 	db_view_service.on("create", function(payload, callback){
 		resourceManager.newResource("test", {name: "testowy", kupa: "dupa"}, function(response){
