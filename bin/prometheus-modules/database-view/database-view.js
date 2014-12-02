@@ -28,6 +28,9 @@ function construct_service(){
 			callback(response);
 		})
 	})
+	db_view_service.on("first_free_id", function(payload, callback){
+		resourceManager.getFirstFreeID(callback);
+	})
 	return db_view_service;
 }
 
@@ -68,5 +71,18 @@ module.exports.channel_setup = function(channel_id, dependencies){
 			})
 		}
 	});
+
+	www_server.route(
+	{
+		method: 'GET',
+		path: '/next_free_id',
+		handler: function(request, reply){
+			console.log("captured request for nono");
+			db_view_service.emit("first_free_id", function(data){
+				reply(data);
+			})
+		}
+	});
+
 
 }
