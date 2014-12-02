@@ -66,6 +66,7 @@ module.exports.channel_setup = function(channel_id, dependencies){
 		path: '/lolo2',
 		handler: function(request, reply){
 			console.log("captured request for nono");
+				console.log("lolo2");
 			db_view_service.emit("create", function(data){
 				reply(data);
 			})
@@ -75,7 +76,7 @@ module.exports.channel_setup = function(channel_id, dependencies){
 	www_server.route(
 	{
 		method: 'GET',
-		path: '/next_free_id',
+		path: '/first_free_id',
 		handler: function(request, reply){
 			console.log("captured request for nono");
 			db_view_service.emit("first_free_id", function(data){
