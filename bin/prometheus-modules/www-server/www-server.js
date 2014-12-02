@@ -4,6 +4,18 @@ module.exports.register_channels = function(){
 	return ["www-server"];
 }
 
+
+process.on('uncaughtException', function (exception) {
+  switch(exception.code){
+  	case "EACCES":
+  		console.error("Cannot listen on port 80 without root.");
+  		break;
+	case "EADDRINUSE":
+		console.error("Port 80 is already taken.");
+		break;
+  }
+});
+
 module.exports.channel_info = function(channel_id){
 	var ret = {};
 	if(channel_id=="www-server"){
