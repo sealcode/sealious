@@ -5,7 +5,6 @@ var servers = [];
 //var server = new Hapi.Server(3001, {cors:true});
 
 module.exports.new_server = function(id, port, options){
-	console.log("new server!");
 	if(servers[id]!=undefined){
 		throw new Error("server with id '"+ id + "' already exists");
 	}else{
