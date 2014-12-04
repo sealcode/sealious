@@ -1,5 +1,4 @@
 var Service = require("prometheus-service");
-var Database_access = require("prometheus-database-accessor");
 var resourceManager = require("prometheus-resource-manager");
 
 module.exports.register_services = function(){
@@ -16,7 +15,7 @@ module.exports.service_info = function(service_name){
 }
 
 
-function construct_service(){
+function construct_service_helper(){
 	var db_view_service =  new Service();
 	db_view_service.on("list_type", function(payload, callback) {
 		resourceManager.getResourceByType("test", {skip: 10, amount: 2, sort: {prometheus_id: 1}}, callback);
@@ -37,9 +36,9 @@ function construct_service(){
 	return db_view_service;
 }
 
-module.exports.service_object = function(service_name, dependencies){
+module.exports.construct_service = function(service_name, dependencies){
 	if(service_name=="database-view"){
-		var ret = construct_service();
+		var ret = construct_service_helper();
 		//setup_channel(dependencies, ret);
 	}
 	return ret;
@@ -68,8 +67,7 @@ module.exports.channel_setup = function(channel_id, dependencies){
 		method: 'GET',
 		path: '/list_type',
 		handler: function(request, reply){
-			console.log("captured request for nono");
-				console.log("list_type");
+			console.log("list_type");
 			db_view_service.emit("list_type", function(data){
 				reply("<pre>" + JSON.stringify(data, null, "\t"));
 			})
@@ -95,7 +93,7 @@ module.exports.channel_setup = function(channel_id, dependencies){
 		path: '/first_free_id',
 		handler: function(request, reply){
 			console.log("captured request for nono");
-			db_view_service.emit("first_free_id", function(data){
+			db_view_service.emit("first_free_id",  function(data){
 				reply(data);
 			})
 		}

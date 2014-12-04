@@ -4,6 +4,10 @@
 		"selected_items":
 		[
 			[
+				"payl",
+				"payload_string"
+			],
+			[
 				"proce",
 				"processError"
 			],
@@ -28,44 +32,18 @@
 	"buffers":
 	[
 		{
-			"file": "bin/prometheus-modules/database-view/database-view.js",
+			"file": "bin/node_modules/prometheus-resource-manager/resource-manager.js",
 			"settings":
 			{
-				"buffer_size": 2239,
+				"buffer_size": 673,
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "bin/prometheus-modules/www-server/www-server.js",
+			"file": "bin/node_modules/prometheus-metadata-manager/metadata-manager.js",
 			"settings":
 			{
-				"buffer_size": 947,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "bin/node_modules/prometheus-exception-handler/exception-handler.js",
-			"settings":
-			{
-				"buffer_size": 762,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"contents": "Searching 3107 files for \"exception-handler\"\n\n/home/kuba/Dropbox/Desktop/prometheus_repo/bin/index.js:\n    1: require(\"exception-handler\");\n    2  var core = require(\"prometheus-core\");\n    3  var LayerManager = require(\"prometheus-layer-manager\");\n\n/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/prometheus-exception-handler/package.json:\n    1  {\n    2:   \"name\": \"prometheus-exception-handler\",\n    3    \"version\": \"0.0.0\",\n    4    \"description\": \"\",\n    5:   \"main\": \"exception-handler.js\",\n    6    \"scripts\": {\n    7      \"test\": \"echo \\\"Error: no test specified\\\" && exit 1\"\n\n/home/kuba/Dropbox/Desktop/prometheus_repo/bin/prometheus-modules/www-server/www-server.js:\n    1  var Core = require(\"prometheus-core\");\n    2: var ExceptionHandler = require(\"prometheus-exception-handler\");\n    3  \n    4  ExceptionHandler.addErrorParser(function(err){\n\n4 matches across 3 files\n",
-			"settings":
-			{
-				"buffer_size": 894,
-				"line_ending": "Unix",
-				"name": "Find Results",
-				"scratch": true
-			}
-		},
-		{
-			"file": "bin/node_modules/prometheus-exception-handler/package.json",
-			"settings":
-			{
-				"buffer_size": 245,
+				"buffer_size": 1647,
 				"line_ending": "Unix"
 			}
 		},
@@ -76,21 +54,55 @@
 				"buffer_size": 744,
 				"line_ending": "Windows"
 			}
+		},
+		{
+			"contents": "Searching 3105 files for \"body on update\" (regex, whole word)\n\n/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/prometheus-database-accessor/database-accessor.js:\n   76  \n   77  				request.put(url, {form:{json_encoded_payload:payload_string}}, function(err, res, body){\n   78: 					console.log(\"REQUEST RESPONSE BODY on update:\", body);\n   79  					console.log(\"error:\", err)\n   80  					if(err){\n\n1 match in 1 file\n\n\nSearching 3105 files for \"update :d\" (regex, whole word)\n\n/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/prometheus-database-layer/database-server.js:\n   67  						case \"update\":\n   68  							//`options` is new object value (entire document)\n   69: 							console.log(\"update :D\");\n   70  							collection_object[mode](query, options, function(err, inserted){\n   71  								if(err){\n\n1 match in 1 file\n",
+			"settings":
+			{
+				"buffer_size": 848,
+				"line_ending": "Unix",
+				"name": "Find Results",
+				"scratch": true
+			}
+		},
+		{
+			"file": "bin/node_modules/prometheus-database-layer/database-server.js",
+			"settings":
+			{
+				"buffer_size": 2091,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "bin/node_modules/prometheus-database-accessor/database-accessor.js",
+			"settings":
+			{
+				"buffer_size": 3129,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "bin/node_modules/prometheus-database-layer/database-rest-server.js",
+			"settings":
+			{
+				"buffer_size": 2494,
+				"line_ending": "Unix"
+			}
 		}
 	],
 	"build_system": "",
 	"command_palette":
 	{
-		"height": 54.0,
+		"height": 159.0,
 		"selected_items":
 		[
 			[
-				"install",
-				"Package Control: Install Package"
-			],
-			[
 				"reind",
 				"Indentation: Reindent Lines"
+			],
+			[
+				"install",
+				"Package Control: Install Package"
 			],
 			[
 				"key",
@@ -126,8 +138,8 @@
 		"/home/kuba/Dropbox/Desktop/prometheus_repo",
 		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin",
 		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/prometheus-exception-handler",
 		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/prometheus-layer-manager",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/prometheus-resource-manager",
 		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/simpleargs",
 		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/prometheus-modules",
 		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/prometheus-modules/database-view",
@@ -137,19 +149,35 @@
 	"file_history":
 	[
 		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/prometheus-database-layer/database-server.js",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/prometheus-database-layer/database-layer.js",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/hapi/test/server.js",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/Set/set.js",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/prometheus-service/prometheus-service.js",
 		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/prometheus-database-accessor/database-accessor.js",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/prometheus-modules/database-view/database-view.js",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/prometheus-modules/www-server/www-server.js",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/prometheus-exception-handler/exception-handler.js",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/prometheus-database-layer/database-rest-server.js",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/prometheus-database-layer/database-layer.js",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/boom/Makefile",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/hapi/test/validation.js",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/hapi/lib/validation.js",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/prometheus-module-manager/prometheus-module-manager.js",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/prometheus-business-layer/biz-layer-jsonrpc-server.js",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/prometheus-core/prometheus-core.js",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/prometheus-service-wrapper/service-wrapper.js",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/prometheus-modules/http/hapi-wrapper.js",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/prometheus-database-layer/mongo_connections.js",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/prometheus-biz-accessor/biz-layer-access.js",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/prometheus-exception-handler/package.json",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/index.js",
 		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/prometheus-resource-manager/resource-manager.js",
 		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/prometheus-metadata-manager/metadata-manager.js",
 		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/mongodb/lib/mongodb/connection/repl_set/options.js",
 		"/home/kuba/Dropbox/Desktop/prometheus_repo/prometheus.sublime-project",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/prometheus-modules/www-server/www-server.js",
 		"/home/kuba/Scripts/backup-aspazja.sh",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/index.js",
 		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/prometheus-layer-manager/layer-manager.js",
 		"/home/kuba/.config/sublime-text-3/Packages/User/Default (Linux).sublime-keymap",
 		"/home/kuba/temp.txt",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/prometheus-modules/database-view/database-view.js",
 		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/hapi/test/response.js",
 		"/home/kuba/Dropbox/Desktop/prometheus_repo/README.md",
 		"/home/kuba/.config/sublime-text-3/Packages/Default/Default (Linux).sublime-keymap",
@@ -164,6 +192,9 @@
 		"height": 93.0,
 		"where_history":
 		[
+			"",
+			"prometheus-*.js",
+			"*.js",
 			""
 		]
 	},
@@ -172,20 +203,52 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"update :d",
+			"body on update",
+			"name",
+			"name:",
+			"first_free",
+			"name:\\W{1,6}first",
+			"name\\W{1,6}first",
+			"name\\W{1,6}free",
+			"name\\W{1,3}free",
+			"name:",
+			"first_free",
+			"request response body",
+			"i am a db",
+			"i am a",
+			"i am in",
+			"newResource",
+			"in emit",
+			"received request to",
+			"received request",
+			"new server!",
+			"!!!!!!",
+			"reginst",
+			"started on",
+			"\n	",
+			"module execution order",
+			"initializing local",
+			"starting up bu",
+			"starting up",
+			"init ",
+			"console.log",
+			"islocal",
+			"console.log",
 			"exception-handler",
 			"2"
 		],
 		"highlight": true,
 		"in_selection": false,
 		"preserve_case": false,
-		"regex": false,
+		"regex": true,
 		"replace_history":
 		[
 		],
 		"reverse": false,
 		"show_context": true,
 		"use_buffer2": true,
-		"whole_word": false,
+		"whole_word": true,
 		"wrap": true
 	},
 	"groups":
@@ -196,19 +259,19 @@
 			[
 				{
 					"buffer": 0,
-					"file": "bin/prometheus-modules/database-view/database-view.js",
+					"file": "bin/node_modules/prometheus-resource-manager/resource-manager.js",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 2239,
+						"buffer_size": 673,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								78,
-								78
+								158,
+								158
 							]
 						],
 						"settings":
@@ -228,19 +291,19 @@
 				},
 				{
 					"buffer": 1,
-					"file": "bin/prometheus-modules/www-server/www-server.js",
+					"file": "bin/node_modules/prometheus-metadata-manager/metadata-manager.js",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 947,
+						"buffer_size": 1647,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								178,
-								178
+								1611,
+								1611
 							]
 						],
 						"settings":
@@ -252,7 +315,7 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 510.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 1,
@@ -260,25 +323,28 @@
 				},
 				{
 					"buffer": 2,
-					"file": "bin/node_modules/prometheus-exception-handler/exception-handler.js",
+					"file": "bin/index.js",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 762,
+						"buffer_size": 744,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								719,
-								719
+								414,
+								414
 							]
 						],
 						"settings":
 						{
 							"incomplete_sync": null,
-							"syntax": "Packages/JavaScript/JavaScript.tmLanguage"
+							"remote_loading": false,
+							"synced": false,
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
 						"translation.y": 0.0,
@@ -292,7 +358,7 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 894,
+						"buffer_size": 848,
 						"regions":
 						{
 							"match":
@@ -301,20 +367,12 @@
 								"regions":
 								[
 									[
-										119,
-										136
+										324,
+										338
 									],
 									[
-										391,
-										408
-									],
-									[
-										486,
-										503
-									],
-									[
-										785,
-										802
+										713,
+										722
 									]
 								],
 								"scope": ""
@@ -323,8 +381,8 @@
 						"selection":
 						[
 							[
-								134,
-								134
+								719,
+								719
 							]
 						],
 						"settings":
@@ -332,7 +390,7 @@
 							"detect_indentation": false,
 							"incomplete_sync": null,
 							"line_numbers": false,
-							"output_tag": 1,
+							"output_tag": 2,
 							"result_base_dir": "",
 							"result_file_regex": "^([A-Za-z\\\\/<].*):$",
 							"result_line_regex": "^ +([0-9]+):",
@@ -340,58 +398,27 @@
 							"syntax": "Packages/Default/Find Results.hidden-tmLanguage"
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 187.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 4,
+					"stack_index": 6,
 					"type": "text"
 				},
 				{
 					"buffer": 4,
-					"file": "bin/node_modules/prometheus-exception-handler/package.json",
+					"file": "bin/node_modules/prometheus-database-layer/database-server.js",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 245,
+						"buffer_size": 2091,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								245,
-								245
-							]
-						],
-						"settings":
-						{
-							"incomplete_sync": null,
-							"remote_loading": false,
-							"synced": false,
-							"syntax": "Packages/JavaScript/JSON.tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 5,
-					"type": "text"
-				},
-				{
-					"buffer": 5,
-					"file": "bin/index.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 744,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								20,
-								20
+								1192,
+								1192
 							]
 						],
 						"settings":
@@ -403,7 +430,72 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 414.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 5,
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "bin/node_modules/prometheus-database-accessor/database-accessor.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 3129,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1345,
+								1345
+							]
+						],
+						"settings":
+						{
+							"incomplete_sync": null,
+							"remote_loading": false,
+							"synced": false,
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 465.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 4,
+					"type": "text"
+				},
+				{
+					"buffer": 6,
+					"file": "bin/node_modules/prometheus-database-layer/database-rest-server.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 2494,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								468,
+								468
+							]
+						],
+						"settings":
+						{
+							"incomplete_sync": null,
+							"remote_loading": false,
+							"synced": false,
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 57.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 3,
@@ -465,6 +557,26 @@
 			[
 				"index",
 				"bin/index.js"
+			],
+			[
+				"dataserver",
+				"bin/node_modules/prometheus-database-layer/database-rest-server.js"
+			],
+			[
+				"metadata",
+				"bin/node_modules/prometheus-metadata-manager/metadata-manager.js"
+			],
+			[
+				"module-",
+				"bin/node_modules/prometheus-module-manager/prometheus-module-manager.js"
+			],
+			[
+				"database-la",
+				"bin/node_modules/prometheus-database-layer/database-layer.js"
+			],
+			[
+				"rest-",
+				"bin/node_modules/prometheus-database-layer/database-rest-server.js"
 			],
 			[
 				"database-ser",
