@@ -18,6 +18,9 @@ module.exports.service_info = function(service_name){
 
 function construct_service(){
 	var db_view_service =  new Service();
+	db_view_service.on("list_type", function(payload, callback) {
+		resourceManager.getResourceByType("test", {skip: 10, amount: 2, sort: {prometheus_id: 1}}, callback);
+	})
 	db_view_service.on("list", function(payload, callback){
 		console.log("inside the proper service ON LIST event handler");
 		resourceManager.getResourceByID("5477108203814fc515f86858", callback)
@@ -56,6 +59,19 @@ module.exports.channel_setup = function(channel_id, dependencies){
 			console.log("captured request for nono");
 			db_view_service.emit("list", function(data){
 				reply(data);
+			})
+		}
+	});
+
+	www_server.route(
+	{
+		method: 'GET',
+		path: '/list_type',
+		handler: function(request, reply){
+			console.log("captured request for nono");
+				console.log("list_type");
+			db_view_service.emit("list_type", function(data){
+				reply("<pre>" + JSON.stringify(data, null, "\t"));
 			})
 		}
 	});

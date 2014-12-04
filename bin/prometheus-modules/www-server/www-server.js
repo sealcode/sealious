@@ -1,20 +1,20 @@
 var Core = require("prometheus-core");
+var ExceptionHandler = require("prometheus-exception-handler");
+
+ExceptionHandler.addErrorParser(function(err){
+	if(err.code=="EACCES"){
+		return "cannot listen on port 80 without root";
+	}
+	if (err.code=="EADDRINUSE") {
+		return "Port 80 is already taken";
+	}
+})
 
 module.exports.register_channels = function(){
 	return ["www-server"];
 }
 
 
-process.on('uncaughtException', function (exception) {
-  switch(exception.code){
-  	case "EACCES":
-  		console.error("Cannot listen on port 80 without root.");
-  		break;
-	case "EADDRINUSE":
-		console.error("Port 80 is already taken.");
-		break;
-  }
-});
 
 module.exports.channel_info = function(channel_id){
 	var ret = {};
@@ -30,7 +30,8 @@ module.exports.channel_object = function(channel_id){
 	if(channel_id=="www-server"){
 		var http_channel = Core.getChannel("http");
 		var server = http_channel.new_server("www", 80, {cors:true});
-		server.start(function(){
+		server.start(function(err){
+			console.log("hapi err:", err);
 			console.log("www server started at port 80");
 			console.log('HTTP: '+server.info.uri+'\n================ \n');
 		})
