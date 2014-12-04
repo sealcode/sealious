@@ -1,0 +1,14 @@
+{
+  "name": "chat",
+  "version": "0.0.0",
+  "description": "ERROR: No README data found!",
+  "main": "chat.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "BSD-2-Clause",
+  "prometheus-module-id": "chat",
+  "prometheus-requires": ["channel.www-server"],
+  "prometheus-defines": ["resource.chat-message", "resource.chat-conversation", "service.chat"]
+}
