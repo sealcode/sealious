@@ -52,7 +52,13 @@ module.exports.construct_resource_type = function(type){
 			}
 		break;
 		case "chat-conversation":
-			
+			return {
+				title: {type: "text"}
+			}
 		break;
 	}
+}
+
+module.exports.construct_associations = function(Assoc){
+	Assoc.create("chat-message", "chat-conversation", true, "is_in_conversation", "contains_messages");
 }
