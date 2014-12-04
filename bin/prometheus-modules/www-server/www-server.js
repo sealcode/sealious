@@ -5,6 +5,9 @@ ExceptionHandler.addErrorParser(function(err){
 	if(err.code=="EACCES"){
 		return "cannot listen on port 80 without root";
 	}
+	if (err.code=="EADDRINUSE") {
+		return "Port 80 is already taken";
+	}
 })
 
 module.exports.register_channels = function(){
