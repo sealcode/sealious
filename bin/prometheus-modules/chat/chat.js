@@ -14,6 +14,45 @@ module.exports.service_info = function(service_name){
 	return ret;
 }
 
-module.exports.construct_service = function(service_name){
+function construct_chat_service(){
+	var chat_service = new Service();
+	//todo
+	return chat_service;
+}
 
+
+module.exports.construct_service = function(service_name){
+	if(service_name=="chat"){
+		return construct_chat_service();
+	}
 };
+
+/**
+
+
+	Reosource types
+
+
+*/
+
+module.exports.register_resource_types = function(){
+	return ["chat-message", "chat-conversation"];
+}
+
+module.exports.construct_resource_type = function(type){
+	switch(type){
+		case "chat-message":
+			return {
+				from: {type: "reference.user"},
+				to: {type: "reference.user"},
+				message: {type: "text"},
+				date: {type: "date"},
+				order_in_conversation: {type: "int"}
+
+			}
+		break;
+		case "chat-conversation":
+			
+		break;
+	}
+}
