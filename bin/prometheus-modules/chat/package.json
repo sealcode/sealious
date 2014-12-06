@@ -9,6 +9,6 @@
   "author": "",
   "license": "BSD-2-Clause",
   "prometheus-module-id": "chat",
-  "prometheus-requires": ["channel.www-server"],
-  "prometheus-defines": ["resource.chat-message", "resource.chat-conversation", "service.chat"]
+  "prometheus-required-chips": ["channel.www-server"],
+  "prometheus-defined-chips": ["resource.chat-message", "resource.chat-conversation", "service.chat"]
 }

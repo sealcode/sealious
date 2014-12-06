@@ -4,6 +4,10 @@
 		"selected_items":
 		[
 			[
+				"cons",
+				"construct_chat_service"
+			],
+			[
 				"payl",
 				"payload_string"
 			],
@@ -32,61 +36,45 @@
 	"buffers":
 	[
 		{
-			"file": "bin/node_modules/prometheus-resource-manager/resource-manager.js",
+			"file": "bin/prometheus-modules/chat/package.json",
 			"settings":
 			{
-				"buffer_size": 673,
+				"buffer_size": 416,
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "bin/node_modules/prometheus-metadata-manager/metadata-manager.js",
+			"file": "bin/prometheus-modules/database-view/database-view.js",
 			"settings":
 			{
-				"buffer_size": 1647,
+				"buffer_size": 2616,
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "bin/index.js",
+			"file": "bin/prometheus-modules/chat/chat.js",
 			"settings":
 			{
-				"buffer_size": 744,
-				"line_ending": "Windows"
+				"buffer_size": 1328,
+				"line_ending": "Unix"
 			}
 		},
 		{
-			"contents": "Searching 3105 files for \"body on update\" (regex, whole word)\n\n/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/prometheus-database-accessor/database-accessor.js:\n   76  \n   77  				request.put(url, {form:{json_encoded_payload:payload_string}}, function(err, res, body){\n   78: 					console.log(\"REQUEST RESPONSE BODY on update:\", body);\n   79  					console.log(\"error:\", err)\n   80  					if(err){\n\n1 match in 1 file\n\n\nSearching 3105 files for \"update :d\" (regex, whole word)\n\n/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/prometheus-database-layer/database-server.js:\n   67  						case \"update\":\n   68  							//`options` is new object value (entire document)\n   69: 							console.log(\"update :D\");\n   70  							collection_object[mode](query, options, function(err, inserted){\n   71  								if(err){\n\n1 match in 1 file\n",
+			"file": "bin/node_modules/prometheus-module-manager/prometheus-module-manager.js",
 			"settings":
 			{
-				"buffer_size": 848,
+				"buffer_size": 8077,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"contents": "Searching 3109 files for \"register_services\" (regex, whole word)\n\n/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/prometheus-module-manager/prometheus-module-manager.js:\n  117  	}\n  118  \n  119: 	this.register_services = function(execute){\n  120  		if(!this.services_registred){\n  121  			this.services_registred = true;\n  122: 			if(this.body.register_services){\n  123: 				var service_ids = this.body.register_services();\n  124  				var dependencies = this.getChannels();\n  125  				for(var i in service_ids){\n  ...\n  172  			}\n  173  		}\n  174: 		this.register_services(execute_services);\n  175  		this.register_channels(execute_channels);\n  176  		this.post_execute_setup();\n\n/home/kuba/Dropbox/Desktop/prometheus_repo/bin/prometheus-modules/chat/chat.js:\n    2  var resourceManager = require(\"prometheus-resource-manager\");\n    3  \n    4: module.exports.register_services = function(){\n    5  	return [\"chat\"];\n    6  }\n\n/home/kuba/Dropbox/Desktop/prometheus_repo/bin/prometheus-modules/database-view/database-view.js:\n    2  var resourceManager = require(\"prometheus-resource-manager\");\n    3  \n    4: module.exports.register_services = function(){\n    5  	return [\"database-view\"];\n    6  }\n\n6 matches across 3 files\n",
+			"settings":
+			{
+				"buffer_size": 1236,
 				"line_ending": "Unix",
 				"name": "Find Results",
 				"scratch": true
-			}
-		},
-		{
-			"file": "bin/node_modules/prometheus-database-layer/database-server.js",
-			"settings":
-			{
-				"buffer_size": 2091,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "bin/node_modules/prometheus-database-accessor/database-accessor.js",
-			"settings":
-			{
-				"buffer_size": 3129,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "bin/node_modules/prometheus-database-layer/database-rest-server.js",
-			"settings":
-			{
-				"buffer_size": 2494,
-				"line_ending": "Unix"
 			}
 		}
 	],
@@ -137,7 +125,7 @@
 	[
 		"/home/kuba/Dropbox/Desktop/prometheus_repo",
 		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/.bin",
 		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/prometheus-layer-manager",
 		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/prometheus-resource-manager",
 		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/simpleargs",
@@ -148,20 +136,27 @@
 	],
 	"file_history":
 	[
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/prometheus-modules/database-view/package.json",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/prometheus-modules/chat/chat.js",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/boom/Makefile",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/prometheus-module-manager/prometheus-module-manager.js",
 		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/prometheus-database-layer/database-server.js",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/prometheus-service/prometheus-service.js",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/mongodb/lib/mongodb/connection/base.js",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/prometheus-database-layer/database-rest-server.js",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/prometheus-resource-manager/resource-manager.js",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/prometheus-database-layer/database-layer.js",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/prometheus-database-accessor/database-accessor.js",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/prometheus-modules/chat/package.json",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/prometheus-metadata-manager/metadata-manager.js",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/index.js",
 		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/hapi/test/server.js",
 		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/Set/set.js",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/prometheus-service/prometheus-service.js",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/prometheus-database-accessor/database-accessor.js",
 		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/prometheus-modules/database-view/database-view.js",
 		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/prometheus-modules/www-server/www-server.js",
 		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/prometheus-exception-handler/exception-handler.js",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/prometheus-database-layer/database-rest-server.js",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/prometheus-database-layer/database-layer.js",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/boom/Makefile",
 		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/hapi/test/validation.js",
 		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/hapi/lib/validation.js",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/prometheus-module-manager/prometheus-module-manager.js",
 		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/prometheus-business-layer/biz-layer-jsonrpc-server.js",
 		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/prometheus-core/prometheus-core.js",
 		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/prometheus-service-wrapper/service-wrapper.js",
@@ -169,9 +164,6 @@
 		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/prometheus-database-layer/mongo_connections.js",
 		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/prometheus-biz-accessor/biz-layer-access.js",
 		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/prometheus-exception-handler/package.json",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/index.js",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/prometheus-resource-manager/resource-manager.js",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/prometheus-metadata-manager/metadata-manager.js",
 		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/mongodb/lib/mongodb/connection/repl_set/options.js",
 		"/home/kuba/Dropbox/Desktop/prometheus_repo/prometheus.sublime-project",
 		"/home/kuba/Scripts/backup-aspazja.sh",
@@ -203,6 +195,10 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"register_services",
+			"hapi err",
+			"service_object",
+			"Database_access",
 			"update :d",
 			"body on update",
 			"name",
@@ -241,37 +237,37 @@
 		"highlight": true,
 		"in_selection": false,
 		"preserve_case": false,
-		"regex": true,
+		"regex": false,
 		"replace_history":
 		[
 		],
 		"reverse": false,
 		"show_context": true,
 		"use_buffer2": true,
-		"whole_word": true,
+		"whole_word": false,
 		"wrap": true
 	},
 	"groups":
 	[
 		{
-			"selected": 2,
+			"selected": 3,
 			"sheets":
 			[
 				{
 					"buffer": 0,
-					"file": "bin/node_modules/prometheus-resource-manager/resource-manager.js",
+					"file": "bin/prometheus-modules/chat/package.json",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 673,
+						"buffer_size": 416,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								158,
-								158
+								234,
+								234
 							]
 						],
 						"settings":
@@ -279,8 +275,7 @@
 							"incomplete_sync": null,
 							"remote_loading": false,
 							"synced": false,
-							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
-							"translate_tabs_to_spaces": false
+							"syntax": "Packages/JavaScript/JSON.tmLanguage"
 						},
 						"translation.x": 0.0,
 						"translation.y": 0.0,
@@ -291,51 +286,19 @@
 				},
 				{
 					"buffer": 1,
-					"file": "bin/node_modules/prometheus-metadata-manager/metadata-manager.js",
+					"file": "bin/prometheus-modules/database-view/database-view.js",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 1647,
+						"buffer_size": 2616,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1611,
-								1611
-							]
-						],
-						"settings":
-						{
-							"incomplete_sync": null,
-							"remote_loading": false,
-							"synced": false,
-							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 510.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 1,
-					"type": "text"
-				},
-				{
-					"buffer": 2,
-					"file": "bin/index.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 744,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								414,
-								414
+								107,
+								107
 							]
 						],
 						"settings":
@@ -350,15 +313,79 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 0,
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "bin/prometheus-modules/chat/chat.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1328,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1326,
+								1326
+							]
+						],
+						"settings":
+						{
+							"incomplete_sync": null,
+							"remote_loading": false,
+							"synced": false,
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 473.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 3,
 					"type": "text"
 				},
 				{
 					"buffer": 3,
+					"file": "bin/node_modules/prometheus-module-manager/prometheus-module-manager.js",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 848,
+						"buffer_size": 8077,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								3680,
+								3680
+							]
+						],
+						"settings":
+						{
+							"incomplete_sync": null,
+							"remote_loading": false,
+							"synced": false,
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 1817.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1236,
 						"regions":
 						{
 							"match":
@@ -367,12 +394,28 @@
 								"regions":
 								[
 									[
-										324,
-										338
+										213,
+										230
 									],
 									[
-										713,
-										722
+										356,
+										373
+									],
+									[
+										415,
+										432
+									],
+									[
+										567,
+										584
+									],
+									[
+										871,
+										888
+									],
+									[
+										1135,
+										1152
 									]
 								],
 								"scope": ""
@@ -381,8 +424,8 @@
 						"selection":
 						[
 							[
-								719,
-								719
+								359,
+								359
 							]
 						],
 						"settings":
@@ -390,7 +433,7 @@
 							"detect_indentation": false,
 							"incomplete_sync": null,
 							"line_numbers": false,
-							"output_tag": 2,
+							"output_tag": 1,
 							"result_base_dir": "",
 							"result_file_regex": "^([A-Za-z\\\\/<].*):$",
 							"result_line_regex": "^ +([0-9]+):",
@@ -398,107 +441,10 @@
 							"syntax": "Packages/Default/Find Results.hidden-tmLanguage"
 						},
 						"translation.x": 0.0,
-						"translation.y": 187.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 6,
-					"type": "text"
-				},
-				{
-					"buffer": 4,
-					"file": "bin/node_modules/prometheus-database-layer/database-server.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 2091,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								1192,
-								1192
-							]
-						],
-						"settings":
-						{
-							"incomplete_sync": null,
-							"remote_loading": false,
-							"synced": false,
-							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 414.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 5,
-					"type": "text"
-				},
-				{
-					"buffer": 5,
-					"file": "bin/node_modules/prometheus-database-accessor/database-accessor.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 3129,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								1345,
-								1345
-							]
-						],
-						"settings":
-						{
-							"incomplete_sync": null,
-							"remote_loading": false,
-							"synced": false,
-							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 465.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 4,
-					"type": "text"
-				},
-				{
-					"buffer": 6,
-					"file": "bin/node_modules/prometheus-database-layer/database-rest-server.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 2494,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								468,
-								468
-							]
-						],
-						"settings":
-						{
-							"incomplete_sync": null,
-							"remote_loading": false,
-							"synced": false,
-							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 57.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 3,
 					"type": "text"
 				}
 			]
@@ -555,6 +501,14 @@
 		"selected_items":
 		[
 			[
+				"modul",
+				"bin/node_modules/prometheus-module-manager/prometheus-module-manager.js"
+			],
+			[
+				"database-",
+				"bin/node_modules/prometheus-database-layer/database-server.js"
+			],
+			[
 				"index",
 				"bin/index.js"
 			],
@@ -610,6 +564,10 @@
 		"height": 500.0,
 		"selected_items":
 		[
+			[
+				"aspa",
+				"~/FTP Cache/Aspazja ikleks/aspazja.sublime-project"
+			],
 			[
 				"",
 				"~/FTP Cache/Aspazja ikleks/aspazja.sublime-project"
