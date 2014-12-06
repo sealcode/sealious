@@ -35,10 +35,6 @@ module.exports.construct_service = function(service_name){
 
 */
 
-module.exports.register_resource_types = function(){
-	return ["chat-message", "chat-conversation"];
-}
-
 module.exports.construct_resource_type = function(type){
 	switch(type){
 		case "chat-message":
