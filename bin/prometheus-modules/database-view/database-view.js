@@ -1,10 +1,6 @@
 var Service = require("prometheus-service");
 var resourceManager = require("prometheus-resource-manager");
 
-module.exports.register_services = function(){
-	return ["database-view"];
-}
-
 module.exports.service_info = function(service_name){
 	var ret = {};
 	if(service_name=="database-view"){
