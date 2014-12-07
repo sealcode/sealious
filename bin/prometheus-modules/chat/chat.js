@@ -4,8 +4,8 @@ var resourceManager = require("prometheus-resource-manager");
 module.exports.service_info = function(service_name){
 	var ret = {};
 	if(service_name=="chat"){
-		ret["name"] = "Prometheus Distributed Chat System";
-		ret["description"] = "The an advanced simple chat image processing service module";
+		ret.name = "Prometheus Distributed Chat System";
+		ret.description = "The an advanced simple chat image processing service module";
 	}
 	return ret;
 }
@@ -15,6 +15,11 @@ function construct_chat_service(){
 	//todo
 	chat_service.on("post", function(payload, callback){
 		resourceManager.newResource("chat-message", payload, function(response){
+			callback(response);
+		})
+	})
+	chat_service.on("create_conversation", function(payload, callback){
+		resourceManager.newResource("chat-conversation", payload, function(response){
 			callback(response);
 		})
 	})
@@ -88,6 +93,17 @@ module.exports.channel_setup = function(channel_id, dependencies){
 		path: '/api/v1/chat/post',
 		handler: function(request, reply){
 			chat_service.emit("post", {message: "heloł mejbi", from: "groovy354@gmail.com"}, function(data){
+				reply(data);
+			})
+		}
+	});
+
+	www_server.route(
+	{
+		method: 'GET',
+		path: '/api/v1/chat/new-conversation',
+		handler: function(request, reply){
+			chat_service.emit("create_conversation", {title: "Template conversation"}, function(data){
 				reply(data);
 			})
 		}
