@@ -31,7 +31,6 @@ module.exports.channel_object = function(channel_id){
 		var http_channel = Core.getChannel("http");
 		var server = http_channel.new_server("www", 80, {cors:true});
 		server.start(function(err){
-			console.log("hapi err:", err);
 			console.log("www server started at port 80");
 			console.log('HTTP: '+server.info.uri+'\n================ \n');
 		})
