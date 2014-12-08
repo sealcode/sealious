@@ -54,7 +54,8 @@ module.exports.construct_resource_type = function(type){
 		break;
 		case "chat-conversation":
 			return {
-				title: {type: "text"}
+				title: {type: "text"},
+				random_number: {type: "int"}
 			}
 		break;
 	}
@@ -80,7 +81,6 @@ module.exports.channel_setup = function(channel_id, dependencies){
 		method: 'GET',
 		path: '/chat/lolo',
 		handler: function(request, reply){
-			console.log("captured request for nono");
 			db_view_service.emit("list", function(data){
 				reply(data);
 			})
@@ -103,7 +103,7 @@ module.exports.channel_setup = function(channel_id, dependencies){
 		method: 'GET',
 		path: '/api/v1/chat/new-conversation',
 		handler: function(request, reply){
-			chat_service.emit("create_conversation", {title: "Template conversation"}, function(data){
+			chat_service.emit("create_conversation", {title: "Template conversation", random_number: Math.floor(Math.random()*100)}, function(data){
 				reply(data);
 			})
 		}
