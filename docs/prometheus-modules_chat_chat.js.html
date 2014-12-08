@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: prometheus-modules/chat/chat.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: prometheus-modules/chat/chat.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>var Service = require("prometheus-service");
+var resourceManager = require("prometheus-resource-manager");
+
+module.exports.service_info = function(service_name){
+	var ret = {};
+	if(service_name=="chat"){
+		ret.name = "Prometheus Distributed Chat System";
+		ret.description = "The an advanced simple chat image processing service module";
+	}
+	return ret;
+}
+
+function construct_chat_service(){
+	var chat_service = new Service();
+	//todo
+	chat_service.on("new-conversation", function(payload, callback){
+		resourceManager.newResource("chat-message", payload, function(response){
+			callback(response.getData());
+		})
+	});
+	chat_service.on("new-conversation", function(payload, callback){
+		resourceManager.newResource("chat-conversation", payload, function(response){
+			callback(response.getData());
+		})
+	});
+	chat_service.on("list-messages", function(payload, callback){
+		resourceManager.getResourcesByType("chat-message", {}, function(resources){
+			var data = resources.map(function(resource){
+				return resource.getData();
+			});
+			callback(data);
+		});
+	})
+	chat_service.on("list-conversations", function(payload, callback){
+		resourceManager.getResourcesByType("chat-conversation", {}, function(resources){
+			var data = resources.map(function(resource){
+				return resource.getData();
+			});
+			callback(data);
+		});
+	})
+	return chat_service;
+}
+
+
+module.exports.construct_service = function(service_name){
+	if(service_name=="chat"){
+		return construct_chat_service();
+	}
+};
+
+/**
+
+
+	Reosource types
+
+
+	*/
+
+	module.exports.construct_resource_type = function(type){
+		switch(type){
+			case "chat-message":
+			return {
+				from: {type: "text", required:true},//should be an association to User
+				message: {type: "text", required: true},
+				date: {type: "date"},
+				order_in_conversation: {type: "int"}
+
+			}
+			break;
+			case "chat-conversation":
+			return {
+				title: {type: "text"},
+				random_number: {type: "int"}
+			}
+			break;
+		}
+	}
+
+	module.exports.construct_associations = function(AssocInterface){
+		AssocInterface.create({
+			left_type: "chat-message", 
+			right_type: "chat-conversation", 
+			bidirectional: true, 
+			name_ltr: "is_in_conversation", 
+			name_rtl: "contains_messages",
+			left_required: true
+		});
+	}
+
+
+/*
+	
+	channel associations
+	
+	*/
+
+module.exports.channel_setup = function(channel_id, dependencies){
+	var www_server = dependencies["channel.www-server"];
+	var chat_service = dependencies["service.chat"];
+	www_server.route([
+		{
+			method: 'GET',
+			path: '/api/v1/chat/message',
+			handler: function(request, reply){
+				chat_service.emit("list-messages", function(data){
+					reply("&lt;pre>" + JSON.stringify(data, null, "\t") + "&lt;/pre>");
+				})
+			}
+		},
+		{
+			method: 'POST',
+			path: '/api/v1/chat/message',
+			handler: function(request, reply){
+				chat_service.emit("new-message", function(data){
+					reply("&lt;pre>" + JSON.stringify(data, null, "\t") + "&lt;/pre>");
+				})
+			}
+		},
+		{
+			method: 'GET',
+			path: '/api/v1/chat/conversation',
+			handler: function(request, reply){
+				chat_service.emit("list-conversations", function(data){
+					reply("&lt;pre>" + JSON.stringify(data, null, "\t") + "&lt;/pre>");
+				})
+			}
+		},
+		{
+			method: 'POST',
+			path: '/api/v1/chat/conversation',
+			handler: function(request, reply){
+				chat_service.emit("new-conversation", request.payload, function(data){
+					reply("&lt;pre>" + JSON.stringify(data, null, "\t") + "&lt;/pre>");
+				})
+			}
+		}
+	]);
+
+}</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-database-accessor.html">database-accessor</a></li><li><a href="module-field-type-manager.html">field-type-manager</a></li><li><a href="module-resource-type-manager.html">resource-type-manager</a></li></ul><h3>Classes</h3><ul><li><a href="AssociationInterface.html">AssociationInterface</a></li><li><a href="field-type-manager-Association.html">Association</a></li><li><a href="FieldType.html">FieldType</a></li><li><a href="Resource.html">Resource</a></li><li><a href="ResourceManager.html">ResourceManager</a></li><li><a href="ResourceType.html">ResourceType</a></li><li><a href="ResourceTypeField.html">ResourceTypeField</a></li></ul><h3>Global</h3><ul><li><a href="global.html#construct_resource_type">construct_resource_type</a></li></ul>
+</nav>
+
+<br clear="both">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-alpha11</a> on Mon Dec 08 2014 13:12:25 GMT+0100 (CET)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
