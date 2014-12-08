@@ -14,7 +14,7 @@ module.exports.service_info = function(service_name){
 function construct_service_helper(){
 	var db_view_service =  new Service();
 	db_view_service.on("list_type", function(payload, callback) {
-		resourceManager.getResourceByType("test", {skip: 10, amount: 2, sort: {prometheus_id: 1}}, callback);
+		resourceManager.getResourceByType("chat-message", {skip: 10, amount: 2, sort: {prometheus_id: 1}}, callback);
 	})
 	db_view_service.on("list", function(payload, callback){
 		console.log("inside the proper service ON LIST event handler");
@@ -22,7 +22,7 @@ function construct_service_helper(){
 		
 	})
 	db_view_service.on("create", function(payload, callback){
-		resourceManager.newResource("test", {name: "testowy", kupa: "dupa"}, function(response){
+		resourceManager.newResource("chat-message", {name: "testowy", kupa: "dupa"}, function(response){
 			callback(response);
 		})
 	})
