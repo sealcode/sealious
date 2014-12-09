@@ -1,10 +1,9 @@
 require("prometheus-exception-handler");
 var core = require("prometheus-core");
 var LayerManager = require("prometheus-layer-manager");
-LayerManager.validate();
 var db_layer = require("prometheus-database-layer");
 
-if(LayerManager.isValid){
+if(LayerManager.isValid()){
 	core.bootstrap();
 	LayerManager.init();
 } else {
