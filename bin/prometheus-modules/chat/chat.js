@@ -25,7 +25,6 @@ function construct_chat_service(){
 		);
 	});
 	chat_service.on("new-message", function(payload, callback){
-		console.log("new message:", payload)
 		resourceManager.newResource("chat-message", payload).then(
 			function(resource){
 				console.log(resource);
