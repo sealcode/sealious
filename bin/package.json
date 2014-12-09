@@ -32,6 +32,7 @@
     "request": "~2.47.0",
     "query-string": "~1.0.0",
     "simpleargs": "0.0.2",
-    "mongodb": "~1.4.19"
+    "mongodb": "~1.4.19",
+    "bluebird": "~2.3.11"
   }
 }
