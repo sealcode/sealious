@@ -3,7 +3,7 @@ var core = require("prometheus-core");
 var LayerManager = require("prometheus-layer-manager");
 var db_layer = require("prometheus-database-layer");
 
-if(LayerManager.validate()){
+if(LayerManager.isValid()){
 	core.bootstrap();
 	LayerManager.init();
 } else {
