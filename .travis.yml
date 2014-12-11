@@ -7,3 +7,4 @@ node_js:
 services:
   - mongodb
 script: echo "all ok"
+before_script: echo "before"
