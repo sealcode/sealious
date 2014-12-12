@@ -5,6 +5,3 @@ services:
   - mongodb
 script: ./tests/run_test.sh
 before_script: echo "before"
-only:
-    - master
-    - /^issue.*$/
