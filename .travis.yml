@@ -3,5 +3,8 @@ node_js:
   - "0.10"
 services:
   - mongodb
-script: echo "all ok"
+script: ./tests/run_test.sh
 before_script: echo "before"
+only:
+    - master
+    - /^issue.*$/
