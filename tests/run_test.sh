@@ -7,4 +7,4 @@ else
 	sudo npm install -g mocha
 fi
 
-node tests.js	
+node test.js	
