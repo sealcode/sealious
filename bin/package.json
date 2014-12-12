@@ -35,4 +35,7 @@
     "mongodb": "~1.4.19",
     "bluebird": "~2.3.11"
   }
+  "devDependencies": {
+    "should": "~4.4.0"
+  }
 }
