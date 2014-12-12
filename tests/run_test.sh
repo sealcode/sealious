@@ -11,6 +11,7 @@ else
     ./configure >&-
     echo "    done!"
     echo "installing jscoverage...."
-    make && sudo make install >&-
+    make 
+    sudo make install
     echo "    done!"
 fi
