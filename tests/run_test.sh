@@ -14,4 +14,11 @@ else
 	npm install -g should
 fi
 
+if hash blanket 2>/dev/null; then
+    echo "blanket installed"
+else
+	echo "installing blanket"
+	npm install -g blanket
+fi
+
 node tests/test.js	
