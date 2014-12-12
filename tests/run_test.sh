@@ -4,11 +4,11 @@
     echo "true"
 else
 	echo "cloning jscoverage..."
-    git clone https://github.com/visionmedia/node-jscoverage.git >&-
+    git clone https://github.com/visionmedia/node-jscoverage.git -q 	>&-
     echo "    done!"
     cd node-jscoverage/ >&-
     echo "configuring jscoverage..."
-    ./configure
+    ./configure >&-
     echo "    done!"
     echo "installing jscoverage...."
     make && sudo make install >&-
