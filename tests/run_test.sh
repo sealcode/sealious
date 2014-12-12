@@ -8,7 +8,7 @@ else
     echo "    done!"
     cd node-jscoverage/ >&-
     echo "configuring jscoverage..."
-    sudo ./configure >&-
+    sudo ./configure
     echo "    done!"
     echo "installing jscoverage...."
     ls -al
