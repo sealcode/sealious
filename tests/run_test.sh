@@ -7,4 +7,11 @@ else
 	npm install -g mocha
 fi
 
+if hash should 2>/dev/null; then
+    echo "should installed"
+else
+	echo "installing should"
+	npm install -g should
+fi
+
 node tests/test.js	
