@@ -148,68 +148,44 @@
 	"buffers":
 	[
 		{
-			"file": "bin/node_modules/prometheus-resource/prometheus-resource.js",
+			"file": "bin/package.json",
 			"settings":
 			{
-				"buffer_size": 892,
+				"buffer_size": 884,
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"contents": "Searching 53 files for \"check for redundant\" (regex)\n\n/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/prometheus-resource-type/resource-type.js:\n   50  		var that = this;\n   51  		return new Promise(function(resolve, reject){\n   52: 			//check for redundant fields\n   53: 			console.log(\"check for redundant fields...\")\n   54  			for(var given_field_name in field_values){\n   55  				if(!(that.fields[given_field_name])){\n\n2 matches in 1 file\n",
+			"file": "bin/index.js",
 			"settings":
 			{
-				"buffer_size": 455,
+				"buffer_size": 322,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "tests/test.js",
+			"settings":
+			{
+				"buffer_size": 95,
 				"line_ending": "Unix",
-				"name": "Find Results",
-				"scratch": true
+				"name": "test.js"
 			}
 		},
 		{
-			"file": "bin/node_modules/prometheus-resource-type/resource-type.js",
+			"file": "tests/run_test.sh",
 			"settings":
 			{
-				"buffer_size": 4117,
-				"line_ending": "Unix"
+				"buffer_size": 388,
+				"line_ending": "Unix",
+				"name": "run_test.sh"
 			}
 		},
 		{
-			"file": "jsdoc.json",
-			"settings":
-			{
-				"buffer_size": 859,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "index.html",
+			"file": ".travis.yml",
 			"settings":
 			{
 				"buffer_size": 116,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "bin/node_modules/prometheus-layer-manager/layer-manager.js",
-			"settings":
-			{
-				"buffer_size": 1527,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "bin/node_modules/prometheus-resource-manager/resource-manager.js",
-			"settings":
-			{
-				"buffer_size": 3196,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "bin/prometheus-modules/chat/chat.js",
-			"settings":
-			{
-				"buffer_size": 3725,
 				"line_ending": "Unix"
 			}
 		}
@@ -217,9 +193,29 @@
 	"build_system": "",
 	"command_palette":
 	{
-		"height": 285.0,
+		"height": 96.0,
 		"selected_items":
 		[
+			[
+				"git push",
+				"Git: Push"
+			],
+			[
+				"qui",
+				"Git: Quick Commit"
+			],
+			[
+				"branch",
+				"Git: Change Branch"
+			],
+			[
+				"remove",
+				"Package Control: Remove Package"
+			],
+			[
+				"install",
+				"Package Control: Install Package"
+			],
 			[
 				"reind",
 				"Indentation: Reindent Lines"
@@ -227,14 +223,6 @@
 			[
 				"findkey",
 				"FindKeyConflicts: All Conflicts"
-			],
-			[
-				"install",
-				"Package Control: Install Package"
-			],
-			[
-				"remove",
-				"Package Control: Remove Package"
 			],
 			[
 				"previe",
@@ -292,20 +280,37 @@
 	"expanded_folders":
 	[
 		"/home/kuba/Dropbox/Desktop/prometheus_repo",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin"
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/prometheus-modules",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/prometheus-modules/http",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/tests"
 	],
 	"file_history":
 	[
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/.travis.yml",
+		"/home/kuba/Dropbox/Desktop/test2l/test.js",
+		"/home/kuba/Dropbox/Desktop/temp/node-jscoverage/test.js",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/prometheus-exception-handler/exception-handler.js",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/prometheus-modules/chat/chat.js",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/package.json",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/prometheus-resource/prometheus-resource.js",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/prometheus-resource-type/resource-type.js",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/jsdoc.json",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/prometheus-layer-manager/layer-manager.js",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/prometheus-resource-manager/resource-manager.js",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/bluebird/js/main/promise_array.js",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/prometheus.sublime-project",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/prometheus-modules/www-server/www-server.js",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/socket.io/node_modules/engine.io/node_modules/engine.io-parser/node_modules/utf8/coverage/prettify.css",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/prometheus-modules/www-server/www-server-wrapper.js",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/prometheus-web-layer/web-layer.js",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/index.html",
 		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/prometheus-biz-accessor/biz-layer-access.js",
 		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/Set/LICENSE",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/prometheus-resource-type/resource-type.js",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/prometheus-resource-manager/resource-manager.js",
 		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/prometheus-database-layer/database-rest-server.js",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/prometheus-resource/prometheus-resource.js",
 		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/prometheus-field-type-manager/types/association.js",
 		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/prometheus-module-manager/prometheus-module-manager.js",
 		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/prometheus-service/prometheus-service.js",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/prometheus-modules/chat/chat.js",
 		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/prometheus-service-wrapper/service-wrapper.js",
 		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/prometheus-business-layer/biz-layer-jsonrpc-server.js",
 		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/boom/Makefile",
@@ -324,7 +329,6 @@
 		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/prometheus-metadata-manager/metadata-manager.js",
 		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/prometheus-database-layer/database-layer.js",
 		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/prometheus-business-layer/biz-layer-core.js",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo/jsdoc.json",
 		"/home/kuba/Dropbox/Desktop/kup/test.js",
 		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/glue/node_modules/joi/node_modules/moment/min/tests.js",
 		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/hapi/node_modules/statehood/lib/index.js",
@@ -339,7 +343,6 @@
 		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/glue/node_modules/joi/node_modules/moment/sauce_connect.log",
 		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/mongodb/lib/mongodb/aggregation_cursor.js",
 		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/prometheus-modules/database-view/database-view.js",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo/prometheus.sublime-project",
 		"/home/kuba/Dropbox/Desktop/prometheus_repo/docs/module-field-type-manager.html",
 		"/home/kuba/Dropbox/Desktop/prometheus_repo/docs/ResourceType.html",
 		"/home/kuba/.config/sublime-text-3/Packages/User/SublimeLinter.sublime-settings",
@@ -355,11 +358,9 @@
 		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/prometheus-field-type-manager/package.json",
 		"/home/kuba/Dropbox/Desktop/prometheus_repo/text.js",
 		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/prometheus-core/prometheus-core.js",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/prometheus-modules/www-server/www-server.js",
 		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/prometheus-modules/www-server/package.json",
 		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/prometheus-modules/http/package.json",
 		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/prometheus-modules/database-view/package.json",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/prometheus-exception-handler/exception-handler.js",
 		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/simpleargs/example.js",
 		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/mongodb/lib/mongodb/connection/base.js",
 		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/index.js",
@@ -371,7 +372,6 @@
 		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/prometheus-exception-handler/package.json",
 		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/mongodb/lib/mongodb/connection/repl_set/options.js",
 		"/home/kuba/Scripts/backup-aspazja.sh",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/prometheus-layer-manager/layer-manager.js",
 		"/home/kuba/.config/sublime-text-3/Packages/User/Default (Linux).sublime-keymap",
 		"/home/kuba/temp.txt",
 		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/hapi/test/response.js",
@@ -407,6 +407,11 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"should",
+			"mocha",
+			"&>",
+			">",
+			"without root",
 			"check for redundant",
 			"response",
 			"params",
@@ -531,7 +536,7 @@
 		"highlight": true,
 		"in_selection": false,
 		"preserve_case": false,
-		"regex": true,
+		"regex": false,
 		"replace_history":
 		[
 		],
@@ -544,148 +549,35 @@
 	"groups":
 	[
 		{
-			"selected": 7,
+			"selected": 2,
 			"sheets":
 			[
 				{
 					"buffer": 0,
-					"file": "bin/node_modules/prometheus-resource/prometheus-resource.js",
+					"file": "bin/package.json",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 892,
+						"buffer_size": 884,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								567,
-								567
+								876,
+								876
 							]
 						],
 						"settings":
 						{
-							"incomplete_sync": null,
-							"remote_loading": false,
-							"synced": false,
-							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 6,
-					"type": "text"
-				},
-				{
-					"buffer": 1,
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 455,
-						"regions":
-						{
-							"match":
-							{
-								"flags": 112,
-								"regions":
-								[
-									[
-										250,
-										269
-									],
-									[
-										300,
-										319
-									]
-								],
-								"scope": ""
-							}
-						},
-						"selection":
-						[
-							[
-								308,
-								308
-							]
-						],
-						"settings":
-						{
-							"detect_indentation": false,
-							"incomplete_sync": null,
-							"line_numbers": false,
-							"output_tag": 1,
-							"result_base_dir": "",
-							"result_file_regex": "^([A-Za-z\\\\/<].*):$",
-							"result_line_regex": "^ +([0-9]+):",
-							"scroll_past_end": true,
-							"syntax": "Packages/Default/Find Results.hidden-tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 5,
-					"type": "text"
-				},
-				{
-					"buffer": 2,
-					"file": "bin/node_modules/prometheus-resource-type/resource-type.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 4117,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								1628,
-								1628
-							]
-						],
-						"settings":
-						{
-							"incomplete_sync": null,
-							"remote_loading": false,
-							"synced": false,
-							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 612.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 4,
-					"type": "text"
-				},
-				{
-					"buffer": 3,
-					"file": "jsdoc.json",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 859,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
+							"WordCountShouldRun": false,
+							"WordCountSyntax": "json",
 							"incomplete_sync": null,
 							"remote_loading": false,
 							"synced": false,
 							"syntax": "Packages/JavaScript/JSON.tmLanguage",
-							"tab_size": 4,
+							"tab_size": 2,
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
@@ -696,8 +588,105 @@
 					"type": "text"
 				},
 				{
+					"buffer": 1,
+					"file": "bin/index.js",
+					"semi_transient": true,
+					"settings":
+					{
+						"buffer_size": 322,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"WordCountShouldRun": false,
+							"WordCountSyntax": "javascript",
+							"incomplete_sync": null,
+							"remote_loading": false,
+							"synced": false,
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 2,
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "tests/test.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 95,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								33,
+								33
+							]
+						],
+						"settings":
+						{
+							"WordCountShouldRun": true,
+							"WordCountSyntax": "plain text",
+							"auto_name": "test.js",
+							"incomplete_sync": null,
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "tests/run_test.sh",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 388,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								261,
+								261
+							]
+						],
+						"settings":
+						{
+							"WordCountShouldRun": true,
+							"WordCountSyntax": "plain text",
+							"auto_name": "run_test.sh",
+							"incomplete_sync": null,
+							"syntax": "Packages/ShellScript/Shell-Unix-Generic.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
 					"buffer": 4,
-					"file": "index.html",
+					"file": ".travis.yml",
 					"semi_transient": false,
 					"settings":
 					{
@@ -708,116 +697,24 @@
 						"selection":
 						[
 							[
-								0,
+								116,
 								116
 							]
 						],
 						"settings":
 						{
+							"WordCountShouldRun": true,
+							"WordCountSyntax": "yaml",
 							"incomplete_sync": null,
-							"syntax": "Packages/HTML/HTML.tmLanguage"
+							"remote_loading": false,
+							"synced": false,
+							"syntax": "Packages/YAML/YAML.tmLanguage"
 						},
 						"translation.x": 0.0,
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 2,
-					"type": "text"
-				},
-				{
-					"buffer": 5,
-					"file": "bin/node_modules/prometheus-layer-manager/layer-manager.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 1527,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"incomplete_sync": null,
-							"remote_loading": false,
-							"synced": false,
-							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 1,
-					"type": "text"
-				},
-				{
-					"buffer": 6,
-					"file": "bin/node_modules/prometheus-resource-manager/resource-manager.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 3196,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"incomplete_sync": null,
-							"remote_loading": false,
-							"synced": false,
-							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 1122.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 7,
-					"type": "text"
-				},
-				{
-					"buffer": 7,
-					"file": "bin/prometheus-modules/chat/chat.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 3725,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								1563,
-								1563
-							]
-						],
-						"settings":
-						{
-							"incomplete_sync": null,
-							"remote_loading": false,
-							"synced": false,
-							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 969.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 0,
+					"stack_index": 4,
 					"type": "text"
 				}
 			]
@@ -858,6 +755,10 @@
 	{
 		"height": 0.0
 	},
+	"output.git":
+	{
+		"height": 421.0
+	},
 	"output.markdown":
 	{
 		"height": 112.0
@@ -877,6 +778,22 @@
 		"height": 0.0,
 		"selected_items":
 		[
+			[
+				"package",
+				"bin/package.json"
+			],
+			[
+				"promeresma",
+				"bin/node_modules/prometheus-resource-manager/resource-manager.js"
+			],
+			[
+				"www-ser",
+				"bin/prometheus-modules/www-server/www-server.js"
+			],
+			[
+				"excep",
+				"bin/node_modules/prometheus-exception-handler/exception-handler.js"
+			],
 			[
 				"chat.js",
 				"bin/prometheus-modules/chat/chat.js"
@@ -1114,16 +1031,20 @@
 		"selected_items":
 		[
 			[
+				"aspa",
+				"~/FTP Cache/Aspazja ikleks/aspazja.sublime-project"
+			],
+			[
+				"daut",
+				"~/Dropbox/Desktop/Studia/DAUT/daut-2014-s384018/DAUT.sublime-project"
+			],
+			[
 				"alk",
 				"~/Dropbox/Desktop/Studia/ALK/ALK.sublime-project"
 			],
 			[
 				"prome",
 				"~/Dropbox/Desktop/prometheus_repo/prometheus.sublime-project"
-			],
-			[
-				"aspa",
-				"~/FTP Cache/Aspazja ikleks/aspazja.sublime-project"
 			],
 			[
 				"",
