@@ -21,4 +21,4 @@ else
 	npm install --silent -g blanket
 fi
 
-node tests/test.js	
+mocha tests/test.js	
