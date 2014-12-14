@@ -32,3 +32,6 @@ describe('FieldType', function(){
 		})
 	})
 });
+
+
+console.log("i finished all tests");
