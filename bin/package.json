@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node test.js"
   },
   "repository": {
     "type": "git",
@@ -34,8 +34,15 @@
     "simpleargs": "0.0.2",
     "mongodb": "~1.4.19",
     "bluebird": "~2.3.11"
-  }
+  },
   "devDependencies": {
-    "should": "~4.4.0"
-  }
+    "should": "~4.4.0",
+    "mocha": "*",
+    "blanket": "1.1.6"
+  },
+  "config": {
+      "blanket": {
+        "pattern": "node_modules"
+      }
+    }
 }

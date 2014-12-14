@@ -148,44 +148,18 @@
 	"buffers":
 	[
 		{
-			"file": "bin/package.json",
+			"file": "bin/tests/test.js",
 			"settings":
 			{
-				"buffer_size": 884,
+				"buffer_size": 765,
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "bin/index.js",
+			"file": "bin/node_modules/prometheus-field-type/field-type.js",
 			"settings":
 			{
-				"buffer_size": 322,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "tests/test.js",
-			"settings":
-			{
-				"buffer_size": 95,
-				"line_ending": "Unix",
-				"name": "test.js"
-			}
-		},
-		{
-			"file": "tests/run_test.sh",
-			"settings":
-			{
-				"buffer_size": 388,
-				"line_ending": "Unix",
-				"name": "run_test.sh"
-			}
-		},
-		{
-			"file": ".travis.yml",
-			"settings":
-			{
-				"buffer_size": 116,
+				"buffer_size": 810,
 				"line_ending": "Unix"
 			}
 		}
@@ -193,9 +167,13 @@
 	"build_system": "",
 	"command_palette":
 	{
-		"height": 96.0,
+		"height": 306.0,
 		"selected_items":
 		[
+			[
+				"reind",
+				"Indentation: Reindent Lines"
+			],
 			[
 				"git push",
 				"Git: Push"
@@ -215,10 +193,6 @@
 			[
 				"install",
 				"Package Control: Install Package"
-			],
-			[
-				"reind",
-				"Indentation: Reindent Lines"
 			],
 			[
 				"findkey",
@@ -281,18 +255,29 @@
 	[
 		"/home/kuba/Dropbox/Desktop/prometheus_repo",
 		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/prometheus-field-type",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/prometheus-field-type-manager",
 		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/prometheus-modules",
 		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/prometheus-modules/http",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo/tests"
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/tests"
 	],
 	"file_history":
 	[
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/tests/test.js",
 		"/home/kuba/Dropbox/Desktop/prometheus_repo/.travis.yml",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/.gitignore",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/tests/run_test.sh",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/package.json",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/tests.js",
+		"/home/kuba/Downloads/zal 6.pdf",
+		"/home/kuba/Downloads/zad 6.pdf",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/coverage/coverage.json",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/coverage/lcov.info",
 		"/home/kuba/Dropbox/Desktop/test2l/test.js",
 		"/home/kuba/Dropbox/Desktop/temp/node-jscoverage/test.js",
 		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/prometheus-exception-handler/exception-handler.js",
 		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/prometheus-modules/chat/chat.js",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/package.json",
 		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/prometheus-resource/prometheus-resource.js",
 		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/prometheus-resource-type/resource-type.js",
 		"/home/kuba/Dropbox/Desktop/prometheus_repo/jsdoc.json",
@@ -339,7 +324,6 @@
 		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/mongodb/lib/mongodb/collection/shared.js",
 		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/Set/set.js",
 		"/home/kuba/Dropbox/Desktop/prometheus_repo/.jshintrc",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo/.gitignore",
 		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/glue/node_modules/joi/node_modules/moment/sauce_connect.log",
 		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/mongodb/lib/mongodb/aggregation_cursor.js",
 		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/prometheus-modules/database-view/database-view.js",
@@ -407,6 +391,8 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"blanket",
+			"-g",
 			"should",
 			"mocha",
 			"&>",
@@ -549,59 +535,24 @@
 	"groups":
 	[
 		{
-			"selected": 2,
+			"selected": 0,
 			"sheets":
 			[
 				{
 					"buffer": 0,
-					"file": "bin/package.json",
+					"file": "bin/tests/test.js",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 884,
+						"buffer_size": 765,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								876,
-								876
-							]
-						],
-						"settings":
-						{
-							"WordCountShouldRun": false,
-							"WordCountSyntax": "json",
-							"incomplete_sync": null,
-							"remote_loading": false,
-							"synced": false,
-							"syntax": "Packages/JavaScript/JSON.tmLanguage",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 3,
-					"type": "text"
-				},
-				{
-					"buffer": 1,
-					"file": "bin/index.js",
-					"semi_transient": true,
-					"settings":
-					{
-						"buffer_size": 322,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
+								531,
+								531
 							]
 						],
 						"settings":
@@ -617,104 +568,41 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 2,
-					"type": "text"
-				},
-				{
-					"buffer": 2,
-					"file": "tests/test.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 95,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								33,
-								33
-							]
-						],
-						"settings":
-						{
-							"WordCountShouldRun": true,
-							"WordCountSyntax": "plain text",
-							"auto_name": "test.js",
-							"incomplete_sync": null,
-							"syntax": "Packages/JavaScript/JavaScript.tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
 					"stack_index": 0,
 					"type": "text"
 				},
 				{
-					"buffer": 3,
-					"file": "tests/run_test.sh",
+					"buffer": 1,
+					"file": "bin/node_modules/prometheus-field-type/field-type.js",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 388,
+						"buffer_size": 810,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								261,
-								261
+								511,
+								511
 							]
 						],
 						"settings":
 						{
-							"WordCountShouldRun": true,
-							"WordCountSyntax": "plain text",
-							"auto_name": "run_test.sh",
+							"WordCountShouldRun": false,
+							"WordCountSyntax": "javascript",
 							"incomplete_sync": null,
-							"syntax": "Packages/ShellScript/Shell-Unix-Generic.tmLanguage"
+							"remote_loading": false,
+							"synced": false,
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 1,
-					"type": "text"
-				},
-				{
-					"buffer": 4,
-					"file": ".travis.yml",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 116,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								116,
-								116
-							]
-						],
-						"settings":
-						{
-							"WordCountShouldRun": true,
-							"WordCountSyntax": "yaml",
-							"incomplete_sync": null,
-							"remote_loading": false,
-							"synced": false,
-							"syntax": "Packages/YAML/YAML.tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 4,
 					"type": "text"
 				}
 			]
