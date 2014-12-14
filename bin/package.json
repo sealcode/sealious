@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha ./tests/test.js && mocha ./tests/test.js -R travis-cov"
   },
   "repository": {
     "type": "git",
@@ -34,5 +34,16 @@
     "simpleargs": "0.0.2",
     "mongodb": "~1.4.19",
     "bluebird": "~2.3.11"
-  }
+  },
+  "devDependencies": {
+    "should": "~4.4.0",
+    "mocha": "*",
+    "blanket": "1.1.6",
+    "travis-cov ": "*"
+  },
+  "config": {
+      "blanket": {
+        "pattern": "node_modules"
+      }
+    }
 }
