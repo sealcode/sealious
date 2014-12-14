@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "node tests.js"
+    "test": "mocha tests.js -R travis-cov"
   },
   "repository": {
     "type": "git",
@@ -38,7 +38,8 @@
   "devDependencies": {
     "should": "~4.4.0",
     "mocha": "*",
-    "blanket": "1.1.6"
+    "blanket": "1.1.6",
+    "travis-cov ": "*"
   },
   "config": {
       "blanket": {
