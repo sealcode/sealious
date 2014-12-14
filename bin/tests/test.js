@@ -1,7 +1,7 @@
 var should = require("should");
 
 var blanket = require("blanket")({
-	"pattern": "node_modules"
+	"pattern": ["node_modules/prometheus"]
 });
 
 describe('Array', function(){
