@@ -3,5 +3,5 @@ node_js:
   - "0.10"
 services:
   - mongodb
-script: echo "all ok"
+script: cd bin && npm install && npm test
 before_script: echo "before"
