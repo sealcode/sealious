@@ -1,3 +1,5 @@
 *~
 *.sublime-workspace
 prometheus.sublime-workspace
+bin/node_modules/*
+!bin/node_modules/prometheus*
