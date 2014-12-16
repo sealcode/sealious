@@ -1,5 +1,5 @@
-var Service = require("prometheus-service");
-var resourceManager = require("prometheus-resource-manager");
+var Service = require("prometheus-service").Service;
+var resourceManager = require("prometheus-resource").ResourceManager;
 
 module.exports.service_info = function(service_name){
 	var ret = {};
