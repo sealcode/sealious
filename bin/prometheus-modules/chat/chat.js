@@ -24,6 +24,7 @@ function construct_chat_service(){
 			}
 		);
 	});
+
 	chat_service.on("new-message", function(payload, callback){
 		resourceManager.newResource("chat-message", payload).then(
 			function(resource){
@@ -35,14 +36,18 @@ function construct_chat_service(){
 			}
 		);
 	});
+
 	chat_service.on("list-messages", function(payload, callback){
+		console.log("topmost callback:", callback);
 		resourceManager.getResourcesByType("chat-message", {}, function(resources){
 			var data = resources.map(function(resource){
 				return resource.getData();
 			});
+			console.log("callback:", callback);
 			callback(data);
 		});
 	})
+
 	chat_service.on("list-conversations", function(payload, callback){
 		resourceManager.getResourcesByType("chat-conversation", {}, function(resources){
 			var data = resources.map(function(resource){
@@ -50,7 +55,8 @@ function construct_chat_service(){
 			});
 			callback(data);
 		});
-	})
+	});
+
 	return chat_service;
 }
 
