@@ -27,7 +27,6 @@
     "ip": "~0.3.2",
     "socket.io-client": "~1.2.0",
     "Set": "~0.4.1",
-    "promise": "~6.0.1",
     "http": "0.0.0",
     "request": "~2.47.0",
     "query-string": "~1.0.0",
