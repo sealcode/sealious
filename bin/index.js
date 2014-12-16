@@ -1,6 +1,6 @@
 require("prometheus-exception-handler");
-var ModuleManager = require("prometheus-module-manager").ModuleManager;
 var LayerManager = require("prometheus-layer-manager");
+var ModuleManager = require("prometheus-module-manager").ModuleManager;
 
 
 if(LayerManager.isValid()){
