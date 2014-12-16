@@ -1,4 +1,4 @@
-var Core = require("prometheus-core");
+var ChipManager = require("prometheus-chip-manager");
 var ExceptionHandler = require("prometheus-exception-handler");
 
 ExceptionHandler.addErrorParser(function(err){
@@ -28,7 +28,7 @@ module.exports.channel_info = function(channel_id){
 
 module.exports.channel_object = function(channel_id){
 	if(channel_id=="www-server"){
-		var http_channel = Core.getChannel("http");
+		var http_channel = ChipManager.getChannel("http");
 		var server = http_channel.new_server("www", 80, {cors:true});
 		server.start(function(err){
 			console.log("www server started at port 80");
