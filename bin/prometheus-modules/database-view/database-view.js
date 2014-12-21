@@ -1,18 +1,5 @@
-var Service = require("prometheus-service").Service;
-var resourceManager = require("prometheus-resource").resourceManager;
 
-module.exports.service_info = function(service_name){
-	var ret = {};
-	if(service_name=="database-view"){
-		ret["name"] = "Database-view";
-		ret["description"] = "A simple example service that displays documents stored in the database";
-	}
-	return ret;
-}
-
-
-function construct_service_helper(){
-	var db_view_service =  new Service();
+module.exports.prepare_service_database_view = function(db_view_service, dependencies){
 	db_view_service.on("list_type", function(payload, callback) {
 		resourceManager.getResourceByType("chat-message", {skip: 10, amount: 2, sort: {prometheus_id: 1}}, callback);
 	})
@@ -29,22 +16,13 @@ function construct_service_helper(){
 	db_view_service.on("first_free_id", function(payload, callback){
 		resourceManager.getFirstFreeID(callback);
 	})
-	return db_view_service;
 }
 
-module.exports.construct_service = function(service_name, dependencies){
-	if(service_name=="database-view"){
-		var ret = construct_service_helper();
-		//setup_channel(dependencies, ret);
-	}
-	return ret;
-}
+module.exports.postprocess_channel_www_server = function(www_server, dependencies){
 
-module.exports.channel_setup = function(channel_id, dependencies){
-	//console.log("got dependencies:", dependencies);
-	var www_server = dependencies["channel.www-server"];
-	var db_view_service = dependencies["service.database-view"];
+	console.log(dependencies);
 
+	var db_view_service = dependencies["service.database_view"];
 	
 	www_server.route(
 	{
