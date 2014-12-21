@@ -10,5 +10,5 @@
   "license": "BSD-2-Clause",
   "prometheus-module-id": "www-server",
   "prometheus-required-chips": ["channel.http"],
-  "prometheus-defined-chips": ["channel.www-server"]
+  "prometheus-defined-chips": ["channel.www_server"]
 }
