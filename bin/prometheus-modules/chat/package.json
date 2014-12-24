@@ -10,5 +10,5 @@
   "license": "BSD-2-Clause",
   "prometheus-module-id": "chat",
   "prometheus-required-chips": ["channel.www_server"],
-  "prometheus-defined-chips": ["resource-type.chat_message", "resource-type.chat_conversation", "service.chat"]
+  "prometheus-defined-chips": ["resource_type.chat_message", "resource_type.chat_conversation", "service.chat"]
 }
