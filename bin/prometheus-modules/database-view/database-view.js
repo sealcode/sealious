@@ -1,5 +1,3 @@
-var ResourceManager = require("prometheus-resource").ResourceManager;
-
 
 module.exports.prepare_service_database_view = function(db_view_service, dependencies){
 	db_view_service.on("list_type", function(payload, callback) {
