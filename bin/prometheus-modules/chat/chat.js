@@ -45,7 +45,7 @@ module.exports.prepare_service_chat = function(chat_service, dependencies){
 
 
 module.exports.prepare_resource_type_chat_message = function(chat_message){
-	chat_message.addFields([
+	chat_message.add_fields([
 		{name: "from", 		type: "text", required:true},//should be an association to User
 		{name: "message", 	type: "text", required: true},
 		{name: "date", 		type: "date"},
@@ -55,7 +55,7 @@ module.exports.prepare_resource_type_chat_message = function(chat_message){
 
 
 module.exports.prepare_resource_type_chat_conversation = function(chat_conversation){
-	chat_conversation.addFields([
+	chat_conversation.add_fields([
 		{name: "title", type: "text", required: true},
 		{name: "random_number", type: "int"}
 	]);
@@ -79,7 +79,7 @@ module.exports.prepare_channel_www_server = function(www_server, dispatcher){
 			path: '/api/v1/chat/message',
 			handler: function(request, reply){
 				dispatcher.resources_list_by_type("chat_message").then(function(resources){
-					reply(reources);
+					reply(resources);
 				})
 			}
 		},
@@ -88,17 +88,18 @@ module.exports.prepare_channel_www_server = function(www_server, dispatcher){
 			path: '/api/v1/chat/message',
 			handler: function(request, reply){
 				console.log("payload:", request.payload);
-				chat_service.emit("new-message", request.payload, function(data){
-					reply("<pre>" + JSON.stringify(data, null, "\t") + "</pre>");
-				})
+				dispatcher.resources_create("chat_message"),then(function(response){
+					reply(response.toString());
+				});
 			}
 		},
 		{
 			method: 'GET',
 			path: '/api/v1/chat/conversation',
 			handler: function(request, reply){
-				chat_service.emit("list-conversations", function(data){
-					reply("<pre>" + JSON.stringify(data, null, "\t") + "</pre>");
+				dispatcher.resources_list_by_type("chat_conversation").then(function(resources){
+					var resources_arr = resources.map(function(resource){return resource.getData()});
+					reply(resources);
 				})
 			}
 		},
@@ -106,9 +107,9 @@ module.exports.prepare_channel_www_server = function(www_server, dispatcher){
 			method: 'POST',
 			path: '/api/v1/chat/conversation',
 			handler: function(request, reply){
-				chat_service.emit("new-conversation", request.payload, function(data){
-					reply("<pre>" + JSON.stringify(data, null, "\t") + "</pre>");
-				})
+				dispatcher.resources_create("chat_conversation", request.payload).then(function(response){
+					reply(response.toString());
+				});
 			}
 		}
 	]);
