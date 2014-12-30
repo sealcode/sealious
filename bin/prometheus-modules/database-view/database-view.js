@@ -1,50 +1,26 @@
-var Service = require("prometheus-service");
-var resourceManager = require("prometheus-resource-manager");
 
-module.exports.service_info = function(service_name){
-	var ret = {};
-	if(service_name=="database-view"){
-		ret["name"] = "Database-view";
-		ret["description"] = "A simple example service that displays documents stored in the database";
-	}
-	return ret;
-}
-
-
-function construct_service_helper(){
-	var db_view_service =  new Service();
+module.exports.prepare_service_database_view = function(db_view_service, dependencies){
 	db_view_service.on("list_type", function(payload, callback) {
-		resourceManager.getResourceByType("chat-message", {skip: 10, amount: 2, sort: {prometheus_id: 1}}, callback);
+		ResourceManager.getResourceByType("chat-message", {skip: 10, amount: 2, sort: {prometheus_id: 1}}, callback);
 	})
 	db_view_service.on("list", function(payload, callback){
 		console.log("inside the proper service ON LIST event handler");
-		resourceManager.getResourceByID("5477108203814fc515f86858", callback)
+		ResourceManager.getResourceByID("5477108203814fc515f86858", callback)
 		
 	})
 	db_view_service.on("create", function(payload, callback){
-		resourceManager.newResource("chat-message", {name: "testowy", kupa: "dupa"}, function(response){
+		ResourceManager.newResource("chat-message", {name: "testowy", kupa: "dupa"}, function(response){
 			callback(response);
 		})
 	})
 	db_view_service.on("first_free_id", function(payload, callback){
-		resourceManager.getFirstFreeID(callback);
+		ResourceManager.getFirstFreeID(callback);
 	})
-	return db_view_service;
 }
 
-module.exports.construct_service = function(service_name, dependencies){
-	if(service_name=="database-view"){
-		var ret = construct_service_helper();
-		//setup_channel(dependencies, ret);
-	}
-	return ret;
-}
+module.exports.postprocess_channel_www_server = function(www_server, dependencies){
 
-module.exports.channel_setup = function(channel_id, dependencies){
-	//console.log("got dependencies:", dependencies);
-	var www_server = dependencies["channel.www-server"];
-	var db_view_service = dependencies["service.database-view"];
-
+	var db_view_service = dependencies["service.database_view"];
 	
 	www_server.route(
 	{
@@ -52,7 +28,7 @@ module.exports.channel_setup = function(channel_id, dependencies){
 		path: '/lolo',
 		handler: function(request, reply){
 			console.log("captured request for nono");
-			db_view_service.emit("list", function(data){
+			db_view_service.fire_action("list", function(data){
 				reply(data);
 			})
 		}
@@ -64,7 +40,7 @@ module.exports.channel_setup = function(channel_id, dependencies){
 		path: '/list_type',
 		handler: function(request, reply){
 			console.log("list_type");
-			db_view_service.emit("list_type", function(data){
+			db_view_service.fire_action("list_type", function(data){
 				reply("<pre>" + JSON.stringify(data, null, "\t"));
 			})
 		}
@@ -77,7 +53,7 @@ module.exports.channel_setup = function(channel_id, dependencies){
 		handler: function(request, reply){
 			console.log("captured request for nono");
 				console.log("lolo2");
-			db_view_service.emit("create", function(data){
+			db_view_service.fire_action("create", function(data){
 				reply(data);
 			})
 		}
@@ -89,7 +65,7 @@ module.exports.channel_setup = function(channel_id, dependencies){
 		path: '/first_free_id',
 		handler: function(request, reply){
 			console.log("captured request for nono");
-			db_view_service.emit("first_free_id",  function(data){
+			db_view_service.fire_action("first_free_id",  function(data){
 				reply(data);
 			})
 		}

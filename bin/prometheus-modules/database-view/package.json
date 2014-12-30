@@ -9,6 +9,6 @@
   "author": "",
   "license": "BSD-2-Clause",
   "prometheus-module-id": "database-view",
-  "prometheus-required-chips": ["channel.www-server"],
-  "prometheus-defined-chips": ["service.database-view"]
+  "prometheus-required-chips": ["channel.www_server"],
+  "prometheus-defined-chips": ["service.database_view"]
 }
