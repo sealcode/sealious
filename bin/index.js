@@ -1,11 +1,3 @@
-require("prometheus-exception-handler");
-var core = require("prometheus-core");
-var LayerManager = require("prometheus-layer-manager");
-var db_layer = require("prometheus-database-layer");
+var PrometheusCore = require("prometheus-core");
 
-if(LayerManager.isValid()){
-	core.bootstrap();
-	LayerManager.init();
-} else {
-	console.log("ERR: Unknown command or layer name.")
-}
+PrometheusCore.start();

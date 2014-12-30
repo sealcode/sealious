@@ -32,7 +32,8 @@
     "query-string": "~1.0.0",
     "simpleargs": "0.0.2",
     "mongodb": "~1.4.19",
-    "bluebird": "~2.3.11"
+    "bluebird": "~2.3.11",
+    "merge": "~1.2.0"
   },
   "devDependencies": {
     "should": "~4.4.0",
@@ -41,8 +42,8 @@
     "travis-cov ": "*"
   },
   "config": {
-      "blanket": {
-        "pattern": "node_modules"
-      }
+    "blanket": {
+      "pattern": "node_modules"
     }
+  }
 }
