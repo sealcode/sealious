@@ -271,52 +271,25 @@
 			"file": "bin/node_modules/prometheus-resource-manager/resource-manager.js",
 			"settings":
 			{
-				"buffer_size": 3312,
+				"buffer_size": 3520,
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "bin/node_modules/prometheus-resource-type/resource-type.js",
+			"contents": "Searching 53 files for \".all\"\n\n/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/prometheus-dispatcher-wrapper/dispatcher-wrapper.js:\n    6  \n    7  \n    8: 	this.allowed_chip_longids = new Set();\n    9: 	this.allowed_chip_longids.addAll(allowed_chip_longids);\n   10  \n   11  }\n   ..\n   30  \n   31  	this.can_access = function(chip_longid){\n   32: 		return this.allowed_chip_longids.has(chip_longid);\n   33  	}\n   34  \n\n/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/prometheus-resource-type/resource-type.js:\n   44  			promises.push(this.fields[field_name].encode_value(current_value, true));\n   45  		}\n   46: 		return Promise.all(promises);\n   47  	}\n   48  \n\n4 matches across 2 files\n\n\nSearching 53 files for \"encode_field_values\"\n\n/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/prometheus-resource-manager/resource-manager.js:\n   23   				.then(\n   24   					function(){\n   25: 	 					return resource_type_object.encode_field_values(body); 						\n   26   					}\n   27   				).then(\n\n/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/prometheus-resource-type/resource-type.js:\n   38  	}\n   39  \n   40: 	this.encode_field_values = function(body){\n   41  		console.log(\"###########encoding body:\", body);\n   42  		var promises = [];\n\n2 matches across 2 files\n\n\nSearching 53 files for \"create_resource\"\n\n/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/prometheus-dispatcher-local/dispatcher-local.js:\n   14  \n   15  	this.resources_create = function(type_name, body){\n   16: 		return ResourceManager.create_resource(type_name, body, this);\n   17  	}\n   18  \n\n/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/prometheus-resource-manager/resource-manager.js:\n   10   var ResourceManager = new function(){\n   11  \n   12:  	this.create_resource = function(type_name, body, dispatcher){\n   13  \n   14   		console.log(\"new resource:\", body);\n\n2 matches across 2 files\n",
 			"settings":
 			{
-				"buffer_size": 737,
-				"line_ending": "Unix"
+				"buffer_size": 1938,
+				"line_ending": "Unix",
+				"name": "Find Results",
+				"scratch": true
 			}
 		},
 		{
-			"file": "/etc/udev/rules.d/99-monitor-hotplug.rules",
-			"settings":
-			{
-				"buffer_size": 80,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "/home/kuba/Scripts/on_monitor_plug.sh",
-			"settings":
-			{
-				"buffer_size": 67,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "/home/kuba/Scripts/monitor_hotplug_handler.sh",
-			"settings":
-			{
-				"buffer_size": 389,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "/home/kuba/Scripts/sound.sh",
-			"settings":
-			{
-				"buffer_size": 95,
-				"line_ending": "Unix"
-			}
-		},
-		{
+			"contents": "var fs = require(\"fs\");\nvar path = require('path')\nvar Set = require('Set');\n//var Channel = require('prometheus-channel')\n\nvar channels = {};\n//var channel_info = {};\n\nvar services = {};\n//var service_info = {};\n\nvar resource_types = {};\nvar field_types = {};\n\nvar registred_chips_longids = new Set();\n\nvar Core = new function(){\n\n	this.register_channel = function(channel){\n		registred_chips_longids.add(\"channel.\" + channel.id);\n		channels[channel.id] = channel;\n	}\n\n	this.register_service = function(service){\n		registred_chips_longids.add(\"service.\" + service.id);\n		services[service.id] = service;\n	}\n	\n	this.register_resource_type = function(resource_type){\n		registred_chips_longids.add(\"resource_type.\" + resource_type.id);\n		resource_types[resource_type.id] = resource_type;\n	}\n\n	this.register_field_type = function(field_type){\n		registred_chips_longids.add(\"field_type.\"+field_type.id);\n		field_types[field_type.id] = field_type;\n	}\n\n	this.get_chip_by_longid = function(longid){\n		var type = longid.split(\".\")[0];\n		var name = longid.split(\".\")[1];\n		return this[\"get_\"+type](name);\n	}\n\n	this.chip_is_registred = function(chip_name){\n		return registred_chips_longids.has(chip_name);\n	}\n\n	this.get_channel = function(id){\n		return channels[id] || null;\n	}\n\n	this.get_service = function(id){\n		return services[id] || null;\n	}\n\n	this.get_resource_type = function(id){\n		console.log(resource_types);\n		return resource_types[id];\n	}\n\n	this.get_field_type = function(id){\n		console.log(field_types);\n		return field_types[id];\n	}\n\n	this.getServices = function(){\n		return services;\n	}\n}\n\n\nmodule.exports = Core;\n//!!important! export Core before importning Modules (circular dependency fail)\nModules = require(\"prometheus-module-manager\");\n\n",
 			"file": "bin/node_modules/prometheus-chip-manager/chip-manager.js",
+			"file_size": -1,
+			"file_write_time": -1,
 			"settings":
 			{
 				"buffer_size": 1746,
@@ -324,42 +297,56 @@
 			}
 		},
 		{
+			"contents": "/**\n * Represents a particular resource in database. Constructed by database entry.\n * @class\n * @param {object} database_entry \n */\nfunction ResourceRepresentation(database_entry){\n	this.database_entry = database_entry;\n	if(!database_entry.body){\n		console.log(\"database_entry missing:\", database_entry.body);\n	}\n}\n\nResourceRepresentation.prototype = new function(){\n	/**\n	 * Returns an object representing the resource, ready to be output for the public, e.g. as JSON\n	 * @alias Resource#getData\n	 * @return {object}\n	 */\n	this.getData = function(){\n		var data = this.database_entry.body || {};\n		console.log(data===null);\n		data.id = this.database_entry.prometheus_id;\n		return data;\n	}\n\n	/**\n	 * Encodes Resource's data into JSON\n	 * @alias Resource#toString\n	 * @return {string} contains the json-encoded data\n	 */\n	this.toString = function(){\n		return JSON.stringify(this.getData());\n	}\n}\n\nmodule.exports = ResourceRepresentation;\n",
+			"file": "bin/node_modules/prometheus-resource-representation/resource-representation.js",
+			"file_size": -1,
+			"file_write_time": -1,
+			"settings":
+			{
+				"buffer_size": 937,
+				"line_ending": "Unix"
+			}
+		},
+		{
 			"file": "bin/prometheus-modules/chat/chat.js",
 			"settings":
 			{
-				"buffer_size": 3120,
+				"buffer_size": 3246,
 				"line_ending": "Unix"
 			}
 		},
 		{
+			"contents": "var ChipManager = require(\"prometheus-chip-manager\");\nvar Promise = require(\"bluebird\");\nvar ResourceManager = require(\"prometheus-resource-manager\");\nvar DatabaseDirectAccess = require(\"prometheus-database\");\nvar MetadataManager = require(\"prometheus-metadata-manager\");\n\nvar DispatcherLocal = new function(){\n\n	this.resources = {};\n\n	this.resources_list_by_type = function(type_name, params){\n		return ResourceManager.list_by_type(type_name, params, this)\n	}\n\n	this.resources_create = function(type_name, body){\n		return ResourceManager.create_resource(type_name, body, this);\n	}\n\n	this.fire_service_action = function(service_name, action_name, payload){\n		return ChipManager.getService(service_name).fire_action(action_name, payload);\n	}\n\n	this.database_query = function(){\n		console.log(\"database_query arguments:\\n\", arguments);\n		return DatabaseDirectAccess.query.apply(DatabaseDirectAccess, arguments);\n	}\n\n	this.metadata_increment_variable = function(){\n		return MetadataManager.increment_variable.apply(MetadataManager, arguments);\n	}\n\n}\n\nmodule.exports = DispatcherLocal;",
 			"file": "bin/node_modules/prometheus-dispatcher-local/dispatcher-local.js",
+			"file_size": -1,
+			"file_write_time": -1,
 			"settings":
 			{
-				"buffer_size": 884,
+				"buffer_size": 1081,
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "bin/node_modules/prometheus-dispatcher-wrapper/dispatcher-wrapper.js",
+			"file": "bin/node_modules/prometheus-metadata-manager/metadata-manager.js",
 			"settings":
 			{
-				"buffer_size": 899,
+				"buffer_size": 1688,
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "bin/node_modules/prometheus-database/database.js",
+			"file": "bin/node_modules/prometheus-resource-type/resource-type.js",
 			"settings":
 			{
-				"buffer_size": 373,
+				"buffer_size": 1461,
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "bin/node_modules/prometheus-database/mongo-access.js",
+			"file": "bin/node_modules/prometheus-resource-type/resource-type-field.js",
 			"settings":
 			{
-				"buffer_size": 2360,
+				"buffer_size": 1838,
 				"line_ending": "Unix"
 			}
 		}
@@ -468,12 +455,7 @@
 		"/home/kuba/Dropbox/Desktop/prometheus_repo3",
 		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin",
 		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/prometheus-base-chips",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/prometheus-base-chips/field-types",
 		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/prometheus-database",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/prometheus-dispatcher-distributed-biz",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/prometheus-dispatcher-local",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/prometheus-dispatcher-wrapper",
 		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/prometheus-resource-type",
 		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/prometheus-modules",
 		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/prometheus-modules/chat",
@@ -482,14 +464,26 @@
 	],
 	"file_history":
 	[
+		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/package.json",
 		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/--deprecated--prometheus-resource/resource-type.js",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/prometheus-chip-manager/chip-manager.js",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/--deprecated--prometheus-resource/prometheus-resource.js",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/--deprecated--prometheus-resource/resource-manager.js",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/--deprecated--prometheus-module-manager/module.js",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/prometheus-dispatcher-wrapper/dispatcher-wrapper.js",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/--deprecated--prometheus-resource/types/date.js",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/prometheus-database/mongo-access.js",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/prometheus-database/database.js",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/prometheus-dispatcher-local/dispatcher-local.js",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/prometheus-modules/chat/chat.js",
+		"/home/kuba/Scripts/sound.sh",
+		"/etc/udev/rules.d/99-monitor-hotplug.rules",
+		"/home/kuba/Scripts/on_monitor_plug.sh",
+		"/home/kuba/Scripts/monitor_hotplug_handler.sh",
 		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/--deprecated--prometheus-resource/resource-type-field.js",
 		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/--deprecated--prometheus-resource/resource-type-manager.js",
 		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/prometheus-resource-type/resource-type-field.js",
 		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/prometheus-resource-type-field/resource-type-field.js",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/prometheus-chip-manager/chip-manager.js",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/prometheus-dispatcher-wrapper/dispatcher-wrapper.js",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/--deprecated--prometheus-resource/types/date.js",
 		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/prometheus-resource-manager/resource-manager.js",
 		"/home/kuba/Dropbox/Desktop/prometheus_repo3/README.md",
 		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/prometheus-field-type/field-type.js",
@@ -502,7 +496,6 @@
 		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/prometheus-modules/database-view/database-view.js",
 		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/--deprecated--prometheus-resource/field-type.js",
 		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/prometheus-modules/www-server/package.json",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/--deprecated--prometheus-module-manager/module.js",
 		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/--deprecated--prometheus-module-manager/module-manager.js",
 		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/prometheus-service/service.js",
 		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/hapi/node_modules/inert/lib/file.js",
@@ -521,13 +514,10 @@
 		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/promise/lib/core.js",
 		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/--deprecated--prometheus-resource/types/association.js",
 		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/prometheus-config.json",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/package.json",
 		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/preometheus-resource-type/resource-type.js",
 		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/request/node_modules/http-signature/node_modules/ctype/README.old",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/--deprecated--prometheus-resource/resource-manager.js",
 		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/prometheus-module-manager/module-info.js",
 		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/prometheus-modules/chat/package.json",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/prometheus-modules/chat/chat.js",
 		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/prometheus-modules/www-server/www-server.js",
 		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/socket.io/node_modules/engine.io/lib/server.js",
 		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/prometheus-modules/http/node_modules/hapi/lib/handler.js",
@@ -548,16 +538,13 @@
 		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/prometheus-error/package.json",
 		"/home/kuba/Dropbox/Desktop/prometheus_repo3/prometheus.sublime-project",
 		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/prometheus-error/prometheus-error.js",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/prometheus-dispatcher-local/dispatcher-local.js",
 		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/mongodb/lib/mongodb/connection/read_preference.js",
 		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/prometheus-resource/resource-manager.js",
 		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/--deprecated--prometheus-layer-manager/interfaces/db-interfaces.js",
 		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/travis-cov/console_runner.js",
 		"/home/kuba/Scripts/hdmi-audio.sh",
-		"/home/kuba/Scripts/sound.sh",
 		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/--deprecated--prometheus-service/service-wrapper.js",
 		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/mongodb/node_modules/readable-stream/writable.js",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/prometheus-database/database.js",
 		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/prometheus-resource/resource-type.js",
 		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/prometheus-resource/resource-type-manager.js",
 		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/prometheus-resource/prometheus-resource.js",
@@ -604,12 +591,7 @@
 		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/blanket/test/vendor/jasmine.js",
 		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/blanket/src/adapters/jasmine-blanket.js",
 		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/blanket/dist/jasmine/blanket_jasmine.js",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo/tests/test.js",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo/.travis.yml",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo/.gitignore",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo/tests/run_test.sh",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/package.json",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/tests.js"
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/tests/test.js"
 	],
 	"find":
 	{
@@ -639,6 +621,20 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"encoded_values",
+			"create_resource",
+			"encode_field_values",
+			".all",
+			".encodeField",
+			".encode",
+			".all",
+			"Resource",
+			"callback",
+			"setValue",
+			"callback",
+			"hasKey",
+			"getValue",
+			"metadata",
 			"validatefield",
 			"canAccess",
 			"Database",
@@ -752,21 +748,7 @@
 			"element",
 			"export",
 			"www_server",
-			"console",
-			"console.log",
-			"console",
-			".all",
-			"require\\([\"']promise",
-			"require([\"']promise",
-			"resolving encode",
-			"tType",
-			"Type",
-			"tT",
-			"texZype",
-			"validateFieldValues",
-			"this",
-			"field_name",
-			"new Promise"
+			"console"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -793,15 +775,222 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 3312,
+						"buffer_size": 3520,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								582,
-								582
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"WordCountSyntax": "javascript",
+							"incomplete_sync": null,
+							"remote_loading": false,
+							"synced": false,
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 969.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 4,
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1938,
+						"regions":
+						{
+							"match":
+							{
+								"flags": 112,
+								"regions":
+								[
+									[
+										173,
+										177
+									],
+									[
+										220,
+										224
+									],
+									[
+										372,
+										376
+									],
+									[
+										653,
+										657
+									],
+									[
+										957,
+										976
+									],
+									[
+										1162,
+										1181
+									],
+									[
+										1564,
+										1579
+									],
+									[
+										1801,
+										1816
+									]
+								],
+								"scope": ""
+							}
+						},
+						"selection":
+						[
+							[
+								1567,
+								1567
+							]
+						],
+						"settings":
+						{
+							"WordCountSyntax": "find results.hidden-tmlanguage",
+							"detect_indentation": false,
+							"incomplete_sync": null,
+							"line_numbers": false,
+							"output_tag": 3,
+							"result_base_dir": "",
+							"result_file_regex": "^([A-Za-z\\\\/<].*):$",
+							"result_line_regex": "^ +([0-9]+):",
+							"scroll_past_end": true,
+							"syntax": "Packages/Default/Find Results.hidden-tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 748.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 3,
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "bin/node_modules/prometheus-chip-manager/chip-manager.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1746,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"WordCountSyntax": "javascript",
+							"incomplete_sync": null,
+							"remote_loading": false,
+							"synced": false,
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": -0.0,
+						"translation.y": 408.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 2,
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "bin/node_modules/prometheus-resource-representation/resource-representation.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 937,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								887,
+								887
+							]
+						],
+						"settings":
+						{
+							"WordCountSyntax": "plain text",
+							"incomplete_sync": null,
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "bin/prometheus-modules/chat/chat.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 3246,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"WordCountShouldRun": false,
+							"WordCountSyntax": "javascript",
+							"incomplete_sync": null,
+							"remote_loading": false,
+							"synced": false,
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "bin/node_modules/prometheus-dispatcher-local/dispatcher-local.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1081,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								514,
+								514
 							]
 						],
 						"settings":
@@ -821,20 +1010,53 @@
 					"type": "text"
 				},
 				{
-					"buffer": 1,
-					"file": "bin/node_modules/prometheus-resource-type/resource-type.js",
+					"buffer": 6,
+					"file": "bin/node_modules/prometheus-metadata-manager/metadata-manager.js",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 737,
+						"buffer_size": 1688,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								695,
-								695
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"WordCountSyntax": "javascript",
+							"incomplete_sync": null,
+							"remote_loading": false,
+							"synced": false,
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 7,
+					"type": "text"
+				},
+				{
+					"buffer": 7,
+					"file": "bin/node_modules/prometheus-resource-type/resource-type.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1461,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
 							]
 						],
 						"settings":
@@ -854,309 +1076,20 @@
 					"type": "text"
 				},
 				{
-					"buffer": 2,
-					"file": "/etc/udev/rules.d/99-monitor-hotplug.rules",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 80,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								61,
-								61
-							]
-						],
-						"settings":
-						{
-							"WordCountSyntax": "plain text",
-							"incomplete_sync": null,
-							"syntax": "Packages/Text/Plain text.tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 4,
-					"type": "text"
-				},
-				{
-					"buffer": 3,
-					"file": "/home/kuba/Scripts/on_monitor_plug.sh",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 67,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								12,
-								12
-							]
-						],
-						"settings":
-						{
-							"WordCountSyntax": "shell-unix-generic",
-							"incomplete_sync": null,
-							"syntax": "Packages/ShellScript/Shell-Unix-Generic.tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 3,
-					"type": "text"
-				},
-				{
-					"buffer": 4,
-					"file": "/home/kuba/Scripts/monitor_hotplug_handler.sh",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 389,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								274,
-								274
-							]
-						],
-						"settings":
-						{
-							"WordCountShouldRun": true,
-							"WordCountSyntax": "shell-unix-generic",
-							"incomplete_sync": null,
-							"remote_loading": false,
-							"synced": false,
-							"syntax": "Packages/ShellScript/Shell-Unix-Generic.tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 0,
-					"type": "text"
-				},
-				{
-					"buffer": 5,
-					"file": "/home/kuba/Scripts/sound.sh",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 95,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								95,
-								30
-							]
-						],
-						"settings":
-						{
-							"WordCountShouldRun": true,
-							"WordCountSyntax": "shell-unix-generic",
-							"incomplete_sync": null,
-							"remote_loading": false,
-							"synced": false,
-							"syntax": "Packages/ShellScript/Shell-Unix-Generic.tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 1,
-					"type": "text"
-				},
-				{
-					"buffer": 6,
-					"file": "bin/node_modules/prometheus-chip-manager/chip-manager.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 1746,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								1505,
-								1505
-							]
-						],
-						"settings":
-						{
-							"WordCountSyntax": "javascript",
-							"incomplete_sync": null,
-							"remote_loading": false,
-							"synced": false,
-							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 474.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 7,
-					"type": "text"
-				},
-				{
-					"buffer": 7,
-					"file": "bin/prometheus-modules/chat/chat.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 3120,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								1732,
-								1732
-							]
-						],
-						"settings":
-						{
-							"WordCountSyntax": "javascript",
-							"incomplete_sync": null,
-							"remote_loading": false,
-							"synced": false,
-							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 415.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 2,
-					"type": "text"
-				},
-				{
 					"buffer": 8,
-					"file": "bin/node_modules/prometheus-dispatcher-local/dispatcher-local.js",
+					"file": "bin/node_modules/prometheus-resource-type/resource-type-field.js",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 884,
+						"buffer_size": 1838,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								449,
-								449
-							]
-						],
-						"settings":
-						{
-							"WordCountSyntax": "javascript",
-							"incomplete_sync": null,
-							"remote_loading": false,
-							"synced": false,
-							"syntax": "Packages/JavaScript/JavaScript.tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 9,
-					"type": "text"
-				},
-				{
-					"buffer": 9,
-					"file": "bin/node_modules/prometheus-dispatcher-wrapper/dispatcher-wrapper.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 899,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								753,
-								753
-							]
-						],
-						"settings":
-						{
-							"WordCountSyntax": "javascript",
-							"incomplete_sync": null,
-							"remote_loading": false,
-							"synced": false,
-							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 8,
-					"type": "text"
-				},
-				{
-					"buffer": 10,
-					"file": "bin/node_modules/prometheus-database/database.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 373,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								328,
-								328
-							]
-						],
-						"settings":
-						{
-							"WordCountSyntax": "javascript",
-							"incomplete_sync": null,
-							"remote_loading": false,
-							"synced": false,
-							"syntax": "Packages/JavaScript/JavaScript.tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 11,
-					"type": "text"
-				},
-				{
-					"buffer": 11,
-					"file": "bin/node_modules/prometheus-database/mongo-access.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 2360,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								942,
-								942
+								0,
+								0
 							]
 						],
 						"settings":
@@ -1169,10 +1102,10 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": -0.0,
-						"translation.y": 204.0,
+						"translation.y": 153.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 10,
+					"stack_index": 8,
 					"type": "text"
 				}
 			]
@@ -1237,16 +1170,24 @@
 		"selected_items":
 		[
 			[
+				"chat.js",
+				"bin/prometheus-modules/chat/chat.js"
+			],
+			[
+				"metada",
+				"bin/node_modules/prometheus-metadata-manager/metadata-manager.js"
+			],
+			[
+				"dispat",
+				"bin/node_modules/prometheus-dispatcher-local/dispatcher-local.js"
+			],
+			[
 				"resourcetype",
 				"bin/node_modules/--deprecated--prometheus-resource/resource-type.js"
 			],
 			[
 				"resource-type",
 				"bin/node_modules/prometheus-resource-type/resource-type.js"
-			],
-			[
-				"chat.js",
-				"bin/prometheus-modules/chat/chat.js"
 			],
 			[
 				"dispatcher-local",
@@ -1415,10 +1356,6 @@
 			[
 				"hapiw",
 				"bin/prometheus-modules/http/hapi-wrapper.js"
-			],
-			[
-				"metada",
-				"bin/node_modules/prometheus-metadata-manager/metadata-manager.js"
 			],
 			[
 				"module-mana",
@@ -1660,6 +1597,10 @@
 		"height": 500.0,
 		"selected_items":
 		[
+			[
+				"APSA",
+				"~/FTP Cache/nowa.aspazja.pl/nowa.aspazja.pl.sublime-project"
+			],
 			[
 				"aspa",
 				"~/FTP Cache/nowa.aspazja.pl/nowa.aspazja.pl.sublime-project"
