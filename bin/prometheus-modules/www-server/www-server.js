@@ -13,8 +13,6 @@ ExceptionHandler.addErrorParser(function(err){
 module.exports.prepare_channel_www_server = function(channel, dispatcher, dependencies){
 	var http_channel = dependencies["channel.http"];
 
-	console.log(dependencies);
-
 	channel.server = http_channel.hapi.new_server("www", 80, {cors:true});
 	
 	channel.start = function(){
