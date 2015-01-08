@@ -1,5 +1,3 @@
-var Service = require("prometheus-service").Service;
-
 module.exports.prepare_service_chat = function(chat_service, dependencies){
 	chat_service.on("new-conversation", function(payload, callback){
 		resourceManager.newResource("chat-conversation", payload).then(
@@ -72,6 +70,12 @@ module.exports.construct_associations = function(AssocInterface){
 	});
 }
 
+module.exports.prepare_channel_rest = function(rest){
+	rest.add_path("/api/v1/chat/message", "chat_message");
+	rest.add_path("/api/v1/chat/conversation", "chat_conversation");
+}
+
+/*
 module.exports.prepare_channel_www_server = function(www_server, dispatcher){
 	www_server.route([
 		{
@@ -88,7 +92,7 @@ module.exports.prepare_channel_www_server = function(www_server, dispatcher){
 			path: '/api/v1/chat/message',
 			handler: function(request, reply){
 				console.log("payload:", request.payload);
-				dispatcher.resources_create("chat_message"),then(function(response){
+				dispatcher.resources_create("chat_message").then(function(response){
 					reply(response.toString());
 				});
 			}
@@ -113,5 +117,5 @@ module.exports.prepare_channel_www_server = function(www_server, dispatcher){
 			}
 		}
 	]);
-
 }
+*/
