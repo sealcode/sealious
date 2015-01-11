@@ -6,11 +6,12 @@ module.exports.prepare_channel_rest = function(channel, dispatcher, dependencies
 			method: "GET",
 			path: url,
 			handler: function(request, reply){
-				dispatcher.resources_list_by_type(resource_type_name).then(function(resources){
+				dispatcher.resources_list_by_type(resource_type_name).then(function(resources){ // wywołanie metody z dispatchera webowego
 					var resources_arr = resources.map(function(resource){return resource.getData()});
 					reply(resources_arr);
 				});
 			}
+			// hanlder GET ma wypisać wszystkie zasoby o podanym typie
 		});
 		www_server.route({
 			method: "POST",
@@ -21,6 +22,7 @@ module.exports.prepare_channel_rest = function(channel, dispatcher, dependencies
 					reply(response.toString());
 				});
 			}
+			// handler POST ma stworzyć zasób z podanymi wartościami
 		});
 	}
 }

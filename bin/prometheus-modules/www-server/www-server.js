@@ -25,6 +25,7 @@ module.exports.prepare_channel_www_server = function(channel, dispatcher, depend
 	channel.route = function(){
 		this.server.route.apply(this.server, arguments);
 	}
+	// route przypina url do funkcji go obslugujacej
 
 	channel.static_route = function(path, url) {		
 		this.server.route({	
@@ -38,3 +39,5 @@ module.exports.prepare_channel_www_server = function(channel, dispatcher, depend
 		});
 	}
 }
+
+//www-server jest naszą gotową biblioteką (serwer HTTP)
