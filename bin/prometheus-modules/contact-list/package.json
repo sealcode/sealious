@@ -9,6 +9,6 @@
   "author": "",
   "license": "ISC",
   "prometheus-module-id": "contact-list",
-  "prometheus-required-chips": ["channel.rest"],
+  "prometheus-required-chips": ["channel.rest", "channel.www_server"],
   "prometheus-defined-chips": ["resource_type.contact"]
 }
