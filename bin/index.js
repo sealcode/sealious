@@ -1,3 +1,3 @@
 var PrometheusCore = require("prometheus-core");
 
-PrometheusCore.start();
+PrometheusCore.start(process.argv[2],process.argv[3]);
