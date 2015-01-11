@@ -26,8 +26,7 @@ module.exports.prepare_channel_www_server = function(channel, dispatcher, depend
 		this.server.route.apply(this.server, arguments);
 	}
 
-	channel.static_route = function(path, url) {
-		
+	channel.static_route = function(path, url) {		
 		this.server.route({	
 			method: 'GET',
 			path: url + '/{param*}',
