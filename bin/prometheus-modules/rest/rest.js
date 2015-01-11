@@ -8,7 +8,7 @@ module.exports.prepare_channel_rest = function(channel, dispatcher, dependencies
 			handler: function(request, reply){
 				dispatcher.resources_list_by_type(resource_type_name).then(function(resources){
 					var resources_arr = resources.map(function(resource){return resource.getData()});
-					reply(resources);
+					reply(resources_arr);
 				});
 			}
 		});
@@ -16,7 +16,8 @@ module.exports.prepare_channel_rest = function(channel, dispatcher, dependencies
 			method: "POST",
 			path: url,
 			handler: function(request, reply){
-				dispatcher.resources_create(resource_type_name).then(function(response){
+				console.log("rest.js POST", request.payload)
+				dispatcher.resources_create(resource_type_name, request.payload).then(function(response){
 					reply(response.toString());
 				});
 			}

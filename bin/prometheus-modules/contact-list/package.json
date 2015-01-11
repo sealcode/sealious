@@ -1,0 +1,14 @@
+{
+  "name": "contact-list",
+  "version": "1.0.0",
+  "description": "",
+  "main": "contact-list.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "prometheus-module-id": "contact-list",
+  "prometheus-required-chips": ["channel.rest"],
+  "prometheus-defined-chips": ["resource_type.contact"]
+}
