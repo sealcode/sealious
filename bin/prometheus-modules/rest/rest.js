@@ -24,5 +24,17 @@ module.exports.prepare_channel_rest = function(channel, dispatcher, dependencies
 			}
 			// handler POST ma stworzyć zasób z podanymi wartościami
 		});
+
+		www_server.route({
+			method: "DELETE",
+			path: url,
+			handler: function(request, reply){
+				console.log("rest.js DELETE", request.payload)
+				dispatcher.resources_delete(resource_type_name, request.payload).then(function(response){
+					reply();
+				});
+			}
+			// handler POST ma stworzyć zasób z podanymi wartościami
+		});
 	}
 }
