@@ -33,7 +33,9 @@
     "simpleargs": "0.0.2",
     "mongodb": "~1.4.19",
     "bluebird": "~2.3.11",
-    "merge": "~1.2.0"
+    "merge": "~1.2.0",
+    "sha1": "~1.1.0",
+    "microtime": "~1.1.0"
   },
   "devDependencies": {
     "should": "~4.4.0",
