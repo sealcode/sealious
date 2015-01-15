@@ -8,5 +8,7 @@
   },
   "author": "",
   "license": "ISC",
-  "prometheus-required-chips": ["channel.www_server"]
+  "prometheus-module-id": "rest-users",
+  "prometheus-required-chips": ["channel.www_server"],
+  "prometheus-defined-chips" : []
 }
