@@ -6,9 +6,11 @@ module.exports.prepare_channel_rest = function(channel, dispatcher, dependencies
 			method: "GET",
 			path: url,
 			handler: function(request, reply){
-				dispatcher.resources_list_by_type(resource_type_name).then(function(resources){ // wywołanie metody z dispatchera webowego
-					var resources_arr = resources.map(function(resource){return resource.getData()});
-					reply(resources_arr);
+				dispatcher.resources_list_by_type(resource_type_name)
+				.then(function(resources){ // wywołanie metody z dispatchera webowego
+					console.log("GOT RESPONSE FROM DISPATCHER");
+					//var resources_arr = resources.map(function(resource){return resource.getData()});
+					reply(resources);
 				});
 			}
 			// hanlder GET ma wypisać wszystkie zasoby o podanym typie
@@ -17,6 +19,7 @@ module.exports.prepare_channel_rest = function(channel, dispatcher, dependencies
 			method: "POST",
 			path: url,
 			handler: function(request, reply){
+				console.log(dispatcher.resources_create.toString());
 				console.log("rest.js POST", request.payload)
 				dispatcher.resources_create(resource_type_name, request.payload).then(function(response){
 					reply(response.toString());
