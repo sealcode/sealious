@@ -1,12 +1,12 @@
 module.exports.prepare_channel_rest_users = function(channel, dispatcher, dependencies){
 
 	www_server = dependencies["channel.www_server"];
-	channel.add_path = function(url, username){
+	url = "/api/v1/user";
 		www_server.route({
 			method: "GET",
 			path: url,
 			handler: function(request, reply){
-				dispatcher.users_get_user_data(username, dispatcher).then(function(userdata){ // wywołanie metody z dispatchera webowego
+				dispatcher.users_get_user_data(request.payload.username, dispatcher).then(function(userdata){ // wywołanie metody z dispatchera webowego
 					reply(userdata);
 				});
 			}
@@ -36,5 +36,4 @@ module.exports.prepare_channel_rest_users = function(channel, dispatcher, depend
 			// handler POST ma stworzyć zasób z podanymi wartościami
 		});
 */
-	}	
 }
