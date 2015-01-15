@@ -4,192 +4,12 @@
 		"selected_items":
 		[
 			[
-				"que",
-				"query_string"
-			],
-			[
-				"get_",
-				"get_chip_by_longid"
-			],
-			[
-				"resource",
-				"resources_list_by_type"
-			],
-			[
-				"arg",
-				"arguments"
-			],
-			[
-				"ar",
-				"arguments"
-			],
-			[
-				"metho",
-				"method_name"
-			],
-			[
-				"function",
-				"function_name"
-			],
-			[
-				"resou",
-				"resources_list_by_type"
-			],
-			[
-				"fun",
-				"function_name"
-			],
-			[
-				"func",
-				"functions_resolved_by_socket"
-			],
-			[
-				"resources",
-				"resources_create"
-			],
-			[
-				"resources_",
-				"resources_list_by_type"
+				"prom",
+				"prometheus_id"
 			],
 			[
 				"field",
-				"field_type_generator_fn"
-			],
-			[
-				"fiel",
-				"field_type_generator_fn"
-			],
-			[
-				"field_",
-				"field_type_generator_fn"
-			],
-			[
-				"current_",
-				"current_module_path"
-			],
-			[
-				"prepa",
-				"prepare_function_name"
-			],
-			[
-				"prepare",
-				"prepare_resource_type_chat_message"
-			],
-			[
-				"regis",
-				"registred_chips_longids"
-			],
-			[
-				"get",
-				"get_allowed_chips_longids"
-			],
-			[
-				"requ",
-				"requires"
-			],
-			[
-				"chip",
-				"chip_longid"
-			],
-			[
-				"type",
-				"type_name"
-			],
-			[
-				"typ",
-				"type_name"
-			],
-			[
-				"res",
-				"resource_types"
-			],
-			[
-				"requierd_channl",
-				"required_channel_ids"
-			],
-			[
-				"required_cha",
-				"required_channel_ids"
-			],
-			[
-				"resource_",
-				"resource_type_id"
-			],
-			[
-				"REsour",
-				"ResourceTypeField"
-			],
-			[
-				"resour",
-				"resource_type_ids"
-			],
-			[
-				"pos",
-				"postprocess_function"
-			],
-			[
-				"post",
-				"postprocess_function_name"
-			],
-			[
-				"require",
-				"required_channel_ids"
-			],
-			[
-				"modul",
-				"module_execution_order"
-			],
-			[
-				"accep",
-				"accepted_modules_count"
-			],
-			[
-				"module",
-				"module_path"
-			],
-			[
-				"settin",
-				"settings_path"
-			],
-			[
-				"channel",
-				"channel_object"
-			],
-			[
-				"prep",
-				"prepare_function_name"
-			],
-			[
-				"modules_",
-				"modules_by_id"
-			],
-			[
-				"moduleid",
-				"modules_by_id"
-			],
-			[
-				"current",
-				"current_module_info"
-			],
-			[
-				"accepted_",
-				"accepted_chip_ids"
-			],
-			[
-				"curren",
-				"current_module_info"
-			],
-			[
-				"curre",
-				"current_module_path"
-			],
-			[
-				"layer_na",
-				"layer_name_valid"
-			],
-			[
-				"prom",
-				"prometheus_id"
+				"field_type_arguments"
 			],
 			[
 				"to_",
@@ -214,6 +34,14 @@
 			[
 				"pr",
 				"prototype"
+			],
+			[
+				"curre",
+				"current_field_value"
+			],
+			[
+				"field_",
+				"field_values"
 			],
 			[
 				"value_in_",
@@ -268,6 +96,14 @@
 				"require"
 			],
 			[
+				"resou",
+				"resource_type_name"
+			],
+			[
+				"resour",
+				"resource_type_fields"
+			],
+			[
 				"ResourceType",
 				"ResourceTypeManager"
 			],
@@ -296,43 +132,47 @@
 				"function_array"
 			],
 			[
+				"function",
+				"function_array"
+			],
+			[
 				"functoi",
 				"function_to_add"
+			],
+			[
+				"fun",
+				"function_array"
 			]
 		]
 	},
 	"buffers":
 	[
+		{
+			"file": "bin/tests/test.js",
+			"settings":
+			{
+				"buffer_size": 765,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "bin/node_modules/prometheus-field-type/field-type.js",
+			"settings":
+			{
+				"buffer_size": 810,
+				"line_ending": "Unix"
+			}
+		}
 	],
 	"build_system": "",
 	"command_palette":
 	{
-		"height": 87.0,
+		"height": 306.0,
 		"selected_items":
 		[
 			[
-				"syntahtml",
-				"Set Syntax: HTML"
-			],
-			[
-				"html",
-				"HTML: Encode Special Characters"
-			],
-			[
 				"reind",
 				"Indentation: Reindent Lines"
-			],
-			[
-				"map",
-				"View: Toggle Minimap"
-			],
-			[
-				"remo",
-				"Package Control: Remove Package"
-			],
-			[
-				"menu",
-				"View: Toggle Menu"
 			],
 			[
 				"git push",
@@ -391,7 +231,7 @@
 				"Preferences: Key Bindings - User"
 			]
 		],
-		"width": 510.0
+		"width": 467.0
 	},
 	"console":
 	{
@@ -413,149 +253,119 @@
 	},
 	"expanded_folders":
 	[
-		"/home/kuba/Dropbox/Desktop/prometheus_repo3",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/prometheus-modules",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/prometheus-modules/chat",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/prometheus-modules/contact-list",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/prometheus-modules/http",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/prometheus-modules/www-server"
+		"/home/kuba/Dropbox/Desktop/prometheus_repo",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/prometheus-field-type",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/prometheus-field-type-manager",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/prometheus-modules",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/prometheus-modules/http",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/tests"
 	],
 	"file_history":
 	[
-		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/prometheus-resource-type/resource-type-field.js",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/prometheus-core/prometheus-core.js",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/prometheus-chip-manager/chip-manager.js",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/prometheus-resource-manager/resource-manager.js",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/prometheus-dispatcher-distributed-db/database-rest-server.js",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/prometheus-dispatcher-wrapper/dispatcher-wrapper.js",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/prometheus-dispatcher-distributed-biz/dispatcher-distributed-biz.js",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/prometheus-dispatcher-distributed-web/dispatcher-distributed-web.js",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/prometheus-modules/rest/rest.js",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/prometheus-modules/http/hapi-wrapper.js",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/prometheus-modules/www-server/www-server.js",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/prometheus-resource-representation/resource-representation.js",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/socket.io/node_modules/engine.io/lib/transports/websocket.js",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/package.json",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/request/node_modules/hawk/test/client.js",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/request/node_modules/hawk/lib/client.js",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/socket.io/lib/client.js",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/prometheus-modules/contact-list/contact-list.js",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/prometheus-modules/chat/chat.js",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/prometheus-resource-type/resource-type.js",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/glue/test/plugins/--custom/index.js",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/mocha/node_modules/glob/test/00-setup.js",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/prometheus-dispatcher-distributed-db/dispatcher-distributed-db.js",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/blanket/CONTRIBUTING.md",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo3/html-cov.sh",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/socket.io/node_modules/has-binary-data/index.js",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/socket.io/node_modules/socket.io-parser/is-buffer.js",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo3/npm-debug.log",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/prometheus-dispatcher-distributed-biz/biz-server.js",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/blanket/test/test-node/fixture/blockinjection_test_file_instrumented.js",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/merge/bower.json",
-		"/home/kuba/Dropbox/Desktop/sturm.txt",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/prometheus-module-manager/module-manager.js",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/prometheus-module-manager/module.js",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/prometheus-module-manager/module-info.js",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/blanket/test/backbone-koans/js/koans/aboutModels.js",
-		"/home/kuba/Downloads/kultury_all.csv",
-		"/home/kuba/Downloads/kultury_all_4.csv",
-		"/home/kuba/Dropbox/Desktop/jap_distance.txt",
-		"/home/kuba/Dropbox/Desktop/mediana_dystansu.txt",
-		"/home/kuba/Dropbox/Desktop/pl_distance.txt",
-		"/home/kuba/Downloads/kultury.csv",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/prometheus-metadata-manager/metadata-manager.js",
-		"/home/kuba/Scripts/kbd-macros/up.sh",
-		"/home/kuba/Scripts/kbd-macros/up",
-		"/home/kuba/.xbindkeysrc",
-		"/usr/share/X11/xkb/symbols/pl",
-		"/usr/share/X11/xkb/symbols/latin",
-		"/home/kuba/.Xmodmap",
-		"/home/kuba/Xmo",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/prometheus-dispatcher-local/dispatcher-local.js",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/--deprecated--prometheus-resource/resource-type.js",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/--deprecated--prometheus-resource/prometheus-resource.js",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/--deprecated--prometheus-resource/resource-manager.js",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/--deprecated--prometheus-module-manager/module.js",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/--deprecated--prometheus-resource/types/date.js",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/prometheus-database/mongo-access.js",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/prometheus-database/database.js",
-		"/home/kuba/Scripts/sound.sh",
-		"/etc/udev/rules.d/99-monitor-hotplug.rules",
-		"/home/kuba/Scripts/on_monitor_plug.sh",
-		"/home/kuba/Scripts/monitor_hotplug_handler.sh",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/--deprecated--prometheus-resource/resource-type-field.js",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/--deprecated--prometheus-resource/resource-type-manager.js",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/prometheus-resource-type-field/resource-type-field.js",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo3/README.md",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/prometheus-field-type/field-type.js",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/prometheus-base-chips/field-types/date.js",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/prometheus-base-chips/package.json",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/prometheus-modules/database-view/database-view.js",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/--deprecated--prometheus-resource/field-type.js",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/prometheus-modules/www-server/package.json",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/--deprecated--prometheus-module-manager/module-manager.js",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/prometheus-service/service.js",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/hapi/node_modules/inert/lib/file.js",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/hapi/lib/handler.js",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/promise/core.js",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/prometheus-base-chips/base-chips.js",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/prometheus-base-chips/field-types/text.js",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/prometheus-base-chips/field-types/int.js",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/--deprecated--prometheus-resource/types/int.js",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/index.js",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/--deprecated--prometheus-resource/types/text.js",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/socket.io-client/node_modules/engine.io-client/node_modules/xmlhttprequest/tests/test-events.js",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/tests/test.js",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/blanket/test/jasmine-requirejs/code/base/core.js",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/mongodb/lib/mongodb/collection/core.js",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/promise/lib/core.js",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/--deprecated--prometheus-resource/types/association.js",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/prometheus-config.json",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/preometheus-resource-type/resource-type.js",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/request/node_modules/http-signature/node_modules/ctype/README.old",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/prometheus-modules/chat/package.json",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/socket.io/node_modules/engine.io/lib/server.js",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/prometheus-modules/http/node_modules/hapi/lib/handler.js",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/prometheus-modules/http/node_modules/hapi/node_modules/inert/lib/file.js",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/prometheus-modules/http/node_modules/hapi/test/pack/--afterErr/package.json",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/request/node_modules/http-signature/package.json",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/prometheus-modules/http/node_modules/hapi/test/pack/--child/package.json",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/prometheus-modules/http/node_modules/hapi/test/pack/--handler/package.json",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/prometheus-modules/http/node_modules/hapi/node_modules/catbox-memory/package.json",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/request/node_modules/combined-stream/node_modules/delayed-stream/test/integration/test-delayed-http-upload.js",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/prometheus-modules/http/http.js",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/prometheus-modules/www-server/www-server-wrapper.js",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/--deprecated--prometheus-layer-manager/database-layer.js",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/prometheus-modules/http/node_modules/hapi/node_modules/qs/test/parse.js",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/prometheus-modules/http/node_modules/hapi/node_modules/vision/examples/handlebars/partials.js",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/prometheus-error/package.json",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo3/prometheus.sublime-project",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/prometheus-error/prometheus-error.js",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/mongodb/lib/mongodb/connection/read_preference.js",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/prometheus-resource/resource-manager.js",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/--deprecated--prometheus-layer-manager/interfaces/db-interfaces.js",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/travis-cov/console_runner.js",
-		"/home/kuba/Scripts/hdmi-audio.sh",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/--deprecated--prometheus-service/service-wrapper.js",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/mongodb/node_modules/readable-stream/writable.js",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/prometheus-resource/resource-type.js",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/prometheus-resource/resource-type-manager.js",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/prometheus-resource/prometheus-resource.js",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/blanket/test/commonjs/source_testing_url_module.js",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/prometheus-modules/database-view/package.json",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/prometheus-module-manager/package.json",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/prometheus-channel/channel.js",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/.bin/hapi",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/glue/node_modules/joi/node_modules/moment/locale/hy-am.js",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/prometheus-channel/package.json",
-		"/home/kuba/Dropbox/Desktop/prometheus_repo3/bin/node_modules/prometheus-channel/index.js"
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/tests/test.js",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/.travis.yml",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/.gitignore",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/tests/run_test.sh",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/package.json",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/tests.js",
+		"/home/kuba/Downloads/zal 6.pdf",
+		"/home/kuba/Downloads/zad 6.pdf",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/coverage/coverage.json",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/coverage/lcov.info",
+		"/home/kuba/Dropbox/Desktop/test2l/test.js",
+		"/home/kuba/Dropbox/Desktop/temp/node-jscoverage/test.js",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/prometheus-exception-handler/exception-handler.js",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/prometheus-modules/chat/chat.js",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/prometheus-resource/prometheus-resource.js",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/prometheus-resource-type/resource-type.js",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/jsdoc.json",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/prometheus-layer-manager/layer-manager.js",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/prometheus-resource-manager/resource-manager.js",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/bluebird/js/main/promise_array.js",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/prometheus.sublime-project",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/prometheus-modules/www-server/www-server.js",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/socket.io/node_modules/engine.io/node_modules/engine.io-parser/node_modules/utf8/coverage/prettify.css",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/prometheus-modules/www-server/www-server-wrapper.js",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/prometheus-web-layer/web-layer.js",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/index.html",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/prometheus-biz-accessor/biz-layer-access.js",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/Set/LICENSE",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/prometheus-database-layer/database-rest-server.js",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/prometheus-field-type-manager/types/association.js",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/prometheus-module-manager/prometheus-module-manager.js",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/prometheus-service/prometheus-service.js",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/prometheus-service-wrapper/service-wrapper.js",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/prometheus-business-layer/biz-layer-jsonrpc-server.js",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/boom/Makefile",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/prometheus-field-type/package.json",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/prometheus-field-type-manager/field-type-manager.js",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/prometheus-field-type-manager/types/text.js",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/prometheus-association/association-interface.js",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/prometheus-resource-type-field/resource-type-field.js",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/prometheus-association/package.json",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/prometheus-association/association.js",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/prometheus-field-type/field-type.js",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/prometheus-resource-type-manager/resource-type-manager.js",
+		"/home/kuba/Dropbox/Desktop/I am a markdown file.md",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/prometheus-database-accessor/database-accessor.js",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/prometheus-database-layer/database-server.js",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/prometheus-metadata-manager/metadata-manager.js",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/prometheus-database-layer/database-layer.js",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/prometheus-business-layer/biz-layer-core.js",
+		"/home/kuba/Dropbox/Desktop/kup/test.js",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/glue/node_modules/joi/node_modules/moment/min/tests.js",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/hapi/node_modules/statehood/lib/index.js",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/generate_docs.sh",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/yuidoc.json",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/prometheus-field-type-manager/types/int.js",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/prometheus-field-type-manager/types/date.js",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/mongodb/lib/mongodb/collection/shared.js",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/Set/set.js",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/.jshintrc",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/glue/node_modules/joi/node_modules/moment/sauce_connect.log",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/mongodb/lib/mongodb/aggregation_cursor.js",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/prometheus-modules/database-view/database-view.js",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/docs/module-field-type-manager.html",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/docs/ResourceType.html",
+		"/home/kuba/.config/sublime-text-3/Packages/User/SublimeLinter.sublime-settings",
+		"/home/kuba/.config/sublime-text-3/Packages/SublimeLinter/SublimeLinter.sublime-settings",
+		"/home/kuba/.config/sublime-text-3/Packages/User/Package Control.sublime-settings",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/hapi/CHANGELOG.md",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/boom/CONTRIBUTING.md",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/prometheus-resource-type-manager/package.json",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/prometheus-modules/chat/package.json",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/socket.io-client/node_modules/engine.io-client/node_modules/xmlhttprequest/tests/test-events.js",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/Set/test.js",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/prometheus-field-type/types/text.js",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/prometheus-field-type-manager/package.json",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/text.js",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/prometheus-core/prometheus-core.js",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/prometheus-modules/www-server/package.json",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/prometheus-modules/http/package.json",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/prometheus-modules/database-view/package.json",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/simpleargs/example.js",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/mongodb/lib/mongodb/connection/base.js",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/index.js",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/hapi/test/server.js",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/hapi/test/validation.js",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/hapi/lib/validation.js",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/prometheus-modules/http/hapi-wrapper.js",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/prometheus-database-layer/mongo_connections.js",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/prometheus-exception-handler/package.json",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/mongodb/lib/mongodb/connection/repl_set/options.js",
+		"/home/kuba/Scripts/backup-aspazja.sh",
+		"/home/kuba/.config/sublime-text-3/Packages/User/Default (Linux).sublime-keymap",
+		"/home/kuba/temp.txt",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/bin/node_modules/hapi/test/response.js",
+		"/home/kuba/Dropbox/Desktop/prometheus_repo/README.md",
+		"/home/kuba/.config/sublime-text-3/Packages/Default/Default (Linux).sublime-keymap",
+		"/home/kuba/.emacs.d/init.el"
 	],
 	"find":
 	{
-		"height": 34.0
+		"height": 35.0
 	},
 	"find_in_files":
 	{
@@ -581,134 +391,133 @@
 		"case_sensitive": false,
 		"find_history":
 		[
-			"event_response_data",
-			"about to call callback",
-			"query_string",
-			"query",
-			"query_string",
-			"[",
-			" [\"",
-			"with arg",
-			".on",
-			"resources_list",
-			"I'm in da",
-			"path.resolve",
-			"generate_chip_action_method_name",
-			"[1] ",
-			"$",
-			"[1] ",
-			"$",
-			"[1]",
-			"$",
-			"jap",
-			"jap_index",
-			"[1]",
-			"$",
-			";",
-			"this",
-			"prepare",
-			"ac07",
-			"ac06",
-			"encoded_values",
-			"create_resource",
-			"encode_field_values",
+			"blanket",
+			"-g",
+			"should",
+			"mocha",
+			"&>",
+			">",
+			"without root",
+			"check for redundant",
+			"response",
+			"params",
+			"scope",
+			"console.log\\([\"']rejec",
+			"console",
+			"console.log\\([\"']reject",
+			"console.log([\"']reject",
+			"console",
+			"value",
+			"Value",
+			"value",
+			"console",
+			"conversation",
+			"response",
+			"bluebird",
+			"bidirectional",
+			"element",
+			"export",
+			"www_server",
+			"console",
+			"console.log",
+			"console",
 			".all",
-			".encodeField",
-			".encode",
-			".all",
-			"Resource",
-			"callback",
-			"setValue",
-			"callback",
-			"hasKey",
-			"getValue",
-			"metadata",
-			"validatefield",
-			"canAccess",
-			"Database",
-			"console",
-			"allowed_c",
-			"console",
-			"d",
-			"console",
-			"getService",
-			"options",
-			"console",
-			"register_channel",
-			"defined",
-			"new Dispa",
-			"allowed_chip_lo",
-			"info",
-			"chip_longid",
-			"chipIsRegistred",
-			"registred_chips",
-			"dependencies",
-			"type",
-			"that",
-			"real_dispatcher",
-			"prepare",
-			"typemanager",
-			"require(\"prometheus-resource",
-			"require(\"prometheus-resource-type-manager",
-			"does not exist",
-			"prepare",
-			"atabase_entry missing",
-			"resourceManager",
+			"require\\([\"']promise",
+			"require([\"']promise",
+			"resolving encode",
+			"tType",
+			"Type",
+			"tT",
+			"texZype",
+			"validateFieldValues",
 			"this",
-			"emit",
-			"required_id",
-			"requires",
-			"defines",
-			"return",
-			"ChipManager",
-			"console",
-			"id",
-			"services",
-			"service",
-			"service_id",
-			"service_ids",
-			"modules_tota",
 			"field_name",
-			"event_name",
-			"DispatcherdistributedBIZ",
-			"Service",
-			"channel_object",
-			" =",
-			"\"channel\"",
-			"channel",
-			"channel_ids",
-			"modules_by_id",
-			"decide_chip_types_to_execute",
-			"chip_types_to_execute",
-			"decide_chip_types_to_execute",
-			"chip_types_to_execute",
-			"execute",
-			"current_module",
-			"modules",
-			"all_modules_accepted",
-			"all_modules_considered",
-			"accepted_chips",
-			"j",
-			"kuba_kronor",
-			"considered_module_ids",
-			"considered",
-			"resolve",
-			"database-rest",
-			"channel_setup",
-			"collect_module_settings",
-			"bootstrap",
-			"chipMan",
-			"wrapper",
-			"execute_modules",
-			".execute(",
-			"post_execute_setup",
-			"setup_channels",
-			"getAllChips",
-			"wrapper",
-			"getAllChips",
-			"wrapper",
+			"new Promise",
 			"console",
-			"var"
+			"bin/",
+			" bin/",
+			"./",
+			"bin",
+			",./bin",
+			"./",
+			"\", \"",
+			"dateType",
+			"getFieldTypeConstructorByName",
+			"getFieldType",
+			"isProperValue",
+			"validateFieldValues",
+			"err",
+			"Err",
+			"err",
+			"Error",
+			"err",
+			"isProperValue",
+			"id",
+			"type",
+			"resource_manager",
+			"TextType",
+			"strnig",
+			"field_type_object",
+			"type",
+			"Assoc",
+			"db_view_service",
+			"field-type",
+			"type",
+			"prometheus-resource-type-manage",
+			"prometheus-resource-type-manager",
+			"prometheus-resource-type-manage",
+			"fs.read",
+			"field_values",
+			"i",
+			"fields",
+			"te_nayp",
+			"type",
+			"console.log",
+			"hapi err",
+			"resource",
+			"r",
+			"name",
+			".prototype =",
+			".defines",
+			"defines",
+			"register_services",
+			"hapi err",
+			"service_object",
+			"Database_access",
+			"update :d",
+			"body on update",
+			"name",
+			"name:",
+			"first_free",
+			"name:\\W{1,6}first",
+			"name\\W{1,6}first",
+			"name\\W{1,6}free",
+			"name\\W{1,3}free",
+			"name:",
+			"first_free",
+			"request response body",
+			"i am a db",
+			"i am a",
+			"i am in",
+			"newResource",
+			"in emit",
+			"received request to",
+			"received request",
+			"new server!",
+			"!!!!!!",
+			"reginst",
+			"started on",
+			"\n	",
+			"module execution order",
+			"initializing local",
+			"starting up bu",
+			"starting up",
+			"init ",
+			"console.log",
+			"islocal",
+			"console.log",
+			"exception-handler",
+			"2"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -716,8 +525,6 @@
 		"regex": false,
 		"replace_history":
 		[
-			"",
-			","
 		],
 		"reverse": false,
 		"show_context": true,
@@ -728,14 +535,82 @@
 	"groups":
 	[
 		{
+			"selected": 0,
 			"sheets":
 			[
+				{
+					"buffer": 0,
+					"file": "bin/tests/test.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 765,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								531,
+								531
+							]
+						],
+						"settings":
+						{
+							"WordCountShouldRun": false,
+							"WordCountSyntax": "javascript",
+							"incomplete_sync": null,
+							"remote_loading": false,
+							"synced": false,
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "bin/node_modules/prometheus-field-type/field-type.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 810,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								511,
+								511
+							]
+						],
+						"settings":
+						{
+							"WordCountShouldRun": false,
+							"WordCountSyntax": "javascript",
+							"incomplete_sync": null,
+							"remote_loading": false,
+							"synced": false,
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				}
 			]
 		}
 	],
 	"incremental_find":
 	{
-		"height": 26.0
+		"height": 34.0
 	},
 	"input":
 	{
@@ -763,7 +638,7 @@
 			1.0
 		]
 	},
-	"menu_visible": false,
+	"menu_visible": true,
 	"output.find_results":
 	{
 		"height": 0.0
@@ -783,7 +658,7 @@
 	"project": "prometheus.sublime-project",
 	"replace":
 	{
-		"height": 48.0
+		"height": 64.0
 	},
 	"save_all_on_build": true,
 	"select_file":
@@ -791,290 +666,6 @@
 		"height": 0.0,
 		"selected_items":
 		[
-			[
-				"wrapper",
-				"bin/node_modules/prometheus-dispatcher-wrapper/dispatcher-wrapper.js"
-			],
-			[
-				"resourema",
-				"bin/node_modules/prometheus-resource-manager/resource-manager.js"
-			],
-			[
-				"-web",
-				"bin/node_modules/prometheus-dispatcher-distributed-web/dispatcher-distributed-web.js"
-			],
-			[
-				"rest.js",
-				"bin/prometheus-modules/rest/rest.js"
-			],
-			[
-				"restser",
-				"bin/node_modules/prometheus-dispatcher-distributed-db/database-rest-server.js"
-			],
-			[
-				"resourtyfie",
-				"bin/node_modules/prometheus-resource-type/resource-type-field.js"
-			],
-			[
-				"core",
-				"bin/node_modules/prometheus-core/prometheus-core.js"
-			],
-			[
-				"-biz",
-				"bin/node_modules/prometheus-dispatcher-distributed-biz/dispatcher-distributed-biz.js"
-			],
-			[
-				"contac",
-				"bin/prometheus-modules/contact-list/contact-list.js"
-			],
-			[
-				"-db",
-				"bin/node_modules/prometheus-dispatcher-distributed-db/dispatcher-distributed-db.js"
-			],
-			[
-				"biz",
-				"bin/node_modules/prometheus-dispatcher-distributed-biz/dispatcher-distributed-biz.js"
-			],
-			[
-				"module.js",
-				"bin/node_modules/prometheus-module-manager/module.js"
-			],
-			[
-				"moder",
-				"bin/node_modules/prometheus-module-manager/module-manager.js"
-			],
-			[
-				"chip-",
-				"bin/node_modules/prometheus-chip-manager/chip-manager.js"
-			],
-			[
-				"module-ma",
-				"bin/node_modules/prometheus-module-manager/module-manager.js"
-			],
-			[
-				"chat",
-				"bin/prometheus-modules/chat/chat.js"
-			],
-			[
-				"chat.js",
-				"bin/prometheus-modules/chat/chat.js"
-			],
-			[
-				"metada",
-				"bin/node_modules/prometheus-metadata-manager/metadata-manager.js"
-			],
-			[
-				"dispat",
-				"bin/node_modules/prometheus-dispatcher-local/dispatcher-local.js"
-			],
-			[
-				"resourcetype",
-				"bin/node_modules/--deprecated--prometheus-resource/resource-type.js"
-			],
-			[
-				"resource-type",
-				"bin/node_modules/prometheus-resource-type/resource-type.js"
-			],
-			[
-				"dispatcher-local",
-				"bin/node_modules/prometheus-dispatcher-local/dispatcher-local.js"
-			],
-			[
-				"resourcemana",
-				"bin/node_modules/prometheus-resource-manager/resource-manager.js"
-			],
-			[
-				"date",
-				"bin/node_modules/--deprecated--prometheus-resource/types/date.js"
-			],
-			[
-				"field-",
-				"bin/node_modules/--deprecated--prometheus-resource/field-type.js"
-			],
-			[
-				"chipmana",
-				"bin/node_modules/prometheus-chip-manager/chip-manager.js"
-			],
-			[
-				"resource-typefield",
-				"bin/node_modules/prometheus-resource-type/resource-type-field.js"
-			],
-			[
-				"moduleman",
-				"bin/node_modules/prometheus-module-manager/module-manager.js"
-			],
-			[
-				"date.js",
-				"bin/node_modules/prometheus-base-chips/field-types/date.js"
-			],
-			[
-				"int.js",
-				"bin/node_modules/prometheus-base-chips/field-types/int.js"
-			],
-			[
-				"text.",
-				"bin/node_modules/prometheus-base-chips/field-types/text.js"
-			],
-			[
-				"modulema",
-				"bin/node_modules/--deprecated--prometheus-module-manager/module-manager.js"
-			],
-			[
-				"chip-ma",
-				"bin/node_modules/prometheus-chip-manager/chip-manager.js"
-			],
-			[
-				"procore",
-				"bin/node_modules/prometheus-core/prometheus-core.js"
-			],
-			[
-				"typefield",
-				"bin/node_modules/--deprecated--prometheus-resource/resource-type-field.js"
-			],
-			[
-				"resource-ty",
-				"bin/node_modules/preometheus-resource-type/resource-type.js"
-			],
-			[
-				"promecore",
-				"bin/node_modules/prometheus-core/prometheus-core.js"
-			],
-			[
-				"chatpack",
-				"bin/prometheus-modules/chat/package.json"
-			],
-			[
-				"wwwservpack",
-				"bin/prometheus-modules/www-server/package.json"
-			],
-			[
-				"modulin",
-				"bin/node_modules/prometheus-module-manager/module-info.js"
-			],
-			[
-				"www-",
-				"bin/prometheus-modules/www-server/www-server.js"
-			],
-			[
-				"www",
-				"bin/prometheus-modules/www-server/www-server.js"
-			],
-			[
-				"module.",
-				"bin/node_modules/prometheus-module-manager/module.js"
-			],
-			[
-				"modul",
-				"bin/node_modules/--deprecated--prometheus-module-manager/module.js"
-			],
-			[
-				"resource-ma",
-				"bin/node_modules/prometheus-resource-manager/resource-manager.js"
-			],
-			[
-				"dispatcher-wea",
-				"bin/node_modules/prometheus-dispatcher-wrapper/dispatcher-wrapper.js"
-			],
-			[
-				"data",
-				"bin/prometheus-modules/database-view/database-view.js"
-			],
-			[
-				"chip",
-				"bin/node_modules/prometheus-chip-manager/chip-manager.js"
-			],
-			[
-				"www-server",
-				"bin/prometheus-modules/www-server/www-server.js"
-			],
-			[
-				"dispatcher-we",
-				"bin/node_modules/prometheus-dispatcher-wrapper/dispatcher-wrapper.js"
-			],
-			[
-				"core.js",
-				"bin/node_modules/promise/core.js"
-			],
-			[
-				"wwwserver",
-				"bin/prometheus-modules/www-server/www-server.js"
-			],
-			[
-				"database-view",
-				"bin/prometheus-modules/database-view/database-view.js"
-			],
-			[
-				"module",
-				"bin/node_modules/--deprecated--prometheus-module-manager/module.js"
-			],
-			[
-				"resource",
-				"bin/node_modules/prometheus-resource-type-field/resource-type-field.js"
-			],
-			[
-				"resoure",
-				"bin/node_modules/preometheus-resource-type/resource-type.js"
-			],
-			[
-				"service.js",
-				"bin/node_modules/prometheus-service/service.js"
-			],
-			[
-				"service",
-				"bin/node_modules/prometheus-service/service.js"
-			],
-			[
-				"hapiw",
-				"bin/prometheus-modules/http/hapi-wrapper.js"
-			],
-			[
-				"module-mana",
-				"bin/node_modules/prometheus-module-manager/module-manager.js"
-			],
-			[
-				"modulein",
-				"bin/node_modules/prometheus-module-manager/module-info.js"
-			],
-			[
-				"servic",
-				"bin/node_modules/prometheus-service/service.js"
-			],
-			[
-				"prcore",
-				"bin/node_modules/prometheus-core/prometheus-core.js"
-			],
-			[
-				"prometcore",
-				"bin/node_modules/prometheus-core/prometheus-core.js"
-			],
-			[
-				"database",
-				"bin/node_modules/prometheus-database/database.js"
-			],
-			[
-				"layer-mana",
-				"bin/node_modules/prometheus-layer-manager/layer-manager.js"
-			],
-			[
-				"index",
-				"bin/index.js"
-			],
-			[
-				"layermana",
-				"bin/node_modules/prometheus-layer-manager/layer-manager.js"
-			],
-			[
-				"modulea",
-				"bin/node_modules/prometheus-module-manager/module-manager.js"
-			],
-			[
-				"leyr",
-				"bin/node_modules/prometheus-layer-manager/layer-manager.js"
-			],
-			[
-				"www-ser",
-				"bin/prometheus-modules/www-server/www-server.js"
-			],
 			[
 				"package",
 				"bin/package.json"
@@ -1084,8 +675,16 @@
 				"bin/node_modules/prometheus-resource-manager/resource-manager.js"
 			],
 			[
+				"www-ser",
+				"bin/prometheus-modules/www-server/www-server.js"
+			],
+			[
 				"excep",
 				"bin/node_modules/prometheus-exception-handler/exception-handler.js"
+			],
+			[
+				"chat.js",
+				"bin/prometheus-modules/chat/chat.js"
 			],
 			[
 				"layerma",
@@ -1120,8 +719,16 @@
 				"bin/node_modules/prometheus-field-type-manager/types/association.js"
 			],
 			[
+				"resource",
+				"bin/node_modules/prometheus-resource/prometheus-resource.js"
+			],
+			[
 				"association",
 				"bin/node_modules/prometheus-association/association.js"
+			],
+			[
+				"resourcemana",
+				"bin/node_modules/prometheus-resource-manager/resource-manager.js"
 			],
 			[
 				"resourcety",
@@ -1132,8 +739,16 @@
 				"bin/node_modules/prometheus-field-type-manager/types/text.js"
 			],
 			[
+				"field-",
+				"bin/node_modules/prometheus-field-type/field-type.js"
+			],
+			[
 				"field",
 				"bin/node_modules/prometheus-resource-type-field/resource-type-field.js"
+			],
+			[
+				"resource-type",
+				"bin/node_modules/prometheus-resource-type/resource-type.js"
 			],
 			[
 				"field-type",
@@ -1184,6 +799,14 @@
 				"bin/node_modules/prometheus-database-accessor/database-accessor.js"
 			],
 			[
+				"database",
+				"bin/node_modules/prometheus-database-accessor/database-accessor.js"
+			],
+			[
+				"module",
+				"bin/node_modules/prometheus-module-manager/prometheus-module-manager.js"
+			],
+			[
 				"restyman",
 				"bin/node_modules/prometheus-resource-type-manager/resource-type-manager.js"
 			],
@@ -1196,12 +819,36 @@
 				"generate_docs.sh"
 			],
 			[
+				"modulema",
+				"bin/node_modules/prometheus-module-manager/prometheus-module-manager.js"
+			],
+			[
+				"chat",
+				"bin/prometheus-modules/chat/chat.js"
+			],
+			[
+				"resource-ty",
+				"bin/node_modules/prometheus-resource-type/resource-type.js"
+			],
+			[
+				"resource-ma",
+				"bin/node_modules/prometheus-resource-manager/resource-manager.js"
+			],
+			[
 				"type",
 				"bin/node_modules/prometheus-field-type-manager/field-type-manager.js"
 			],
 			[
 				"fielma",
 				"bin/node_modules/prometheus-field-type-manager/field-type-manager.js"
+			],
+			[
+				"module-ma",
+				"bin/node_modules/prometheus-module-manager/prometheus-module-manager.js"
+			],
+			[
+				"resoure",
+				"bin/node_modules/prometheus-resource-manager/resource-manager.js"
 			],
 			[
 				"resource-mana",
@@ -1212,8 +859,16 @@
 				"bin/node_modules/prometheus-exception-handler/exception-handler.js"
 			],
 			[
+				"modul",
+				"bin/node_modules/prometheus-module-manager/prometheus-module-manager.js"
+			],
+			[
 				"database-",
 				"bin/node_modules/prometheus-database-layer/database-server.js"
+			],
+			[
+				"index",
+				"bin/index.js"
 			],
 			[
 				"dataserver",
@@ -1248,6 +903,10 @@
 				"bin/node_modules/prometheus-database-accessor/database-accessor.js"
 			],
 			[
+				"data",
+				"bin/prometheus-modules/database-view/database-view.js"
+			],
+			[
 				"resour",
 				"bin/node_modules/prometheus-resource-manager/resource-manager.js"
 			]
@@ -1260,28 +919,16 @@
 		"selected_items":
 		[
 			[
-				"alk",
-				"~/Dropbox/Desktop/Studia/ALK/ALK.sublime-project"
-			],
-			[
-				"aut",
-				"~/Dropbox/Desktop/Studia/DAUT/daut-2014-s384018/DAUT.sublime-project"
-			],
-			[
-				"nowa",
-				"~/FTP Cache/nowa.aspazja.pl/nowa.aspazja.pl.sublime-project"
-			],
-			[
-				"APSA",
-				"~/FTP Cache/nowa.aspazja.pl/nowa.aspazja.pl.sublime-project"
-			],
-			[
 				"aspa",
-				"~/FTP Cache/nowa.aspazja.pl/nowa.aspazja.pl.sublime-project"
+				"~/FTP Cache/Aspazja ikleks/aspazja.sublime-project"
 			],
 			[
 				"daut",
 				"~/Dropbox/Desktop/Studia/DAUT/daut-2014-s384018/DAUT.sublime-project"
+			],
+			[
+				"alk",
+				"~/Dropbox/Desktop/Studia/ALK/ALK.sublime-project"
 			],
 			[
 				"prome",
@@ -1296,6 +943,10 @@
 				"~/FTP Cache/Aspazja ikleks/aspazja.sublime-project"
 			],
 			[
+				"aut",
+				"~/Dropbox/Desktop/Studia/DAUT/daut-2014-s384018/DAUT.sublime-project"
+			],
+			[
 				"pro",
 				"~/Dropbox/Desktop/prometheus_repo/prometheus.sublime-project"
 			]
@@ -1304,21 +955,21 @@
 	},
 	"select_symbol":
 	{
-		"height": 392.0,
+		"height": 0.0,
 		"selected_items":
 		[
 		],
-		"width": 1023.0
+		"width": 0.0
 	},
 	"selected_group": 0,
 	"settings":
 	{
 	},
-	"show_minimap": false,
+	"show_minimap": true,
 	"show_open_files": false,
 	"show_tabs": true,
 	"side_bar_visible": true,
-	"side_bar_width": 329.0,
+	"side_bar_width": 311.0,
 	"status_bar_visible": true,
 	"template_settings":
 	{
