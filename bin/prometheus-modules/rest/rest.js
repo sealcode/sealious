@@ -63,5 +63,16 @@ module.exports.prepare_channel_rest = function(channel, dispatcher, dependencies
 				});
 			}
 		});
+
+		www_server.route({
+			method: "GET",
+			path: url+"/{id}/access_mode",
+			handler: function(request, reply){
+				console.log("rest.js get_resource_access_mode_by_id");
+				dispatcher.resources_get_access_mode(request.params.id).then(function(response){
+					reply(response);
+				});
+			}
+		})
 	}
 }
