@@ -1,6 +1,6 @@
 module.exports.prepare_channel_rest = function(channel, dispatcher, dependencies){
 
-	console.log("\nREST dependencies:", dependencies);
+	//console.log("\nREST dependencies:", dependencies);
 
 	var www_server = dependencies["channel.www_server"];
 	channel.add_path = function(url, resource_type_name){
