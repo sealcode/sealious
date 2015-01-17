@@ -1,6 +1,6 @@
 module.exports.prepare_channel_rest = function(channel, dispatcher, dependencies){
 
-	console.log("\nREST dependencies:", dependencies);
+	//console.log("\nREST dependencies:", dependencies);
 
 	var www_server = dependencies["channel.www_server"];
 	channel.add_path = function(url, resource_type_name){
@@ -40,6 +40,28 @@ module.exports.prepare_channel_rest = function(channel, dispatcher, dependencies
 				});
 			}
 			// handler POST ma stworzyć zasób z podanymi wartościami
+		});
+
+		www_server.route({
+			method: "GET",
+			path: url+"/{id}",
+			handler: function(request, reply){
+				console.log("rest.js get_resource_by_id", request.params.id);
+				dispatcher.resources_get_by_id(request.params.id).then(function(response){
+					reply(response);
+				});
+			}
+		});
+
+		www_server.route({
+			method: "PUT",
+			path: url+"/{id}/access_mode",
+			handler: function(request, reply){
+				console.log("rest.js get_resource_by_id", request.params.id, request.payload.access_mode, request.payload.access_mode_args);
+				dispatcher.resources_edit_resource_access_mode(request.params.id, request.payload.access_mode, request.payload.access_mode_args).then(function(response){
+					reply(response);
+				});
+			}
 		});
 	}
 }

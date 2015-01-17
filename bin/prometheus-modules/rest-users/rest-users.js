@@ -6,23 +6,32 @@ module.exports.prepare_channel_www_server = function(channel, dispatcher, depend
 		method: "GET",
 		path: url,
 		handler: function(request, reply){
-			dispatcher.users_get_user_data(request.payload.username, dispatcher).then(function(userdata){ // wywołanie metody z dispatchera webowego
-				reply(userdata);
-			});
-		}
+			if(request.payload!=null){
+				dispatcher.users_get_user_data(request.payload.username, dispatcher).then(function(userdata){ // wywołanie metody z dispatchera webowego
+					reply(userdata);
+				});
+			}else{
+				reply("No data received.")
+			}
+	}
 		// hanlder GET ma zwrócić dane użytkownika w obiekcie JSONowym
 	});
+
 	www_server.route({
 		method: "POST",
 		path: url,
 		handler: function(request, reply){
 			console.log("rest.js POST", request.payload)
-			dispatcher.users_user_create(request.payload.username, request.payload.password, dispatcher).then(function(response){
-				reply(response.userdata_id.toString());
+
+			dispatcher.users_create_user(request.payload.username, request.payload.password, dispatcher).then(function(response){
+				console.log("rest_users.js", response)
+				reply(response[0].userdata_id.toString());
 			});
 		}
 		// handler POST ma stworzyć usera o podanej nazwie i haśle
 	});
+
+	
 /*
 		www_server.route({
 			method: "DELETE",
