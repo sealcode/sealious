@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<script src="/jquery.js"></script>
+	<meta charset="utf-8">
+	<title>Dane użytkownika</title>
+	<style>
+		html{
+			background-color:gray;
+		}
+		body{
+			padding:20px;
+			background-color:white;
+			font-family:sans-serif;
+			max-width:50rem;
+			margin:0 auto;
+		}
+	</style>
+</head>
+<body>
+	<center><h1>Dane użytkownika: <span class="insert-conversation-name"></span></h1></center>
+	<ul id="dane">
+	</ul>
+	<button id="confirm" onclick="changeData()">Zapisz</button>
+	<button id="confirm" onclick="changeData()">Zapisz</button>
+</body>
+<script>
+
+	var user_id = document.location.hash.slice(1);	
+
+	var base_url = "/api/v1/chat/user/" + user_id;
+
+	function checkData(){
+		var userdata = $("#dane");
+		userdata.html("");
+		$.get(base_url, function(data) {
+			for(var i in data) {
+				var entry = data[i];
+				var node = $("<li><input type='text' id='username' value='"+entry.username+"'></li><li><input type='text' id='password' value='"+entry.password+"'></li><li><input type='text' id='email' value='"+entry.email+"'></li>");
+				userdata.append(node);
+			}
+		});
+	}
+
+	function updateData(){
+
+	}
+
+	checkData();
+
+</script>
+</html>
