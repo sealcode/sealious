@@ -6,9 +6,9 @@ module.exports.prepare_channel_www_server = function(channel, dispatcher, depend
 		method: "GET",
 		path: url,
 		handler: function(request, reply){
-			if(request.payload!=null){
-				dispatcher.users_get_user_data(request.payload.username, dispatcher).then(function(userdata){ // wywołanie metody z dispatchera webowego
-					reply(userdata);
+			if(1){
+				dispatcher.users_get_all_users(dispatcher).then(function(users){ // wywołanie metody z dispatchera webowego
+					reply(users);
 				});
 			}else{
 				reply("No data received.")
