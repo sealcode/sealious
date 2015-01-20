@@ -37,7 +37,6 @@ module.exports.prepare_channel_www_server = function(channel, dispatcher, depend
 	});
 
 	
-/*
 		www_server.route({
 			method: "DELETE",
 			path: url,
@@ -49,5 +48,4 @@ module.exports.prepare_channel_www_server = function(channel, dispatcher, depend
 			}
 			// handler POST ma stworzyć zasób z podanymi wartościami
 		});
-*/
 }
