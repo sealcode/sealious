@@ -50,6 +50,18 @@ module.exports.prepare_channel_www_server = function(channel, dispatcher, depend
 		// handler POST ma stworzyć usera o podanej nazwie i haśle
 	});
 
+	www_server.route({
+		method: "PUT",
+		path: url,
+		handler: function(request, reply){
+			dispatcher.users_update_user_data(request.payload.username, request.payload.new_user_data, dispatcher)
+				.then(function(response){
+					reply();
+				})
+		}
+
+	});
+
 
 		www_server.route({
 			method: "DELETE",
