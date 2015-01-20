@@ -49,6 +49,8 @@ module.exports.prepare_channel_rest = function(channel, dispatcher, dependencies
 				console.log("rest.js get_resource_by_id", request.params.id);
 				dispatcher.resources_get_by_id(request.params.id).then(function(response){
 					reply(response);
+				}).catch(function(error){
+					reply().statusCode = 409;	
 				});
 			}
 		});
