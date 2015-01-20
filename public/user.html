@@ -21,7 +21,7 @@
 	<center><h1>Dane użytkownika: <span class="insert-conversation-name"></span></h1></center>
 	<ul id="dane">
 	</ul>
-	<button id="confirm" onclick="changeData()">Zapisz</button>
+	<button id="confirm" onclick="updateData()">Zapisz</button>
 
 </body>
 <script>
@@ -51,6 +51,7 @@
 			type: 'PUT',
 			success: function(result){
 				checkData();
+				window.location.href = "/administrator.html";
 			}
 		});
 	}
