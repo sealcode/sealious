@@ -36,6 +36,7 @@
 		$.get(base_url, function(data) {
 			for(var i in data) {
 				var entry = data[i];
+			
 				var node = $("<li><input type='text' id='username' value='"+entry.username+"'></li><li><input type='text' id='password' value='"+entry.password+"'></li><li><input type='text' id='email' value='"+entry.email+"'></li>");
 				userdata.append(node);
 			}

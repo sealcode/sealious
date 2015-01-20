@@ -18,10 +18,13 @@
 			color:gray;
 			font-size:0.8em;
 		}
+		li {
+			margin-bottom: 3px;
+		}
 	</style>
 </head>
 <body>
-	<center><h1>Lista kontaktów</h1></center>
+	<center><h1>Zarządzanie użytkownikami</h1></center>
 	<ul id="lista-uzytkownikow">
 	</ul>
 	<hr>
@@ -40,7 +43,8 @@
 
 			for(var i in data) {
 				var entry = data[i];
-				var node = $("<li>"+entry.username+" <a href='/user.html#"+entry.userdata_id+"'> <button onclick='editUser("+entry.userdata_id+")'>Edytuj</button></a> <button onclick='deleteUser("+entry.userdata_id+")'>Usuń</button></li>");
+				var getVar = entry.username;
+				var node = $("<li>"+entry.username+" <a href='/user.html#"+getVar+"'> <button onclick='editUser("+get+")'>Edytuj</button></a> <button onclick='deleteUser("+get+")'>Usuń</button></li>");
 				$("#lista-uzytkownikow").append(node);
 			}
 		});
@@ -55,10 +59,10 @@
 		});
 	}
 
-	function deleteUser(userdata_id){
+	function deleteUser(username){
 		$.ajax({
 			url: '/api/v1/user',
-			data: {userdata_id: userdata_id},
+			data: {username: username},
 			type: 'DELETE',
 			success: function(result) {
 				readUserList();
