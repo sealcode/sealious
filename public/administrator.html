@@ -41,7 +41,7 @@
 			for(var i in data) {
 				var entry = data[i];
 				var node = $("<li>"+entry.username+" <a href='/user.html#"+entry.userdata_id+"'> <button onclick='editUser("+entry.userdata_id+")'>Edytuj</button></a> <button onclick='deleteUser("+entry.userdata_id+")'>Usuń</button></li>");
-				$("#dane").append(node);
+				$("#lista-uzytkownikow").append(node);
 			}
 		});
 	}
