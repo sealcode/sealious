@@ -19,6 +19,23 @@ module.exports.prepare_channel_www_server = function(channel, dispatcher, depend
 	});
 
 	www_server.route({
+		method: "GET",
+		path: url + "/{username}",
+		handler: function(request, reply){
+				dispatcher.users_get_user_data(request.params.username, dispatcher)
+					.then(function(user_data){ // wywołanie metody z dispatchera webowego
+						reply(user_data);
+					})
+					.catch(function(error){
+						reply("There is no such user. Go away.");
+					})
+
+			}
+		// hanlder GET ma zwrócić dane konkretnego użytkownika w obiekcie JSONowym
+	});
+
+
+	www_server.route({
 		method: "POST",
 		path: url,
 		handler: function(request, reply){
