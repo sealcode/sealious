@@ -41,7 +41,7 @@
 			for(var i in data) {
 				var entry = data[i];
 				var getVar = entry.username;
-				var node = $("<li>"+entry.username+" <a href='/user.html#"+getVar+"'> <button onclick='editUser("+getVar+")'>Edytuj</button></a> <button onclick='deleteUser(\""+getVar+"\")'>Usuń</button></li>");
+				var node = $("<li>"+entry.username+" </br>Hasło:"+ entry.password + "</br> <a href='/user.html#"+getVar+"'> <button onclick='editUser("+getVar+")'>Edytuj</button></a> <button onclick='deleteUser(\""+getVar+"\")'>Usuń</button></li>");
 				$("#lista-uzytkownikow").append(node);
 			}
 		});
