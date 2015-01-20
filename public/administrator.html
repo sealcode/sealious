@@ -41,7 +41,7 @@
 			for(var i in data) {
 				var entry = data[i];
 				var getVar = entry.username;
-				var node = $("<li>"+entry.username+" <a href='/user.html#"+getVar+"'> <button onclick='editUser("+getVar+")'>Edytuj</button></a> <button onclick='deleteUser("+getVar+")'>Usuń</button></li>");
+				var node = $("<li>"+entry.username+" <a href='/user.html#"+getVar+"'> <button onclick='editUser("+getVar+")'>Edytuj</button></a> <button onclick='deleteUser(\""+getVar+"\")'>Usuń</button></li>");
 				$("#lista-uzytkownikow").append(node);
 			}
 		});
@@ -56,16 +56,18 @@
 		});
 	}
 
-	function deleteUser(username){
-		$.ajax({
-			url: '/api/v1/user',
-			data: {username: username},
-			type: 'DELETE',
-			success: function(result) {
-				readUserList();
-			}
-		});
-	}
+		function deleteUser(user){
+			//console.log(user);
+			$.ajax({
+				url: '/api/v1/user',
+				data: {username: user},
+				method: 'DELETE',
+				success: function(result) {
+					readUserList();
+				}
+			});	
+		}
+
 	readUserList();
 
 </script>
