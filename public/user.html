@@ -41,8 +41,18 @@
 	}
 
 	function updateData(){
+		var username = $("#username").val();
 
-		checkData();
+		$.ajax({
+			url: '/api/v1/user',
+			data: {username: username, 
+				   new_user_data: { username: username }
+				},
+			type: 'PUT',
+			success: function(result){
+				checkData();
+			}
+		});
 	}
 
 	checkData();
