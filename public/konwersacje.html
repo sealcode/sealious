@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<script src="/jquery.js"></script>
+	<meta charset="utf-8">
+	<title>Lista kontaktów</title>
+	<style>
+		html{
+			background-color:gray;
+		}
+		body{
+			padding:20px;
+			background-color:white;
+			font-family:sans-serif;
+			max-width:50rem;
+			margin:0 auto;
+		}
+		.email{
+			color:gray;
+			font-size:0.8em;
+		}
+	</style>
+</head>
+<body>
+	<center><h1>Lista konwersacji</h1></center>
+	<ul id="lista-konwersacji">
+	</ul>
+	<input type="text" placeholder="Tytuł konwersacji" id="title">
+	<button id="confirm" onclick="addNewConversation()">Dodaj</button>
+</body>
+<script>
+
+	function readConversations(){
+		$("#lista-konwersacji").html("");
+		$.get("/api/v1/chat/conversation", function(data) {
+			console.log(data);
+			for(var i in data) {
+				var entry = data[i];
+				console.log(entry);
+				var node = $("<li id='"+entry.id+"'><a href='konwersacja.html#"+entry.id+"'>"+entry.title + "</a>  <button onclick='deleteCoversation("+entry.id+")'>Usuń</button>");
+				var select = $("<select><option value='private' >Prywatna</option><option value='public'>Publiczna</option></select>");
+				node.append(select);
+				select.val(entry.access_mode);
+				$("#lista-konwersacji").append(node);
+			}
+		});
+	}
+
+	function addNewConversation(){
+		var title = $("#title").val();
+
+		$.post("/api/v1/chat/conversation", {title: title}, function() {
+			readConversations();
+		});
+	}
+
+	function deleteCoversation(conversation_id){
+		$.ajax({
+			url: '/api/v1/chat/conversation',
+			data: {id: conversation_id},
+			type: 'DELETE',
+			success: function(result) {
+				readConversations();
+			}
+		});
+	}
+
+	function editAccessMode(conversation_id, new_access_mode){
+		$.ajax({
+			url: '/api/v1/chat/conversation/'+conversation_id+'/access_mode',
+			data: {access_mode: new_access_mode},
+			type: 'PUT',
+			success: function(result){
+				readConversations();
+			}
+		})
+	}
+	function getAccessMode(conversation_id, callback){
+
+		$.get("/api/v1/chat/conversation/"+conversation_id+"/access_mode", function(data) {
+			callback(data);
+		});
+	}
+
+	$(document).ready(function(){
+		$(document).on("change", "select", function(e){
+			console.log("dupa");
+			var id = $(this).parent().attr("id");
+			var access_mode = $(this).val();
+			editAccessMode(id, access_mode);
+		});
+
+	});
+
+
+	readConversations();
+
+</script>
+</html>
