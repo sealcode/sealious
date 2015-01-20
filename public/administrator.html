@@ -1,0 +1,74 @@
+<html>
+<head>
+	<script src="/jquery.js"></script>
+	<meta charset="utf-8">
+	<title>Zarządzanie użytkownikami</title>
+	<style>
+		html{
+			background-color:gray;
+		}
+		body{
+			padding:20px;
+			background-color:white;
+			font-family:sans-serif;
+			max-width:50rem;
+			margin:0 auto;
+		}
+		.email{
+			color:gray;
+			font-size:0.8em;
+		}
+		li {
+			margin-bottom: 3px;
+		}
+	</style>
+</head>
+<body>
+	<center><h1>Zarządzanie użytkownikami</h1></center>
+	<ul id="lista-uzytkownikow">
+	</ul>
+	<hr>
+	<input type="text" placeholder="Nazwa użytkownika" id="username">
+	<input type="password" placeholder="Hasło" id="password">
+	<button id="confirm" onclick="addUser()">Dodaj</button>
+</body>
+<script>
+
+	function readUserList(){
+		$("#lista-uzytkownikow").html("");
+		$.get("/api/v1/user", function(data) {
+			console.log(data);
+			for(var i in data) {
+				var entry = data[i];
+				var getVar = entry.username;
+				var node = $("<li>"+entry.username+" <a href='/user.html#"+getVar+"'> <button onclick='editUser("+getVar+")'>Edytuj</button></a> <button onclick='deleteUser(\""+getVar+"\")'>Usuń</button></li>");
+				$("#lista-uzytkownikow").append(node);
+			}
+		});
+	}
+
+	function addUser(){
+		var username = $("#username").val();
+		var password = $("#password").val();
+
+		$.post("/api/v1/user", {username: username, password: password}, function() {
+			readUserList();
+		});
+	}
+
+		function deleteUser(user){
+			//console.log(user);
+			$.ajax({
+				url: '/api/v1/user',
+				data: {username: user},
+				method: 'DELETE',
+				success: function(result) {
+					readUserList();
+				}
+			});	
+		}
+
+	readUserList();
+
+</script>
+</html>
