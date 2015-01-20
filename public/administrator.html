@@ -33,18 +33,15 @@
 	<button id="confirm" onclick="addUser()">Dodaj</button>
 </body>
 <script>
-	$(function(){
-		readUserList();
-	});
 
 	function readUserList(){
 		$("#lista-uzytkownikow").html("");
 		$.get("/api/v1/user", function(data) {
-
+			console.log(data);
 			for(var i in data) {
 				var entry = data[i];
 				var getVar = entry.username;
-				var node = $("<li>"+entry.username+" <a href='/user.html#"+getVar+"'> <button onclick='editUser("+get+")'>Edytuj</button></a> <button onclick='deleteUser("+get+")'>Usuń</button></li>");
+				var node = $("<li>"+entry.username+" <a href='/user.html#"+getVar+"'> <button onclick='editUser("+getVar+")'>Edytuj</button></a> <button onclick='deleteUser("+getVar+")'>Usuń</button></li>");
 				$("#lista-uzytkownikow").append(node);
 			}
 		});
@@ -69,6 +66,7 @@
 			}
 		});
 	}
+	readUserList();
 
 </script>
 </html>
