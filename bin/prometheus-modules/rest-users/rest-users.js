@@ -39,11 +39,8 @@ module.exports.prepare_channel_www_server = function(channel, dispatcher, depend
 		method: "POST",
 		path: url,
 		handler: function(request, reply){
-			console.log("rest.js POST", request.payload)
-
 			dispatcher.users_create_user(request.payload.username, request.payload.password, dispatcher)
 				.then(function(response){
-					console.log("rest_users.js", response)
 					reply(response[0].userdata_id.toString());
 				})
 				.catch(function(error){
@@ -54,17 +51,20 @@ module.exports.prepare_channel_www_server = function(channel, dispatcher, depend
 	});
 
 	
-/*
+
 		www_server.route({
 			method: "DELETE",
 			path: url,
 			handler: function(request, reply){
 				console.log("rest.js DELETE", request.payload)
-				dispatcher.resources_delete(resource_type_name, request.payload).then(function(response){
-					reply();
-				});
-			}
-			// handler POST ma stworzyć zasób z podanymi wartościami
+				dispatcher.users_delete_user(request.payload.username, dispatcher)
+					.then(function(user_data){
+						reply(user_data);
+					})
+					.catch(function(error){
+						reply(error);
+					})
+				}
 		});
-*/
+
 }
