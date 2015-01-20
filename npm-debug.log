@@ -1,21 +1,18 @@
 0 info it worked if it ends with ok
-1 verbose cli [ 'C:\\Program Files\\nodejs\\\\node.exe',
-1 verbose cli   'C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js',
-1 verbose cli   'install' ]
+1 verbose cli [ '/usr/bin/node', '/usr/bin/npm', 'install', '.' ]
 2 info using npm@1.4.28
-3 info using node@v0.10.32
-4 verbose node symlink C:\Program Files\nodejs\\node.exe
-5 verbose config Skipping project config: C:\Users\Mariusz/.npmrc. (matches userconfig)
-6 error install Couldn't read dependencies
-7 error package.json ENOENT, open 'C:\Users\Mariusz\package.json'
-7 error package.json This is most likely not a problem with npm itself.
-7 error package.json npm can't find a package.json file in your current directory.
-8 error System Windows_NT 6.2.9200
-9 error command "C:\\Program Files\\nodejs\\\\node.exe" "C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js" "install"
-10 error cwd C:\Users\Mariusz\Documents\GitHub\Prometheus
-11 error node -v v0.10.32
-12 error npm -v 1.4.28
-13 error path C:\Users\Mariusz\package.json
-14 error code ENOPACKAGEJSON
-15 error errno 34
-16 verbose exit [ 34, true ]
+3 info using node@v0.10.35
+4 verbose node symlink /usr/bin/node
+5 error install Couldn't read dependencies
+6 error package.json ENOENT, open '/home/adrian/Documents/Prometheus/package.json'
+6 error package.json This is most likely not a problem with npm itself.
+6 error package.json npm can't find a package.json file in your current directory.
+7 error System Linux 3.13.0-43-generic
+8 error command "/usr/bin/node" "/usr/bin/npm" "install" "."
+9 error cwd /home/adrian/Documents/Prometheus
+10 error node -v v0.10.35
+11 error npm -v 1.4.28
+12 error path /home/adrian/Documents/Prometheus/package.json
+13 error code ENOPACKAGEJSON
+14 error errno 34
+15 verbose exit [ 34, true ]
