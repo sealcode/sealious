@@ -16,6 +16,7 @@ module.exports.prepare_channel_www_server = function(channel, dispatcher, depend
 	}
 		// hanlder GET ma zwrócić dane użytkownika w obiekcie JSONowym
 	});
+
 	www_server.route({
 		method: "POST",
 		path: url,
@@ -29,6 +30,8 @@ module.exports.prepare_channel_www_server = function(channel, dispatcher, depend
 		}
 		// handler POST ma stworzyć usera o podanej nazwie i haśle
 	});
+
+	
 /*
 		www_server.route({
 			method: "DELETE",

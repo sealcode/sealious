@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<script src="/jquery.js"></script>
+	<meta charset="utf-8">
+	<title>Konwersacja</title>
+	<style>
+		html{
+			background-color:gray;
+		}
+		body{
+			padding:20px;
+			background-color:white;
+			font-family:sans-serif;
+			max-width:50rem;
+			margin:0 auto;
+		}
+		.email{
+			color:gray;
+			font-size:0.8em;
+		}
+	</style>
+</head>
+<body>
+	<center><h1>Konwersacja: <span class="insert-conversation-name"></span></h1></center>
+	<ul id="lista-wiadomosci">
+	</ul>
+	<input type="text" id="message-box" placeholder="Nowa wiadomość">
+	<button id="confirm" onclick="sendMessage()">Wyślij</button>
+</body>
+<script>
+
+	var conversation_id = document.location.hash.slice(1);	
+
+	var base_url = "/api/v1/chat/conversation/" + conversation_id + "/messages";
+
+	function readMessages(){
+		var message_list = $("#lista-wiadomosci");
+		message_list.html("");
+		$.get(base_url, function(data) {
+			console.log(data);
+			for(var i in data) {
+				var entry = data[i];
+				var node = $("<li>"+entry.message+"</li>");
+				message_list.append(node);
+			}
+		});
+	}
+
+
+	function sendMessage(){
+		var message = $("#message-box").val();
+
+		$.post("/api/v1/chat/message", {message: message, conversation_id: conversation_id}, function() {
+			readMessages();
+		});
+	}
+
+	$("#message-box").keydown(function(e){
+		if(e.which==13){
+			sendMessage();
+		}
+	});
+
+
+	readMessages();
+
+</script>
+</html>
