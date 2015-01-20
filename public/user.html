@@ -22,29 +22,27 @@
 	<ul id="dane">
 	</ul>
 	<button id="confirm" onclick="changeData()">Zapisz</button>
-	<button id="confirm" onclick="changeData()">Zapisz</button>
+
 </body>
 <script>
 
-	var user_id = document.location.hash.slice(1);	
+	var user_name = document.location.hash.slice(1);	
 
-	var base_url = "/api/v1/chat/user/" + user_id;
-
+	var base_url = "/api/v1/user/" + user_name;
+	console.log(base_url);
 	function checkData(){
-		var userdata = $("#dane");
-		userdata.html("");
+		$("#dane").html("");
 		$.get(base_url, function(data) {
-			for(var i in data) {
-				var entry = data[i];
-			
-				var node = $("<li><input type='text' id='username' value='"+entry.username+"'></li><li><input type='text' id='password' value='"+entry.password+"'></li><li><input type='text' id='email' value='"+entry.email+"'></li>");
-				userdata.append(node);
-			}
+				console.log(data);
+				var entry = data;
+				var node = $("<li>Username: <input type='text' id='username' value='"+entry.username+"'></li>");
+				$("#dane").append(node);
 		});
 	}
 
 	function updateData(){
-		
+
+		checkData();
 	}
 
 	checkData();
