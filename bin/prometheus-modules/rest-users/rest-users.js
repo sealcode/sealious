@@ -7,7 +7,7 @@ module.exports.prepare_channel_www_server = function(channel, dispatcher, depend
 		path: url,
 		handler: function(request, reply){
 			if(1){
-				dispatcher.users_get_all_users(dispatcher)
+				dispatcher.users_get_all_users()
 					.then(function(users){ // wywołanie metody z dispatchera webowego
 						reply(users);
 					})
@@ -22,7 +22,7 @@ module.exports.prepare_channel_www_server = function(channel, dispatcher, depend
 		method: "GET",
 		path: url + "/{username}",
 		handler: function(request, reply){
-				dispatcher.users_get_user_data(request.params.username, dispatcher)
+				dispatcher.users_get_user_data(request.params.username)
 					.then(function(user_data){ // wywołanie metody z dispatchera webowego
 						reply(user_data);
 					})
@@ -39,7 +39,7 @@ module.exports.prepare_channel_www_server = function(channel, dispatcher, depend
 		method: "POST",
 		path: url,
 		handler: function(request, reply){
-			dispatcher.users_create_user(request.payload.username, request.payload.password, dispatcher)
+			dispatcher.users_create_user(request.payload.username, request.payload.password)
 				.then(function(response){
 					reply(response[0].userdata_id.toString());
 				})
@@ -69,7 +69,7 @@ module.exports.prepare_channel_www_server = function(channel, dispatcher, depend
 			path: url,
 			handler: function(request, reply){
 				console.log("rest.js DELETE", request.payload)
-				dispatcher.users_delete_user(request.payload.username, dispatcher)
+				dispatcher.users_delete_user(request.payload.username)
 					.then(function(user_data){
 						reply(user_data);
 					})
