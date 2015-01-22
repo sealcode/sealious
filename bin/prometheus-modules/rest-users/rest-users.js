@@ -54,7 +54,8 @@ module.exports.prepare_channel_www_server = function(channel, dispatcher, depend
 		method: "PUT",
 		path: url,
 		handler: function(request, reply){
-			dispatcher.users_update_user_data(request.payload.username, JSON.parse(request.payload.new_user_data), dispatcher)
+			console.log(request.payload.new_user_data);
+			dispatcher.users_update_user_data(request.payload.username, request.payload.new_user_data, dispatcher)
 				.then(function(response){
 					reply();
 				})

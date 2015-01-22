@@ -45,8 +45,8 @@
 
 		$.ajax({
 			url: '/api/v1/user',
-			data: {username: username, 
-				   new_user_data: { username: username }
+			data: {username: user_name, 
+				   new_user_data: { username : username }
 				},
 			type: 'PUT',
 			success: function(result){
