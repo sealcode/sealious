@@ -34,6 +34,12 @@
 
 	var base_url = "/api/v1/chat/conversation/" + conversation_id + "/messages";
 
+	function getTitle() {
+		$.get("/api/v1/chat/conversation/"+conversation_id, function(data) {
+			$(".insert-conversation-name").text(data.title);
+		});
+	}
+
 	function readMessages(){
 		var message_list = $("#lista-wiadomosci");
 		message_list.html("");
@@ -54,6 +60,7 @@
 		$.post("/api/v1/chat/message", {message: message, conversation_id: conversation_id}, function() {
 			readMessages();
 		});
+		$("#message-box").val("");
 	}
 
 	$("#message-box").keydown(function(e){
@@ -62,7 +69,7 @@
 		}
 	});
 
-
+	getTitle();
 	readMessages();
 
 </script>
