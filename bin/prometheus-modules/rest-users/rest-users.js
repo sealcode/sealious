@@ -54,7 +54,7 @@ module.exports.prepare_channel_www_server = function(channel, dispatcher, depend
 		method: "PUT",
 		path: url,
 		handler: function(request, reply){
-			console.log(request.payload.new_user_data);
+			//console.log(request.payload.new_user_data);
 			dispatcher.users_update_user_data(request.payload.username, request.payload.new_user_data, dispatcher)
 				.then(function(response){
 					reply();
@@ -68,7 +68,7 @@ module.exports.prepare_channel_www_server = function(channel, dispatcher, depend
 			method: "DELETE",
 			path: url,
 			handler: function(request, reply){
-				console.log("rest.js DELETE", request.payload)
+				//console.log("rest.js DELETE", request.payload)
 				dispatcher.users_delete_user(request.payload.username)
 					.then(function(user_data){
 						reply(user_data);

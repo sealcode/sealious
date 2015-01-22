@@ -10,7 +10,7 @@ module.exports.prepare_channel_rest = function(channel, dispatcher, dependencies
 			handler: function(request, reply){
 				dispatcher.resources_list_by_type(resource_type_name)
 				.then(function(resources){ // wywołanie metody z dispatchera webowego
-					console.log("GOT RESPONSE FROM DISPATCHER");
+					//console.log("GOT RESPONSE FROM DISPATCHER");
 					//var resources_arr = resources.map(function(resource){return resource.getData()});
 					reply(resources);
 				});
@@ -21,8 +21,8 @@ module.exports.prepare_channel_rest = function(channel, dispatcher, dependencies
 			method: "POST",
 			path: url,
 			handler: function(request, reply){
-				console.log(dispatcher.resources_create.toString());
-				console.log("rest.js POST", request.payload)
+				//console.log(dispatcher.resources_create.toString());
+				//console.log("rest.js POST", request.payload)
 				dispatcher.resources_create(resource_type_name, request.payload).then(function(response){
 					reply(response.toString());
 				});
@@ -34,7 +34,7 @@ module.exports.prepare_channel_rest = function(channel, dispatcher, dependencies
 			method: "DELETE",
 			path: url,
 			handler: function(request, reply){
-				console.log("rest.js DELETE", request.payload)
+				//console.log("rest.js DELETE", request.payload)
 				dispatcher.resources_delete(resource_type_name, request.payload).then(function(response){
 					reply();
 				});
@@ -46,7 +46,7 @@ module.exports.prepare_channel_rest = function(channel, dispatcher, dependencies
 			method: "GET",
 			path: url+"/{id}",
 			handler: function(request, reply){
-				console.log("rest.js get_resource_by_id", request.params.id);
+				//console.log("rest.js get_resource_by_id", request.params.id);
 				dispatcher.resources_get_by_id(request.params.id).then(function(response){
 					reply(response);
 				}).catch(function(error){
@@ -59,7 +59,7 @@ module.exports.prepare_channel_rest = function(channel, dispatcher, dependencies
 			method: "PUT",
 			path: url+"/{id}/access_mode",
 			handler: function(request, reply){
-				console.log("rest.js get_resource_by_id", request.params.id, request.payload.access_mode, request.payload.access_mode_args);
+				//console.log("rest.js get_resource_by_id", request.params.id, request.payload.access_mode, request.payload.access_mode_args);
 				dispatcher.resources_edit_resource_access_mode(request.params.id, request.payload.access_mode, request.payload.access_mode_args).then(function(response){
 					reply(response);
 				});
@@ -70,7 +70,7 @@ module.exports.prepare_channel_rest = function(channel, dispatcher, dependencies
 			method: "GET",
 			path: url+"/{id}/access_mode",
 			handler: function(request, reply){
-				console.log("rest.js get_resource_access_mode_by_id");
+				//console.log("rest.js get_resource_access_mode_by_id");
 				dispatcher.resources_get_access_mode(request.params.id).then(function(response){
 					reply(response);
 				});
