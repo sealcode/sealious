@@ -75,6 +75,8 @@ module.exports.prepare_channel_rest = function(channel, dispatcher, dependencies
 					reply(response);
 				});
 			}
-		})
+		});
+
+		
 	}
 }
