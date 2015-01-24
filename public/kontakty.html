@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<script src="/jquery.js"></script>
+	<meta charset="utf-8">
+	<title>Lista kontaktów</title>
+	<style>
+		html{
+			background-color:gray;
+		}
+		body{
+			padding:20px;
+			background-color:white;
+			font-family:sans-serif;
+			max-width:50rem;
+			margin:0 auto;
+		}
+		.email{
+			color:gray;
+			font-size:0.8em;
+		}
+	</style>
+</head>
+<body>
+	<a href="/">Menu główne</a>
+	<center><h1>Lista kontaktów</h1></center>
+	<ul id="lista-kontaktow">
+	</ul>
+	<input type="text" placeholder="Nazwa użytkownika" id="username">
+	<input type="text" placeholder="Adres email" id="email">
+	<button id="confirm" onclick="addNewContact()">Dodaj</button>
+</body>
+<script>
+
+	function readContactList(){
+		$("#lista-kontaktow").html("");
+		$.get("/api/v1/chat/contacts", function(data) {
+			console.log(data);
+			for(var i in data) {
+				var entry = data[i];
+				var node = $("<li>"+entry.name+" <span class='email'>"+entry.email+"</span> <button onclick='deleteContact("+entry.id+")'>Usuń</button></li>");
+				$("#lista-kontaktow").append(node);
+			}
+		});
+	}
+
+	function addNewContact(){
+		var name = $("#username").val();
+		var email = $("#email").val();
+
+		$.post("/api/v1/chat/contacts", {name: name, email: email}, function() {
+			readContactList();
+		});
+	}
+
+	function deleteContact(contact_id){
+		$.ajax({
+			url: '/api/v1/chat/contacts',
+			data: {id: parseInt(contact_id)},
+			type: 'DELETE',
+			success: function(result) {
+        		readContactList();
+    		}
+		});
+	}
+
+	readContactList();
+
+</script>
+</html>
