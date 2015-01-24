@@ -5,6 +5,8 @@ module.exports.prepare_channel_rest = function(channel, dispatcher, dependencies
 	var www_server = dependencies["channel.www_server"];
 	var sessionManager = dependencies["service.session_manager"];
 
+	console.log(sessionManager);
+
 	channel.add_path = function(url, resource_type_name){
 		www_server.route({
 			method: "GET",
