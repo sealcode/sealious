@@ -67,7 +67,7 @@
 
 	function editAccessMode(conversation_id, new_access_mode){
 		$.ajax({
-			url: '/api/v1/chat/conversation/'+conversation_id+'/access_mode',
+			url: '/api/v1/chat/conversation/'+conversation_id,
 			data: {access_mode: new_access_mode},
 			type: 'PUT',
 			success: function(result){
