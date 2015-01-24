@@ -3,7 +3,7 @@ module.exports.prepare_channel_www_server = function(channel, dispatcher, depend
 	var www_server = dependencies["channel.www_server"];
 	var sessionManager = dependencies["service.session_manager"];
 
-	url = "/api/v1/user";
+	url = "/api/v1/users";
 
 	www_server.route({
 		method: "GET",
@@ -18,7 +18,7 @@ module.exports.prepare_channel_www_server = function(channel, dispatcher, depend
 				reply("No data received.")
 			}
 	}
-		// hanlder GET ma zwrócić dane użytkownika w obiekcie JSONowym
+		// hanlder GET ma zwrócić dane użytkowników w obiekcie JSONowym
 	});
 
 	www_server.route({
