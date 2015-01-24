@@ -23,9 +23,9 @@ module.exports.prepare_channel_www_server = function(channel, dispatcher, depend
 
 	www_server.route({
 		method: "GET",
-		path: url + "/{username}",
+		path: url + "/{userdata_id}",
 		handler: function(request, reply){
-				dispatcher.users_get_user_data(request.params.username)
+				dispatcher.users_get_user_data(request.params.userdata_id)
 					.then(function(user_data){ // wywołanie metody z dispatchera webowego
 						reply(user_data);
 					})
