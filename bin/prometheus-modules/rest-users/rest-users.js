@@ -1,7 +1,10 @@
 module.exports.prepare_channel_www_server = function(channel, dispatcher, dependencies){
 
-	www_server = dependencies["channel.www_server"];
+	var www_server = dependencies["channel.www_server"];
+	var sessionManager = dependencies["service.session_manager"];
+
 	url = "/api/v1/user";
+
 	www_server.route({
 		method: "GET",
 		path: url,
@@ -64,19 +67,30 @@ module.exports.prepare_channel_www_server = function(channel, dispatcher, depend
 	});
 
 
-		www_server.route({
-			method: "DELETE",
-			path: url,
-			handler: function(request, reply){
-				//console.log("rest.js DELETE", request.payload)
-				dispatcher.users_delete_user(request.payload.username)
-					.then(function(user_data){
-						reply(user_data);
-					})
-					.catch(function(error){
-						reply(error);
-					})
-				}
-		});
+	www_server.route({
+		method: "DELETE",
+		path: url,
+		handler: function(request, reply){
+			//console.log("rest.js DELETE", request.payload)
+			dispatcher.users_delete_user(request.payload.username)
+				.then(function(user_data){
+					reply(user_data);
+				})
+				.catch(function(error){
+					reply(error);
+				})
+			}
+	});
+
+	www_server.route({
+		method: "GET",
+		path: url+"/me",
+		handler: function(request, reply){
+			var session_id = request.state.PrometheusSession;
+			dispatcher.
+			reply("username");
+	}
+		// hanlder GET ma zwrócić dane użytkownika w obiekcie JSONowym
+	});
 
 }
