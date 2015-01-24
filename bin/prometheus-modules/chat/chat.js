@@ -12,10 +12,13 @@ module.exports.prepare_resource_type_chat_message = function(chat_message){
 module.exports.prepare_resource_type_chat_conversation = function(chat_conversation){
 	chat_conversation.add_fields([
 		{name: "title", type: "text", required: true},
-		{name: "random_number", type: "int"}
+		{name: "random_number", type: "int"},
+		{name: "user1", type: "Reference"},
+		{name: "user2", type: "Reference"}
 	]);
 }
 
+//ten kod nie jest wykorzystywany
 module.exports.construct_associations = function(AssocInterface){
 	AssocInterface.create({
 		left_type: "chat-message", 
