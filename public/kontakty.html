@@ -49,6 +49,7 @@
 		var email = $("#email").val();
 
 		$.post("/api/v1/chat/contacts", {name: name, email: email}, function() {
+			console.log("posted");
 			readContactList();
 		});
 	}

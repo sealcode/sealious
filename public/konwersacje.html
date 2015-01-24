@@ -60,7 +60,7 @@
 				var entry = data[i];
 				console.log(entry);
 				var node = $("<li id='"+entry.id+"'><a href='konwersacja.html#"+entry.id+"'>"+entry.title + "</a><i> rozmowa z użytkownikiem: " + findById(users, entry.user2) + " </i> <button onclick='deleteCoversation("+entry.id+")'>Usuń</button>");
-				var selectMode = $("<select><option value='private' >Prywatna</option><option value='public'>Publiczna</option></select>");
+				var selectMode = $("<select class='access_mode'><option value='private' >Prywatna</option><option value='public'>Publiczna</option></select>");
 				node.append(selectMode);
 				selectMode.val(entry.access_mode);
 				$("#lista-konwersacji").append(node);
@@ -110,7 +110,7 @@
 	}
 
 	$(document).ready(function(){
-		$(document).on("change", "select", function(e){
+		$(document).on("change", "select.access_mode", function(e){
 			console.log("dupa");
 			var id = $(this).parent().attr("id");
 			var access_mode = $(this).val();
