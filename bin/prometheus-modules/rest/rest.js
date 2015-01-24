@@ -67,6 +67,18 @@ module.exports.prepare_channel_rest = function(channel, dispatcher, dependencies
 		});
 
 		www_server.route({
+			method: "PUT",
+			path: url+"/{id}",
+			handler: function(request, reply){
+				//console.log("rest.js get_resource_by_id", request.params.id, request.payload.access_mode, request.payload.access_mode_args);
+				dispatcher.resources_update(request.params.id, request.payload).then(function(response){
+					reply(response);
+				});
+			}
+		});
+
+
+		www_server.route({
 			method: "GET",
 			path: url+"/{id}/access_mode",
 			handler: function(request, reply){
