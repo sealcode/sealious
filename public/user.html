@@ -26,9 +26,9 @@
 </body>
 <script>
 
-	var user_name = document.location.hash.slice(1);	
+	var user_id = document.location.hash.slice(1);	
 
-	var base_url = "/api/v1/user/" + user_name;
+	var base_url = "/api/v1/user/" + user_id;
 	console.log(base_url);
 	function checkData(){
 		$("#dane").html("");
@@ -51,7 +51,6 @@
 			type: 'PUT',
 			success: function(result){
 				checkData();
-				window.location.href = "/administrator.html";
 			}
 		});
 	}
