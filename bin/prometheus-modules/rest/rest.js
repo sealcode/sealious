@@ -23,8 +23,6 @@ module.exports.prepare_channel_rest = function(channel, dispatcher, dependencies
 			method: "POST",
 			path: url,
 			handler: function(request, reply){
-				//console.log(dispatcher.resources_create.toString());
-				request.payload.owner = "1";
 				console.log("rest.js POST", request.payload, request.state.PrometheusSession);
 
 				var session = sessionManager.get_user_id(request.state.PrometheusSession.toString());
