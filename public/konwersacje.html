@@ -49,8 +49,13 @@
 	function addNewConversation(){
 		var title = $("#title").val();
 
-		$.post("/api/v1/chat/conversation", {title: title}, function() {
-			readConversations();
+		$.post("/api/v1/chat/conversation", {title: title}, function(result) {
+				if(result){
+					readConversations();
+				} else {
+					document.location.href = "/login.html";
+				}
+
 		});
 	}
 

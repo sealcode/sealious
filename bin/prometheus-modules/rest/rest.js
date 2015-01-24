@@ -23,19 +23,14 @@ module.exports.prepare_channel_rest = function(channel, dispatcher, dependencies
 			method: "POST",
 			path: url,
 			handler: function(request, reply){
-				console.log("rest.js POST", request.payload, request.state.PrometheusSession);
-
-				var session = sessionManager.get_user_id(request.state.PrometheusSession.toString());
-				console.log(session);
-
-				var request_with_owner = {
-					payload : request.payload,
-					owner_id: session
+				var id_by_session = sessionManager.get_user_id(request.state.PrometheusSession);
+				if(id_by_session){
+					dispatcher.resources_create(resource_type_name, request.payload, id_by_session).then(function(response){
+						reply(response.toString());
+					});
+				} else {
+					reply(id_by_session);
 				}
-
-				dispatcher.resources_create(resource_type_name, request_with_owner).then(function(response){
-					reply(response.toString());
-				});
 			}
 			// handler POST ma stworzyć zasób z podanymi wartościami
 		});
