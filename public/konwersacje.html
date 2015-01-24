@@ -3,7 +3,7 @@
 <head>
 	<script src="/jquery.js"></script>
 	<meta charset="utf-8">
-	<title>Lista kontaktów</title>
+	<title>Lista konwersacji</title>
 	<style>
 		html{
 			background-color:gray;
@@ -26,9 +26,28 @@
 	<ul id="lista-konwersacji">
 	</ul>
 	<input type="text" placeholder="Tytuł konwersacji" id="title">
+	<select id="user2"></select>
 	<button id="confirm" onclick="addNewConversation()">Dodaj</button>
 </body>
 <script>
+	//function getAllUsers(){
+	var users;
+		$.get("/api/v1/users", function(data){
+			for(var i in data){
+				users = data;
+				var entry = data[i];
+				$("#user2").append($("<option value='" + entry.user_id + "'>" + entry.username + "</option>"));
+			}
+		});
+
+	function findById(users, id){
+		for(var i in users){
+			if(users[i].user_id == id){
+				return users[i].username;
+			}
+		}
+	}
+	
 
 	function readConversations(){
 		$("#lista-konwersacji").html("");
@@ -37,10 +56,10 @@
 			for(var i in data) {
 				var entry = data[i];
 				console.log(entry);
-				var node = $("<li id='"+entry.id+"'><a href='konwersacja.html#"+entry.id+"'>"+entry.title + "</a>  <button onclick='deleteCoversation("+entry.id+")'>Usuń</button>");
-				var select = $("<select><option value='private' >Prywatna</option><option value='public'>Publiczna</option></select>");
-				node.append(select);
-				select.val(entry.access_mode);
+				var node = $("<li id='"+entry.id+"'><a href='konwersacja.html#"+entry.id+"'>"+entry.title + "</a><i> rozmowa z użytkownikiem: " + findById(users, entry.user2) + " </i> <button onclick='deleteCoversation("+entry.id+")'>Usuń</button>");
+				var selectMode = $("<select><option value='private' >Prywatna</option><option value='public'>Publiczna</option></select>");
+				node.append(selectMode);
+				selectMode.val(entry.access_mode);
 				$("#lista-konwersacji").append(node);
 			}
 		});
@@ -48,8 +67,8 @@
 
 	function addNewConversation(){
 		var title = $("#title").val();
-
-		$.post("/api/v1/chat/conversation", {title: title}, function() {
+		var user2 = $("#user2").val();
+		$.post("/api/v1/chat/conversation", {title: title, user2: user2}, function() {
 			readConversations();
 		});
 	}
