@@ -29,7 +29,7 @@ module.exports.prepare_channel_rest = function(channel, dispatcher, dependencies
 						reply(response.toString());
 					});
 				} else {
-					reply(id_by_session);
+					reply("not logged in");
 				}
 			}
 			// handler POST ma stworzyć zasób z podanymi wartościami
