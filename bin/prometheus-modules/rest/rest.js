@@ -3,6 +3,8 @@ module.exports.prepare_channel_rest = function(channel, dispatcher, dependencies
 	//console.log("\nREST dependencies:", dependencies);
 
 	var www_server = dependencies["channel.www_server"];
+	var sessionManager = dependencies["service.session_manager"];
+
 	channel.add_path = function(url, resource_type_name){
 		www_server.route({
 			method: "GET",
@@ -22,8 +24,18 @@ module.exports.prepare_channel_rest = function(channel, dispatcher, dependencies
 			path: url,
 			handler: function(request, reply){
 				//console.log(dispatcher.resources_create.toString());
-				//console.log("rest.js POST", request.payload)
-				dispatcher.resources_create(resource_type_name, request.payload).then(function(response){
+				request.payload.owner = "1";
+				console.log("rest.js POST", request.payload, request.state.PrometheusSession);
+
+				var session = sessionManager.get_user_id(request.state.PrometheusSession.toString());
+				console.log(session);
+
+				var request_with_owner = {
+					payload : request.payload,
+					owner_id: session
+				}
+
+				dispatcher.resources_create(resource_type_name, request_with_owner).then(function(response){
 					reply(response.toString());
 				});
 			}
