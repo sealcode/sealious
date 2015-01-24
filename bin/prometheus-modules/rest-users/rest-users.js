@@ -3,6 +3,8 @@ module.exports.prepare_channel_www_server = function(channel, dispatcher, depend
 	var www_server = dependencies["channel.www_server"];
 	var sessionManager = dependencies["service.session_manager"];
 
+	console.log("rest_users.js sessionManager:", sessionManager);
+
 	url = "/api/v1/users";
 
 	www_server.route({
@@ -23,9 +25,9 @@ module.exports.prepare_channel_www_server = function(channel, dispatcher, depend
 
 	www_server.route({
 		method: "GET",
-		path: url + "/{userdata_id}",
+		path: url + "/{user_id}",
 		handler: function(request, reply){
-				dispatcher.users_get_user_data(request.params.userdata_id)
+				dispatcher.users_get_user_data(request.params.user_id)
 					.then(function(user_data){ // wywołanie metody z dispatchera webowego
 						reply(user_data);
 					})
@@ -87,8 +89,18 @@ module.exports.prepare_channel_www_server = function(channel, dispatcher, depend
 		path: url+"/me",
 		handler: function(request, reply){
 			var session_id = request.state.PrometheusSession;
-			dispatcher.
-			reply("username");
+			var user_id = sessionManager.get_user_id(session_id);
+			dispatcher.users_get_user_data(user_id)
+			.then(function(user_data){
+				if(user_data){
+					reply(user_data);					
+				}else{
+					reply("not logged in");
+				}
+			})
+			.catch(function(){
+				reply("not logged in");
+			})
 	}
 		// hanlder GET ma zwrócić dane użytkownika w obiekcie JSONowym
 	});

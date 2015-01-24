@@ -9,6 +9,6 @@
   "author": "",
   "license": "ISC",
   "prometheus-module-id": "rest-users",
-  "prometheus-required-chips": ["channel.www_server", "resource_type.user_data"],
+  "prometheus-required-chips": ["channel.www_server", "resource_type.user_data", "service.session_manager"],
   "prometheus-defined-chips" : []
 }
