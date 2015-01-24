@@ -36,7 +36,7 @@
 
 	function readUserList(){
 		$("#lista-uzytkownikow").html("");
-		$.get("/api/v1/user", function(data) {
+		$.get("/api/v1/users", function(data) {
 			console.log(data);
 			for(var i in data) {
 				var entry = data[i];
@@ -51,7 +51,7 @@
 		var username = $("#username").val();
 		var password = $("#password").val();
 
-		$.post("/api/v1/user", {username: username, password: password}, function() {
+		$.post("/api/v1/users", {username: username, password: password}, function() {
 			readUserList();
 		});
 	}
@@ -59,7 +59,7 @@
 		function deleteUser(user){
 			//console.log(user);
 			$.ajax({
-				url: '/api/v1/user',
+				url: '/api/v1/users',
 				data: {username: user},
 				method: 'DELETE',
 				success: function(result) {
