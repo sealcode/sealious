@@ -67,9 +67,13 @@
 
 	function addNewConversation(){
 		var title = $("#title").val();
-		var user2 = $("#user2").val();
-		$.post("/api/v1/chat/conversation", {title: title, user2: user2}, function() {
-			readConversations();
+
+		$.post("/api/v1/chat/conversation", {title: title}, function(result) {
+				if(result){
+					readConversations();
+				} else {
+					document.location.href = "/login.html";
+				}
 		});
 	}
 
