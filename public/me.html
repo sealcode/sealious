@@ -3,16 +3,20 @@
 		<meta charset="utf-8">
 		<title>Zalogowany jako...</title>
 		<script src="/jquery.js"></script>
+		<script src="/authorization.js"></script>
+		<link rel="stylesheet" href="/style.css">
 	</head>
 	<body>
+		<a href="/">Menu główne</a>
 		<h2>
 			jesteś zalogowany jako użytkownik: <span class="insert-user-name"></span>
 		</h2>
 	</body>
 	<script>
 		console.log("getting");
-		$.get("/api/v1/user/me", function(response){
-			$(".insert-user-name").html(response);
+		$.get("/api/v1/users/me", function(response){
+			console.log(response);
+			$(".insert-user-name").html(response.username);
 		})
 	</script>
 

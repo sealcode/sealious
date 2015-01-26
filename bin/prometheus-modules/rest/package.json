@@ -9,6 +9,6 @@
   "author": "",
   "license": "BSD-2-Clause",
   "prometheus-module-id": "rest",
-  "prometheus-required-chips": ["channel.www_server", "resource_type.*"],
+  "prometheus-required-chips": ["channel.www_server", "resource_type.*", "service.session_manager"],
   "prometheus-defined-chips": ["channel.rest"]
 }
