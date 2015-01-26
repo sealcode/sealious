@@ -40,6 +40,7 @@ module.exports.prepare_channel_rest = function(rest){
 
 module.exports.prepare_channel_www_server = function(www_server, dispatcher, dependencies){
 var sessionManager = dependencies["service.session_manager"];
+var Promise = require("bluebird");
 
 	www_server.route({
 		method: "GET", 
@@ -50,14 +51,25 @@ var sessionManager = dependencies["service.session_manager"];
 					reply(resources);
 				})
 		}
-	})
+	});
 
 	www_server.route({
 		method: "GET",
-		path: "api/v1/chat/conversation/mine",
+		path: "/api/v1/chat/conversation/mine",
 		handler: function(request, reply){
 			var me = sessionManager.get_user_id(request.state.PrometheusSession);
-			dispatcher.resources_find([{user1: me}, user2: me}], "conversation");
+			me = me.toString();
+			console.log(me);
+			var p1 = dispatcher.resources_find({user2: me}, "chat_conversation");
+			var p2 = dispatcher.resources_find({user1: me}, "chat_conversation");
+			Promise.all([p1,p2]).then(function(response){
+				console.log(response);
+				reply(response);
+			})
+/*			dispatcher.resources_find({user2: me}, "chat_conversation").then(function(response){
+				reply(response);
+			});
+*/			
 		}
-	})
+	});
 }

@@ -26,7 +26,7 @@
 	var me;
 
 		
-
+	function create_users_array(callback){
 		$.get("/api/v1/users", function(data){
 			$.get("api/v1/users/me", function(user_data){
 				me = user_data.user_id;
@@ -38,8 +38,10 @@
 					$("#user2").append($("<option value='" + entry.user_id + "'>" + entry.username + "</option>"));
 				}
 			}
+			callback(me);
 		});
 		});
+	}
 
 
 	function findById(users, id){
@@ -51,14 +53,22 @@
 	}
 	
 
-	function readConversations(){
+	function readConversations(me){
 		$("#lista-konwersacji").html("");
-		$.get("/api/v1/chat/conversation", function(data) {
+		$.get("/api/v1/chat/conversation/mine", function(data) {
 			console.log(data);
+			data = data[0].concat(data[1]);
 			for(var i in data) {
 				var entry = data[i];
 				console.log(entry);
-				var node = $("<li id='"+entry.id+"'><a href='konwersacja.html#"+entry.id+"'>"+entry.title + "</a><i> rozmowa z użytkownikiem: " + findById(users, entry.user2) + " </i> <button onclick='deleteCoversation("+entry.id+")'>Usuń</button>");
+				var conversor;
+				if (me == entry.user1){
+					conversor = findById(users, entry.user2);
+				}else{
+					conversor = findById(users, entry.user1);
+				}
+				
+				var node = $("<li id='"+entry.id+"'><a href='konwersacja.html#"+entry.id+"'>"+entry.title + "</a><i> rozmowa z użytkownikiem: " + conversor + " </i> <button onclick='deleteCoversation("+entry.id+")'>Usuń</button>");
 				var selectMode = $("<select class='access_mode'><option value='private' >Prywatna</option><option value='public'>Publiczna</option></select>");
 				node.append(selectMode);
 				selectMode.val(entry.access_mode);
@@ -70,13 +80,15 @@
 	function addNewConversation(){
 		var title = $("#title").val();
 		var user2 = $("#user2").val();
-
-		$.post("/api/v1/chat/conversation", {title: title, user2: user2}, function(result) {
+		$.get("api/v1/users/me", function(user_data){
+			me = user_data.user_id;
+		$.post("/api/v1/chat/conversation", {title: title, user2: user2, user1: me}, function(result) {
 				if(result){
 					readConversations();
 				} else {
 					document.location.href = "/login.html";
 				}
+		});
 		});
 	}
 
@@ -118,8 +130,7 @@
 
 	});
 
-
-	readConversations();
+	create_users_array(readConversations);
 
 </script>
 </html>
