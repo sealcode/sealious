@@ -23,17 +23,24 @@
 	Auth.redirect_if_not_logged_in();
 
 	var users;
+	var me;
+
+		
+
 		$.get("/api/v1/users", function(data){
+			$.get("api/v1/users/me", function(user_data){
+				me = user_data.user_id;
+				console.log(me);
 			for(var i in data){
 				users = data;
 				var entry = data[i];
-				$("#user2").append($("<option value='" + entry.user_id + "'>" + entry.username + "</option>"));
+				if (entry.user_id != me){
+					$("#user2").append($("<option value='" + entry.user_id + "'>" + entry.username + "</option>"));
+				}
 			}
 		});
-	var me;
-		$get("api/v1/users/me", function(user_data){
-			me = user_data.user_id;
-		})
+		});
+
 
 	function findById(users, id){
 		for(var i in users){
