@@ -47,8 +47,8 @@
 			for(var i in data) {
 				var entry = data[i];
 				console.log(entry);
-				var node = $("<li id='"+entry.id+"'><a href='konwersacja.html#"+entry.id+"'>"+entry.title + "</a><i> rozmowa z użytkownikiem: " + findById(users, entry.user2) + " </i> <button onclick='deleteCoversation("+entry.id+")'>Usuń</button>");
-				var selectMode = $("<select class='access_mode'><option value='private' >Prywatna</option><option value='public'>Publiczna</option></select>");
+				var node = $("<li id='"+entry.id+"'><a href='konwersacja.html#"+entry.id+"'>"+entry.title + "</a><i> rozmowa z użytkownikiem: " + findById(users, entry.user2) + " </i> <button onclick='deleteCoversation("+entry.id+")' class='negative show-on-parent-hover'>Usuń</button>");
+				var selectMode = $("<select class='access_mode show-on-parent-hover'><option value='private' >Prywatna</option><option value='public'>Publiczna</option></select>");
 				node.append(selectMode);
 				selectMode.val(entry.access_mode);
 				$("#lista-konwersacji").append(node);

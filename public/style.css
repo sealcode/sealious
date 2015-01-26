@@ -61,6 +61,21 @@ button{
 	border-radius: 2px;
 }
 
+button.negative{
+	border-color:hsl(23, 61%, 55%);
+}
+
 .prometheus{
 	color:hsl(194, 32%, 55%);
+}
+
+.show-on-parent-hover{
+	/*
+		opacity:0;
+	 */
+	transition: all 300ms;
+}
+
+*:hover > .show-on-parent-hover{
+	opacity:1;
 }
