@@ -9,6 +9,17 @@
     font-style: normal;
 }
 
+@font-face {
+    font-family: 'Open Sans Light Regular';
+    src: url('fonts/opensans_regular_polish/OpenSans-Regular-webfont.eot');
+    src: url('fonts/opensans_regular_polish/OpenSans-Regular-webfont.eot?#iefix') format('embedded-opentype'),
+         url('fonts/opensans_regular_polish/OpenSans-Regular-webfont.woff') format('woff'),
+         url('fonts/opensans_regular_polish/OpenSans-Regular-webfont.ttf') format('truetype'),
+         url('fonts/opensans_regular_polish/OpenSans-Regular-webfont.svg#open_sansbold') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
 html{
 	background-color:hsl(0, 0%, 90%);
 }
@@ -22,12 +33,34 @@ body{
 	margin:0 auto;
 	background-image: url(/img/logo.png);
 	background-repeat:no-repeat;
-	background-position: 20px 98%;
+	background-position: 20px 97%;
 	background-size: auto 30px;
 	padding-bottom:50px;
+	margin-top:40px;
 }
 
 *{
 	color:hsl(0, 0%, 28%);
 	font-family: 'Open Sans Light';
+}
+
+strong{
+	font-family: 'Open Sans Light Regular';
+}
+
+a{
+	color: hsl(198, 51%, 50%);
+	text-decoration:none;
+	font-family: 'Open Sans Light Regular';
+}
+
+button{
+	border-color: hsl(198, 51%, 50%);
+	border-style:solid;
+	border-width:1px;
+	border-radius: 2px;
+}
+
+.prometheus{
+	color:hsl(194, 32%, 55%);
 }
