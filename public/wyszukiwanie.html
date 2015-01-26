@@ -23,35 +23,27 @@
 </head>
 <body>
 	<center><h1>Wyszukiwanie</h1></center>
-	<ul id="wyszukiwanie">
-	</ul>
 	<input type="text" placeholder="Treść" id="search_string">
 	<button id="confirm" onclick="searchQuery()">Szukaj</button>
+	<ul id="wyszukiwanie">
+	</ul>
 </body>
 <script>
-
-	function readContactList(){
-		$("#Wyszukiwanie").html("");
-		$.get("/api/v1/chat/contacts", function(data) {
-			console.log(data);
-			for(var i in data) {
-				var entry = data[i];
-				var node = $("<li>"+entry.name+" <span class='email'>"+entry.email+"</span> <button onclick='deleteContact("+entry.id+")'>Usuń</button></li>");
-				$("#Wyszukiwanie").append(node);
-			}
-		});
-	}
-
 	function searchQuery(){
-		var name = $("#username").val();
-		var email = $("#email").val();
-
-		$.post("/api/v1/chat/contacts", {name: name, email: email}, function() {
-			readContactList();
+		var query = $("#search_string").val();
+		var message_list = $("#wyszukiwanie");
+		message_list.html("");
+		$.get("/api/v1/chat/search/" + query, function(data) {
+			if (data.length>0){
+				for(var i in data) {
+					var entry = data[i];
+					var url = "http://localhost/konwersacja.html" + "#" + entry.conversation_id;
+					var node = $("<li>"+entry.message + " " + "<a href='" + url +"'>"+"konwersacja nr: "+ entry.conversation_id +"</a>"+"</li>");
+					message_list.append(node);
+				}
+			}else {message_list.append("brak wyników");}
 		});
 	}
-
-	readContactList();
 
 </script>
 </html>
