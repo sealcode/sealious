@@ -2,6 +2,7 @@
 <html>
 <head>
 	<script src="/jquery.js"></script>
+	<script src="/authorization.js"></script>
 	<meta charset="utf-8">
 	<title>Prometheus demo - chat</title>
 	<style>
@@ -42,6 +43,8 @@
 	</nav>
 </body>
 <script>
+
+	Auth.redirect_if_not_logged_in();
 
 	var user_id = document.location.hash.slice(1);	
 
