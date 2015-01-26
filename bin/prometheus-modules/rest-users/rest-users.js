@@ -101,8 +101,21 @@ module.exports.prepare_channel_www_server = function(channel, dispatcher, depend
 			.catch(function(){
 				reply("not logged in");
 			})
-	}
+		}
 		// hanlder GET ma zwrócić dane użytkownika w obiekcie JSONowym
 	});
+
+	www_server.route({
+		method: "PUT",
+		path: url+"/me",
+		handler: function(request, reply){
+			var session_id = request.state.PrometheusSession;
+			var user_id = sessionManager.get_user_id(session_id);
+			dispatcher.users_update_user_data(user_id, request.payload)
+			.then(function(){
+				reply("ok!");
+			})
+		}	
+	})
 
 }
