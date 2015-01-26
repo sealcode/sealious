@@ -1,3 +1,5 @@
+
+
 module.exports.prepare_resource_type_chat_message = function(chat_message){
 	chat_message.add_fields([
 		{name: "from", 		type: "text", required:true},//should be an association to User
@@ -37,6 +39,8 @@ module.exports.prepare_channel_rest = function(rest){
 
 
 module.exports.prepare_channel_www_server = function(www_server, dispatcher, dependencies){
+var sessionManager = dependencies["service.session_manager"];
+
 	www_server.route({
 		method: "GET", 
 		path: "/api/v1/chat/conversation/{id}/messages",
@@ -45,6 +49,15 @@ module.exports.prepare_channel_www_server = function(www_server, dispatcher, dep
 				.then(function(resources){
 					reply(resources);
 				})
+		}
+	})
+
+	www_server.route({
+		method: "GET",
+		path: "api/v1/chat/conversation/mine",
+		handler: function(request, reply){
+			var me = sessionManager.get_user_id(request.state.PrometheusSession);
+			dispatcher.resources_find([{user1: me}, user2: me}], "conversation");
 		}
 	})
 }
