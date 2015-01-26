@@ -30,6 +30,7 @@
 	}
 
 	function readMessages(){
+		console.log("read messages");
 		var message_list = $("#lista-wiadomosci");
 		message_list.html("");
 		$.get(base_url, function(data) {
@@ -60,6 +61,8 @@
 
 	getTitle();
 	readMessages();
+
+	setInterval(readMessages, 500);
 
 </script>
 </html>
