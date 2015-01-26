@@ -17,3 +17,15 @@ Auth.redirect_if_not_logged_in = function(){
 		}
 	})	
 }
+
+Auth.logout = function(){
+	$.post("/logout", function(data){
+		document.location="/login.html";
+	});
+}
+
+Auth.get_user_data = function(callback){
+	$.get("/api/v1/users/me", function(data){
+		callback && callback(data);
+	})
+}

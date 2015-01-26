@@ -2,29 +2,22 @@
 <html>
 <head>
 	<script src="/jquery.js"></script>
+	<script src="/authorization.js"></script>
 	<meta charset="utf-8">
 	<title>Panel logowania</title>
-	<style>
-		html{
-			background-color:gray;
-		}
-		body{
-			padding:20px;
-			background-color:white;
-			font-family:sans-serif;
-			max-width:50rem;
-			margin:0 auto;
-		}
-	</style>
+	<link rel="stylesheet" href="/style.css">
 </head>
 <body>
-	<div style="margin:0 auto;">
+	<div style="margin:0 auto; text-align:center">
 		Zaloguj się:
 		<form action="/login" method="post">
 			<input type="text" name="username" placeholder="Login" /><br/>
 			<input type="password" name="password" placeholder="Hasło" /><br/>
-			<input type="submit" text="Zaloguj" />
+			<input type="submit" value="zaloguj"/>
 		</form>
+	</div>
+	<div style="text-align:right; font-size:0.9em">
+		<a href="rejestracja.html">Zarejestruj się</a>
 	</div>
 
 </body>
