@@ -12,8 +12,9 @@
 	</body>
 	<script>
 		console.log("getting");
-		$.get("/api/v1/user/me", function(response){
-			$(".insert-user-name").html(response);
+		$.get("/api/v1/users/me", function(response){
+			console.log(response);
+			$(".insert-user-name").html(response.username);
 		})
 	</script>
 

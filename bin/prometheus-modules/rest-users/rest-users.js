@@ -13,9 +13,9 @@ module.exports.prepare_channel_www_server = function(channel, dispatcher, depend
 		handler: function(request, reply){
 			if(1){
 				dispatcher.users_get_all_users()
-					.then(function(users){ // wywołanie metody z dispatchera webowego
-						reply(users);
-					})
+				.then(function(users){ // wywołanie metody z dispatchera webowego
+					reply(users);
+				})
 			}else{
 				reply("No data received.")
 			}
