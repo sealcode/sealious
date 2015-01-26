@@ -42,6 +42,10 @@
 				$("#user2").append($("<option value='" + entry.user_id + "'>" + entry.username + "</option>"));
 			}
 		});
+	var me;
+		$get("api/v1/users/me", function(user_data){
+			me = user_data.user_id;
+		})
 
 	function findById(users, id){
 		for(var i in users){
