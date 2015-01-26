@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<script src="/jquery.js"></script>
+	<meta charset="utf-8">
+	<title>Wyszukiwanie</title>
+	<style>
+		html{
+			background-color:gray;
+		}
+		body{
+			padding:20px;
+			background-color:white;
+			font-family:sans-serif;
+			max-width:50rem;
+			margin:0 auto;
+		}
+		.email{
+			color:gray;
+			font-size:0.8em;
+		}
+	</style>
+</head>
+<body>
+	<center><h1>Wyszukiwanie</h1></center>
+	<input type="text" placeholder="Treść" id="search_string">
+	<button id="confirm" onclick="searchQuery()">Szukaj</button>
+	<ul id="wyszukiwanie">
+	</ul>
+</body>
+<script>
+	function searchQuery(){
+		var query = $("#search_string").val();
+		var message_list = $("#wyszukiwanie");
+		message_list.html("");
+		$.get("/api/v1/chat/search/" + query, function(data) {
+			if (data.length>0){
+				for(var i in data) {
+					var entry = data[i];
+					var url = "http://localhost/konwersacja.html" + "#" + entry.conversation_id;
+					var node = $("<li>"+entry.message + " " + "<a href='" + url +"'>"+"konwersacja nr: "+ entry.conversation_id +"</a>"+"</li>");
+					message_list.append(node);
+				}
+			}else {message_list.append("brak wyników");}
+		});
+	}
+
+</script>
+</html>
