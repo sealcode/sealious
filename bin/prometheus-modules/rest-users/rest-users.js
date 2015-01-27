@@ -57,10 +57,10 @@ module.exports.prepare_channel_www_server = function(channel, dispatcher, depend
 
 	www_server.route({
 		method: "PUT",
-		path: url,
+		path: url+"/{user_id}",
 		handler: function(request, reply){
-			//console.log(request.payload.new_user_data);
-			dispatcher.users_update_user_data(request.payload.username, request.payload.new_user_data, dispatcher)
+			console.log("rest-user.js", "request.payload", request.payload);
+			dispatcher.users_update_user_data(request.params.user_id, request.payload)
 				.then(function(response){
 					reply();
 				})
