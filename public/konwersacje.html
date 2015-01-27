@@ -56,7 +56,7 @@
 	function readConversations(){
 		$("#lista-konwersacji").html("");
 		$.get("/api/v1/chat/conversation/mine", function(data) {
-			data = data[0].concat(data[1]);
+			data = data[0].concat(data[1]).concat(data[2]);
 			for(var i in data) {
 				var entry = data[i];
 				var conversor;
