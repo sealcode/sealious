@@ -39,44 +39,75 @@
 		});	
 	}
 
+	var lastMessageId = -1;
+
+	function isScrolledIntoView(elem)
+	{
+		var docViewTop = $(window).scrollTop();
+		var docViewBottom = docViewTop + $(window).height();
+
+		var elemTop = $(elem).offset().top;
+		var elemBottom = elemTop + $(elem).height();
+
+		return ((elemBottom <= docViewBottom) && (elemTop >= docViewTop));
+	}
 
 	function readMessages(){
 		console.log("read messages");
 		var message_list = $("#lista-wiadomosci");
-		message_list.html("");
 		$.get(base_url, function(data) {
+			var checkState = false;		
 			console.log(data);
 			for(var i in data) {
-				var entry = data[i];
-				var node;
-				if(entry.message.trim() != ""){
-					if(entry.owner_id == me){
-						node = $("<li class='message incoming'>"+entry.message+"</li>");
-					} else {
-						node = $("<li class='message'><div class='poitner'></div>"+entry.message+"</li>");
+				if (lastMessageId < data[i].id) {
+					var entry = data[i];
+					var node;
+					if(entry.message.trim() != ""){
+						if(entry.owner_id == me){
+							node = $("<li class='message incoming'>"+entry.message+"</li>");
+						} else {
+							node = $("<li class='message'><div class='poitner'></div>"+entry.message+"</li>");
+						}
+						message_list.append(node);
+						checkState = true;
+
 					}
-					message_list.append(node);
+					lastMessageId = data[i].id;	
 				}
 			}
+
+			if (isScrolledIntoView("#message-box") && checkState) {
+				$("html, body").animate({
+					scrollTop: $("#message-box").offset().top+50
+				}, 200);
+			}
 		});
+
 	}
 
 
+
 	function sendMessage(){
+		console.log("sendMessage")
 		var message = $("#message-box").val();
 		if(message.trim() != ""){
 			$.post("/api/v1/chat/message", {message: message, conversation_id: conversation_id}, function() {
+				console.log("before readNewMessages")
 				readMessages();
 			});
 		} else {
 			alert("Może najpierw coś napisz?");
 		}
-		$("#message-box").val("");
+		$("#message-box").val("").focus();
+		$("html, body").animate({
+			scrollTop: $("#message-box").offset().top+50
+		}, 200);
+
 	}
 
 	$("#message-box").keydown(function(e){
 		if(e.which==13){
-				sendMessage();
+			sendMessage();
 		}
 	});
 
@@ -84,7 +115,7 @@
 	getTitle();
 	
 
-	//setInterval(readMessages, 500);
+	setInterval(readMessages, 500);
 
 </script>
 </html>

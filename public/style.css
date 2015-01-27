@@ -148,6 +148,20 @@ ul .message {
     overflow: hidden;
 }
 
+#registered {
+  display: none;
+  opacity: 1;
+}
+
+#registered:target {
+  color: rgba(0,0,0,0.3);
+  margin:0 auto 15px;
+  width: 190px;
+  display: block;
+  transition-delay: 2s;
+  transition: opacity 200ms easy-in;
+}
+
 /*
 	Animations
  */
@@ -169,4 +183,5 @@ ul .message {
     opacity:1.0;
   }
 }
+
 

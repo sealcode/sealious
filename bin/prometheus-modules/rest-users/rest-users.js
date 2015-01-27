@@ -46,7 +46,7 @@ module.exports.prepare_channel_www_server = function(channel, dispatcher, depend
 		handler: function(request, reply){
 			dispatcher.users_create_user(request.payload.username, request.payload.password)
 				.then(function(response){
-					reply(response[0].userdata_id.toString());
+					reply().redirect("/login.html#registered");
 				})
 				.catch(function(error){
 					reply("Username is taken.").statusCode="409.1";
