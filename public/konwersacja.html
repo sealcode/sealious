@@ -24,7 +24,7 @@
 
 	var conversation_id = document.location.hash.slice(1);	
 
-	var base_url = "/api/v1/chat/conversation/" + conversation_id + "/messages";
+	var base_url = "/api/v1/chat/conversation/" + conversation_id  + "/messages";
 
 	function getTitle() {
 		$.get("/api/v1/chat/conversation/"+conversation_id, function(data) {
