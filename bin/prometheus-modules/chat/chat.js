@@ -39,7 +39,6 @@ module.exports.prepare_channel_rest = function(rest){
 
 
 module.exports.prepare_channel_www_server = function(www_server, dispatcher, dependencies){
-var sessionManager = dependencies["service.session_manager"];
 var Promise = require("bluebird");
 
 	www_server.route({
@@ -57,7 +56,7 @@ var Promise = require("bluebird");
 		method: "GET",
 		path: "/api/v1/chat/conversation/mine",
 		handler: function(request, reply){
-			var me = sessionManager.get_user_id(request.state.PrometheusSession);
+			var me = www_server.get_user_id(request.state.PrometheusSession);
 			me = me.toString();
 			console.log(me);
 			var p1 = dispatcher.resources_find({user2: me}, "chat_conversation");
