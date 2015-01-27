@@ -58,9 +58,7 @@
 			data = data[0].concat(data[1]);
 			for(var i in data) {
 				var entry = data[i];
-
 				var conversor;
-				console.log("comparing users. me: ", me, "user1:", entry.user1, "user2:", entry.user2);
 				if (me == entry.user1){
 					conversor = findById(users, entry.user2);
 				}else{

@@ -11,6 +11,9 @@
 		<h2>
 			jesteś zalogowany jako użytkownik: <span class="insert-user-name"></span>
 		</h2>
+	<input type="text" placeholder="Zmień status" id="username">
+	<button id="confirm" onclick="changeUserStatus()">zapisz</button>
+
 	</body>
 	<script>
 		console.log("getting");
@@ -18,6 +21,27 @@
 			console.log(response);
 			$(".insert-user-name").html(response.username);
 		})
-	</script>
 
+		function changeUserStatus(){
+		var username = $("#username").val();
+
+		$.ajax({
+			url: '/api/v1/users/me',
+			data: {status: status, 
+				   new_user_status: { status : status }
+				},
+			type: 'PUT',
+			success: function(result){
+				checkData();//co to jest? to jest chyba ten get
+				window.location.href = "/administrator.html";//ocb z tym
+			}
+		});
+	}
+//user.html jest chyba niedokończony
+		function viewUserStatus(){//co by się stało, jakby tego nie bylo i czemu Get nic nie zmienia
+			$("#dane").html("");
+			$.get(base_url, function(data) {
+			});
+		}
+	</script>
 </html>
