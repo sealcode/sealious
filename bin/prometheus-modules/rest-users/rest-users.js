@@ -93,6 +93,7 @@ module.exports.prepare_channel_www_server = function(channel, dispatcher, depend
 			dispatcher.users_get_user_data(user_id)
 			.then(function(user_data){
 				if(user_data){
+					user_data.user_id = user_id;
 					reply(user_data);					
 				}else{
 					reply("not logged in");
