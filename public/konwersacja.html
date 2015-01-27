@@ -32,10 +32,11 @@
 		});
 	}
 
-	function getCurrentUserID(){
+	function getCurrentUserID(callback){
 		$.get("api/v1/users/me", function(user_data){
 			me = user_data.user_id;
-		});
+			callback();
+		});	
 	}
 
 
@@ -74,9 +75,9 @@
 		}
 	});
 
-	getCurrentUserID();
+	getCurrentUserID(readMessages);
 	getTitle();
-	readMessages();
+	
 
 	//setInterval(readMessages, 500);
 
