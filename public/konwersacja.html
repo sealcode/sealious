@@ -7,13 +7,14 @@
 	<title>Konwersacja</title>
 	<link rel="stylesheet" href="/style.css">
 </head>
-<body>
-	<a href="/">Menu główne</a> > <a href="/konwersacje.html">Konwersacje</a>
-	<center><h1>Konwersacja: <span class="insert-conversation-name"></span></h1></center>
-	<ul id="lista-wiadomosci">
-	</ul>
-	<textarea id="message-box" placeholder="Nowa wiadomość"></textarea>
-	<button id="confirm" onclick="sendMessage()">Wyślij</button>
+<body style="width: 25rem;">
+	<div class="content">
+		<a href="/">Menu główne</a> > <a href="/konwersacje.html">Konwersacje</a>
+		<center><h1>Konwersacja: <span class="insert-conversation-name"></span></h1></center>
+		<ul id="lista-wiadomosci"></ul>
+		<input type="text" id="message-box" placeholder="Nowa wiadomość"></textarea>
+		<button id="confirm" onclick="sendMessage()">Wyślij</button>
+	</div>
 </body>
 <script>
 
@@ -23,7 +24,7 @@
 
 	var conversation_id = document.location.hash.slice(1);	
 
-	var base_url = "/api/v1/chat/conversation/" + conversation_id + "/messages";
+	var base_url = "/api/v1/chat/conversation/" + conversation_id  + "/messages";
 
 	function getTitle() {
 		$.get("/api/v1/chat/conversation/"+conversation_id, function(data) {
@@ -38,34 +39,70 @@
 		});	
 	}
 
+	var lastMessageId = -1;
+
+	function isScrolledIntoView(elem)
+	{
+		var docViewTop = $(window).scrollTop();
+		var docViewBottom = docViewTop + $(window).height();
+
+		var elemTop = $(elem).offset().top;
+		var elemBottom = elemTop + $(elem).height();
+
+		return ((elemBottom <= docViewBottom) && (elemTop >= docViewTop));
+	}
 
 	function readMessages(){
 		console.log("read messages");
 		var message_list = $("#lista-wiadomosci");
-		message_list.html("");
 		$.get(base_url, function(data) {
+			var checkState = false;		
 			console.log(data);
 			for(var i in data) {
-				var entry = data[i];
-				var node;
-				if(entry.owner_id == me){
-					node = $("<li class='message'>"+entry.message+"</li>");
-				} else {
-					node = $("<li class='message incoming'><div class='poitner'></div>"+entry.message+"</li>");
+				if (lastMessageId < data[i].id) {
+					var entry = data[i];
+					var node;
+					if(entry.message.trim() != ""){
+						if(entry.owner_id == me){
+							node = $("<li class='message incoming'>"+entry.message+"</li>");
+						} else {
+							node = $("<li class='message'><div class='poitner'></div>"+entry.message+"</li>");
+						}
+						message_list.append(node);
+						checkState = true;
+
+					}
+					lastMessageId = data[i].id;	
 				}
-				message_list.append(node);
+			}
+
+			if (isScrolledIntoView("#message-box") && checkState) {
+				$("html, body").animate({
+					scrollTop: $("#message-box").offset().top+50
+				}, 200);
 			}
 		});
+
 	}
 
 
-	function sendMessage(){
-		var message = $("#message-box").val();
 
-		$.post("/api/v1/chat/message", {message: message, conversation_id: conversation_id}, function() {
-			readMessages();
-		});
-		$("#message-box").val("");
+	function sendMessage(){
+		console.log("sendMessage")
+		var message = $("#message-box").val();
+		if(message.trim() != ""){
+			$.post("/api/v1/chat/message", {message: message, conversation_id: conversation_id}, function() {
+				console.log("before readNewMessages")
+				readMessages();
+			});
+		} else {
+			alert("Może najpierw coś napisz?");
+		}
+		$("#message-box").val("").focus();
+		$("html, body").animate({
+			scrollTop: $("#message-box").offset().top+50
+		}, 200);
+
 	}
 
 	$("#message-box").keydown(function(e){
@@ -78,7 +115,7 @@
 	getTitle();
 	
 
-	//setInterval(readMessages, 500);
+	setInterval(readMessages, 500);
 
 </script>
 </html>

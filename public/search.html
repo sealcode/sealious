@@ -24,7 +24,7 @@
 			if (data.length>0){
 				for(var i in data) {
 					var entry = data[i];
-					var url = "http://localhost/konwersacja.html" + "#" + entry.conversation_id;
+					var url = "/konwersacja.html" + "#" + entry.conversation_id;
 					var node = $("<li>"+entry.message + " " + "<a href='" + url +"'>"+"konwersacja nr: "+ entry.conversation_id +"</a>"+"</li>");
 					message_list.append(node);
 				}
