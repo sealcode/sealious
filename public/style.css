@@ -33,9 +33,9 @@ body{
 	margin:0 auto;
 	background-image: url(/img/logo.png);
 	background-repeat:no-repeat;
-	background-position: 20px 99%;
+	background-position: bottom 10px left 20px;
 	background-size: auto 30px;
-	padding-bottom:80px;
+	padding-bottom:50px;
 	margin-top:40px;
 	animation: fadeIn linear 500ms;
 	animation-iteration-count: 1;
@@ -145,7 +145,10 @@ textarea#message-box {
     width: 83%;
     float: left;
 }
-
+.content {
+    height: auto;
+    overflow: hidden;
+}
 
 /*
 	Animations
