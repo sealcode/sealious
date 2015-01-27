@@ -89,7 +89,7 @@ module.exports.prepare_channel_www_server = function(channel, dispatcher, depend
 		path: url+"/me",
 		handler: function(request, reply){
 			var session_id = request.state.PrometheusSession;
-			var user_id = sessionManager.get_user_id(session_id);
+			var user_id = www_server.get_user_id(session_id);
 			dispatcher.users_get_user_data(user_id)
 			.then(function(user_data){
 				if(user_data){
@@ -111,7 +111,7 @@ module.exports.prepare_channel_www_server = function(channel, dispatcher, depend
 		path: url+"/me",
 		handler: function(request, reply){
 			var session_id = request.state.PrometheusSession;
-			var user_id = sessionManager.get_user_id(session_id);
+			var user_id = www_server.get_user_id(session_id);
 			dispatcher.users_update_user_data(user_id, request.payload)
 			.then(function(){
 				reply("ok!");
