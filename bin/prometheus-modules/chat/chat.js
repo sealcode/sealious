@@ -61,8 +61,8 @@ var Promise = require("bluebird");
 			console.log(me);
 			var p1 = dispatcher.resources_find({user2: me}, "chat_conversation");
 			var p2 = dispatcher.resources_find({user1: me}, "chat_conversation");
-			var p3 = dispatcher.resources_find({acces_mode: "public"}, "chat_conversation");
-			Promise.all([p1,p2]).then(function(response){
+			var p3 = dispatcher.resources_search_by_mode("chat_conversation", "public");
+			Promise.all([p1,p2,p3]).then(function(response){
 				console.log(response);
 				reply(response);
 			})
