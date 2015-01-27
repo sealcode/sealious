@@ -3,9 +3,6 @@ module.exports.prepare_channel_rest = function(channel, dispatcher, dependencies
 	//console.log("\nREST dependencies:", dependencies);
 
 	var www_server = dependencies["channel.www_server"];
-	var sessionManager = dependencies["service.session_manager"];
-
-	console.log(sessionManager);
 
 	channel.add_path = function(url, resource_type_name){
 		www_server.route({
@@ -25,7 +22,7 @@ module.exports.prepare_channel_rest = function(channel, dispatcher, dependencies
 			method: "POST",
 			path: url,
 			handler: function(request, reply){
-				var id_by_session = sessionManager.get_user_id(request.state.PrometheusSession);
+				var id_by_session = www_server.get_user_id(request.state.PrometheusSession);
 				if(id_by_session){
 					dispatcher.resources_create(resource_type_name, request.payload, id_by_session).then(function(response){
 						reply(response.toString());
