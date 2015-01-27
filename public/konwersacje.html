@@ -25,21 +25,20 @@
 	var users;
 	var me;
 
-		
+
 	function create_users_array(callback){
 		$.get("/api/v1/users", function(data){
 			$.get("api/v1/users/me", function(user_data){
 				me = user_data.user_id;
-				console.log(me);
-			for(var i in data){
-				users = data;
-				var entry = data[i];
-				if (entry.user_id != me){
-					$("#user2").append($("<option value='" + entry.user_id + "'>" + entry.username + "</option>"));
+				for(var i in data){
+					users = data;
+					var entry = data[i];
+					if (entry.user_id != me){
+						$("#user2").append($("<option value='" + entry.user_id + "'>" + entry.username + "</option>"));
+					}
 				}
-			}
-			callback(me);
-		});
+				callback(me);
+			});
 		});
 	}
 
@@ -53,23 +52,22 @@
 	}
 	
 
-	function readConversations(me){
+	function readConversations(){
 		$("#lista-konwersacji").html("");
 		$.get("/api/v1/chat/conversation/mine", function(data) {
-			console.log(data);
 			data = data[0].concat(data[1]);
 			for(var i in data) {
 				var entry = data[i];
-				console.log(entry);
 
 				var conversor;
+				console.log("comparing users. me: ", me, "user1:", entry.user1, "user2:", entry.user2);
 				if (me == entry.user1){
 					conversor = findById(users, entry.user2);
 				}else{
 					conversor = findById(users, entry.user1);
 				}
 				
-				var node = $("<li id='"+entry.id+"'><a href='konwersacja.html#"+entry.id+"'>"+entry.title + "</a><i> rozmowa z użytkownikiem: " + conversor + " </i> <button onclick='deleteCoversation("+entry.id+")'>Usuń</button>");
+				var node = $("<li id='"+entry.id+"'><a href='konwersacja.html#"+entry.id+"'>"+entry.title + "</a><i> rozmowa z użytkownikiem: " + conversor + " </i> <button class='negative' onclick='deleteCoversation("+entry.id+")'>Usuń</button>");
 				var selectMode = $("<select class='access_mode'><option value='private' >Prywatna</option><option value='public'>Publiczna</option></select>");
 
 				node.append(selectMode);
@@ -83,14 +81,14 @@
 		var title = $("#title").val();
 		var user2 = $("#user2").val();
 		$.get("api/v1/users/me", function(user_data){
-			me = user_data.user_id;
-		$.post("/api/v1/chat/conversation", {title: title, user2: user2, user1: me}, function(result) {
+			//me = user_data.user_id;
+			$.post("/api/v1/chat/conversation", {title: title, user2: user2, user1: me}, function(result) {
 				if(result){
 					readConversations();
 				} else {
 					document.location.href = "/login.html";
 				}
-		});
+			});
 		});
 	}
 

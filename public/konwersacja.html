@@ -12,12 +12,14 @@
 	<center><h1>Konwersacja: <span class="insert-conversation-name"></span></h1></center>
 	<ul id="lista-wiadomosci">
 	</ul>
-	<input type="text" id="message-box" placeholder="Nowa wiadomość">
+	<textarea id="message-box" placeholder="Nowa wiadomość"></textarea>
 	<button id="confirm" onclick="sendMessage()">Wyślij</button>
 </body>
 <script>
 
 	Auth.redirect_if_not_logged_in();
+
+	var me;
 
 	var conversation_id = document.location.hash.slice(1);	
 
@@ -29,6 +31,13 @@
 		});
 	}
 
+	function getCurrentUserID(){
+		$.get("api/v1/users/me", function(user_data){
+			me = user_data.user_id;
+		});
+	}
+
+
 	function readMessages(){
 		console.log("read messages");
 		var message_list = $("#lista-wiadomosci");
@@ -37,7 +46,12 @@
 			console.log(data);
 			for(var i in data) {
 				var entry = data[i];
-				var node = $("<li>"+entry.message+"</li>");
+				var node;
+				if(entry.owner_id == me){
+					node = $("<li class='message'>"+entry.message+"</li>");
+				} else {
+					node = $("<li class='message incoming'><div class='poitner'></div>"+entry.message+"</li>");
+				}
 				message_list.append(node);
 			}
 		});
@@ -59,10 +73,11 @@
 		}
 	});
 
+	getCurrentUserID();
 	getTitle();
 	readMessages();
 
-	setInterval(readMessages, 500);
+	//setInterval(readMessages, 500);
 
 </script>
 </html>

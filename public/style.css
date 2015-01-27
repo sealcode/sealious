@@ -33,10 +33,13 @@ body{
 	margin:0 auto;
 	background-image: url(/img/logo.png);
 	background-repeat:no-repeat;
-	background-position: 20px 97%;
+	background-position: 20px 99%;
 	background-size: auto 30px;
-	padding-bottom:50px;
+	padding-bottom:80px;
 	margin-top:40px;
+	animation: fadeIn linear 500ms;
+	animation-iteration-count: 1;
+	transform-origin: 50% 50%;
 }
 
 *{
@@ -79,3 +82,90 @@ button.negative{
 *:hover > .show-on-parent-hover{
 	opacity:1;
 }
+
+ul#lista-wiadomosci {
+    overflow: hidden;
+}
+ul .message.incoming {
+    float: right;
+    background: hsl(198, 51%, 70%) !important;
+    border-color: rgba(0,0,0,0.1);
+    text-align: right;
+    margin-right: 18px;
+}
+ul .message {
+    list-style: none;
+    margin-bottom: 10px;
+    width: 80%;
+    color: rgba(255,255,255,1);
+    border-radius: 4px;
+    float: left;
+
+   position: relative;
+   padding: 10px;
+   background: hsl(198, 51%, 50%);
+   -webkit-border-radius: 5px;
+   -moz-border-radius: 5px;
+   border-radius: 5px;
+   -webkit-box-shadow: inset 2px 1px 10px 0px rgba(0,0,0,0.1);
+   -moz-box-shadow: inset 2px 1px 10px 0px rgba(0,0,0,0.1);
+   box-shadow: inset 2px 1px 10px 0px rgba(0,0,0,0.1);
+}
+
+.message:not(.incoming)::after {
+    border-color: transparent hsl(198, 51%, 50%);
+    border-style: solid;
+    border-width: 10px 18px 10px 0;
+    content: "";
+    display: block;
+    left: -18px;
+    position: absolute;
+    top: 5px;
+    width: 0;
+    z-index: 1;
+}
+.incoming:before {
+    border-color: transparent hsl(198, 51%, 70%);
+    border-style: solid;
+    border-width: 10px 0 10px 18px;
+    content: "";
+    display: block;
+    position: absolute;
+    right: -18px !important;
+    top: 5px;
+    width: 0;
+    z-index: 1;
+}
+textarea#message-box + button {
+    float: left;
+    clear: both;
+    margin-top: 10px;
+}
+textarea#message-box {
+    width: 83%;
+    float: left;
+}
+
+
+/*
+	Animations
+ */
+
+@keyframes fadeIn{
+  0% {
+    opacity:0;
+  }
+  25% {
+    opacity:0.25;
+  }
+  50% {
+    opacity:0.5;
+  }
+  75% {
+    opacity:0.75;
+  }
+  100% {
+    opacity:1.0;
+  }
+}
+
