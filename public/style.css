@@ -96,6 +96,7 @@ ul .message.incoming {
 }
 ul .message {
 	list-style: none;
+  margin-left:-20px;
 	margin-bottom: 10px;
 	width: auto;
 	color: rgba(255,255,255,1);
@@ -113,24 +114,24 @@ ul .message {
 .message:not(.incoming)::after {
     border-color: transparent hsl(198, 51%, 50%);
     border-style: solid;
-    border-width: 10px 18px 10px 0;
+    border-width: 0px 18px 20px 0;
     content: "";
     display: block;
     left: -18px;
     position: absolute;
-    top: 5px;
+    top: 0px;
     width: 0;
     z-index: 1;
 }
 .incoming:before {
     border-color: transparent hsl(198, 51%, 70%);
     border-style: solid;
-    border-width: 10px 0 10px 18px;
+    border-width: 0px 0 20px 18px;
     content: "";
     display: block;
     position: absolute;
     right: -18px !important;
-    top: 5px;
+    top: 0px;
     width: 0;
     z-index: 1;
 }
