@@ -33,13 +33,14 @@ body{
 	margin:0 auto;
 	background-image: url(/img/logo.png);
 	background-repeat:no-repeat;
-	background-position: 20px 99%;
+	background-position: bottom 10px left 20px;
 	background-size: auto 30px;
-	padding-bottom:80px;
+	padding-bottom:50px;
 	margin-top:40px;
 	animation: fadeIn linear 500ms;
 	animation-iteration-count: 1;
 	transform-origin: 50% 50%;
+	margin-bottom: 15px;
 }
 
 *{
@@ -94,22 +95,19 @@ ul .message.incoming {
     margin-right: 18px;
 }
 ul .message {
-    list-style: none;
-    margin-bottom: 10px;
-    width: 80%;
-    color: rgba(255,255,255,1);
-    border-radius: 4px;
-    float: left;
-
-   position: relative;
-   padding: 10px;
-   background: hsl(198, 51%, 50%);
-   -webkit-border-radius: 5px;
-   -moz-border-radius: 5px;
-   border-radius: 5px;
-   -webkit-box-shadow: inset 2px 1px 10px 0px rgba(0,0,0,0.1);
-   -moz-box-shadow: inset 2px 1px 10px 0px rgba(0,0,0,0.1);
-   box-shadow: inset 2px 1px 10px 0px rgba(0,0,0,0.1);
+	list-style: none;
+	margin-bottom: 10px;
+	width: auto;
+	color: rgba(255,255,255,1);
+	float: left;
+	word-wrap: break-word;
+	clear: both;
+	position: relative;
+	padding: 10px;
+	background: hsl(198, 51%, 50%);
+	-webkit-box-shadow: inset 0px -5px 10px 0px rgba(0,0,0,0.1);
+	-moz-box-shadow: inset 0px -5px 10px 0px rgba(0,0,0,0.1);
+	box-shadow: inset 0px -5px 10px 0px rgba(0,0,0,0.1);
 }
 
 .message:not(.incoming)::after {
@@ -136,16 +134,33 @@ ul .message {
     width: 0;
     z-index: 1;
 }
-textarea#message-box + button {
+#message-box + button {
     float: left;
     clear: both;
     margin-top: 10px;
 }
-textarea#message-box {
-    width: 83%;
+#message-box {
+    width: 98%;
     float: left;
 }
+.content {
+    height: auto;
+    overflow: hidden;
+}
 
+#registered {
+  display: none;
+  opacity: 1;
+}
+
+#registered:target {
+  color: rgba(0,0,0,0.3);
+  margin:0 auto 15px;
+  width: 190px;
+  display: block;
+  transition-delay: 2s;
+  transition: opacity 200ms easy-in;
+}
 
 /*
 	Animations
@@ -168,4 +183,5 @@ textarea#message-box {
     opacity:1.0;
   }
 }
+
 
