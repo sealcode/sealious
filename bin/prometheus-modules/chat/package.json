@@ -11,8 +11,10 @@
   "prometheus-module-id": "chat",
   "prometheus-required-chips": [
     "channel.www_server",
-    "channel.rest"
+    "channel.rest",
+    "service.session_manager"
   ],
+  
   "prometheus-defined-chips": [
     "resource_type.chat_message", 
     "resource_type.chat_conversation", 
