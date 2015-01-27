@@ -1,23 +1,50 @@
 <html>
-	<head>
-		<meta charset="utf-8">
-		<title>Zalogowany jako...</title>
-		<script src="/jquery.js"></script>
-		<script src="/authorization.js"></script>
-		<link rel="stylesheet" href="/style.css">
-	</head>
-	<body>
-		<a href="/">Menu główne</a>
-		<h2>
-			jesteś zalogowany jako użytkownik: <span class="insert-user-name"></span>
-		</h2>
-	</body>
-	<script>
-		console.log("getting");
-		$.get("/api/v1/users/me", function(response){
-			console.log(response);
-			$(".insert-user-name").html(response.username);
-		})
-	</script>
+<head>
+	<meta charset="utf-8">
+	<title>Zalogowany jako...</title>
+	<script src="/jquery.js"></script>
+	<script src="/authorization.js"></script>
+	<link rel="stylesheet" href="/style.css">
+	<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1, maximum-scale=1">
 
-</html>
+</head>
+<body>
+	<a href="/">Menu główne</a>
+	<h2>
+		jesteś zalogowany jako użytkownik: <span class="insert-user-name"></span>
+	</h2>
+	<input type="text" placeholder="Zmień status" id="username">
+	<button id="confirm" onclick="changeUserStatus()">zapisz</button>
+
+</body>
+<script>
+	console.log("getting");
+	$.get("/api/v1/users/me", function(response){
+		console.log(response);
+		$(".insert-user-name").html(response.username);
+	})
+
+	function changeUserStatus(){
+		var status = $("#status").val();
+
+		$.ajax({
+			url: '/api/v1/users/me',
+			data: {status: status},
+			type: 'PUT',
+			success: function(result){
+				checkData();//co to jest? to jest chyba ten get
+				window.location.href = "/administrator.html";//ocb z tym
+			}
+		});
+	}
+//user.html jest chyba niedokończony
+		function viewUserStatus(){//co by się stało, jakby tego nie bylo i czemu Get nic nie zmienia
+			$("#dane").html("");
+			$.get('/api/v1/users/me', function(data) {
+				$("#status").val(data.status)
+			});
+		}
+
+		viewUserStatus();
+	</script>
+	</html>
