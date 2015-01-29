@@ -2,6 +2,7 @@
 <html>
 <head>
 	<script src="/jquery.js"></script>
+	<script src="/js/buzz.js"></script>
 	<script src="/authorization.js"></script>
 	<meta charset="utf-8">
 	<title>Konwersacja</title>
@@ -20,6 +21,9 @@
 <script>
 
 	Auth.redirect_if_not_logged_in();
+
+	var mySound = new buzz.sound("/sounds/new_message.mp3");
+
 
 	var me;
 
@@ -67,6 +71,7 @@
 						if(entry.owner_id == me){
 							node = $("<li class='message incoming'>"+entry.message+"</li>");
 						} else {
+							mySound.play();
 							node = $("<li class='message'><div class='poitner'></div>"+entry.message+"</li>");
 						}
 						message_list.append(node);
