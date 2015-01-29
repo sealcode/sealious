@@ -2,7 +2,7 @@
 
 module.exports.prepare_resource_type_chat_message = function(chat_message){
 	chat_message.add_fields([
-		{name: "from", 		type: "text", required:true},//should be an association to User
+		{name: "from", 		type: "text" },//should be an association to User | was "required: true"
 		{name: "message", 	type: "text", required: true},
 		{name: "date", 		type: "date"},
 		{name: "order_in_conversation", type: "int"},
