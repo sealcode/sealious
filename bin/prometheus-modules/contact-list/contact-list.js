@@ -3,7 +3,7 @@ var path = require("path");
 module.exports.prepare_resource_type_contact = function(chat_conversation){
 	chat_conversation.add_fields([
 		{name: "name", type: "text", required: true},
-		{name: "email", type: "text", required: true},
+		{name: "email", type: "email", required: true},
 		{name: "phone_number", type:"text"}
 	]);
 }
