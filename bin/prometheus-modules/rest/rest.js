@@ -24,8 +24,12 @@ module.exports.prepare_channel_rest = function(channel, dispatcher, dependencies
 			handler: function(request, reply){
 				var id_by_session = www_server.get_user_id(request.state.PrometheusSession);
 				if(id_by_session){
-					dispatcher.resources_create(resource_type_name, request.payload, id_by_session).then(function(response){
+					dispatcher.resources_create(resource_type_name, request.payload, id_by_session)
+					.then(function(response){
 						reply(response.toString());
+					})
+					.catch(function(error) {
+						reply(error).statusCode = 422;
 					});
 				} else {
 					reply("not logged in");
