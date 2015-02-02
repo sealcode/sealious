@@ -59,6 +59,7 @@
 		return username;
 	}
 
+
 	var lastMessageId = -1;
 
 	function isScrolledIntoView(elem)
@@ -84,7 +85,6 @@
 					var node;
 					if(entry.message.trim() != ""){
 						var username = getUsername(entry.owner_id);
-						console.log(username.responseJSON);
 						if(entry.owner_id == me){
 							node = $("<li class='message incoming'><div class='username'>"+username+":</div>"+entry.message+"</li>");
 						} else {
@@ -98,6 +98,7 @@
 					lastMessageId = data[i].id;	
 				}
 			}
+
 
 			if (isScrolledIntoView("#message-box") && checkState) {
 				$("html, body").animate({
@@ -138,7 +139,7 @@
 	getTitle();
 	
 
-	//setInterval(readMessages, 500);
+	setInterval(readMessages, 500);
 
 </script>
 </html>
