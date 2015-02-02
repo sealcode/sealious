@@ -56,7 +56,7 @@
 	function readConversations(){
 		$("#lista-konwersacji").html("");
 		$.get("/api/v1/chat/conversation/mine", function(data) {
-			data = data[0].concat(data[1]).concat(data[2]);
+			data = deleteDuplicates(data[0].concat(data[1]).concat(data[2]));
 			for(var i in data) {
 				var entry = data[i];
 				var conversor;
@@ -118,6 +118,18 @@
 			callback(data);
 		});
 	}
+
+	function deleteDuplicates(array) {
+	    var a = array.concat();
+	    for(var i=0; i<a.length; ++i) {
+	        for(var j=i+1; j<a.length; ++j) {
+	            if(a[i].id === a[j].id)
+	                a.splice(j--, 1);
+	        }
+	    }
+
+	    return a;
+	};
 
 	$(document).ready(function(){
 		$(document).on("change", "select.access_mode", function(e){
