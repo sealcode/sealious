@@ -23,6 +23,7 @@
 	Auth.redirect_if_not_logged_in();
 
 	var mySound = new buzz.sound("/sounds/new_message.mp3");
+
 	var me;
 
 	var conversation_id = document.location.hash.slice(1);	
@@ -53,7 +54,7 @@
 		var elemBottom = elemTop + $(elem).height();
 
 		return ((elemBottom <= docViewBottom) && (elemTop >= docViewTop));
-	}
+	} 
 
 	function readMessages(){
 		console.log("read messages");
