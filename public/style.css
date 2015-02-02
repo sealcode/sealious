@@ -162,6 +162,10 @@ ul .message {
   transition-delay: 2s;
   transition: opacity 200ms easy-in;
 }
+.username {
+    font-size: 10px;
+    color: rgba(255,255,255,0.6);
+}
 
 /*
 	Animations

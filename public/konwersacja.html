@@ -43,6 +43,22 @@
 		});	
 	}
 
+	function getUsername(user_id){
+		var username;
+			$.ajax({
+		       url: "api/v1/users/"+user_id,
+		       type: 'GET',
+		       dataType: "json",
+		       async: false,
+		       contentType: "application/json; charset=utf-8",
+		       success: function(data){
+		       	username = data.username;
+		       }
+		    });
+
+		return username;
+	}
+
 	var lastMessageId = -1;
 
 	function isScrolledIntoView(elem)
@@ -67,11 +83,13 @@
 					var entry = data[i];
 					var node;
 					if(entry.message.trim() != ""){
+						var username = getUsername(entry.owner_id);
+						console.log(username.responseJSON);
 						if(entry.owner_id == me){
-							node = $("<li class='message incoming'>"+entry.message+"</li>");
+							node = $("<li class='message incoming'><div class='username'>"+username+":</div>"+entry.message+"</li>");
 						} else {
 							mySound.play();
-							node = $("<li class='message'><div class='poitner'></div>"+entry.message+"</li>");
+							node = $("<li class='message'><div class='username'>"+username+":</div>"+entry.message+"</li>");
 						}
 						message_list.append(node);
 						checkState = true;
@@ -120,7 +138,7 @@
 	getTitle();
 	
 
-	setInterval(readMessages, 500);
+	//setInterval(readMessages, 500);
 
 </script>
 </html>
