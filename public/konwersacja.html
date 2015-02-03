@@ -17,9 +17,11 @@
         <center>
             <h1>Konwersacja: <span class="insert-conversation-name"></span></h1>
         </center>
-        <ul id="lista-wiadomosci"></ul>
+        <ul id="lista-wiadomosci">
+        	<svg  class="prometheus-loading-circle" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" version="1.1" width="40" height="40" id="svg2"><defs id="defs4" /><g  transform="translate(0,-1012.3622)"><path d="m 37.307924,20.708296 a 16.102993,16.102993 0 1 1 -32.2059858,0 16.102993,16.102993 0 1 1 32.2059858,0 z" transform="translate(-1.2049313,1011.6539)" id="path2991"/></g>
+        	</svg>
+        </ul>
         <input type="text" id="message-box" placeholder="Nowa wiadomość">
-        </textarea>
         <button id="confirm" onclick="sendMessage()">Wyślij</button>
         <button style="float:left; clear:both;margin-top:10px;" onclick="$('.settings').css('display','inline-block');">Ustawienia</button>
     </div>
@@ -111,6 +113,7 @@ function readMessages() {
     console.log("read messages");
     var message_list = $("#lista-wiadomosci");
     $.get(base_url, function(data) {
+    	$(".prometheus-loading-circle").css({display: "none"});
         var checkState = false;
         console.log(data);
         for (var i in data) {
@@ -202,6 +205,7 @@ getTitle();
 downloadUserData(function() {
     setInterval(readMessages, 500);
 })
+
 </script>
 
 </html>
