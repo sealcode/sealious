@@ -147,6 +147,7 @@ ul .message {
 .content {
   height: auto;
   overflow: hidden;
+  position:relative;
 }
 
 #registered {
@@ -185,10 +186,19 @@ ul .message {
  * circle loading animation
  */
 
+.loading-container{
+  text-align:center;
+  opacity:1;
+  will-change:opacity;
+  transition:opacity 300ms;
+  height:40px;
+  width:100%;
+}
+
 .prometheus-loading-circle{
   animation: rotate 2s infinite linear;
   margin: 0 auto;
-  display:block;
+  display:inline-block;
 }
 
 @keyframes rotate{
@@ -212,6 +222,22 @@ ul .message {
   animation: loading-circle 2s infinite;
 }
 
+.loading-container.not-loading{
+  opacity:0!important;
+  position:absolute;
+}
+
+@keyframes fade-out{
+  0%{
+    opacity:1!important;
+  }
+  99%{
+    opacity:0!important;
+  }
+  100%{
+    display:none;
+  }
+}
 
  @keyframes loading-circle{
   0% {
