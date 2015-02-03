@@ -43,20 +43,20 @@
 		});	
 	}
 
-	function getUsername(user_id){
-		var username;
-			$.ajax({
-		       url: "api/v1/users/"+user_id,
-		       type: 'GET',
-		       dataType: "json",
-		       async: false,
-		       contentType: "application/json; charset=utf-8",
-		       success: function(data){
-		       	username = data.username;
-		       }
-		    });
+	var users = {};
 
-		return username;
+	function downloadUserData(callback){
+		$.get("/api/v1/users", function(data){
+			for(var i in data){
+				users[data[i].user_id] = data[i];
+			}
+			callback();
+		})
+	}
+
+	function getUsername(user_id){
+		console.log("got request for user_id", user_id);
+		return (users[user_id] && users[user_id].username) || "unknown";
 	}
 
 
@@ -138,8 +138,9 @@
 	getCurrentUserID(readMessages);
 	getTitle();
 	
-
-	setInterval(readMessages, 500);
+	downloadUserData(function(){
+		setInterval(readMessages, 500);		
+	})
 
 </script>
 </html>
