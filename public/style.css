@@ -1,23 +1,23 @@
 @font-face {
-    font-family: 'Open Sans Light';
-    src: url('fonts/opensans_light_polish/OpenSans-Light-webfont.eot');
-    src: url('fonts/opensans_light_polish/OpenSans-Light-webfont.eot?#iefix') format('embedded-opentype'),
-         url('fonts/opensans_light_polish/OpenSans-Light-webfont.woff') format('woff'),
-         url('fonts/opensans_light_polish/OpenSans-Light-webfont.ttf') format('truetype'),
-         url('fonts/opensans_light_polish/OpenSans-Light-webfont.svg#open_sansbold') format('svg');
-    font-weight: normal;
-    font-style: normal;
+  font-family: 'Open Sans Light';
+  src: url('fonts/opensans_light_polish/OpenSans-Light-webfont.eot');
+  src: url('fonts/opensans_light_polish/OpenSans-Light-webfont.eot?#iefix') format('embedded-opentype'),
+  url('fonts/opensans_light_polish/OpenSans-Light-webfont.woff') format('woff'),
+  url('fonts/opensans_light_polish/OpenSans-Light-webfont.ttf') format('truetype'),
+  url('fonts/opensans_light_polish/OpenSans-Light-webfont.svg#open_sansbold') format('svg');
+  font-weight: normal;
+  font-style: normal;
 }
 
 @font-face {
-    font-family: 'Open Sans Light Regular';
-    src: url('fonts/opensans_regular_polish/OpenSans-Regular-webfont.eot');
-    src: url('fonts/opensans_regular_polish/OpenSans-Regular-webfont.eot?#iefix') format('embedded-opentype'),
-         url('fonts/opensans_regular_polish/OpenSans-Regular-webfont.woff') format('woff'),
-         url('fonts/opensans_regular_polish/OpenSans-Regular-webfont.ttf') format('truetype'),
-         url('fonts/opensans_regular_polish/OpenSans-Regular-webfont.svg#open_sansbold') format('svg');
-    font-weight: normal;
-    font-style: normal;
+  font-family: 'Open Sans Light Regular';
+  src: url('fonts/opensans_regular_polish/OpenSans-Regular-webfont.eot');
+  src: url('fonts/opensans_regular_polish/OpenSans-Regular-webfont.eot?#iefix') format('embedded-opentype'),
+  url('fonts/opensans_regular_polish/OpenSans-Regular-webfont.woff') format('woff'),
+  url('fonts/opensans_regular_polish/OpenSans-Regular-webfont.ttf') format('truetype'),
+  url('fonts/opensans_regular_polish/OpenSans-Regular-webfont.svg#open_sansbold') format('svg');
+  font-weight: normal;
+  font-style: normal;
 }
 
 html{
@@ -53,13 +53,13 @@ strong{
 }
 
 a{
-	color: hsl(198, 51%, 50%);
+	color: hsl(194, 51%, 50%);
 	text-decoration:none;
 	font-family: 'Open Sans Light Regular';
 }
 
 button{
-	border-color: hsl(198, 51%, 50%);
+	border-color: hsl(194, 51%, 50%);
 	border-style:solid;
 	border-width:1px;
 	border-radius: 2px;
@@ -76,77 +76,77 @@ button.negative{
 .show-on-parent-hover{
 	/*
 		opacity:0;
-	 */
-	transition: all 300ms;
-}
+    */
+    transition: all 300ms;
+  }
 
-*:hover > .show-on-parent-hover{
-	opacity:1;
-}
+  *:hover > .show-on-parent-hover{
+   opacity:1;
+ }
 
-ul#lista-wiadomosci {
-    overflow: hidden;
+ ul#lista-wiadomosci {
+  overflow: hidden;
 }
 ul .message.incoming {
-    float: right;
-    background: hsl(198, 51%, 70%) !important;
-    border-color: rgba(0,0,0,0.1);
-    text-align: right;
-    margin-right: 18px;
+  float: right;
+  background: hsl(198, 51%, 70%) !important;
+  border-color: rgba(0,0,0,0.1);
+  text-align: right;
+  margin-right: 18px;
 }
 ul .message {
 	list-style: none;
   margin-left:-20px;
-	margin-bottom: 10px;
-	width: auto;
-	color: rgba(255,255,255,1);
-	float: left;
-	word-wrap: break-word;
-	clear: both;
-	position: relative;
-	padding: 10px;
-	background: hsl(198, 51%, 50%);
-	-webkit-box-shadow: inset 0px -5px 10px 0px rgba(0,0,0,0.1);
-	-moz-box-shadow: inset 0px -5px 10px 0px rgba(0,0,0,0.1);
-	box-shadow: inset 0px -5px 10px 0px rgba(0,0,0,0.1);
+  margin-bottom: 10px;
+  width: auto;
+  color: rgba(255,255,255,1);
+  float: left;
+  word-wrap: break-word;
+  clear: both;
+  position: relative;
+  padding: 10px;
+  background: hsl(198, 51%, 50%);
+  -webkit-box-shadow: inset 0px -5px 10px 0px rgba(0,0,0,0.1);
+  -moz-box-shadow: inset 0px -5px 10px 0px rgba(0,0,0,0.1);
+  box-shadow: inset 0px -5px 10px 0px rgba(0,0,0,0.1);
 }
 
 .message:not(.incoming)::after {
-    border-color: transparent hsl(198, 51%, 50%);
-    border-style: solid;
-    border-width: 0px 18px 20px 0;
-    content: "";
-    display: block;
-    left: -18px;
-    position: absolute;
-    top: 0px;
-    width: 0;
-    z-index: 1;
+  border-color: transparent hsl(198, 51%, 50%);
+  border-style: solid;
+  border-width: 0px 18px 20px 0;
+  content: "";
+  display: block;
+  left: -18px;
+  position: absolute;
+  top: 0px;
+  width: 0;
+  z-index: 1;
 }
 .incoming:before {
-    border-color: transparent hsl(198, 51%, 70%);
-    border-style: solid;
-    border-width: 0px 0 20px 18px;
-    content: "";
-    display: block;
-    position: absolute;
-    right: -18px !important;
-    top: 0px;
-    width: 0;
-    z-index: 1;
+  border-color: transparent hsl(198, 51%, 70%);
+  border-style: solid;
+  border-width: 0px 0 20px 18px;
+  content: "";
+  display: block;
+  position: absolute;
+  right: -18px !important;
+  top: 0px;
+  width: 0;
+  z-index: 1;
 }
 #message-box + button {
-    float: left;
-    clear: both;
-    margin-top: 10px;
+  float: left;
+  clear: both;
+  margin-top: 10px;
 }
 #message-box {
-    width: 98%;
-    float: left;
+  width: 98%;
+  float: left;
 }
 .content {
-    height: auto;
-    overflow: hidden;
+  height: auto;
+  overflow: hidden;
 }
 
 #registered {
@@ -163,30 +163,64 @@ ul .message {
   transition: opacity 200ms easy-in;
 }
 .username {
-    font-size: 10px;
-    color: rgba(255,255,255,0.6);
+  font-size: 10px;
+  color: rgba(255,255,255,0.6);
 }
 
 /*
 	Animations
  */
 
-@keyframes fadeIn{
+ @keyframes fadeIn{
   0% {
     opacity:0;
   }
-  25% {
-    opacity:0.25;
-  }
-  50% {
-    opacity:0.5;
-  }
-  75% {
-    opacity:0.75;
-  }
   100% {
-    opacity:1.0;
+    opacity:1;
   }
 }
 
 
+/**
+ * circle loading animation
+ */
+
+.prometheus-loading-circle{
+  animation: rotate 2s infinite linear;
+}
+
+@keyframes rotate{
+  from{
+    transform: rotateZ(0deg);
+  }
+  to{
+    transform: rotateZ(360deg);
+  }
+}
+
+.prometheus-loading-circle path{
+  fill: none;
+  stroke: #669FB1;
+  stroke-width: 4.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-opacity: 1;
+  stroke-dasharray: 19;
+  stroke-dashoffset: 0;
+  animation: loading-circle 2s infinite;
+}
+
+
+ @keyframes loading-circle{
+  0% {
+    stroke-dashoffset: 0;
+    stroke-dasharray:15;
+  }
+  50% {
+    stroke-dasharray:60;
+  }
+  100% {
+    stroke-dashoffset: 10;
+    stroke-dasharray:15;
+  }
+}
