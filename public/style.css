@@ -193,6 +193,7 @@ ul .message {
   transition:opacity 300ms;
   height:40px;
   width:100%;
+  left:0;
 }
 
 .prometheus-loading-circle{
