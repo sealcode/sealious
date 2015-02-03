@@ -37,7 +37,7 @@ body{
 	background-size: auto 30px;
 	padding-bottom:50px;
 	margin-top:40px;
-	animation: fadeIn linear 500ms;
+	animation: fadeIn linear 400ms;
 	animation-iteration-count: 1;
 	transform-origin: 50% 50%;
 	margin-bottom: 15px;
@@ -87,29 +87,35 @@ button.negative{
 ul#lista-wiadomosci {
     overflow: hidden;
 }
+
 ul .message.incoming {
-    float: right;
-    background: hsl(198, 51%, 70%) !important;
-    border-color: transparent hsl(198, 51%, 70%);
-    text-align: right;
-    margin-right: 18px;
+  float: right;
+  background: hsl(198, 51%, 70%) !important;
+  border-color: transparent hsl(198, 51%, 70%);
+  text-align: right;
+  margin-right: 18px;
+  animation-name: message-enter-right;
 }
+
 ul .message {
 	list-style: none;
   margin-left:-20px;
-	margin-bottom: 10px;
-	width: auto;
-	color: rgba(255,255,255,1);
-	float: left;
-	word-wrap: break-word;
-	clear: both;
-	position: relative;
-	padding: 10px;
-	background: hsl(198, 51%, 50%);
-	-webkit-box-shadow: inset 0px -5px 10px 0px rgba(0,0,0,0.1);
-	-moz-box-shadow: inset 0px -5px 10px 0px rgba(0,0,0,0.1);
-	box-shadow: inset 0px -5px 10px 0px rgba(0,0,0,0.1);
+  margin-bottom: 10px;
+  width: auto;
+  color: rgba(255,255,255,1);
+  float: left;
+  word-wrap: break-word;
+  clear: both;
+  position: relative;
+  padding: 10px;
+  background: hsl(198, 51%, 50%);
+  -webkit-box-shadow: inset 0px -5px 10px 0px rgba(0,0,0,0.1);
+  -moz-box-shadow: inset 0px -5px 10px 0px rgba(0,0,0,0.1);
+  box-shadow: inset 0px -5px 10px 0px rgba(0,0,0,0.1);
   border-color: transparent hsl(198, 51%, 50%);
+  animation-fill-mode: both;
+   animation-duration: 400ms;
+  animation-name: message-enter-left;
 }
 
 
@@ -147,8 +153,9 @@ ul .message {
     float: left;
 }
 .content {
-    height: auto;
-    overflow: hidden;
+  height: auto;
+  overflow: hidden;
+  position:relative;
 }
 
 #registered {
@@ -322,5 +329,3 @@ ul .message {
   animation-delay:400ms;
   animation-duration:600ms;
 }
-
-
