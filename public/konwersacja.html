@@ -1,146 +1,207 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-	<script src="/js/jquery.js"></script>
-	<script src="/js/buzz.js"></script>
-	<script src="/js/authorization.js"></script>
-	<meta charset="utf-8">
-	<title>Konwersacja</title>
-	<link rel="stylesheet" href="/style.css">
-	<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1, maximum-scale=1">
+    <script src="/js/jquery.js"></script>
+    <script src="/js/buzz.js"></script>
+    <script src="/js/authorization.js"></script>
+    <meta charset="utf-8">
+    <title>Konwersacja</title>
+    <link rel="stylesheet" href="/style.css">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1, maximum-scale=1">
 </head>
+
 <body style="max-width:25rem;">
-	<div class="content">
-		<a href="/">Menu główne</a> > <a href="/konwersacje.html">Konwersacje</a>
-		<center><h1>Konwersacja: <span class="insert-conversation-name"></span></h1></center>
-		<ul id="lista-wiadomosci"></ul>
-		<input type="text" id="message-box" placeholder="Nowa wiadomość"></textarea>
-		<button id="confirm" onclick="sendMessage()">Wyślij</button>
-	</div>
+    <div class="content">
+        <a href="/">Menu główne</a> > <a href="/konwersacje.html">Konwersacje</a>
+        <center>
+            <h1>Konwersacja: <span class="insert-conversation-name"></span></h1>
+        </center>
+        <ul id="lista-wiadomosci"></ul>
+        <input type="text" id="message-box" placeholder="Nowa wiadomość">
+        </textarea>
+        <button id="confirm" onclick="sendMessage()">Wyślij</button>
+        <button style="float:left; clear:both;margin-top:10px;" onclick="$('.settings').css('display','inline-block');">Ustawienia</button>
+    </div>
+
+    <div class="settings">
+        <h2>Ustawienia chatu</h2>
+        <section>
+            <h5>Kolory</h5>
+            <ul>
+                <li>Chmurka wiadomości:
+                    <input type="color" id="color" value="#3E9AC1">
+                </li>
+            </ul>
+        </section>
+        <!-- <section>
+            <h5>Wyświetlanie wiadomości:</h5>
+            <ul>
+                <li>Moje wiadomości:
+                    <select>
+                        <option selected>po prawej</option>
+                        <option>po lewej</option>
+                    </select>
+                </li>
+            </ul>
+        </section> -->
+        <button id="close">Zamknij</button>
+    </div>
 </body>
 <script>
+Auth.redirect_if_not_logged_in();
 
-	Auth.redirect_if_not_logged_in();
+var me;
+var conversation_id = document.location.hash.slice(1);
+var base_url = "/api/v1/chat/conversation/" + conversation_id + "/messages";
 
-	var mySound = new buzz.sound("/sounds/new_message.mp3");
+/*
+	settings
+*/
+var color = "#3E9AC1";
+var mySound = new buzz.sound("/sounds/new_message.mp3");
 
-	var me;
+/*
+	functions
+*/
 
-	var conversation_id = document.location.hash.slice(1);	
+function getTitle() {
+    $.get("/api/v1/chat/conversation/" + conversation_id, function(data) {
+        $(".insert-conversation-name").text(data.title);
+    });
+}
 
-	var base_url = "/api/v1/chat/conversation/" + conversation_id  + "/messages";
+function getCurrentUserID(callback) {
+    $.get("api/v1/users/me", function(user_data) {
+        me = user_data.user_id;
+        callback();
+    });
+}
 
-	function getTitle() {
-		$.get("/api/v1/chat/conversation/"+conversation_id, function(data) {
-			$(".insert-conversation-name").text(data.title);
-		});
-	}
+var users = {};
 
-	function getCurrentUserID(callback){
-		$.get("api/v1/users/me", function(user_data){
-			me = user_data.user_id;
-			callback();
-		});	
-	}
+function downloadUserData(callback) {
+    $.get("/api/v1/users", function(data) {
+        for (var i in data) {
+            users[data[i].user_id] = data[i];
+        }
+        callback();
+    })
+}
 
-	var users = {};
-
-	function downloadUserData(callback){
-		$.get("/api/v1/users", function(data){
-			for(var i in data){
-				users[data[i].user_id] = data[i];
-			}
-			callback();
-		})
-	}
-
-	function getUsername(user_id){
-		console.log("got request for user_id", user_id);
-		return (users[user_id] && users[user_id].username) || "unknown";
-	}
-
-
-	var lastMessageId = -1;
-
-	function isScrolledIntoView(elem)
-	{
-		var docViewTop = $(window).scrollTop();
-		var docViewBottom = docViewTop + $(window).height();
-
-		var elemTop = $(elem).offset().top;
-		var elemBottom = elemTop + $(elem).height();
-
-		return ((elemBottom <= docViewBottom) && (elemTop >= docViewTop));
-	} 
-
-	function readMessages(){
-		console.log("read messages");
-		var message_list = $("#lista-wiadomosci");
-		$.get(base_url, function(data) {
-			var checkState = false;		
-			console.log(data);
-			for(var i in data) {
-				if (lastMessageId < data[i].id) {
-					var entry = data[i];
-					var node;
-					if(entry.message.trim() != ""){
-						var username = getUsername(entry.owner_id);
-						if(entry.owner_id == me){
-							node = $("<li class='message incoming'><div class='username'>"+username+":</div>"+entry.message+"</li>");
-						} else {
-							mySound.play();
-							node = $("<li class='message'><div class='username'>"+username+":</div>"+entry.message+"</li>");
-						}
-						message_list.append(node);
-						checkState = true;
-
-					}
-					lastMessageId = data[i].id;	
-				}
-			}
+function getUsername(user_id) {
+    console.log("got request for user_id", user_id);
+    return (users[user_id] && users[user_id].username) || "unknown";
+}
 
 
-			if (isScrolledIntoView("#message-box") && checkState) {
-				$("html, body").animate({
-					scrollTop: $("#message-box").offset().top+50
-				}, 200);
-			}
-		});
+var lastMessageId = -1;
 
-	}
+function isScrolledIntoView(elem) {
+    var docViewTop = $(window).scrollTop();
+    var docViewBottom = docViewTop + $(window).height();
+
+    var elemTop = $(elem).offset().top;
+    var elemBottom = elemTop + $(elem).height();
+
+    return ((elemBottom <= docViewBottom) && (elemTop >= docViewTop));
+}
+
+function readMessages() {
+    console.log("read messages");
+    var message_list = $("#lista-wiadomosci");
+    $.get(base_url, function(data) {
+        var checkState = false;
+        console.log(data);
+        for (var i in data) {
+            if (lastMessageId < data[i].id) {
+                var entry = data[i];
+                var node;
+                if (entry.message.trim() != "") {
+                    var username = getUsername(entry.owner_id);
+                    if (entry.owner_id == me) {
+                        node = $("<li class='message incoming' style='background-color: " + shadeColor(color, 0.5) + " !important; border-color: transparent " + shadeColor(color, 0.5) + " !important;'><div class='username'>" + username + ":</div>" + entry.message + "</li>");
+                    } else {
+                        mySound.play();
+                        node = $("<li class='message' style='background-color: " + color + " !important; border-color: transparent " + color + " !important;'><div class='username'>" + username + ":</div>" + entry.message + "</li>");
+                    }
+                    message_list.append(node);
+                    checkState = true;
+
+                }
+                lastMessageId = data[i].id;
+            }
+        }
 
 
+        if (isScrolledIntoView("#message-box") && checkState) {
+            $("html, body").animate({
+                scrollTop: $("#message-box").offset().top + 50
+            }, 200);
+        }
+    });
 
-	function sendMessage(){
-		console.log("sendMessage")
-		var message = $("#message-box").val();
-		if(message.trim() != ""){
-			$.post("/api/v1/chat/message", {message: message, conversation_id: conversation_id}, function() {
-				console.log("before readNewMessages")
-				readMessages();
-			});
-		} else {
-			alert("Może najpierw coś napisz?");
-		}
-		$("#message-box").val("").focus();
-		$("html, body").animate({
-			scrollTop: $("#message-box").offset().top+50
-		}, 200);
+}
 
-	}
+function sendMessage() {
+    console.log("sendMessage")
+    var message = $("#message-box").val();
+    if (message.trim() != "") {
+        $.post("/api/v1/chat/message", {
+            message: message,
+            conversation_id: conversation_id
+        }, function() {
+            console.log("before readNewMessages")
+            readMessages();
+        });
+    } else {
+        alert("Może najpierw coś napisz?");
+    }
+    $("#message-box").val("").focus();
+    $("html, body").animate({
+        scrollTop: $("#message-box").offset().top + 50
+    }, 200);
 
-	$("#message-box").keydown(function(e){
-		if(e.which==13){
-			sendMessage();
-		}
-	});
+}
 
-	getCurrentUserID(readMessages);
-	getTitle();
-	
-	downloadUserData(function(){
-		setInterval(readMessages, 500);		
-	})
+function shadeColor(color, percent) {
+    var f = parseInt(color.slice(1), 16),
+        t = percent < 0 ? 0 : 255,
+        p = percent < 0 ? percent * -1 : percent,
+        R = f >> 16,
+        G = f >> 8 & 0x00FF,
+        B = f & 0x0000FF;
+    return "#" + (0x1000000 + (Math.round((t - R) * p) + R) * 0x10000 + (Math.round((t - G) * p) + G) * 0x100 + (Math.round((t - B) * p) + B)).toString(16).slice(1);
+}
 
+$("#message-box").keydown(function(e) {
+    if (e.which == 13) {
+        sendMessage();
+    }
+});
+
+$("#color").on("input", function() {
+    color = $(this).val();
+
+    $("li.message.incoming").each(function() {
+		$(this).attr("style", "background-color: " + shadeColor(color, 0.5) + " !important; border-color: transparent " + shadeColor(color, 0.5) + " !important;");
+    });
+
+    $("li.message:not(.incoming)").each(function(){
+    	$(this).attr("style", "background-color: " + color + " !important; border-color: transparent " + color + " !important;");
+    });
+});
+$("button#close").click(function() {
+    var section = $(this).parent();
+    $(section).css("display", "none");
+})
+
+getCurrentUserID(readMessages);
+getTitle();
+
+downloadUserData(function() {
+    setInterval(readMessages, 500);
+})
 </script>
+
 </html>
