@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<script src="/jquery.js"></script>
-	<script src="/authorization.js"></script>
+	<script src="/js/jquery.js"></script>
+	<script src="/js/buzz.js"></script>
+	<script src="/js/authorization.js"></script>
 	<meta charset="utf-8">
 	<title>Konwersacja</title>
 	<link rel="stylesheet" href="/style.css">
@@ -11,8 +12,11 @@
 <body style="max-width:25rem;">
 	<div class="content">
 		<a href="/">Menu główne</a> > <a href="/konwersacje.html">Konwersacje</a>
-		<center><h1>Konwersacja: <span class="insert-conversation-name"></span></h1></center>
-		<ul id="lista-wiadomosci"></ul>
+		<h1>Konwersacja: <span class="insert-conversation-name"></span></h1>
+		<ul id="lista-wiadomosci">
+			<svg  class="prometheus-loading-circle" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" version="1.1" width="40" height="40" id="svg2"><defs id="defs4" /><g  transform="translate(0,-1012.3622)"><path d="m 37.307924,20.708296 a 16.102993,16.102993 0 1 1 -32.2059858,0 16.102993,16.102993 0 1 1 32.2059858,0 z" transform="translate(-1.2049313,1011.6539)" id="path2991"/></g>
+			</svg>
+		</ul>
 		<input type="text" id="message-box" placeholder="Nowa wiadomość"></textarea>
 		<button id="confirm" onclick="sendMessage()">Wyślij</button>
 	</div>
@@ -20,6 +24,8 @@
 <script>
 
 	Auth.redirect_if_not_logged_in();
+
+	var mySound = new buzz.sound("/sounds/new_message.mp3");
 
 	var me;
 
@@ -40,6 +46,23 @@
 		});	
 	}
 
+	var users = {};
+
+	function downloadUserData(callback){
+		$.get("/api/v1/users", function(data){
+			for(var i in data){
+				users[data[i].user_id] = data[i];
+			}
+			callback();
+		})
+	}
+
+	function getUsername(user_id){
+		console.log("got request for user_id", user_id);
+		return (users[user_id] && users[user_id].username) || "unknown";
+	}
+
+
 	var lastMessageId = -1;
 
 	function isScrolledIntoView(elem)
@@ -51,12 +74,13 @@
 		var elemBottom = elemTop + $(elem).height();
 
 		return ((elemBottom <= docViewBottom) && (elemTop >= docViewTop));
-	}
+	} 
 
 	function readMessages(){
 		console.log("read messages");
 		var message_list = $("#lista-wiadomosci");
 		$.get(base_url, function(data) {
+			$(".prometheus-loading-circle").css({display: "none"});
 			var checkState = false;		
 			console.log(data);
 			for(var i in data) {
@@ -64,10 +88,12 @@
 					var entry = data[i];
 					var node;
 					if(entry.message.trim() != ""){
+						var username = getUsername(entry.owner_id);
 						if(entry.owner_id == me){
-							node = $("<li class='message incoming'>"+entry.message+"</li>");
+							node = $("<li class='message incoming'><div class='username'>"+username+":</div>"+entry.message+"</li>");
 						} else {
-							node = $("<li class='message'><div class='poitner'></div>"+entry.message+"</li>");
+							mySound.play();
+							node = $("<li class='message'><div class='username'>"+username+":</div>"+entry.message+"</li>");
 						}
 						message_list.append(node);
 						checkState = true;
@@ -76,6 +102,7 @@
 					lastMessageId = data[i].id;	
 				}
 			}
+
 
 			if (isScrolledIntoView("#message-box") && checkState) {
 				$("html, body").animate({
@@ -115,8 +142,9 @@
 	getCurrentUserID(readMessages);
 	getTitle();
 	
-
-	setInterval(readMessages, 500);
+	downloadUserData(function(){
+		setInterval(readMessages, 500);		
+	})
 
 </script>
 </html>
