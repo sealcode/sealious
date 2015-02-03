@@ -200,6 +200,7 @@ ul .message {
   height:40px;
   width:100%;
   left:0;
+  pointer-events:none;
 }
 
 .prometheus-loading-circle{
