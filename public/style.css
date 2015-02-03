@@ -187,6 +187,8 @@ ul .message {
 
 .prometheus-loading-circle{
   animation: rotate 2s infinite linear;
+  margin: 0 auto;
+  display:block;
 }
 
 @keyframes rotate{
