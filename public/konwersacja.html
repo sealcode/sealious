@@ -78,6 +78,8 @@
 		return ((elemBottom <= docViewBottom) && (elemTop >= docViewTop));
 	} 
 
+	var first_load = true;
+
 	function readMessages(){
 		console.log("read messages");
 		var message_list = $("#lista-wiadomosci");
@@ -105,6 +107,12 @@
 				}
 			}
 
+			if(first_load){
+				first_load=false;
+				message_list[0].classList.add("first-load");
+			}else{
+				message_list[0].classList.remove("first-load");
+			}
 
 			if (isScrolledIntoView("#message-box") && checkState) {
 				$("html, body").animate({
