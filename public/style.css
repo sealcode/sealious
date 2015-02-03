@@ -37,7 +37,7 @@ body{
 	background-size: auto 30px;
 	padding-bottom:50px;
 	margin-top:40px;
-	animation: fadeIn linear 500ms;
+	animation: fadeIn linear 400ms;
 	animation-iteration-count: 1;
 	transform-origin: 50% 50%;
 	margin-bottom: 15px;
@@ -87,13 +87,16 @@ button.negative{
  ul#lista-wiadomosci {
   overflow: hidden;
 }
+
 ul .message.incoming {
   float: right;
   background: hsl(198, 51%, 70%) !important;
   border-color: rgba(0,0,0,0.1);
   text-align: right;
   margin-right: 18px;
+  animation-name: message-enter-right;
 }
+
 ul .message {
 	list-style: none;
   margin-left:-20px;
@@ -109,6 +112,9 @@ ul .message {
   -webkit-box-shadow: inset 0px -5px 10px 0px rgba(0,0,0,0.1);
   -moz-box-shadow: inset 0px -5px 10px 0px rgba(0,0,0,0.1);
   box-shadow: inset 0px -5px 10px 0px rgba(0,0,0,0.1);
+  animation-fill-mode: both;
+   animation-duration: 400ms;
+  animation-name: message-enter-left;
 }
 
 .message:not(.incoming)::after {
@@ -186,7 +192,7 @@ ul .message {
  * circle loading animation
  */
 
-.loading-container{
+ .loading-container{
   text-align:center;
   opacity:1;
   will-change:opacity;
@@ -240,7 +246,7 @@ ul .message {
   }
 }
 
- @keyframes loading-circle{
+@keyframes loading-circle{
   0% {
     stroke-dashoffset: 0;
     stroke-dasharray:15;
@@ -252,4 +258,46 @@ ul .message {
     stroke-dashoffset: 10;
     stroke-dasharray:15;
   }
+}
+
+ @keyframes message-enter-right{
+  0% {
+    opacity:0;
+    transform:translateX(40px);
+  }
+  100% {
+    opacity:1;
+  }
+}
+
+
+@keyframes message-enter-left{
+  0% {
+    opacity:0;
+    transform:translateX(-40px);
+  }
+  100% {
+    opacity:1;
+  }
+}
+
+.message:nth-last-child(5){
+  animation-delay:0;
+}
+
+
+.message:nth-last-child(4){
+  animation-delay:100ms;
+}
+
+.message:nth-last-child(3){
+  animation-delay:200ms;
+}
+
+.message:nth-last-child(2){
+  animation-delay:300ms;
+}
+
+.message:not(.incoming):nth-last-child(1){
+  animation-delay:400ms;
 }
