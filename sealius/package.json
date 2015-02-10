@@ -1,6 +1,6 @@
 {
-  "name": "prometheus",
-  "version": "0.0.1",
+  "name": "sealius",
+  "version": "0.0.2",
   "description": "",
   "main": "index.js",
   "scripts": {
