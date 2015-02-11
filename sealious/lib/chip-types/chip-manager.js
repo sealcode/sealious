@@ -1,20 +1,15 @@
 var fs = require("fs");
 var path = require('path')
 var Set = require('Set');
-//var Channel = require('prometheus-channel')
 
-var channels = {};
-//var channel_info = {};
-
-var services = {};
-//var service_info = {};
-
-var resource_types = {};
-var field_types = {};
+var channels 		= {};
+var services 		= {};
+var resource_types 	= {};
+var field_types 	= {};
 
 var registred_chips_longids = new Set();
 
-var Core = new function(){
+var ChipManager = new function(){
 
 	this.register_channel = function(channel){
 		registred_chips_longids.add("channel." + channel.id);
@@ -70,7 +65,5 @@ var Core = new function(){
 }
 
 
-module.exports = Core;
-//!!important! export Core before importning Modules (circular dependency fail)
-Modules = require("prometheus-module-manager");
-
+module.exports = ChipManager;
+	

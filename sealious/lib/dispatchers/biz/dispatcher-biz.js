@@ -2,14 +2,15 @@ var io = require('socket.io')();
 var http = require("request");
 var QueryString = require("query-string");
 var Promise = require("bluebird");
-var config = require('prometheus-config');
-var MetadataManager = require("prometheus-metadata-manager");
-var UserManager = require("prometheus-user-manager");
-var ChipManager = require("prometheus-chip-manager");
+
+var config 			= require("../../config/config-manager.js").getConfiguration();
+var MetadataManager = require("../../metadata-manager.js");
+var UserManager 	= require("../../user-manager.js");
+var ChipManager 	= require("../../chip-types/chip-manager.js");
+var ResourceManager = require("../../chip-types/resource-manager.js");
 
 io.listen(config.biz_layer_config.port);
 
-var ResourceManager = require("prometheus-resource-manager");
 
 console.log("###############\n    Socket.io started on port " + config.biz_layer_config.port + "\n###############");
 

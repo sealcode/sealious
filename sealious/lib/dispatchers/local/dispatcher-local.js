@@ -1,10 +1,10 @@
-var ChipManager = require("prometheus-chip-manager");
-var Promise = require("bluebird");
-var ResourceManager = require("prometheus-resource-manager");
-var DatabaseDirectAccess = require("../database/direct-access.js")
-var MetadataManager = require("prometheus-metadata-manager");
-//var SessionManager = require("prometheus-session-manager");
-var UserManager = require("prometheus-user-manager");
+var Promise	= require("bluebird");
+
+var DatabaseDirectAccess 	= require("../../database/direct-access.js")
+var MetadataManager 		= require("../../metadata-manager.js");
+var UserManager 			= require("../../user-manager.js");
+var ResourceManager 		= require("../../chip-types/resource-manager.js");
+var ChipManager 			= require("../../chip-types/chip-manager.js");
 
 var DispatcherLocal = new function(){
 

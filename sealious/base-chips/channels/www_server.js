@@ -1,3 +1,5 @@
+/*
+
 var ExceptionHandler = require("prometheus-exception-handler");
 
 ExceptionHandler.addErrorParser(function(err){
@@ -9,6 +11,7 @@ ExceptionHandler.addErrorParser(function(err){
 	}
 })
 
+*/
 
 module.exports = function(channel, dispatcher, dependencies){
 

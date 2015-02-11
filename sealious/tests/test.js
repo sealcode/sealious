@@ -14,7 +14,7 @@ describe('Array', function(){
 });
 
 
-var FieldType = require("prometheus-field-type");
+var FieldType = require("../lib/chip-types/field-type.js");
 
 describe('FieldType', function(){
 	describe('#isProperValue()', function(){

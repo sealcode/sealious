@@ -1,5 +1,11 @@
 var path = require("path"); //path.resolve(module.filename, "../../../prometheus-modules");
-var ModuleManager = require("prometheus-module-manager");
+
+var ModuleManager = require("./module/module-manager.js");
+var ConfigManager = require("./config/config-manager.js");
+
+var base_chips_location = "../../base-chips";
+
+var default_app_location = "../../example-app";
 
 var PrometheusCore = new function(){
 
@@ -34,10 +40,10 @@ var PrometheusCore = new function(){
 	}
 
 	function getDispatcher(mode, layer_name){
-		if(mode==="local"){
-			return require("prometheus-dispatcher-local");
+		if(mode=="local"){
+			return require("../lib/dispatchers/local/dispatcher-local.js");			
 		}else{
-			return require("prometheus-dispatcher-distributed-" + layer_name);
+			return require("../lib/dispatchers/" + layer_name + "/dispatcher-" + layer_name + ".js");
 		}
 	}
 
@@ -46,16 +52,19 @@ var PrometheusCore = new function(){
 	 * @param  {string} mode       local|distributed
 	 * @param  {string} layer_name db|biz|web
 	 */
-	this.start = function(mode, layer_name, modules_dir){
+	this.start = function(mode, layer_name, modules_dir, config_file_path){
 		mode = mode || "local";
 		layer_name = layer_name || null;
+		config_file_path = config_file_path || null;
+
+		ConfigManager.readFromFile(config_file_path); //if the argument is null then the default configuration file (config.default.json) is used
 
 
 		//module needed for basic Prometheus operations
-		base_module_dir = path.resolve(module.filename, "../../prometheus-base-chips");
+		base_module_dir = path.resolve(module.filename, base_chips_location	);
 		ModuleManager.register_module(base_module_dir);
 
-		modules_dir = modules_dir ||  path.resolve(module.filename, "../../../prometheus-modules");
+		modules_dir = modules_dir ||  path.resolve(module.filename, default_app_location);
 		ModuleManager.register_modules(modules_dir);
 
 		var chip_types_to_start = decide_chip_types_to_start(mode, layer_name);

@@ -1,7 +1,8 @@
 var Promise = require("bluebird");
-var config = require("prometheus-config");
 var io_client = require('socket.io-client')
 var ip=require('ip');
+
+var config = require("../../config/config-manager.js").getConfiguration();
 
 var DispatcherDistributedWEB = new function(){
 
