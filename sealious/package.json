@@ -38,9 +38,10 @@
     "microtime": "~1.1.0"
   },
   "devDependencies": {
-    "should": "~4.4.0",
-    "mocha": "*",
     "blanket": "1.1.6",
+    "mocha": "*",
+    "npm-server": "0.0.1",
+    "should": "~4.4.0",
     "travis-cov ": "*"
   },
   "config": {
