@@ -1,5 +1,5 @@
 var Promise = require("bluebird");
-var ChipManager = require("prometheus-chip-manager");
+var ChipManager = require("./chip-manager.js");
 
 /**
  * A field in a resource type

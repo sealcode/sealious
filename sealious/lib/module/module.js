@@ -1,11 +1,13 @@
 var fs = require("fs");
-var ModuleInfo = require("./module-info.js");
-var ChipManager = require("prometheus-chip-manager");
-var Channel = require("../chip-types/channel.js");
-var Service = require("prometheus-service");
-var DispatcherWrapper = require("prometheus-dispatcher-wrapper");
-var ResourceType = require("prometheus-resource-type");
-var FieldType = require("prometheus-field-type");
+
+var ModuleInfo 		= require("./module-info.js");
+var ChipManager 	= require("../chip-types/chip-manager.js");
+var Channel 		= require("../chip-types/channel.js");
+var Service 		= require("../chip-types/service.js");
+var ResourceType 	= require("../chip-types/resource-type.js");
+var FieldType 		= require("../chip-types/field-type.js");
+
+var DispatcherWrapper = require("../dispatchers/dispatcher-wrapper.js");
 
 var Module = function(path_to_module){
 	this.path = path_to_module;

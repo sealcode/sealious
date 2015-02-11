@@ -1,7 +1,8 @@
 //this is how we access the server by methods (locally);
-var config = require("prometheus-config");
 var simpleargs = require("simpleargs");
 var connections = require('./mongo_connections.js');
+
+var config = require("../config/config-manager.js").getConfiguration();
 
 var serverCache = connections(config.mongo_host, config.mongo_port);
 

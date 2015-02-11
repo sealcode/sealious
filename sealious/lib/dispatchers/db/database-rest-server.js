@@ -1,6 +1,7 @@
-var config = require("prometheus-config")
 var Hapi = require('hapi');
-var DatabaseAccess = require("../database/direct-access.js");//.direct_access;
+
+var config = require("../../config/config-manager.js").getConfiguration();
+var DatabaseAccess = require("../../database/direct-access.js");//.direct_access;
 
 var server = new Hapi.Server(config.db_layer_config.port);
 
@@ -24,7 +25,9 @@ server.route({
     handler: function (request, reply) {
         var collection_name = request.params.collection_name;
         var query = (request.query.query && JSON.parse(request.query.query))||{};
+        console.log(request.query);
         for(var i in query){
+            //checking for regular expression
             if(query[i].toString().slice(0, 3) == "$R("){
                 var regex_declaration = query[i].slice(3, -1);
                 query[i] = new RegExp(regex_declaration.split("/")[1], regex_declaration.split("/")[2]);

@@ -1,8 +1,7 @@
-
 var Promise = require("bluebird");
-var ResourceRepresentation = require("prometheus-resource-representation");
 
-var ChipManager = require("prometheus-chip-manager");
+var ResourceRepresentation = require("./resource-representation.js");
+var ChipManager = require("./chip-manager.js");
 
 /**
  * Manages resources in the database
