@@ -1,8 +1,11 @@
 *~
 *.sublime-workspace
 npm-debug.log
-prometheus.sublime-workspace
+sealious.sublime-workspace
 node_modules
+./node_modules/
+./node_modules
+./node_modules/*
 node_modules/*
 coverage/*
 coverage.html
