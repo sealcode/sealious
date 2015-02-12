@@ -1,10 +1,13 @@
 {
   "name": "sealious",
-  "version": "0.0.2",
+  "version": "0.0.8",
   "description": "",
-  "main": "index.js",
+  "main": "./main.js",
   "scripts": {
     "test": "mocha ./tests/test.js && mocha ./tests/test.js -R travis-cov"
+  },
+  "bin" : { 
+    "sealious" : "./shell.js" 
   },
   "repository": {
     "type": "git",
@@ -34,8 +37,7 @@
     "mongodb": "~1.4.19",
     "bluebird": "~2.3.11",
     "merge": "~1.2.0",
-    "sha1": "~1.1.0",
-    "microtime": "~1.1.0"
+    "sha1": "~1.1.0"
   },
   "devDependencies": {
     "blanket": "1.1.6",
