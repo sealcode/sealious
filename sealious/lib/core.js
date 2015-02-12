@@ -52,10 +52,11 @@ var PrometheusCore = new function(){
 	 * @param  {string} mode       local|distributed
 	 * @param  {string} layer_name db|biz|web
 	 */
-	this.start = function(mode, layer_name, modules_dir, config_file_path){
+	this.start = function(mode, layer_name, app_location, config_file_path){
 		mode = mode || "local";
 		layer_name = layer_name || null;
 		config_file_path = config_file_path || null;
+		app_location = app_location ||  path.resolve(module.filename, default_app_location);
 
 		ConfigManager.readFromFile(config_file_path); //if the argument is null then the default configuration file (config.default.json) is used
 
@@ -64,8 +65,8 @@ var PrometheusCore = new function(){
 		base_module_dir = path.resolve(module.filename, base_chips_location	);
 		ModuleManager.register_module(base_module_dir);
 
-		modules_dir = modules_dir ||  path.resolve(module.filename, default_app_location);
-		ModuleManager.register_modules(modules_dir);
+
+		ModuleManager.register_modules(app_location + "/modules");
 
 		var chip_types_to_start = decide_chip_types_to_start(mode, layer_name);
 
