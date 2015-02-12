@@ -14,7 +14,7 @@ module.exports.prepare_channel_rest = function(rest){
 }
 
 module.exports.prepare_channel_www_server = function(channel){
-	var public_dir = path.resolve(module.filename, "../../../../public");
+	var public_dir = path.resolve(module.filename, "../../../public");
 	channel.static_route(public_dir, "");
 }
 
