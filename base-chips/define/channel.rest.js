@@ -35,7 +35,8 @@ module.exports = function(channel, dispatcher, dependencies){
 						reply(response.toString());
 					})
 					.catch(function(error) {
-						reply(error).statusCode = 422;
+						console.log("caught error:", error);
+						reply(error).code(422);
 					});
 				} else {
 					reply("not logged in");
@@ -64,7 +65,7 @@ module.exports = function(channel, dispatcher, dependencies){
 				dispatcher.resources_get_by_id(request.params.id).then(function(response){
 					reply(response);
 				}).catch(function(error){
-					reply().statusCode = 409;	
+					reply().code(409);
 				});
 			}
 		});
