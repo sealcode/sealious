@@ -7,18 +7,5 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
-  "license": "BSD-2-Clause",
-  "prometheus-module-id": "base",
-  "prometheus-defined-chips": [
-    "field_type.int", 
-    "field_type.date", 
-    "field_type.text",
-    "field_type.email",
-    "field_type.Reference",
-    "resource_type.user_data",
-    "service.session_manager",
-    "channel.http",
-    "channel.www_server",
-    "channel.http_session"
-  ]
+  "license": "BSD-2-Clause"
 }

@@ -1,6 +1,6 @@
 {
   "name": "sealious",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "description": "",
   "main": "./main.js",
   "scripts": {
@@ -33,7 +33,6 @@
     "http": "0.0.0",
     "request": "~2.47.0",
     "query-string": "~1.0.0",
-    "simpleargs": "0.0.2",
     "mongodb": "~1.4.19",
     "bluebird": "~2.3.11",
     "merge": "~1.2.0",
