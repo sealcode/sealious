@@ -31,7 +31,11 @@ module.exports = function(www_server, dispatcher, dependencies){
 
     var http_channel = dependencies["channel.http"];
 
-    www_server.server = http_channel.new_server("www", 80, {cors:true});
+    www_server.default_configuration = {
+        port: 80
+    }
+
+    www_server.server = http_channel.new_server("www", www_server.configuration.port, {cors:true});
     
     www_server.start = function(){
         this.server.start(function(err){
@@ -41,7 +45,7 @@ module.exports = function(www_server, dispatcher, dependencies){
     }
 
     www_server.route = function(){
-        this.server.route.apply(this.server, arguments);
+        www_server.server.route.apply(this.server, arguments);
     }
 
 
