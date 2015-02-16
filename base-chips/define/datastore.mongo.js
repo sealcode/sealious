@@ -9,7 +9,6 @@ module.exports = function(datastore_mongo){
 	var mongo_client = null;
 
 	datastore_mongo.start = function(){
-		console.log("STARTED CHIP MONGO");
 		var mongo_client = new MongoClient(new Server('localhost', 27017));
 		return new Promise(function(resolve, reject){
 			mongo_client.open(function(err, mongoClient){
@@ -90,7 +89,6 @@ module.exports = function(datastore_mongo){
 				justOne=0;
 			}
 			justOne = justOne? 1 : 0;
-			console.log("calling remove with arguments:", query, justOne);
 			db.collection(collection_name).remove(query, justOne, function(err, delete_response) {
 			    if (err) {
 			        reject(err);
