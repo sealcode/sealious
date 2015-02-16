@@ -1,5 +1,6 @@
 var Promise = require("bluebird");
 var mongodb = require("mongodb");
+var TingoDB = require('tingodb')();
 var MongoClient = mongodb.MongoClient;
 var Server = mongodb.Server;
 
@@ -11,20 +12,27 @@ module.exports = function(datastore_mongo){
 	datastore_mongo.default_configuration = {
 		embedded: false,
 		host: 'localhost',
-		port: 27017
+		port: 27017,
+		db_name: 'myproject'
 	}
 
 
 	datastore_mongo.start = function(){
 		var config = datastore_mongo.configuration;
-		var mongo_client = new MongoClient(new Server(config.host, config.port));
-		return new Promise(function(resolve, reject){
-			mongo_client.open(function(err, mongoClient){
-				db = mongoClient.db("myproject");
+		if(config.embedded){
+			return new Promise(function(resolve, reject){
+				db = new TingoDB.Db('.', {});
 				resolve();
+			})
+		}else{
+			var mongo_client = new MongoClient(new Server(config.host, config.port));
+			return new Promise(function(resolve, reject){
+				mongo_client.open(function(err, mongoClient){
+					db = mongoClient.db("myproject");
+					resolve();
+				})			
 			})			
-		})
-		db = connected_mongo_client.db("myproject");
+		}
 	}
 
 	function process_query(query){
