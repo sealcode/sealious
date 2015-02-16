@@ -16,6 +16,9 @@
 	"chip_config":{
 		"channel.www_server":{
 			"port": 80
+		},
+		"datastore.mongo":{
+			"embedded": false
 		}
 	}
 }
