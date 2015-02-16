@@ -5,11 +5,21 @@ var Server = mongodb.Server;
 
 module.exports = function(datastore_mongo){
 
+	console.log("datastore constructor function", datastore_mongo.longid);
+
 	var db = null;
 	var mongo_client = null;
 
+	datastore_mongo.default_configuration = {
+		embedded: false,
+		host: 'localhost',
+		port: 27017
+	}
+
+
 	datastore_mongo.start = function(){
-		var mongo_client = new MongoClient(new Server('localhost', 27017));
+		var config = datastore_mongo.configuration;
+		var mongo_client = new MongoClient(new Server(config.host, config.port));
 		return new Promise(function(resolve, reject){
 			mongo_client.open(function(err, mongoClient){
 				db = mongoClient.db("myproject");
