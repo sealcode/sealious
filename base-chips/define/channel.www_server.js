@@ -35,10 +35,12 @@ module.exports = function(www_server, dispatcher, dependencies){
         port: 80
     }
 
-    www_server.server = http_channel.new_server("www", www_server.configuration.port, {cors:true});
+    www_server.server = http_channel.new_server();
+    www_server.server.connection({port: www_server.configuration.port,  routes: { cors: true }})
     
     www_server.start = function(){
-        this.server.start(function(err){
+        console.log(www_server.server);
+        www_server.server.start(function(err){
             console.log('HTTP: '+www_server.server.info.uri+'\n================ \n');
         })
     }
@@ -63,34 +65,4 @@ module.exports = function(www_server, dispatcher, dependencies){
     www_server.new_session = new_session;
     www_server.kill_session = kill_session;
     www_server.get_user_id = get_user_id;
-
-    www_server.route({
-        method: "POST",
-        path: "/login",
-        handler: function(request, reply) {
-            dispatcher.users_password_match(request.payload.username, request.payload.password).then(function(user_id) {
-                if (user_id) {
-                    var sessionId = www_server.new_session(user_id);
-                    reply("http_session: Logged in!").state('PrometheusSession', sessionId).redirect('/');
-                } else {
-                    reply("Password incorrect.")
-                }
-            });
-        }
-    });
-    www_server.route({
-        method: "POST",
-        path: "/logout",
-        handler: function(request, reply) {
-            www_server.kill_session(request.state.PrometheusSession);
-            reply().redirect("/login.html");
-        }
-    });
-    www_server.route({
-        method: "GET",
-        path: "/api/v1/make_coffee",
-        handler: function(request, reply) {
-            reply().code(418);
-        }
-    });
 }

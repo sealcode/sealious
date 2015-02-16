@@ -6,8 +6,8 @@
   "scripts": {
     "test": "mocha ./tests/test.js && mocha ./tests/test.js -R travis-cov"
   },
-  "bin" : { 
-    "sealious" : "./shell.js" 
+  "bin": {
+    "sealious": "./shell.js"
   },
   "repository": {
     "type": "git",
@@ -22,21 +22,21 @@
     "url": "https://github.com/groovy354/Prometheus/issues"
   },
   "dependencies": {
-    "socket.io": "~1.2.0",
-    "hapi": "~7.5.0",
+    "./base-chips/": "",
+    "Set": "~0.4.1",
+    "bluebird": "~2.3.11",
     "boom": "~2.6.0",
     "glue": "~1.0.0",
-    "open": "0.0.5",
-    "ip": "~0.3.2",
-    "socket.io-client": "~1.2.0",
-    "Set": "~0.4.1",
+    "hapi": "^8.2.0",
     "http": "0.0.0",
-    "request": "~2.47.0",
-    "query-string": "~1.0.0",
-    "bluebird": "~2.3.11",
+    "ip": "~0.3.2",
     "merge": "~1.2.0",
+    "open": "0.0.5",
+    "query-string": "~1.0.0",
+    "request": "~2.47.0",
     "sha1": "~1.1.0",
-    "./base-chips/": ""
+    "socket.io": "~1.2.0",
+    "socket.io-client": "~1.2.0"
   },
   "devDependencies": {
     "blanket": "1.1.6",
