@@ -18,7 +18,7 @@
 			"port": 80
 		},
 		"datastore.mongo":{
-			"embedded": false
+			"embedded": true
 		}
 	}
 }
