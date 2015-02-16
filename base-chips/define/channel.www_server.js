@@ -39,7 +39,6 @@ module.exports = function(www_server, dispatcher, dependencies){
     
     www_server.start = function(){
         this.server.start(function(err){
-            console.log("www server started at port 80");
             console.log('HTTP: '+www_server.server.info.uri+'\n================ \n');
         })
     }
