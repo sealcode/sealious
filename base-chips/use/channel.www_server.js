@@ -46,6 +46,7 @@ module.exports = function(www_server, dispatcher, dependencies){
 					reply().redirect("/login.html#registered");
 				})
 				.catch(function(error){
+					throw error;
 					reply("Username is taken.").statusCode="409.1";
 				})
 		}
