@@ -4,17 +4,12 @@ module.exports = function(channel, dispatcher, dependencies){
 
 	var www_server = dependencies["channel.www_server"];
 
-	console.log("constructed REST channel");
-
 	channel.add_path = function(url, resource_type_name){
-
-		console.log("add_path", arguments);
 
 		www_server.route({
 			method: "GET",
 			path: url,
 			handler: function(request, reply){
-				console.log("weszło");
 				dispatcher.resources_list_by_type(resource_type_name)
 				.then(function(resources){ // wywołanie metody z dispatchera webowego
 					//console.log("GOT RESPONSE FROM DISPATCHER");
@@ -24,6 +19,7 @@ module.exports = function(channel, dispatcher, dependencies){
 			}
 			// hanlder GET ma wypisać wszystkie zasoby o podanym typie
 		});
+
 		www_server.route({
 			method: "POST",
 			path: url,

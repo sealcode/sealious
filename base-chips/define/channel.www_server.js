@@ -39,7 +39,6 @@ module.exports = function(www_server, dispatcher, dependencies){
     www_server.server.connection({port: www_server.configuration.port,  routes: { cors: true }})
     
     www_server.start = function(){
-        console.log(www_server.server);
         www_server.server.start(function(err){
             console.log('HTTP: '+www_server.server.info.uri+'\n================ \n');
         })

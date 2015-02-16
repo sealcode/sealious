@@ -5,8 +5,6 @@ var Server = mongodb.Server;
 
 module.exports = function(datastore_mongo){
 
-	console.log("datastore constructor function", datastore_mongo.longid);
-
 	var db = null;
 	var mongo_client = null;
 

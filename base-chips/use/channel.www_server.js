@@ -1,7 +1,6 @@
 module.exports = function(www_server, dispatcher, dependencies){
 	var sessionManager = dependencies["service.session_manager"];
 
-	console.log("rest_users.js sessionManager:", sessionManager);
 
 	url = "/api/v1/users";
 
@@ -57,7 +56,6 @@ module.exports = function(www_server, dispatcher, dependencies){
 		method: "PUT",
 		path: url+"/{user_id}",
 		handler: function(request, reply){
-			console.log("rest-user.js", "request.payload", request.payload);
 			dispatcher.users_update_user_data(request.params.user_id, request.payload)
 				.then(function(response){
 					reply();
@@ -71,7 +69,6 @@ module.exports = function(www_server, dispatcher, dependencies){
 		method: "DELETE",
 		path: url,
 		handler: function(request, reply){
-			//console.log("rest.js DELETE", request.payload)
 			dispatcher.users_delete_user(request.payload.username)
 				.then(function(user_data){
 					reply(user_data);
@@ -131,7 +128,7 @@ module.exports = function(www_server, dispatcher, dependencies){
             });
         }
     });
-    
+
     www_server.route({
         method: "POST",
         path: "/logout",
