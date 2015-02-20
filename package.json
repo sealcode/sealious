@@ -5,7 +5,7 @@
   "main": "./main.js",
   "scripts": {
     "test": "mocha ./tests/test.js && mocha ./tests/test.js -R travis-cov",
-    "preinstall": "npm install ./base-chips"
+    "preinstall": "cd base-chips && npm install ."
   },
   "bin": {
     "sealious": "./shell.js"
