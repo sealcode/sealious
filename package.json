@@ -22,7 +22,6 @@
     "url": "https://github.com/groovy354/Prometheus/issues"
   },
   "dependencies": {
-    "./base-chips/": "",
     "Set": "~0.4.1",
     "bluebird": "~2.3.11",
     "boom": "~2.6.0",
@@ -36,7 +35,8 @@
     "request": "~2.47.0",
     "sha1": "~1.1.0",
     "socket.io": "~1.2.0",
-    "socket.io-client": "~1.2.0"
+    "socket.io-client": "~1.2.0",
+    "sealious-base-chips": "file:base-chips"
   },
   "devDependencies": {
     "blanket": "1.1.6",
