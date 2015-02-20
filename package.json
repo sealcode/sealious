@@ -4,7 +4,8 @@
   "description": "",
   "main": "./main.js",
   "scripts": {
-    "test": "mocha ./tests/test.js && mocha ./tests/test.js -R travis-cov"
+    "test": "mocha ./tests/test.js && mocha ./tests/test.js -R travis-cov",
+    "preinstall": "npm install ./base-chips"
   },
   "bin": {
     "sealious": "./shell.js"
