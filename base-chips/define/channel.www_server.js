@@ -44,7 +44,25 @@ module.exports = function(www_server, dispatcher, dependencies){
         })
     }
 
+    var custom_reply_function = function(original_reply_function, obj){
+        var ret;
+        if(obj.is_error){
+            ret = original_reply_function(obj.toResponse());
+            ret.statusCode = obj.http_code;
+        }else{
+            ret = original_reply_function(obj);
+        }
+        return ret;
+    }
+
     www_server.route = function(){
+        var original_handler = arguments[0].handler;
+        if(original_handler){
+            arguments[0].handler = function(request, reply){
+                var new_reply = custom_reply_function.bind(custom_reply_function, reply);
+                original_handler(request, new_reply);
+            }
+        }
         www_server.server.route.apply(this.server, arguments);
     }
 
