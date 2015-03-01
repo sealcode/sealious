@@ -23,8 +23,9 @@ function kill_session(session_id) {
 function get_user_id(session_id) {
     if (session_id_to_user_id[session_id]) {
         return session_id_to_user_id[session_id];
+    }else{
+        return false;        
     }
-    return false;
 }
 
 module.exports = function(www_server, dispatcher, dependencies){
@@ -46,9 +47,17 @@ module.exports = function(www_server, dispatcher, dependencies){
 
     var custom_reply_function = function(original_reply_function, obj){
         var ret;
-        if(obj.is_error){
-            ret = original_reply_function(obj.toResponse());
-            ret.statusCode = obj.http_code;
+        if(obj instanceof Error){
+            throw obj;
+        }
+        if(obj && obj.is_error){
+            if(obj.is_user_fault){
+                ret = original_reply_function(obj.toResponse());
+                ret.statusCode = obj.http_code;                
+            }else{
+                ret = original_reply_function("{\"server_error\":true}");
+                ret.statusCode = 500;
+            }
         }else{
             ret = original_reply_function(obj);
         }

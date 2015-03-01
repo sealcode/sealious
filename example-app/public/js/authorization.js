@@ -2,11 +2,14 @@ var Auth = {};
 
 Auth.is_logged_in = function(callback){
 	$.get("/api/v1/users/me", function(data){
-		if(data["id"]){
-			callback(true);
-		}else{
+		if(data.status=="error"){
 			callback(false);
+		}else{
+			callback(true);
 		}
+	})
+	.fail(function(){
+		callback(false);
 	})
 }
 

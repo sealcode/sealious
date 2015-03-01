@@ -41,6 +41,7 @@ module.exports = function(www_server, dispatcher, dependencies){
 		method: "POST",
 		path: url,
 		handler: function(request, reply){
+			//console.log("user/channel.www_server.js", "username and password:", request.payload.username, ":", request.payload.password);
 			dispatcher.users_create_user(request.payload.username, request.payload.password)
 				.then(function(response){
 					reply().redirect("/login.html#registered");
@@ -94,8 +95,8 @@ module.exports = function(www_server, dispatcher, dependencies){
 					reply("not logged in");
 				}
 			})
-			.catch(function(){
-				reply("not logged in");
+			.catch(function(err){
+				reply(err);
 			})
 		}
 		// hanlder GET ma zwrócić dane użytkownika w obiekcie JSONowym
@@ -126,7 +127,6 @@ module.exports = function(www_server, dispatcher, dependencies){
                 }
             })
             .catch(function(error){
-            	console.log("caught error in login");
             	reply(error);
             })
         }
