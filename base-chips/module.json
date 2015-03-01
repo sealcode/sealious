@@ -1,6 +1,7 @@
 {
 	"name": "base_chips",
 	"defines": [
+		"datastore.mongo",
 		"field_type.text",
 		"field_type.int",
 		"field_type.date",

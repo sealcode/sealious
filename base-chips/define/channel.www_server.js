@@ -31,17 +31,39 @@ module.exports = function(www_server, dispatcher, dependencies){
 
     var http_channel = dependencies["channel.http"];
 
-    www_server.server = http_channel.new_server("www", 80, {cors:true});
+    www_server.default_configuration = {
+        port: 80
+    }
+
+    www_server.server = http_channel.new_server();
+    www_server.server.connection({port: www_server.configuration.port,  routes: { cors: true }})
     
     www_server.start = function(){
-        this.server.start(function(err){
-            console.log("www server started at port 80");
+        www_server.server.start(function(err){
             console.log('HTTP: '+www_server.server.info.uri+'\n================ \n');
         })
     }
 
+    var custom_reply_function = function(original_reply_function, obj){
+        var ret;
+        if(obj.is_error){
+            ret = original_reply_function(obj.toResponse());
+            ret.statusCode = obj.http_code;
+        }else{
+            ret = original_reply_function(obj);
+        }
+        return ret;
+    }
+
     www_server.route = function(){
-        this.server.route.apply(this.server, arguments);
+        var original_handler = arguments[0].handler;
+        if(original_handler && typeof original_handler=="function"){
+            arguments[0].handler = function(request, reply){
+                var new_reply = custom_reply_function.bind(custom_reply_function, reply);
+                original_handler(request, new_reply);
+            }
+        }
+        www_server.server.route.apply(this.server, arguments);
     }
 
 
@@ -60,34 +82,4 @@ module.exports = function(www_server, dispatcher, dependencies){
     www_server.new_session = new_session;
     www_server.kill_session = kill_session;
     www_server.get_user_id = get_user_id;
-
-    www_server.route({
-        method: "POST",
-        path: "/login",
-        handler: function(request, reply) {
-            dispatcher.users_password_match(request.payload.username, request.payload.password).then(function(user_id) {
-                if (user_id) {
-                    var sessionId = www_server.new_session(user_id);
-                    reply("http_session: Logged in!").state('PrometheusSession', sessionId).redirect('/');
-                } else {
-                    reply("Password incorrect.")
-                }
-            });
-        }
-    });
-    www_server.route({
-        method: "POST",
-        path: "/logout",
-        handler: function(request, reply) {
-            www_server.kill_session(request.state.PrometheusSession);
-            reply().redirect("/login.html");
-        }
-    });
-    www_server.route({
-        method: "GET",
-        path: "/api/v1/make_coffee",
-        handler: function(request, reply) {
-            reply().code(418);
-        }
-    });
 }
