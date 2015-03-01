@@ -57,7 +57,7 @@ module.exports = function(www_server, dispatcher, dependencies){
 
     www_server.route = function(){
         var original_handler = arguments[0].handler;
-        if(original_handler){
+        if(original_handler && typeof original_handler=="function"){
             arguments[0].handler = function(request, reply){
                 var new_reply = custom_reply_function.bind(custom_reply_function, reply);
                 original_handler(request, new_reply);

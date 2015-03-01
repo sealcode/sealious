@@ -118,14 +118,17 @@ module.exports = function(www_server, dispatcher, dependencies){
         method: "POST",
         path: "/login",
         handler: function(request, reply) {
-            dispatcher.users_password_match(request.payload.username, request.payload.password).then(function(user_id) {
-                if (user_id) {
+            dispatcher.users_password_match(request.payload.username, request.payload.password)
+            .then(function(user_id) {
+                if (user_id!==false) {
                     var sessionId = www_server.new_session(user_id);
-                    reply("http_session: Logged in!").state('PrometheusSession', sessionId).redirect('/');
-                } else {
-                    reply("Password incorrect.")
+                    reply("http_session: Logged in!").state('PrometheusSession', sessionId);
                 }
-            });
+            })
+            .catch(function(error){
+            	console.log("caught error in login");
+            	reply(error);
+            })
         }
     });
 
