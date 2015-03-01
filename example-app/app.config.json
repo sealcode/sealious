@@ -1,7 +1,4 @@
 {
-	"mongo_port": 27017,
-	"mongo_host": "127.0.0.1",
-	"mongo_db_name": "myproject",
 	"db_layer_config":{
 		"host": "localhost",
 		"port": "7766"
@@ -12,5 +9,13 @@
 	},
 	"dispatcher_config":{
 		"datastore_chip":"mongo"
+	},
+	"chip_config":{
+		"channel.www_server":{
+			"port": 80
+		},
+		"datastore.mongo":{
+			"embedded": false
+		}
 	}
 }

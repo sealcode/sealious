@@ -1,7 +1,6 @@
 module.exports = function(www_server, dispatcher, dependencies){
 	var sessionManager = dependencies["service.session_manager"];
 
-	console.log("rest_users.js sessionManager:", sessionManager);
 
 	url = "/api/v1/users";
 
@@ -47,7 +46,7 @@ module.exports = function(www_server, dispatcher, dependencies){
 					reply().redirect("/login.html#registered");
 				})
 				.catch(function(error){
-					reply("Username is taken.").statusCode="409.1";
+					reply(error);
 				})
 		}
 		// handler POST ma stworzyć usera o podanej nazwie i haśle
@@ -57,7 +56,6 @@ module.exports = function(www_server, dispatcher, dependencies){
 		method: "PUT",
 		path: url+"/{user_id}",
 		handler: function(request, reply){
-			console.log("rest-user.js", "request.payload", request.payload);
 			dispatcher.users_update_user_data(request.params.user_id, request.payload)
 				.then(function(response){
 					reply();
@@ -71,7 +69,6 @@ module.exports = function(www_server, dispatcher, dependencies){
 		method: "DELETE",
 		path: url,
 		handler: function(request, reply){
-			//console.log("rest.js DELETE", request.payload)
 			dispatcher.users_delete_user(request.payload.username)
 				.then(function(user_data){
 					reply(user_data);
@@ -116,5 +113,40 @@ module.exports = function(www_server, dispatcher, dependencies){
 			})
 		}	
 	})
+
+	www_server.route({
+        method: "POST",
+        path: "/login",
+        handler: function(request, reply) {
+            dispatcher.users_password_match(request.payload.username, request.payload.password)
+            .then(function(user_id) {
+                if (user_id!==false) {
+                    var sessionId = www_server.new_session(user_id);
+                    reply("http_session: Logged in!").state('PrometheusSession', sessionId);
+                }
+            })
+            .catch(function(error){
+            	console.log("caught error in login");
+            	reply(error);
+            })
+        }
+    });
+
+    www_server.route({
+        method: "POST",
+        path: "/logout",
+        handler: function(request, reply) {
+            www_server.kill_session(request.state.PrometheusSession);
+            reply().redirect("/login.html");
+        }
+    });
+
+    www_server.route({
+        method: "GET",
+        path: "/api/v1/make_coffee",
+        handler: function(request, reply) {
+            reply().code(418);
+        }
+    });
 
 }
