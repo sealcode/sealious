@@ -1,11 +1,10 @@
 {
   "name": "sealious",
-  "version": "0.0.10",
+  "version": "0.0.11",
   "description": "",
   "main": "./main.js",
   "scripts": {
-    "test": "mocha ./tests/test.js && mocha ./tests/test.js -R travis-cov",
-    "preinstall": "cd base-chips && npm install ."
+    "test": "mocha ./tests/test.js && mocha ./tests/test.js -R travis-cov"
   },
   "bin": {
     "sealious": "./shell.js"
