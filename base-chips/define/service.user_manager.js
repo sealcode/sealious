@@ -1,13 +1,10 @@
 var Promise = require("bluebird");
 
-var Errors = require("./response/error.js");
+module.exports = function(user_manager, dispatcher){
 
-var UserManager = new function(){
-var that = this;
-
-	this.create_user = function(username, password, dispatcher){
+	user_manager.create_user = function(dispatcher, username, password){
 		var user_data;
-		return dispatcher.users_user_exists(username, dispatcher)
+		return dispatcher.services.user_manager.user_exists(username, dispatcher)
 			.then(function(user_exists){	
 				if (!user_exists){
 					console.log("user ", username, "does not exists, creating it");
@@ -18,7 +15,7 @@ var that = this;
 			})
 	}
 
-	this.user_exists = function(username, dispatcher){
+	user_manager.user_exists = function(dispatcher, username){
 		return new Promise(function(resolve, reject){
 			dispatcher.resources_find({username: username}, "user")
 			.then(function(matched_documents){
@@ -29,7 +26,7 @@ var that = this;
 		})
 	}
 
-	this.password_match = function(username, password, dispatcher){
+	user_manager.password_match = function(dispatcher, username, password){
 		username = username.toString();
 		password = password.toString();
 		console.log("searching forr "+username+":"+password);
@@ -50,11 +47,11 @@ var that = this;
 		})
 	}
 
-	this.get_all_users = function(dispatcher){
+	user_manager.get_all_users = function(dispatcher){
 		return dispatcher.datastore.find("resources", {type: "user"});
 	}
 
-	this.get_user_data = function(user_resource_id, dispatcher){
+	user_manager.get_user_data = function(dispatcher, user_resource_id){
 		var user_resource_id = parseInt(user_resource_id);
 		try{
 			var ret = dispatcher.resources_get_by_id(user_resource_id);						
@@ -64,7 +61,7 @@ var that = this;
 		return ret;
 	}
 
-	this.update_user_data = function(user_id, new_user_data, dispatcher){
+	user_manager.update_user_data = function(dispatcher, user_id, new_user_data){
 		return dispatcher.datastore.find("users", {user_id: user_id})
 		.then(function(user_document){
 			console.log("user-manager.js user_document", user_document);
@@ -73,7 +70,7 @@ var that = this;
 		})
 	}
 
-	this.delete_user = function(username, dispatcher){
+	user_manager.delete_user = function(dispatcher, username){
  		return new Promise(function(resolve, reject){ 			
  			dispatcher.datastore.delete("users", {username: username})
  			.then(function(data){
@@ -84,8 +81,4 @@ var that = this;
  		});
  	}
 
-
-
 }
-
-module.exports = UserManager;
