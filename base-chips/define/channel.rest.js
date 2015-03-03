@@ -8,6 +8,20 @@ module.exports = function(channel, dispatcher, dependencies){
 
 		www_server.route({
 			method: "GET",
+			path: url+"/signature",
+			handler: function(request, reply){
+				dispatcher.resources_get_signature(resource_type_name)
+				.then(function(signature){
+					reply(signature);
+				}).catch(function(err){
+					reply(err);
+				})
+			}
+			// hanlder GET ma wypisać wszystkie zasoby o podanym typie
+		});
+
+		www_server.route({
+			method: "GET",
 			path: url,
 			handler: function(request, reply){
 				dispatcher.resources_list_by_type(resource_type_name)
