@@ -8,16 +8,17 @@ module.exports = function(user_manager, dispatcher){
 			.then(function(user_exists){	
 				if (!user_exists){
 					console.log("user ", username, "does not exists, creating it");
-					return dispatcher.resources_create("user", {username: username, password:password});
+					return dispatcher.resources.create("user", {username: username, password:password});
 				}else{
-					throw new Errors.ValueExists("Username `" + username + "` is already taken.");
+					//throw new Errors.ValueExists("Username `" + username + "` is already taken.");
+					throw new Error("Username `" + username + "` is already taken.");
 				}
 			})
 	}
 
 	user_manager.user_exists = function(dispatcher, username){
 		return new Promise(function(resolve, reject){
-			dispatcher.resources_find({username: username}, "user")
+			dispatcher.resources.find({username: username}, "user")
 			.then(function(matched_documents){
 				console.log("user-manager.js", "matched_documents", matched_documents);
 				console.log("user-manager.js user_exists resolving with", matched_documents.length===1)
@@ -40,7 +41,8 @@ module.exports = function(user_manager, dispatcher){
 					console.log("found");
 					resolve(result[0].prometheus_id);
 				}else{
-					var err = new Errors.InvalidCredentials("wrong username or password");
+					//var err = new Errors.InvalidCredentials("wrong username or password");
+					var err = new Error("wrong username or password");
 					reject(err);
 				}
 			})			
@@ -54,7 +56,7 @@ module.exports = function(user_manager, dispatcher){
 	user_manager.get_user_data = function(dispatcher, user_resource_id){
 		var user_resource_id = parseInt(user_resource_id);
 		try{
-			var ret = dispatcher.resources_get_by_id(user_resource_id);						
+			var ret = dispatcher.resources.get_by_id(user_resource_id);						
 		}catch(err){
 			throw err;
 		}
@@ -66,7 +68,7 @@ module.exports = function(user_manager, dispatcher){
 		.then(function(user_document){
 			console.log("user-manager.js user_document", user_document);
 			userdata_id = user_document[0].userdata_id;
-			return dispatcher.resources_update(userdata_id, new_user_data);
+			return dispatcher.resources.update(userdata_id, new_user_data);
 		})
 	}
 

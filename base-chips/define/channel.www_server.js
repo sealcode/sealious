@@ -48,9 +48,9 @@ module.exports = function(www_server, dispatcher, dependencies){
     var custom_reply_function = function(original_reply_function, obj){
         var ret;
         if(obj instanceof Error){
-            throw obj;
-        }
-        if(obj && obj.is_error){
+            original_reply_function(obj.message);
+            console.log(obj.stack);
+        }else if(obj && obj.is_error){
             if(obj.is_user_fault){
                 ret = original_reply_function(obj.toResponse());
                 ret.statusCode = obj.http_code;                
