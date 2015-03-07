@@ -42,14 +42,17 @@ module.exports = function(datastore_mongo){
 		var new_query = {};
 		for(var attribute_name in query){
 			if(attribute_name=="prometheus_id"){
+				console.log("~~~~~~~~~~~~~~~~~~~~~~~~~~");
 				new_query[attribute_name] = parseInt(query[attribute_name]);
-			}
-			if(query[attribute_name] instanceof Object){
-				for(var i in query[attribute_name]){
-					new_query[attribute_name + "." + i] = query[attribute_name][i];
-				}
+				console.log(new_query);
 			}else{
-				new_query[attribute_name] = query[attribute_name];
+				if(query[attribute_name] instanceof Object){
+					for(var i in query[attribute_name]){
+						new_query[attribute_name + "." + i] = query[attribute_name][i];
+					}
+				}else{
+					new_query[attribute_name] = query[attribute_name];
+				}				
 			}
 		}
 		console.log("new_query:", new_query, "old_query:", query);
