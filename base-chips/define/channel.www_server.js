@@ -56,6 +56,8 @@ module.exports = function(www_server, dispatcher, dependencies){
                 ret.statusCode = obj.http_code;                
             }else{
                 ret = original_reply_function("{\"server_error\":true}");
+                console.log(obj.message);
+                console.log(obj.stack);
                 ret.statusCode = 500;
             }
         }else{
