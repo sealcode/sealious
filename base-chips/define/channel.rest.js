@@ -10,7 +10,7 @@ module.exports = function(channel, dispatcher, dependencies){
 			method: "GET",
 			path: url+"/signature",
 			handler: function(request, reply){
-				dispatcher.resources_get_signature(resource_type_name)
+				dispatcher.resources.get_resource_type_signature(resource_type_name)
 				.then(function(signature){
 					reply(signature);
 				}).catch(function(err){
