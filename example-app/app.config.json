@@ -15,7 +15,8 @@
 			"port": 80
 		},
 		"datastore.mongo":{
-			"embedded": false
+			"embedded": false,
+			"db_name": "sealious"
 		}
 	}
 }
