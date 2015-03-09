@@ -28,7 +28,7 @@ module.exports = function(datastore_mongo){
 			var mongo_client = new MongoClient(new Server(config.host, config.port));
 			return new Promise(function(resolve, reject){
 				mongo_client.open(function(err, mongoClient){
-					db = mongoClient.db("myproject");
+					db = mongoClient.db(config.db_name);
 					resolve();
 				})			
 			})			
