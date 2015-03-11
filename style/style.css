@@ -84,6 +84,7 @@ nav {
     position: relative;
     font-size: 6rem;
     font-family: 'Lato Regular';
+    -webkit-animation: blink 0.7s infinite;
 }
 
 .title_description {
