@@ -1,150 +1,164 @@
-* {  
-  margin: 0px; 
-  padding: 0px; 
-  box-sizing: border-box;
-  text-rendering: optimizelegibility;
+* {
+    margin: 0px;
+    padding: 0px;
+    box-sizing: border-box;
+    text-rendering: optimizelegibility;
 }
 
 article, aside, details, figcaption, figure, footer, header, hgroup, main, nav, section, summary {
-  display: block;
+    display: block;
 }
 
 @font-face {
-  font-family: 'Lato Regular';
-  font-style: normal;
-  font-weight: 400;
-  src: local('Lato Regular'), local('Lato-Regular'), local('LatoRegular'), url(lato-regular.woff) format('woff');
+    font-family: 'Lato Regular';
+    font-style: normal;
+    font-weight: 400;
+    src: local('Lato Regular'), local('Lato-Regular'), local('LatoRegular'), url(lato-regular.woff) format('woff');
 }
 
 @font-face {
-  font-family: 'Source Sans Pro';
-  font-style: normal;
-  font-weight: 300;
-  src: local('Source Sans Pro'), local('Source-Sans-Pro'), local('SourceSansPro'), url(SourceSansPro-Light.woff) format('woff');
+    font-family: 'Source Sans Pro';
+    font-style: normal;
+    font-weight: 300;
+    src: local('Source Sans Pro'), local('Source-Sans-Pro'), local('SourceSansPro'), url(SourceSansPro-Light.woff) format('woff');
 }
 
-body{
-  font-family: 'Source Sans Pro';
-  font-size: 1.2rem;
-  color: hsl(213, 38%, 22%);
+body {
+    font-family: 'Source Sans Pro';
+    font-size: 1.2rem;
+    /*color: hsl(213, 38%, 22%);*/
 }
 
-.pg1{
-  position: relative;
-  height: 100vh;
-  /*-webkit-filter: blur(3px);*/
-  background-size: cover;
-  background-repeat: no-repeat;
-  background-image: url(http://papers.co/wallpaper/papers.co-vd60-frontier-ipad-space-colorful-star-nebula-22-wallpaper.jpg);
+.pg1 {
+    position: relative;
+    height: 100vh;
+    /*-webkit-filter: blur(3px);*/
+    
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-image: url(http://papers.co/wallpaper/papers.co-vd60-frontier-ipad-space-colorful-star-nebula-22-wallpaper.jpg);
+
 }
 
-.pg2{
-  position: relative;
-  padding-top: 20vh;
-  height: 100vh;
-  background-color: #FFF;
-}
-
-.pg3{
-  position: relative;
-  padding-top: 20vh;
-  height: 100vh;
-  background-color: #F1F1F1;
+.pg2 {
+    position: relative;
+    padding-top: 20vh;
+    height: 100vh auto;
+    background-color: #FFF;
 }
 
 
+.pg3 {
+    position: relative;
+    padding-top: 20vh;
+    height: auto;
+    background-color: hsl(213, 38%, 22%);
+    color: #FFF;
 
-header{
-  margin: 0 auto;
-  max-width: 900px;
-  color: #FFF;
+    border-bottom-style: solid;
+    border-bottom-width: 20px;
+    border-bottom-color: hsl(213, 38%, 18%);
 }
 
-nav{
-  height: 30vh;
-  font-size: 1.2rem;
+.pg4 {
+    position: relative;
+    padding-top: 20vh;
+    height: 50vh auto;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-image: url(http://papers.co/wallpaper/papers.co-vd60-frontier-ipad-space-colorful-star-nebula-22-wallpaper.jpg);
 }
 
-.title{
-  position: relative;
-  font-size: 6rem;
-  font-family: 'Lato Regular';
+header {
+    margin: 0 auto;
+    max-width: 900px;
+    color: #FFF;
 }
 
-.title_description{
-  position: relative;
-  font-size: 2rem;
-  text-justify: inter-word;
-  margin-bottom: 1.4rem;
-  max-width: 50%;
+nav {
+    height: 30vh;
+    font-size: 1.2rem;
 }
 
-button{
-  width: 30%;
-  background: hsl(12, 62%, 57%);
-  border: none;
-  padding: 20px 0;
-  color: white;
-  font-weight: bold;
-  font-size: 1.25rem;
-  margin-right: 1rem;
+.title {
+    position: relative;
+    font-size: 6rem;
+    font-family: 'Lato Regular';
 }
 
-.wrapper{
-  position: relative;
-  max-width: 900px;
-  margin: 0 auto;
-  display: block;
+.title_description {
+    position: relative;
+    font-size: 2rem;
+    text-justify: inter-word;
+    margin-bottom: 1.4rem;
+    max-width: 50%;
 }
 
-.content{
-  position: relative;
-  width: 100%;
-  line-height: 160%;
-  text-align: justify;
+button {
+    width: 30%;
+    background: hsl(12, 62%, 57%);
+    border: none;
+    padding: 20px 0;
+    color: white;
+    font-weight: bold;
+    font-size: 1.25rem;
+    margin-right: 1rem;
 }
 
-.box{
-  display: inline-block; 
-  margin-bottom: 6rem;
+.wrapper {
+    position: relative;
+    max-width: 900px;
+    margin: 0 auto;
+    display: block;
 }
 
-.box-code-left{
-  position: relative;
-  display: inline-block; 
-  vertical-align: middle;
-  float: left;
-  width: 40%;
-  height: 30vh;
-  background-color: #F1F1F1;
+.content {
+    position: relative;
+    width: 100%;
+    line-height: 160%;
+    text-align: justify;
 }
 
-.box-code-right{
-  position: relative;
-  display: inline-block; 
-  vertical-align: middle;
-  float: right;
-  width: 40%;
-  height: 30vh;
-  background-color: #F1F1F1;
+.box {
+    display: inline-block;
+    margin-bottom: 6rem;
 }
 
-
-.box-text-title{
-  padding-left: 2rem;
-  margin-bottom: 1.2rem;
-  position: relative;
-  display: inline-block; 
-  vertical-align: middle;
-  width: 60%;
-  font-size: 3rem;
+.box-code-left {
+    position: relative;
+    display: inline-block;
+    vertical-align: middle;
+    float: left;
+    width: 40%;
+    height: 30vh;
+    background-color: #F1F1F1;
 }
 
-.box-text{
-  padding-left: 2rem;
-  position: relative;
-  display: inline-block; 
-  vertical-align: middle;
-  width: 60%;
+.box-code-right {
+    position: relative;
+    display: inline-block;
+    vertical-align: middle;
+    float: right;
+    width: 40%;
+    height: 30vh;
+    background-color: #F1F1F1;
 }
 
+.box-text-title {
+    padding-left: 2rem;
+    margin-bottom: 1.2rem;
+    position: relative;
+    display: inline-block;
+    vertical-align: middle;
+    width: 60%;
+    font-size: 2.4rem;
+}
+
+.box-text {
+    padding-left: 2rem;
+    font-size: 1.2rem;
+    position: relative;
+    display: inline-block;
+    vertical-align: middle;
+    width: 60%;
+}
