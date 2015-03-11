@@ -29,7 +29,7 @@ body{
   color: hsl(213, 38%, 22%);
 }
 
-.wrapper-header{
+.pg1{
   position: relative;
   height: 100vh;
   /*-webkit-filter: blur(3px);*/
@@ -37,6 +37,22 @@ body{
   background-repeat: no-repeat;
   background-image: url(http://papers.co/wallpaper/papers.co-vd60-frontier-ipad-space-colorful-star-nebula-22-wallpaper.jpg);
 }
+
+.pg2{
+  position: relative;
+  padding-top: 20vh;
+  height: 100vh;
+  background-color: #FFF;
+}
+
+.pg3{
+  position: relative;
+  padding-top: 20vh;
+  height: 100vh;
+  background-color: #F1F1F1;
+}
+
+
 
 header{
   margin: 0 auto;
@@ -49,7 +65,7 @@ nav{
   font-size: 1.2rem;
 }
 
-.title{   /* logo */
+.title{
   position: relative;
   font-size: 6rem;
   font-family: 'Lato Regular';
@@ -83,17 +99,14 @@ button{
 
 .content{
   position: relative;
-  height: 100vh;
   width: 100%;
-  padding-top: 20vh;
-  background-color: #FFF;
   line-height: 160%;
   text-align: justify;
 }
 
 .box{
   display: inline-block; 
-  margin-bottom: 10rem;
+  margin-bottom: 6rem;
 }
 
 .box-code-left{
@@ -134,7 +147,4 @@ button{
   vertical-align: middle;
   width: 60%;
 }
-
-
-
 
