@@ -31,7 +31,7 @@ body {
 
 .pg1 {
     position: relative;
-    height: 100vh;
+    height: 95vh;
     /*-webkit-filter: blur(3px);*/
     
     background-size: cover;
@@ -117,49 +117,56 @@ button {
     position: relative;
     width: 100%;
     line-height: 160%;
-    text-align: justify;
 }
+
+/*------------- BOX CODE ----------------*/
 
 .box {
     display: inline-block;
     margin-bottom: 6rem;
 }
 
-.box-code-left {
+.box-code {
+    font-family: "Lucida Console", Courier, monospace;
     position: relative;
     display: inline-block;
     vertical-align: middle;
-    float: left;
     width: 40%;
     height: 30vh;
     background-color: #F1F1F1;
+}
+
+.box-code-left {
+    float: left;
 }
 
 .box-code-right {
-    position: relative;
-    display: inline-block;
-    vertical-align: middle;
     float: right;
-    width: 40%;
-    height: 30vh;
-    background-color: #F1F1F1;
 }
 
 .box-text-title {
-    padding-left: 2rem;
     margin-bottom: 1.2rem;
     position: relative;
     display: inline-block;
     vertical-align: middle;
     width: 60%;
     font-size: 2.4rem;
+    line-height: 110%;
+}
+
+.box-padding-left{
+    padding-left: 2rem;
+}
+
+.box-padding-right{
+    padding-right: 2rem;
 }
 
 .box-text {
-    padding-left: 2rem;
     font-size: 1.2rem;
     position: relative;
     display: inline-block;
     vertical-align: middle;
     width: 60%;
+    text-align: justify;
 }
