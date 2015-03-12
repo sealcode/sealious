@@ -1,11 +1,13 @@
 {
-	"db_layer_config":{
-		"host": "localhost",
-		"port": "7766"
-	},
-	"biz_layer_config":{
-		"host": "localhost",
-		"port": "7767"
+	"layer_config":{
+		"db":{
+			"host": "localhost",
+			"port": "7766"
+		},
+		"biz":{
+			"host": "localhost",
+			"port": "7767"
+		}
 	},
 	"dispatcher_config":{
 		"datastore_chip":"mongo"
