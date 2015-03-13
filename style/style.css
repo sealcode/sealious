@@ -183,7 +183,7 @@ button {
 480px = 48rem
 768px = 76.8rem*/
 
-@media screen and (max-width: 76.8rem) {
+@media all and (max-width: 48rem) {
 
     .pg1{
         height: 100%;
@@ -193,18 +193,15 @@ button {
         padding-top: 2rem;
     }
 
-
     header{
         width: 100%;
     }
-
 
     nav{
         height: 20vh;
     }
 
     .title{
-        font-size: 6rem;
         text-align: center;
     }
 
@@ -212,6 +209,7 @@ button {
         text-align: center;
         padding-left: 1rem;
         padding-right: 1rem;
+        padding-bottom: 4rem;
         max-width: 100%;
     }
 
@@ -226,6 +224,7 @@ button {
         padding-left: 1rem;
         padding-right: 1rem;
     }
+
     .content {
         width: 100%;
         line-height: 160%;
@@ -237,21 +236,10 @@ button {
     }
 
     .box-code {
-        font-size: 1rem;
-        font-family: "Lucida Console", Courier, monospace;
-        position: relative;
         display: block;
-        vertical-align: middle;
         width: 100%;
         height: auto;
-
-        background-color: hsl(200, 60%, 15%);
-        /*background-color: #0D3257;*/
-
-        padding-top: 1rem;
-        padding-left: 1rem;
         padding-bottom: 1rem;
-
         margin-bottom: 2rem;
     }
 
@@ -264,11 +252,9 @@ button {
     .box-text-title {
         display: block;
         text-align: justify;
-        vertical-align: middle;
         width: 100%;
         padding-top: 2rem;
-        font-size: 2.4rem;
-        line-height: 110%;
+
     }
     .box-padding-left {
         padding-left: 0;
@@ -282,9 +268,24 @@ button {
         width: 100%;
         text-align: justify;
     }
+}
 
+@media all and (min-width: 48rem) and (max-width: 60rem) {
 
+    .title{
+        text-align: center;
+    }
 
+    .title-description{
+        text-align: center;
+        padding-left: 1rem;
+        padding-right: 1rem;
+        padding-bottom: 4rem;
+        max-width: 100%;
+    }
 
-
+    button{
+        width: 33%;
+        margin-right: 0;
+    }
 }
