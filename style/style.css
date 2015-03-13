@@ -42,7 +42,7 @@ body {
 
 .pg2 {
     position: relative;
-    padding-top: 20vh;
+    padding-top: 16vh;
     height: 100%;
     background-color: #FFF;
 }
@@ -286,6 +286,6 @@ button {
 
     button{
         width: 33%;
-        margin-right: 0;
+        margin-right: 0;    
     }
 }
