@@ -38,11 +38,9 @@ module.exports = function(channel, dispatcher, dependencies){
 			method: "POST",
 			path: url,
 			handler: function(request, reply){
-				console.log(request.state);
-				console.log("request_session:", request.state.PrometheusSession);
 				var id_by_session = www_server.get_user_id(request.state.PrometheusSession);
-				console.log("id by session:", id_by_session);
-				if(id_by_session===false){
+				console.log("id_by_session:", id_by_session);
+				if(id_by_session!==false){
 					dispatcher.resources.create(resource_type_name, request.payload, id_by_session)
 					.then(function(response){
 						reply(response.toString());
