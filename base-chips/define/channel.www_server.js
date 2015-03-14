@@ -24,9 +24,9 @@ function get_user_id(session_id) {
     console.log("all sessions:", session_id_to_user_id);
     console.log("session in index:", session_id_to_user_id[session_id]);
     if (session_id_to_user_id[session_id]==undefined) {
-        return session_id_to_user_id[session_id];
-    }else{
         return false;        
+    }else{
+        return session_id_to_user_id[session_id];
     }
 }
 
@@ -52,7 +52,7 @@ module.exports = function(www_server, dispatcher, dependencies){
         if(obj instanceof Error){
             original_reply_function(obj.message);
             console.log(obj.stack);
-        }else if(obj && obj.is_error){
+        }else if(obj && (obj.is_error || obj.type=="error")){
             if(obj.is_user_fault){
                 ret = original_reply_function(obj.toResponse());
                 ret.statusCode = obj.http_code;                
