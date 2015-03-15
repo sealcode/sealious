@@ -1,0 +1,24 @@
+{
+	"layer_config":{
+		"db":{
+			"host": "localhost",
+			"port": "7766"
+		},
+		"biz":{
+			"host": "localhost",
+			"port": "7767"
+		}
+	},
+	"dispatcher_config":{
+		"datastore_chip":"mongo"
+	},
+	"chip_config":{
+		"channel.www_server":{
+			"port": 80
+		},
+		"datastore.mongo":{
+			"embedded": false,
+			"db_name": "sealious"
+		}
+	}
+}

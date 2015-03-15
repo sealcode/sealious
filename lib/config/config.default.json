@@ -9,5 +9,8 @@
 	"biz_layer_config":{
 		"host": "localhost",
 		"port": "7767"
+	},
+	"dispatcher_config":{
+		"datastore_chip":"mongo"
 	}
 }
