@@ -2,6 +2,8 @@ var Promise = require("bluebird");
 
 module.exports = function(user_manager, dispatcher){
 
+var SealiousErrors = require("./response/error.js");
+
 	user_manager.create_user = function(dispatcher, username, password){
 		var user_data;
 		return dispatcher.services.user_manager.user_exists(username, dispatcher)
@@ -10,8 +12,7 @@ module.exports = function(user_manager, dispatcher){
 					console.log("user ", username, "does not exists, creating it");
 					return dispatcher.resources.create("user", {username: username, password:password});
 				}else{
-					//throw new Errors.ValueExists("Username `" + username + "` is already taken.");
-					throw new Error("Username `" + username + "` is already taken.");
+					throw new SealiousErrors.ValueExists("Username `" + username + "` is already taken.");
 				}
 			})
 	}
@@ -41,8 +42,7 @@ module.exports = function(user_manager, dispatcher){
 					console.log("found");
 					resolve(result[0].prometheus_id);
 				}else{
-					//var err = new Errors.InvalidCredentials("wrong username or password");
-					var err = new Error("wrong username or password");
+					var err = new SealiousErrors.InvalidCredentials("wrong username or password");
 					reject(err);
 				}
 			})			
