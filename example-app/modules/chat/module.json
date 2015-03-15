@@ -1,0 +1,12 @@
+{
+	"name": "chat",
+	"uses": [
+		"channel.www_server",
+		"channel.rest"
+	],
+	"defines": [
+		"resource_type.chat_message",
+		"resource_type.chat_conversation",
+		"resource_type.contact"
+	]
+}

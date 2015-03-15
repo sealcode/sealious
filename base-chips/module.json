@@ -1,0 +1,30 @@
+{
+	"name": "base_chips",
+	"defines": [
+		"datastore.mongo",
+		"field_type.text",
+		"field_type.int",
+		"field_type.date",
+		"field_type.email",
+		"field_type.reference",
+		"resource_type.user",
+		"channel.http",
+		{
+			"longid": "channel.www_server",
+			"requires": ["channel.http"]
+		},
+		{
+			"longid": "channel.rest",
+			"requires": ["channel.www_server"]
+		},
+		{
+			"longid": "service.user_manager",
+			"requires": [
+				"resource_type.user"
+			]
+		}
+	],
+	"uses": [
+		"channel.www_server"
+	]
+}
