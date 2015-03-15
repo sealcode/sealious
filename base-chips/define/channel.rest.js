@@ -8,6 +8,20 @@ module.exports = function(channel, dispatcher, dependencies){
 
 		www_server.route({
 			method: "GET",
+			path: url+"/signature",
+			handler: function(request, reply){
+				dispatcher.resources.get_resource_type_signature(resource_type_name)
+				.then(function(signature){
+					reply(signature);
+				}).catch(function(err){
+					reply(err);
+				})
+			}
+			// hanlder GET ma wypisać wszystkie zasoby o podanym typie
+		});
+
+		www_server.route({
+			method: "GET",
 			path: url,
 			handler: function(request, reply){
 				dispatcher.resources.list_by_type(resource_type_name)
@@ -25,7 +39,8 @@ module.exports = function(channel, dispatcher, dependencies){
 			path: url,
 			handler: function(request, reply){
 				var id_by_session = www_server.get_user_id(request.state.PrometheusSession);
-				if(id_by_session){
+				console.log("id_by_session:", id_by_session);
+				if(id_by_session!==false){
 					dispatcher.resources.create(resource_type_name, request.payload, id_by_session)
 					.then(function(response){
 						reply(response.toString());
