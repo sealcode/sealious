@@ -127,8 +127,8 @@ button {
 }
 
 .box-code {
-    font-size: 1rem;
     font-family: "Lucida Console", Courier, monospace;
+    font-size: 1rem;
     position: relative;
     display: inline-block;
     vertical-align: middle;
