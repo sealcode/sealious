@@ -9,7 +9,8 @@ module.exports = function(www_server, dispatcher, dependencies){
 		path: url,
 		handler: function(request, reply){
 			if(1){
-				dispatcher.users_get_all_users()
+				console.log(dispatcher.services.user_manager);
+				dispatcher.services.user_manager.get_all_users()
 				.then(function(users){ // wywołanie metody z dispatchera webowego
 					reply(users);
 				})
@@ -24,7 +25,7 @@ module.exports = function(www_server, dispatcher, dependencies){
 		method: "GET",
 		path: url + "/{user_id}",
 		handler: function(request, reply){
-				dispatcher.users_get_user_data(request.params.user_id)
+				dispatcher.services.user_manager.get_user_data(request.params.user_id)
 					.then(function(user_data){ // wywołanie metody z dispatchera webowego
 						reply(user_data);
 					})
@@ -42,7 +43,7 @@ module.exports = function(www_server, dispatcher, dependencies){
 		path: url,
 		handler: function(request, reply){
 			//console.log("user/channel.www_server.js", "username and password:", request.payload.username, ":", request.payload.password);
-			dispatcher.users_create_user(request.payload.username, request.payload.password)
+			dispatcher.services.user_manager.create_user(request.payload.username, request.payload.password)
 				.then(function(response){
 					reply().redirect("/login.html#registered");
 				})
@@ -57,7 +58,7 @@ module.exports = function(www_server, dispatcher, dependencies){
 		method: "PUT",
 		path: url+"/{user_id}",
 		handler: function(request, reply){
-			dispatcher.users_update_user_data(request.params.user_id, request.payload)
+			dispatcher.services.user_manager.update_user_data(request.params.user_id, request.payload)
 				.then(function(response){
 					reply();
 				})
@@ -70,7 +71,7 @@ module.exports = function(www_server, dispatcher, dependencies){
 		method: "DELETE",
 		path: url,
 		handler: function(request, reply){
-			dispatcher.users_delete_user(request.payload.username)
+			dispatcher.services.user_manager.delete_user(request.payload.username)
 				.then(function(user_data){
 					reply(user_data);
 				})
@@ -86,7 +87,7 @@ module.exports = function(www_server, dispatcher, dependencies){
 		handler: function(request, reply){
 			var session_id = request.state.PrometheusSession;
 			var user_id = www_server.get_user_id(session_id);
-			dispatcher.users_get_user_data(user_id)
+			dispatcher.services.user_manager.get_user_data(user_id)
 			.then(function(user_data){
 				if(user_data){
 					user_data.user_id = user_id;
@@ -108,7 +109,7 @@ module.exports = function(www_server, dispatcher, dependencies){
 		handler: function(request, reply){
 			var session_id = request.state.PrometheusSession;
 			var user_id = www_server.get_user_id(session_id);
-			dispatcher.users_update_user_data(user_id, request.payload)
+			dispatcher.services.user_manager.update_user_data(user_id, request.payload)
 			.then(function(){
 				reply("ok!");
 			})
@@ -119,7 +120,7 @@ module.exports = function(www_server, dispatcher, dependencies){
         method: "POST",
         path: "/login",
         handler: function(request, reply) {
-            dispatcher.users_password_match(request.payload.username, request.payload.password)
+            dispatcher.services.user_manager.password_match(request.payload.username, request.payload.password)
             .then(function(user_id) {
                 if (user_id!==false) {
                     var sessionId = www_server.new_session(user_id);
