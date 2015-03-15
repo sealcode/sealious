@@ -25,7 +25,6 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, nav, 
 
 body {
     font-family: 'Source Sans Pro';
-    font-size: 1.2rem;
     /*color: hsl(213, 38%, 22%);*/
 }
 
@@ -139,6 +138,12 @@ button {
 
     padding-top: 1rem;
     padding-left: 1rem;
+}
+
+pre{
+    margin: 0; 
+    white-space: pre-wrap; 
+    line-height: 125%;
 }
 
 .box-code-left {
