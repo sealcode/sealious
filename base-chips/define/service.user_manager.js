@@ -1,26 +1,25 @@
 var Promise = require("bluebird");
 
+module.exports = function(user_manager, dispatcher){
+
 var SealiousErrors = require("./response/error.js");
 
-var UserManager = new function(){
-var that = this;
-
-	this.create_user = function(username, password, dispatcher){
+	user_manager.create_user = function(dispatcher, username, password){
 		var user_data;
-		return dispatcher.users_user_exists(username, dispatcher)
+		return dispatcher.services.user_manager.user_exists(username, dispatcher)
 			.then(function(user_exists){	
 				if (!user_exists){
 					console.log("user ", username, "does not exists, creating it");
-					return dispatcher.resources_create("user", {username: username, password:password});
+					return dispatcher.resources.create("user", {username: username, password:password});
 				}else{
 					throw new SealiousErrors.ValueExists("Username `" + username + "` is already taken.");
 				}
 			})
 	}
 
-	this.user_exists = function(username, dispatcher){
+	user_manager.user_exists = function(dispatcher, username){
 		return new Promise(function(resolve, reject){
-			dispatcher.resources_find({username: username}, "user")
+			dispatcher.resources.find({username: username}, "user")
 			.then(function(matched_documents){
 				console.log("user-manager.js", "matched_documents", matched_documents);
 				console.log("user-manager.js user_exists resolving with", matched_documents.length===1)
@@ -29,7 +28,7 @@ var that = this;
 		})
 	}
 
-	this.password_match = function(username, password, dispatcher){
+	user_manager.password_match = function(dispatcher, username, password){
 		username = username.toString();
 		password = password.toString();
 		console.log("searching forr "+username+":"+password);
@@ -50,30 +49,30 @@ var that = this;
 		})
 	}
 
-	this.get_all_users = function(dispatcher){
+	user_manager.get_all_users = function(dispatcher){
 		return dispatcher.datastore.find("resources", {type: "user"});
 	}
 
-	this.get_user_data = function(user_resource_id, dispatcher){
+	user_manager.get_user_data = function(dispatcher, user_resource_id){
 		var user_resource_id = parseInt(user_resource_id);
 		try{
-			var ret = dispatcher.resources_get_by_id(user_resource_id);						
+			var ret = dispatcher.resources.get_by_id(user_resource_id);						
 		}catch(err){
 			throw err;
 		}
 		return ret;
 	}
 
-	this.update_user_data = function(user_id, new_user_data, dispatcher){
+	user_manager.update_user_data = function(dispatcher, user_id, new_user_data){
 		return dispatcher.datastore.find("users", {user_id: user_id})
 		.then(function(user_document){
 			console.log("user-manager.js user_document", user_document);
 			userdata_id = user_document[0].userdata_id;
-			return dispatcher.resources_update(userdata_id, new_user_data);
+			return dispatcher.resources.update(userdata_id, new_user_data);
 		})
 	}
 
-	this.delete_user = function(username, dispatcher){
+	user_manager.delete_user = function(dispatcher, username){
  		return new Promise(function(resolve, reject){ 			
  			dispatcher.datastore.delete("users", {username: username})
  			.then(function(data){
@@ -84,8 +83,4 @@ var that = this;
  		});
  	}
 
-
-
 }
-
-module.exports = UserManager;
