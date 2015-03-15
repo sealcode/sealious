@@ -71,7 +71,7 @@ body {
 
 header {
     margin: 0 auto;
-    max-width: 900px;
+    max-width: 60rem;
     color: #FFF;
 }
 
@@ -108,7 +108,7 @@ button {
 
 .wrapper {
     position: relative;
-    max-width: 900px;
+    max-width: 60rem;
     margin: 0 auto;
     display: block;
 }
