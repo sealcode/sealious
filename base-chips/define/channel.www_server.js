@@ -21,10 +21,12 @@ function kill_session(session_id) {
 }
 
 function get_user_id(session_id) {
-    if (session_id_to_user_id[session_id]) {
-        return session_id_to_user_id[session_id];
-    }else{
+    console.log("all sessions:", session_id_to_user_id);
+    console.log("session in index:", session_id_to_user_id[session_id]);
+    if (session_id_to_user_id[session_id]==undefined) {
         return false;        
+    }else{
+        return session_id_to_user_id[session_id];
     }
 }
 
@@ -50,12 +52,14 @@ module.exports = function(www_server, dispatcher, dependencies){
         if(obj instanceof Error){
             original_reply_function(obj.message);
             console.log(obj.stack);
-        }else if(obj && obj.is_error){
+        }else if(obj && (obj.is_error || obj.type=="error")){
             if(obj.is_user_fault){
                 ret = original_reply_function(obj.toResponse());
                 ret.statusCode = obj.http_code;                
             }else{
                 ret = original_reply_function("{\"server_error\":true}");
+                console.log(obj.message);   
+                console.log(obj.stack);
                 ret.statusCode = 500;
             }
         }else{
@@ -64,12 +68,28 @@ module.exports = function(www_server, dispatcher, dependencies){
         return ret;
     }
 
+    function process_request(old_request){
+        var cookie_string = old_request.headers.cookie;
+        if(cookie_string){
+            var cookie_array = cookie_string.split(";");
+            var new_state = cookie_array.map(function(cookie_entry){
+                var obj = {};
+                obj[cookie_entry.split("=")[0]]=cookie_entry.split("=")[1];
+            });
+            for(var i in new_state){
+                old_request.state[i] = new_state[i] && new_state[i].trim();
+            }            
+        }
+        return old_request;
+    }
+
     www_server.route = function(){
         var original_handler = arguments[0].handler;
         if(original_handler && typeof original_handler=="function"){
             arguments[0].handler = function(request, reply){
                 var new_reply = custom_reply_function.bind(custom_reply_function, reply);
-                original_handler(request, new_reply);
+                var new_request = process_request(request);
+                original_handler(new_request, new_reply);
             }
         }
         www_server.server.route.apply(this.server, arguments);
