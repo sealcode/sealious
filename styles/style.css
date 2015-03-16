@@ -9,22 +9,9 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, nav, 
     display: block;
 }
 
-@font-face {
-    font-family: 'Lato Regular';
-    font-style: normal;
-    font-weight: 400;
-    src: local('Lato Regular'), local('Lato-Regular'), local('LatoRegular'), url(lato-regular.woff) format('woff');
-}
-
-@font-face {
-    font-family: 'Source Sans Pro';
-    font-style: normal;
-    font-weight: 300;
-    src: local('Source Sans Pro'), local('Source-Sans-Pro'), local('SourceSansPro'), url(SourceSansPro-Light.woff) format('woff');
-}
-
 body {
     font-family: 'Source Sans Pro';
+    font-weight: 300;
     /*color: hsl(213, 38%, 22%);*/
 }
 
@@ -65,7 +52,7 @@ body {
     height: 50vh auto;
     background-size: cover;
     background-repeat: no-repeat;
-    background-image: url(http://papers.co/wallpaper/papers.co-vd60-frontier-ipad-space-colorful-star-nebula-22-wallpaper.jpg);
+    /*background-image: url(http://papers.co/wallpaper/papers.co-vd60-frontier-ipad-space-colorful-star-nebula-22-wallpaper.jpg);*/
 }
 
 header {
@@ -126,8 +113,6 @@ button {
 }
 
 .box-code {
-    font-family: "Lucida Console", Courier, monospace;
-    font-size: 1rem;
     position: relative;
     display: inline-block;
     vertical-align: middle;
@@ -142,6 +127,8 @@ button {
 
 pre{
     margin: 0; 
+    font-family: "Lucida Console", Courier, monospace;
+    font-size: 0.8rem;
     white-space: pre-wrap; 
     line-height: 125%;
 }
