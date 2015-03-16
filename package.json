@@ -36,7 +36,7 @@
     "sha1": "~1.1.0",
     "socket.io": "~1.2.0",
     "socket.io-client": "~1.2.0",
-    "sealious-base-chips": "file:base-chips"
+    "sealious-base-chips": "sealious-base-chips"
   },
   "devDependencies": {
     "blanket": "1.1.6",
