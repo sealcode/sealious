@@ -34,6 +34,7 @@
     "query-string": "~1.0.0",
     "request": "~2.47.0",
     "sealious-base-chips": ">=0.0.1",
+    "sealious-example-app": ">=0.0.1",
     "sha1": "~1.1.0",
     "socket.io": "~1.2.0",
     "socket.io-client": "~1.2.0"
