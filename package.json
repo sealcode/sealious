@@ -33,10 +33,10 @@
     "open": "0.0.5",
     "query-string": "~1.0.0",
     "request": "~2.47.0",
+    "sealious-base-chips": "file:sealious-base-chips",
     "sha1": "~1.1.0",
     "socket.io": "~1.2.0",
-    "socket.io-client": "~1.2.0",
-    "sealious-base-chips": "sealious-base-chips"
+    "socket.io-client": "~1.2.0"
   },
   "devDependencies": {
     "blanket": "1.1.6",
