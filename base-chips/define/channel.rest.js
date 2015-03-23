@@ -97,7 +97,7 @@ module.exports = function(channel, dispatcher, dependencies){
 			path: url+"/{id}",
 			handler: function(request, reply){
 				//console.log("rest.js get_resource_by_id", request.params.id, request.payload.access_mode, request.payload.access_mode_args);
-				dispatcher.resources.update(request.params.id, request.payload).then(function(response){
+				dispatcher.resources.update_resource(request.params.id, request.payload).then(function(response){
 					reply(response);
 				});
 			}
