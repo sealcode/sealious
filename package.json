@@ -1,6 +1,6 @@
 {
   "name": "sealious",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "description": "",
   "main": "./main.js",
   "scripts": {
@@ -33,9 +33,8 @@
     "open": "0.0.5",
     "query-string": "~1.0.0",
     "request": "~2.47.0",
-    "sealious-base-chips": ">=0.0.1",
-    "sealious-example-app": ">=0.0.1",
-    "sha1": "~1.1.0",
+    "sealious-base-chips": "latest",
+    "sealious-example-app": "latest",
     "socket.io": "~1.2.0",
     "socket.io-client": "~1.2.0"
   },
