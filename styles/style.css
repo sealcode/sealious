@@ -75,22 +75,71 @@ nav {
 
 .title-description {
     position: relative;
-    font-size: 2rem;
+    font-size: 2.15rem;
     text-justify: inter-word;
     margin-bottom: 1.4rem;
     max-width: 50%;
 }
 
-button {
-    width: 30%;
-    background: hsl(12, 62%, 57%);
+.install-prompt {
+    background-color: #FFF;
+    white-space: pre;
+    font-size: 1.6rem;
+    -webkit-animation-name: blinker;
+    -webkit-animation-duration: 1.4s;
+    -webkit-animation-timing-function: ease;
+    -webkit-animation-iteration-count: infinite;
+    
+    -moz-animation-name: blinker;
+    -moz-animation-duration: 1.4s;
+    -moz-animation-timing-function: linear;
+    -moz-animation-iteration-count: infinite;
+    
+    animation-name: blinker;
+    animation-duration: 1.4s;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+}
+
+@-moz-keyframes blinker {  
+    0% { opacity: 1.0; }
+    50% { opacity: 0.0; }
+    100% { opacity: 1.0; }
+}
+
+@-webkit-keyframes blinker {  
+    0% { opacity: 1.0; }
+    50% { opacity: 0.0; }
+    100% { opacity: 1.0; }
+}
+
+@keyframes blinker {  
+    0% { opacity: 1.0; }
+    50% { opacity: 0.0; }
+    100% { opacity: 1.0; }
+}
+
+.button {
+    display: inline-block;
+    width: 33%;
+    background-color: hsl(220, 60%, 15%);
     border: none;
     padding: 20px 0;
     color: white;
-    font-weight: bold;
-    font-size: 1.25rem;
-    margin-right: 1rem;
+    font-family: 'Lato Regular';
+
+    font-size: 1.4rem;
+    transition: all 800ms;
+    text-decoration: none;
+    text-align: center;
+    vertical-align: middle;
 }
+
+.button:hover {
+    background: hsl(128, 53%, 36%);
+    transition: all 800ms;
+}
+
 
 .wrapper {
     position: relative;
@@ -118,7 +167,7 @@ button {
     vertical-align: middle;
     width: 40%;
     height: 30vh;
-    background-color: hsl(200, 60%, 15%);
+    background-color: hsl(220, 60%, 15%);
     /*background-color: #0D3257;*/
 
     padding-top: 1rem;
@@ -159,13 +208,18 @@ pre{
     padding-right: 2rem;
 }
 
-.box-text {
+.box-text{
     font-size: 1.2rem;
     position: relative;
     display: inline-block;
     vertical-align: middle;
     width: 60%;
     text-align: justify;
+}
+
+.box-img{
+
+
 }
 
 /*  width: 320px 480px 768px */
@@ -205,7 +259,7 @@ pre{
         max-width: 100%;
     }
 
-    button{
+    .button{
         width: 100%;
         margin-left: 0;
         margin-right: 0;
@@ -276,7 +330,7 @@ pre{
         max-width: 100%;
     }
 
-    button{
+    .button{
         width: 33%;
         margin-right: 0;    
     }
