@@ -1,8 +1,9 @@
 * {
     margin: 0px;
     padding: 0px;
-    box-sizing: border-box;
-    text-rendering: optimizelegibility;
+    box-sizing: border-box;/*
+    text-rendering: optimizeLegibility !important;
+    -webkit-font-smoothing: antialiased !important;*/
 }
 
 article, aside, details, figcaption, figure, footer, header, hgroup, main, nav, section, summary {
@@ -10,60 +11,57 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, nav, 
 }
 
 body {
-    font-family: 'Source Sans Pro';
-    font-weight: 300;
-    /*color: hsl(213, 38%, 22%);*/
+    font-family: 'Source Sans Pro Light';
+    color: hsl(0, 0%, 30%);
 }
 
+h1{
+    font-family: 'Source Sans Pro Light';
+    font-size: 2.8rem;
+    text-align: center;
+}
+ 
 .pg1 {
     position: relative;
-    height: 95vh;
-    /*-webkit-filter: blur(3px);*/
-    
+    height: 60vh;
     background-size: cover;
     background-repeat: no-repeat;
-    background-image: url(../img/background.png);
-
+    background-image: url(../img/background.jpg);
 }
 
 .pg2 {
     position: relative;
-    padding-top: 16vh;
     height: 100%;
     background-color: #FFF;
 }
 
-
 .pg3 {
     position: relative;
-    padding-top: 20vh;
     height: auto;
+    padding-top: 2rem;
     background-color: hsl(213, 38%, 22%);
     color: #FFF;
-
     border-bottom-style: solid;
     border-bottom-width: 20px;
     border-bottom-color: hsl(213, 38%, 18%);
 }
-
+/*
 .pg4 {
     position: relative;
     padding-top: 20vh;
     height: 50vh auto;
     background-size: cover;
     background-repeat: no-repeat;
-    /*background-image: url(http://papers.co/wallpaper/papers.co-vd60-frontier-ipad-space-colorful-star-nebula-22-wallpaper.jpg);*/
 }
-
+*/
 header {
     margin: 0 auto;
-    padding-left: 10rem;
-    padding-right: 10rem;
+    max-width: 60rem;
     color: #FFF;
 }
 
 nav {
-    height: 30vh;
+    height: 20vh;
     font-size: 1.2rem;
 }
 
@@ -71,20 +69,19 @@ nav {
     position: relative;
     font-size: 6rem;
     font-family: 'Lato Regular';
-    -webkit-animation: blink 0.7s infinite;
 }
 
 .title-description {
     position: relative;
     font-size: 2.35rem;
-    margin-bottom: 1.4rem;
     max-width: 100%;
+    margin-bottom: 1.4rem;
 }
 
 .install-prompt {
+    font-size: 1.6rem;
     background-color: #FFF;
     white-space: pre;
-    font-size: 1.6rem;
     -webkit-animation-name: blinker;
     -webkit-animation-duration: 1.4s;
     -webkit-animation-timing-function: ease;
@@ -121,14 +118,13 @@ nav {
 
 .button {
     display: inline-block;
-    width: 33%;
+    font-family: 'Source Sans Pro Light';
+    font-size: 1.6rem;
+    color: white;
     background-color: hsl(220, 60%, 15%);
     border: none;
     padding: 20px 0;
-    color: white;
-    font-family: 'Lato Regular';
-
-    font-size: 1.4rem;
+    width: 33%;
     transition: all 800ms;
     text-decoration: none;
     text-align: center;
@@ -142,43 +138,43 @@ nav {
 
 .wrapper {
     position: relative;
+    display: block;
     max-width: 60rem;
     margin: 0 auto;
-    display: block;
 }
 
 .content {
     position: relative;
     width: 100%;
     line-height: 160%;
+    margin-top: 2rem;
 }
 
 /*------------- BOX CODE ----------------*/
 
 .box {
     display: inline-block;
+    margin-top: 2rem;
     margin-bottom: 6rem;
 }
 
 .box-code {
     position: relative;
     display: inline-block;
-    vertical-align: middle;
-    width: 40%;
-    height: 30vh;
     background-color: hsl(220, 60%, 15%);
-    /*background-color: #0D3257;*/
-
+    width: 40%;
+    height: 12.5rem;
     padding-top: 1rem;
     padding-left: 1rem;
+    vertical-align: middle;
 }
 
 pre{
-    margin: 0; 
-    font-family: "Lucida Console", Courier, monospace;
+    font-family: 'DejaVuSans-regular',"Lucida Console", Courier, monospace;
     font-size: 0.8rem;
     white-space: pre-wrap; 
     line-height: 125%;
+    margin: 0; 
 }
 
 .box-code-left {
@@ -190,13 +186,14 @@ pre{
 }
 
 .box-text-title {
-    margin-bottom: 1.2rem;
     position: relative;
     display: inline-block;
-    vertical-align: middle;
-    width: 60%;
     font-size: 2.4rem;
+    font-weight: bold;
     line-height: 110%;
+    vertical-align: middle;
+    margin-bottom: 1.2rem;
+    width: 60%;
 }
 
 .box-padding-left{
@@ -208,31 +205,49 @@ pre{
 }
 
 .box-text{
-    font-size: 1.2rem;
     position: relative;
     display: inline-block;
+    font-size: 1.2rem;
     vertical-align: middle;
-    width: 60%;
     text-align: justify;
+    width: 60%;
 }
 
 .box-img{
+}
 
+/*-------------------RWD------------------*/
 
+@media all and (min-width: 60.75rem) and (max-width: 68.75rem){
+    header, .wrapper{
+        max-width: none;
+        padding-left: 4rem;
+        padding-right: 4rem;
+    }
 }
 
 
 @media all and (max-width: 60.75rem) {
+
+
     .title {
         text-align: center;
     }
 
     .title-description{
-        text-align: center;
+        max-width: 100%;
         padding-left: 1rem;
         padding-right: 1rem;
         padding-bottom: 4rem;
-        max-width: 100%;
+        text-align: center;
+    }
+
+    .pg1{
+        height: auto;
+    }
+
+    .pg2{
+        margin-top: 2rem;
     }
 
     header{
@@ -245,10 +260,62 @@ pre{
         margin-left: 0;
         margin-right: 0;
     }
+
+    .wrapper {
+        max-width: 100%;
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+
+    .content {
+        width: 100%;
+        line-height: 160%;
+    }
+
+    .box{
+        display: block;
+        margin-bottom: 2rem;
+    }
+
+    .box-code {
+        display: block;
+        width: 50%;
+        height: auto;
+        padding-bottom: 1rem;
+        margin-bottom: 2rem;
+    }
+
+    .box-code-left {
+        margin-right: 2rem;
+    }
+    .box-code-right {
+        margin-left: 2rem;
+    }
+    .box-text-title {
+        display: block;
+        text-align: justify;
+        width: 100%;
+    }
+
+    .box-text {
+        display: block;
+        vertical-align: middle;
+        width: 100%;
+        text-align: justify;
+    }
+
+    .box-padding-left {
+        padding-left: 0;
+    }
+    .box-padding-right {
+        padding-right: 0;
+    }
 }
 
 @media all and (max-width: 48rem) {
-
+    .box-code{
+        width: 100%;
+    }
 }
 
 @media all and (max-width: 40rem) {
@@ -258,6 +325,11 @@ pre{
 
     .title-description{
         font-size: 2.25rem;
+    }
+
+    .box-text-title {
+        display: block;
+        text-align: left;
     }
 }
 
@@ -303,166 +375,8 @@ pre{
     }
 }
 
-@media all and (max-height: 30rem){
+@media all and (max-height: 38.75rem){
     .pg1{
         height: auto;
     }
 }
-
-/*
-
-@media all and (min-width: 48rem) and (max-width: 60rem) {
-
-    .title{
-        text-align: center;
-    }
-
-    .title-description{
-        text-align: center;
-        padding-left: 1rem;
-        padding-right: 1rem;
-        padding-bottom: 4rem;
-        max-width: 100%;
-    }
-
-    .button{
-        width: 100%;
-        margin-left: 0;
-        margin-right: 0;
-    }
-}
-
-@media all and (min-width: 32rem) and (max-width: 48rem) {
-
-    .pg1{
-        height: 100%;
-    }
-
-    .pg2 {
-        padding-top: 2rem;
-    }
-
-    header{
-        width: 100%;
-    }
-
-    nav{
-        height: 20vh;
-    }
-
-    .title{
-        text-align: center;
-    }
-
-    .title-description{
-        text-align: center;
-        padding-left: 1rem;
-        padding-right: 1rem;
-        padding-bottom: 4rem;
-        max-width: 100%;
-    }
-
-    .button{
-        width: 100%;
-        margin-left: 0;
-        margin-right: 0;
-    }
-
-    .wrapper {
-        max-width: 100%;
-        padding-left: 1rem;
-        padding-right: 1rem;
-    }
-
-    .content {
-        width: 100%;
-        line-height: 160%;
-    }
-
-    .box{
-        display: block;
-        margin-bottom: 4rem;
-    }
-
-    .box-code {
-        display: block;
-        width: 100%;
-        height: auto;
-        padding-bottom: 1rem;
-        margin-bottom: 2rem;
-    }
-
-    .box-code-left {
-        float: 0;
-    }
-    .box-code-right {
-        float: 0;
-    }
-    .box-text-title {
-        display: block;
-        text-align: justify;
-        width: 100%;
-        padding-top: 2rem;
-
-    }
-    .box-padding-left {
-        padding-left: 0;
-    }
-    .box-padding-right {
-        padding-right: 0;
-    }
-    .box-text {
-        display: block;
-        vertical-align: middle;
-        width: 100%;
-        text-align: justify;
-    }
-}
-
-@media all and (min-width: 20rem) and (max-width: 32rem){
-
-    .title{
-        text-align: center;
-        font-size: 4.2rem;
-    }
-
-    .title-description{
-        font-size: 1.60rem;
-        text-align: center;
-        padding-left: 1rem;
-        padding-right: 1rem;
-        padding-bottom: 4rem;
-        max-width: 100%;
-    }
-
-    .button{
-        width: 100%;
-        margin-left: 0;
-        margin-right: 0;
-    }
-}
-
-@media all and (max-width: 20rem){
-
-    .title{
-        text-align: center;
-        font-size: 4rem;
-    }
-
-    .title-description{
-        font-size: 1.55rem;
-        text-align: center;
-        padding-left: 1rem;
-        padding-right: 1rem;
-        padding-bottom: 4rem;
-        max-width: 100%;
-    }
-
-    .button{
-        width: 100%;
-        margin-left: 0;
-        margin-right: 0;
-    }
-}
-
-*/
