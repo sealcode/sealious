@@ -48,6 +48,6 @@
     }
   },
   "peerDependencies":{
-    "sealious-base-chips": "^0.0.5"
+    "sealious-base-chips": "^0.0.6"
   }
 }
