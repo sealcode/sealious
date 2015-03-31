@@ -6,7 +6,7 @@
 }
 
 @font-face{
-    font-family: 'Source Sans Pro';
+    font-family: 'Source Sans Pro Light';
     font-weight: 300;
     font-style: normal;
     font-stretch: normal;
@@ -19,7 +19,7 @@
 }
 
 @font-face{
-    font-family: 'Source Sans Pro';
+    font-family: 'Source Sans Pro Regular';
     font-weight: 400;
     font-style: normal;
     font-stretch: normal;
@@ -29,4 +29,40 @@
         url('fonts/woff/SourceSansPro-Regular.otf.woff') format('woff'),
         url('fonts/ttf/SourceSansPro-Regular.ttf') format('truetype'),
         url('fonts/otf/SourceSansPro-Regular.otf') format('opentype');
+}
+
+@font-face{
+    font-family: 'DejaVuSans-extralight';
+    font-weight: 300;
+    font-style: normal;
+    font-stretch: normal;
+    src:
+        url('Source Sans Pro'),
+        url('fonts/eot/DejaVuSans-ExtraLight-webfont.eot') format('embedded-opentype'),
+        url('fonts/woff/DejaVuSans-ExtraLight-webfont.woff') format('woff'),
+        url('fonts/ttf/DejaVuSans-ExtraLight-webfont.ttf') format('truetype');
+}
+
+@font-face{
+    font-family: 'DejaVuSans-condensed';
+    font-weight: 300;
+    font-style: normal;
+    font-stretch: normal;
+    src:
+        url('Source Sans Pro'),
+        url('fonts/eot/DejaVuSansCondensed-webfont.eot') format('embedded-opentype'),
+        url('fonts/woff/DejaVuSansCondensed-webfont.woff') format('woff'),
+        url('fonts/ttf/DejaVuSansCondensed-webfont.ttf') format('truetype');
+}
+
+@font-face{
+    font-family: 'DejaVuSans-regular';
+    font-weight: 400;
+    font-style: normal;
+    font-stretch: normal;
+    src:
+        url('Source Sans Pro'),
+        url('fonts/eot/DejaVuSans-webfont.eot') format('embedded-opentype'),
+        url('fonts/woff/DejaVuSans-webfont.woff') format('woff'),
+        url('fonts/ttf/DejaVuSans-webfont.ttf') format('truetype');
 }
