@@ -17,8 +17,9 @@ body {
 
 h1{
     font-family: 'Source Sans Pro Light';
-    font-size: 2.8rem;
+    font-size: 4.8rem;
     text-align: center;
+    color: #FFF;
 }
  
 .pg1 {
@@ -36,6 +37,13 @@ h1{
 }
 
 .pg3 {
+    padding-top: 2rem;
+    position: relative;
+    height: 100%;
+    background-color: #E0E2E3;
+}
+
+.pg4 {
     position: relative;
     height: auto;
     padding-top: 2rem;
@@ -148,6 +156,13 @@ nav {
     width: 100%;
     line-height: 160%;
     margin-top: 2rem;
+}
+
+hr{
+    height: 4rem;
+    background: url(../img/seal-wh.svg) no-repeat 50% 50%;
+    margin-top: 1rem;
+    border: 0;
 }
 
 /*------------- BOX CODE ----------------*/
@@ -297,7 +312,6 @@ pre{
     }
     .box-text-title {
         display: block;
-        text-align: justify;
         width: 100%;
     }
 
@@ -318,6 +332,10 @@ pre{
 
 @media all and (max-width: 48rem) {
     .box-code{
+        width: 100%;
+    }
+    .box-img{
+        margin-bottom: 0;
         width: 100%;
     }
 }
