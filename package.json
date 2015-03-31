@@ -1,6 +1,6 @@
 {
   "name": "sealious",
-  "version": "0.1.7",
+  "version": "0.1.14",
   "description": "",
   "main": "./main.js",
   "scripts": {
@@ -32,9 +32,6 @@
     "merge": "~1.2.0",
     "open": "0.0.5",
     "query-string": "~1.0.0",
-    "request": "~2.47.0",
-    "sealious-base-chips": "latest",
-    "sealious-example-app": "latest",
     "socket.io": "~1.2.0",
     "socket.io-client": "~1.2.0"
   },
@@ -49,5 +46,8 @@
     "blanket": {
       "pattern": "node_modules"
     }
+  },
+  "peerDependencies":{
+    "sealious-base-chips": "^0.0.5"
   }
 }
