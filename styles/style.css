@@ -1,14 +1,10 @@
 * {
     margin: 0px;
     padding: 0px;
-    box-sizing: border-box;/*
-    text-rendering: optimizeLegibility !important;
-    -webkit-font-smoothing: antialiased !important;*/
+    box-sizing: border-box;
 }
 
-article, aside, details, figcaption, figure, footer, header, hgroup, main, nav, section, summary {
-    display: block;
-}
+article, aside, details, figcaption, figure, footer, header, hgroup, main, nav, section, summary {  display: block;}
 
 body {
     font-family: 'Source Sans Pro Light';
@@ -21,7 +17,35 @@ h1{
     text-align: center;
     color: #FFF;
 }
- 
+
+nav {
+    height: 10rem;
+    font-size: 1.2rem;
+}
+
+header {
+    margin: 0 auto;
+    max-width: 60rem;
+    color: #FFF;
+}
+/*------------------ POSITION ----------------------*/
+.el-left {
+    float: left;
+}
+
+.el-right {
+    float: right;
+}
+
+.el-padding-left{
+    padding-left: 2rem;
+}
+
+.el-padding-right{
+    padding-right: 2rem;
+}
+
+/*------------------ FIRST PAGE ----------------------*/
 .pg1 {
     position: relative;
     height: 75vh;
@@ -29,50 +53,6 @@ h1{
     background-repeat: no-repeat;
     background-image: url(../img/background.jpg);
 }
-
-.pg2 {
-    position: relative;
-    height: 100%;
-    background-color: #FFF;
-}
-
-.pg3 {
-    padding-top: 2rem;
-    position: relative;
-    height: 100%;
-    background-color: #E0E2E3;
-}
-
-.pg4 {
-    position: relative;
-    height: auto;
-    padding-top: 2rem;
-    background-color: hsl(213, 38%, 22%);
-    color: #FFF;
-    border-bottom-style: solid;
-    border-bottom-width: 20px;
-    border-bottom-color: hsl(213, 38%, 18%);
-}
-/*
-.pg4 {
-    position: relative;
-    padding-top: 20vh;
-    height: 50vh auto;
-    background-size: cover;
-    background-repeat: no-repeat;
-}
-*/
-header {
-    margin: 0 auto;
-    max-width: 60rem;
-    color: #FFF;
-}
-
-nav {
-    height: 20vh;
-    font-size: 1.2rem;
-}
-
 .title {
     position: relative;
     font-size: 6rem;
@@ -144,29 +124,82 @@ nav {
     transition: all 800ms;
 }
 
-.wrapper {
+/*------------------ FEATURES PAGE ----------------------*/
+
+.pg2 {
     position: relative;
-    display: block;
-    max-width: 60rem;
-    margin: 0 auto;
+    height: 100%;
+    background-color: #FFF;
 }
 
-.content {
-    position: relative;
-    width: 100%;
-    line-height: 160%;
+.col{
+    display: inline-block;
     margin-top: 2rem;
+    margin-bottom: 4rem;
 }
 
-hr{
-    height: 4rem;
-    background: url(../img/seal-wh.svg) no-repeat 50% 50%;
-    margin-top: 1rem;
-    border: 0;
+.col-text-title {
+    position: relative;
+    display: inline-block;
+    font-size: 2.4rem;
+    font-weight: bold;
+    line-height: 110%;
+    vertical-align: middle;
+    margin-bottom: 1.2rem;
+    width: 60%;
 }
 
-/*------------- BOX CODE ----------------*/
+.col-padding-left{
+    padding-left: 2rem;
+}
 
+.col-padding-right{
+    padding-right: 2rem;
+}
+
+.col-img {
+    position: relative;
+    display: inline-block;
+    height: 10rem;
+    width: 40%;
+    vertical-align: middle;
+    background: url(../img/fishes.svg) no-repeat;
+}
+.col-img-left {
+    float: left;
+}
+
+.col-img-right {
+    float: right;
+}
+
+.col-text{
+    position: relative;
+    display: inline-block;
+    font-size: 1.2rem;
+    vertical-align: middle;
+    text-align: justify;
+    width: 60%;
+}
+
+/*------------------ GET STARTED HEADER ----------------------*/
+.pg2-3 {
+    position: relative;
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+    height: 100%;
+    background-color: #E0E2E3;
+}
+
+
+
+/*------------------ GET STARTED CONTENT PAGE ----------------------*/
+.pg3 {
+    padding-top: 2rem;
+    position: relative;
+    height: 100%;
+    background-color: #FFF;
+}
 .box {
     display: inline-block;
     margin-top: 2rem;
@@ -228,12 +261,46 @@ pre{
     width: 60%;
 }
 
-.box-img {
+
+/*------------------ FOOTER PAGE ----------------------*/
+
+.pg4 {
     position: relative;
-    display: inline-block;
-    width: 40%;
-    vertical-align: middle;
+    height: auto;
+    padding-top: 2rem;
+    background-color: hsl(213, 38%, 22%);
+    color: #FFF;
+    border-bottom-style: solid;
+    border-bottom-width: 20px;
+    border-bottom-color: hsl(213, 38%, 18%);
 }
+
+
+
+
+.wrapper {
+    position: relative;
+    display: block;
+    max-width: 60rem;
+    margin: 0 auto;
+}
+
+.content {
+    position: relative;
+    width: 100%;
+    line-height: 160%;
+    margin-top: 2rem;
+}
+
+hr{
+    height: 4rem;
+    background: url(../img/seal-wh.svg) no-repeat 50% 50%;
+    margin-top: 1rem;
+    border: 0;
+}
+
+
+
 
 /*-------------------RWD------------------*/
 
@@ -265,7 +332,7 @@ pre{
         height: auto;
     }
 
-    .pg2{
+    .pg2, .pg3{
         margin-top: 2rem;
     }
 
@@ -291,23 +358,43 @@ pre{
         line-height: 160%;
     }
 
+    .col-text-title, .col-text, .col-img{
+        width: 100%;
+        text-align: center;
+    }
+
+    .col-img{
+        background: url(../img/fishes.svg) no-repeat 50% 50%;
+        margin-bottom: 1rem;
+    }
+
+    .el-padding-left, .el-padding-right {
+        padding-left: 0;
+        padding-right: 0;
+    }
+
     .box{
         display: block;
         margin-bottom: 2rem;
     }
 
-    .box-code, .box-img{
+    .box-code{
         display: block;
         width: 50%;
         height: auto;
         padding-bottom: 1rem;
         margin-bottom: 2rem;
     }
+    .box-img{
+        display: block;
+        margin-bottom: 0;
+        width: 100%;
+    }
 
-    .box-code-left {
+    .el-left {
         margin-right: 2rem;
     }
-    .box-code-right {
+    .el-right {
         margin-left: 2rem;
     }
     .box-text-title {
@@ -321,32 +408,33 @@ pre{
         width: 100%;
         text-align: justify;
     }
-
-    .box-padding-left {
-        padding-left: 0;
-    }
-    .box-padding-right {
-        padding-right: 0;
-    }
 }
 
 @media all and (max-width: 48rem) {
     .box-code{
         width: 100%;
     }
-    .box-img{
-        margin-bottom: 0;
-        width: 100%;
+
+    .col-text{
+        text-align: justify;
     }
 }
 
 @media all and (max-width: 40rem) {
+    nav{
+        height: 8rem;
+    }
+
     .title {
         font-size: 5.75rem;
     }
 
     .title-description{
         font-size: 2.25rem;
+    }
+
+    h1{
+        font-size: 4.6rem;
     }
 
     .box-text-title {
@@ -356,12 +444,20 @@ pre{
 }
 
 @media all and (max-width: 33.75rem) {
+    nav{
+        height: 6rem;
+    }
+
     .title {
         font-size: 5.5rem;
 
     }
     .title-description{
         font-size: 2.15rem;
+    }
+
+    h1{
+        font-size: 4.4rem;
     }
 }
 
@@ -373,6 +469,10 @@ pre{
     .title-description{
         font-size: 1.95rem;
     }
+
+    h1{
+        font-size: 4rem;
+    }
 }
 
 @media all and (max-width: 22.5rem) {
@@ -382,6 +482,10 @@ pre{
 
     .title-description{
         font-size: 1.75rem;
+    }
+
+    h1{
+        font-size: 3.6rem;
     }
 }
 
@@ -394,6 +498,10 @@ pre{
 
     .title-description{
         font-size: 1.55rem;
+    }
+
+    h1{
+        font-size: 3.2rem;
     }
 }
 
