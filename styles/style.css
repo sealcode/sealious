@@ -12,7 +12,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, nav, 
 
 body {
     font-family: 'Source Sans Pro Light';
-    color: hsl(0, 0%, 30%);
+    color: #333;
 }
 
 h1{
@@ -23,7 +23,7 @@ h1{
  
 .pg1 {
     position: relative;
-    height: 60vh;
+    height: 75vh;
     background-size: cover;
     background-repeat: no-repeat;
     background-image: url(../img/background.jpg);
@@ -213,7 +213,11 @@ pre{
     width: 60%;
 }
 
-.box-img{
+.box-img {
+    position: relative;
+    display: inline-block;
+    width: 40%;
+    vertical-align: middle;
 }
 
 /*-------------------RWD------------------*/
@@ -277,7 +281,7 @@ pre{
         margin-bottom: 2rem;
     }
 
-    .box-code {
+    .box-code, .box-img{
         display: block;
         width: 50%;
         height: auto;
