@@ -37,11 +37,11 @@ header {
     float: right;
 }
 
-.el-padding-left{
+.el-padding-left, .col-padding-left{
     padding-left: 2rem;
 }
 
-.el-padding-right{
+.el-padding-right, .col-padding-right{
     padding-right: 2rem;
 }
 

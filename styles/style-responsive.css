@@ -61,10 +61,20 @@
         background: url(../img/fishes.svg) no-repeat 50% 50%;
         margin-bottom: 1rem;
     }
-
-    .el-padding-left, .el-padding-right {
+    .col-padding-left, .col-padding-right{
         padding-left: 0;
         padding-right: 0;
+        text-align: center;
+    }
+
+    .el-padding-left{
+        padding-left: 0;
+        text-align: right;
+    }
+
+    .el-padding-right {
+        padding-right: 0;
+        text-align: left;
     }
 
     .box{
@@ -91,6 +101,7 @@
     .el-right {
         margin-left: 2rem;
     }
+
     .box-text-title {
         display: block;
         width: 100%;
