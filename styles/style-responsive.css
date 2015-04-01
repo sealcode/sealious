@@ -1,4 +1,4 @@
-@media all (min-width: 60.75em) and (max-width: 68.75em){
+@media all and  (min-width: 60.75em) and (max-width: 68.75em){
     header, .wrapper{
         max-width: none;
         padding-left: 4rem;
@@ -7,7 +7,7 @@
 }
 
 
-@media all (max-width: 60.75em) {
+@media all and  (max-width: 60.75em) {
 
 
     .title {
@@ -104,7 +104,7 @@
     }
 }
 
-@media all (max-width: 48em) {
+@media all and  (max-width: 48em) {
     .box-code{
         width: 100%;
     }
@@ -114,7 +114,7 @@
     }
 }
 
-@media all (max-width: 40em) {
+@media all and  (max-width: 40em) {
     nav{
         height: 8rem;
     }
@@ -137,7 +137,7 @@
     }
 }
 
-@media all (max-width: 33.75em) {
+@media all and  (max-width: 33.75em) {
     nav{
         height: 6rem;
     }
@@ -155,7 +155,7 @@
     }
 }
 
-@media all (max-width: 30em) {
+@media all and  (max-width: 30em) {
     .title {
         font-size: 5rem;
     }
@@ -169,7 +169,7 @@
     }
 }
 
-@media all (max-width: 22.5em) {
+@media all and  (max-width: 22.5em) {
     .title {
         font-size: 4.5rem;
     }
@@ -183,7 +183,7 @@
     }
 }
 
-@media all (max-width: 20em) {
+@media all and  (max-width: 20em) {
 
     .title {
         font-size: 4rem;
@@ -199,7 +199,7 @@
     }
 }
 
-@media all (max-height: 38.75em){
+@media all and  (max-height: 38.75em){
     .pg1{
         height: auto;
     }
