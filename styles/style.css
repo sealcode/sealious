@@ -219,8 +219,9 @@ header {
 }
 
 pre{
-    font-family: 'DejaVuSans-regular',"Lucida Console", Courier, monospace;
+    font-family: 'DejaVuSans-extralight',"Lucida Console", Courier, monospace;
     font-size: 0.8rem;
+    font-weight: bold;
     white-space: pre-wrap; 
     line-height: 125%;
     margin: 0; 
