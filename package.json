@@ -29,7 +29,7 @@
     "hapi": ">8.0.0",
     "http": "0.0.0",
     "ip": "~0.3.2",
-    "merge": "~1.2.0",
+    "merge": "^1.2.0",
     "open": "0.0.5",
     "query-string": "~1.0.0",
     "socket.io": "~1.2.0",
@@ -47,7 +47,7 @@
       "pattern": "node_modules"
     }
   },
-  "peerDependencies":{
+  "peerDependencies": {
     "sealious-base-chips": "^0.0.6"
   }
 }
