@@ -2,9 +2,12 @@
     margin: 0px;
     padding: 0px;
     box-sizing: border-box;
+    text-rendering: optimizeLegibility;
+
 }
 
 article, aside, details, figcaption, figure, footer, header, hgroup, main, nav, section, summary {  display: block;}
+
 
 body {
     font-family: 'Source Sans Pro Light';
@@ -143,7 +146,6 @@ header {
     position: relative;
     display: inline-block;
     font-size: 2.4rem;
-    font-weight: bold;
     line-height: 110%;
     vertical-align: middle;
     margin-bottom: 1.2rem;
@@ -239,7 +241,6 @@ pre{
     position: relative;
     display: inline-block;
     font-size: 2.4rem;
-    font-weight: bold;
     line-height: 110%;
     vertical-align: middle;
     margin-bottom: 1.2rem;
