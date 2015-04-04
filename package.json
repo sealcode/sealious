@@ -1,6 +1,6 @@
 {
   "name": "sealious",
-  "version": "0.1.14",
+  "version": "0.1.18",
   "description": "",
   "main": "./main.js",
   "scripts": {
@@ -24,14 +24,12 @@
   "dependencies": {
     "Set": "~0.4.1",
     "bluebird": "~2.3.11",
-    "boom": "~2.6.0",
     "glue": "~1.0.0",
     "hapi": ">8.0.0",
     "http": "0.0.0",
     "ip": "~0.3.2",
     "merge": "^1.2.0",
     "open": "0.0.5",
-    "query-string": "~1.0.0",
     "socket.io": "~1.2.0",
     "socket.io-client": "~1.2.0"
   },
@@ -48,6 +46,6 @@
     }
   },
   "peerDependencies": {
-    "sealious-base-chips": "^0.0.6"
+    "sealious-base-chips": "^0.1.0"
   }
 }
