@@ -6,15 +6,12 @@
   "scripts": {
     "test": "mocha ./tests/test.js && mocha ./tests/test.js -R travis-cov"
   },
-  "bin": {
-    "sealious": "./shell.js"
-  },
   "repository": {
     "type": "git",
     "url": "https://github.com/groovy354/Prometheus.git"
   },
   "keywords": [
-    "prometheus"
+    "sealious"
   ],
   "author": "Kuba Orlik",
   "license": "BSD-2-Clause",
