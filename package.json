@@ -1,20 +1,17 @@
 {
   "name": "sealious",
-  "version": "0.1.7",
+  "version": "0.1.20",
   "description": "",
   "main": "./main.js",
   "scripts": {
     "test": "mocha ./tests/test.js && mocha ./tests/test.js -R travis-cov"
-  },
-  "bin": {
-    "sealious": "./shell.js"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/groovy354/Prometheus.git"
   },
   "keywords": [
-    "prometheus"
+    "sealious"
   ],
   "author": "Kuba Orlik",
   "license": "BSD-2-Clause",
@@ -24,24 +21,18 @@
   "dependencies": {
     "Set": "~0.4.1",
     "bluebird": "~2.3.11",
-    "boom": "~2.6.0",
     "glue": "~1.0.0",
     "hapi": ">8.0.0",
     "http": "0.0.0",
     "ip": "~0.3.2",
-    "merge": "~1.2.0",
+    "merge": "^1.2.0",
     "open": "0.0.5",
-    "query-string": "~1.0.0",
-    "request": "~2.47.0",
-    "sealious-base-chips": "latest",
-    "sealious-example-app": "latest",
     "socket.io": "~1.2.0",
     "socket.io-client": "~1.2.0"
   },
   "devDependencies": {
     "blanket": "1.1.6",
     "mocha": "*",
-    "npm-server": "0.0.1",
     "should": "~4.4.0",
     "travis-cov ": "*"
   },
@@ -49,5 +40,8 @@
     "blanket": {
       "pattern": "node_modules"
     }
+  },
+  "peerDependencies": {
+    "sealious-base-chips": "^0.1.0"
   }
 }
