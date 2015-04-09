@@ -1,6 +1,6 @@
 {
   "name": "sealious",
-  "version": "0.1.18",
+  "version": "0.1.20",
   "description": "",
   "main": "./main.js",
   "scripts": {
@@ -36,7 +36,6 @@
   "devDependencies": {
     "blanket": "1.1.6",
     "mocha": "*",
-    "npm-server": "0.0.1",
     "should": "~4.4.0",
     "travis-cov ": "*"
   },
