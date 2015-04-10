@@ -1,8 +1,13 @@
-@font-face {
+@font-face{
     font-family: 'Lato Regular';
-    font-style: normal;
     font-weight: 400;
-    src: local('Lato Regular'), local('Lato-Regular'), local('LatoRegular'), url('fonts/lato-regular.woff') format('woff');
+    font-style: normal;
+    font-stretch: normal;
+    src: 
+        url('fonts/eot/lato-regular.eot') format('embedded-opentype'),
+        url('fonts/woff/lato-regular.woff') format('woff'),
+        url('fonts/ttf/lato-regular.ttf') format('truetype'),
+        url('fonts/otf/lato-regular.otf') format('opentype');
 }
 
 @font-face{
@@ -30,12 +35,12 @@
 }
 
 @font-face{
-    font-family: 'DejaVuSans-extralight';
+    font-family: 'Inconsolata';
     font-weight: 300;
     font-style: normal;
     font-stretch: normal;
     src:
-        url('fonts/eot/DejaVuSans-ExtraLight-webfont.eot') format('embedded-opentype'),
-        url('fonts/woff/DejaVuSans-ExtraLight-webfont.woff') format('woff'),
-        url('fonts/ttf/DejaVuSans-ExtraLight-webfont.ttf') format('truetype');
+        url('fonts/woff/inconsolata.woff') format('woff'),
+        url('fonts/ttf/inconsolata.ttf') format('truetype'),
+        url('fonts/otf/inconsolata.eot') format('embedded-opentype');
 }
