@@ -78,13 +78,12 @@
     }
 
     .box{
-        display: block;
         margin-bottom: 2rem;
     }
 
     .box-code{
         display: block;
-        width: 50%;
+        width: 100%;
         height: auto;
         padding-bottom: 1rem;
         margin-bottom: 2rem;

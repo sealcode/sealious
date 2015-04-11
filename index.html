@@ -27,69 +27,99 @@
         <div class="wrapper">
             <div class="content">
                 <div class="col">
-                    <div class="col-text-title col-padding-left">Productive first</div>
+                    <div class="col-text-title col-padding-left">An extensible, declarative node framework</div>
                     <div class="col-img el-left"></div>
-                    <div class="col-text el-padding-left">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam et arcu a mi imperdiet pharetra ac id est. Integer aliquam dolor id mollis efficitur. Sed facilisis tincidunt ligula non euismod. Nulla ut neque id metus feugiat convallis.</div>
+                    <div class="col-text col-padding-left">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam et arcu a mi imperdiet pharetra ac id est. Integer aliquam dolor id mollis efficitur. Sed facilisis tincidunt ligula non euismod. Nulla ut neque id metus feugiat convallis.</div>
                 </div>
                 <div class="col">
-                    <div class="col-text-title col-padding-right">Advantages and features</div>
+                    <div class="col-text-title col-padding-right">Productive first</div>
                     <div class="col-img el-right"></div>
                     <div class="col-text el-padding-right">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam et arcu a mi imperdiet pharetra ac id est. Integer aliquam dolor id mollis efficitur. Sed facilisis tincidunt ligula non euismod. Nulla ut neque id metus feugiat convallis.</div>
                 </div>
                 <div class="col">
-                    <div class="col-text-title col-padding-left">Easily build applications</div>
+                    <div class="col-text-title col-padding-left">Advantages and features</div>
                     <div class="col-img el-left"></div>
                     <div class="col-text el-padding-left">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam et arcu a mi imperdiet pharetra ac id est. Integer aliquam dolor id mollis efficitur. Sed facilisis tincidunt ligula non euismod. Nulla ut neque id metus feugiat convallis.</div>
                 </div>
             </div>
         </div>
     </div>
-    <div class="pg2-3">
-        <h1 id="get-started">Quick start</h1>
-        <hr>
-    </div>
     <div class="pg3">
         <div class="wrapper">
-            <div class="content">
+            <div class="content" id="get-started">
+
+
+
                 <div class="box">
-                    <div class="box-text-title el-padding-left">Quickly define REST API</div>
-                    <div class="box-code el-left">
-                        <pre><span style="color: #555555">module.exports</span> <span style="color: #555555">=</span> <span style="color: hsl(128, 53%, 46%); font-weight: bold">function</span><span style="color: #555555">(rest){</span>
-    <span style="color: #555555">rest.add_path(</span><span style="color: #0086d2">&quot;/api/v1/app/resource&quot;</span><span style="color: #555555">,</span> <span style="color: #0086d2"><br>    &quot;resource&quot;</span><span style="color: #555555">);</span>
-<span style="color: #555555">}</span>
-            </pre>
+                    <div class="box-text-title" style="width: 100%;">Example sealious chat application</div>
+                    <div class="box-text" style="width: 100%; margin-bottom: 2rem;">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam et arcu a mi imperdiet pharetra ac id est. Integer aliquam dolor id mollis efficitur. Sed facilisis tincidunt ligula non euismod. Nulla ut neque id metus feugiat convallis.</div>
+                
+                    <div class="box-code main-js-code">
+<pre>
+<span style='color:#a71d5d;'>var</span> path <span style='color:#308080; '>=</span><span style='color:#0086b3;'> require</span><span style='color:#308080; '>(</span><span style='color:#183691; '>"path"</span><span style='color:#308080; '>)</span><span style='color:#406080; '>;</span>
+<span style='color:#a71d5d;'>var</span> Sealious <span style='color:#308080; '>=</span><span style='color:#0086b3;'> require</span><span style='color:#308080; '>(</span><span style='color:#183691; '>"sealious"</span><span style='color:#308080; '>)</span><span style='color:#406080; '>;</span>
+<span style='color:#a71d5d;'>var</span> app <span style='color:#308080; '>=</span> <span style='color:#a71d5d  ;'>new</span><span style='color: #795da3;'> Sealious.App</span><span style='color:#308080; '>(</span><span style='color:#0086b3; '>__dirname</span><span style='color:#308080; '>+</span><span style='color:#183691; '>"/package.json"</span><span style='color:#595979; '>/*, mode, layer_name*/</span><span style='color:#308080; '>)</span><span style='color:#406080; '>;</span>
+<span style='color:#a71d5d;'>var</span> www_server <span style='color:#308080; '>=</span> app<span style='color:#308080; '>.</span>ChipManager<span style='color:#308080; '>.</span>get_chip<span style='color:#308080; '>(</span><span style='color:#183691; '>"channel"</span><span style='color:#308080; '>,</span> <span style='color:#183691; '>"www_server"</span><span style='color:#308080; '>)</span><span style='color:#406080; '>;</span>
+<span style='color:#a71d5d;'>
+var</span> form_entry <span style='color:#308080; '>=</span> <span style='color:#a71d5;'>new</span><span style='color: #795da3;'> Sealious.ChipTypes</span><span style='color:#308080; '>.</span>ResourceType<span style='color:#308080; '>(</span><span style='color:#183691; '>"form_entry"</span><span style='color:#308080; '>)</span><span style='color:#406080; '>;</span>  
+form_entry<span style='color:#308080; '>.</span>add_fields<span style='color:#308080; '>(</span><span style='color:#308080; '>[</span>
+    <span style='color:#406080; '>{</span>name<span style='color:#406080; '>:</span> <span style='color:#183691; '>"first-name"</span><span style='color:#308080; '>,</span> type<span style='color:#406080; '>:</span> <span style='color:#183691; '>"text"</span><span style='color:#308080; '>,</span> required<span style='color:#406080; '>:</span> <span style='color:#0086b3; '>true</span><span style='color:#406080; '>}</span><span style='color:#308080; '>,</span>
+    <span style='color:#406080; '>{</span>name<span style='color:#406080; '>:</span> <span style='color:#183691; '>"last-name"</span><span style='color:#308080; '>,</span> type<span style='color:#406080; '>:</span> <span style='color:#183691; '>"text"</span><span style='color:#308080; '>,</span> required<span style='color:#406080; '>:</span> <span style='color:#0086b3; '>true</span><span style='color:#406080; '>}</span><span style='color:#308080; '>,</span>
+    <span style='color:#406080; '>{</span>name<span style='color:#406080; '>:</span> <span style='color:#183691; '>"PESEL"</span><span style='color:#308080; '>,</span> type<span style='color:#406080; '>:</span> <span style='color:#183691; '>"text"</span><span style='color:#308080; '>,</span> required<span style='color:#406080; '>:</span> <span style='color:#0086b3; '>true</span><span style='color:#406080; '>}</span>
+<span style='color:#308080; '>]</span><span style='color:#308080; '>)</span>
+<span style='color:#a71d5d;'>
+var</span> rest <span style='color:#308080; '>=</span> app<span style='color:#308080; '>.</span>ChipManager<span style='color:#308080; '>.</span>get_chip<span style='color:#308080; '>(</span><span style='color:#183691; '>"channel"</span><span style='color:#308080; '>,</span> <span style='color:#183691; '>"rest"</span><span style='color:#308080; '>)</span><span style='color:#406080; '>;</span>
+rest<span style='color:#308080; '>.</span>add_path<span style='color:#308080; '>(</span><span style='color:#183691; '>"/api/v1/form_entry"</span><span style='color:#308080; '>,</span> <span style='color:#183691; '>"form_entry"</span><span style='color:#308080; '>)</span><span style='color:#406080; '>;</span>
+www_server<span style='color:#308080; '>.</span>static_route<span style='color:#308080; '>(</span>path<span style='color:#308080; '>.</span>resolve<span style='color:#308080; '>(</span> <span style='color:#0086b3; '>__dirname</span><span style='color:#308080; '>,</span> <span style='color:#183691; '>"./public"</span><span style='color:#308080; '>)</span><span style='color:#308080; '>,</span> <span style='color:#183691; '>""</span><span style='color:#308080; '>)</span><span style='color:#406080; '>;</span>
+app<span style='color:#308080; '>.</span><span style='color:#0086b3;'>start</span><span style='color:#308080; '>(</span><span style='color:#308080; '>)</span><span style='color:#406080; '>;</span>
+</pre>
                     </div>
-                    <div class="box-text el-padding-left">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam et arcu a mi imperdiet pharetra ac id est. Integer aliquam dolor id mollis efficitur. Sed facilisis tincidunt ligula non euismod. Nulla ut neque id metus feugiat convallis.</div>
                 </div>
+
+
                 <div class="box">
-                    <div class="box-text-title el-padding-right">Easily build applications</div>
+                    <div class="box-text-title el-padding-right">Create your own modules</div>
                     <div class="box-code el-right">
-                        <pre><span style="color: #555555">{</span>
-    <span style="color: hsl(128, 53%, 46%); font-weight: bold">&quot;name&quot;</span><span style="color: #555555">:</span> <span style="color: #0086d2">&quot;your_app&quot;</span><span style="color: #555555">,</span>
-    <span style="color: hsl(128, 53%, 46%); font-weight: bold">&quot;uses&quot;</span><span style="color: #555555">:</span> <span style="color: #555555">[</span>
-        <span style="color: #0086d2">&quot;channel.www_server&quot;</span><span style="color: #555555">,</span>
-        <span style="color: #0086d2">&quot;channel.rest&quot;</span>
-    <span style="color: #555555">],</span>
-    <span style="color: hsl(128, 53%, 46%); font-weight: bold">&quot;defines&quot;</span><span style="color: #555555">:</span> <span style="color: #555555">[</span>
-        <span style="color: #0086d2">&quot;resource_type.name&quot;</span>
-    <span style="color: #555555">]</span>
-<span style="color: #555555">}</span>
+<pre>
+<span style='color:#0086b3;'>module</span><span style='color:#808030; '>.</span><span style='color:#183691;'>require </span><span style='color:#808030; '>=</span> <span style='color:#a71d5d;'>function</span><span style='color:#808030; '>(</span>chat_message<span style='color:#808030; '>)</span><span style='color:#800080; '>{</span>
+    chat_message<span style='color:#808030; '>.</span>add_fields<span style='color:#808030; '>(</span><span style='color:#808030; '>[</span>
+        <span style='color:#800080; '>{</span>name<span style='color:#800080; '>:</span> <span style='color:#183691; '>"form"</span><span style='color:#808030; '>,</span>        type<span style='color:#800080; '>:</span> <span style='color:#183691; '>"text"</span> <span style='color:#800080; '>}</span><span style='color:#808030; '>,</span>
+        <span style='color:#800080; '>{</span>name<span style='color:#800080; '>:</span> <span style='color:#183691; '>"message"</span><span style='color:#808030; '>,</span>     type<span style='color:#800080; '>:</span> <span style='color:#183691; '>"text"</span><span style='color:#808030; '>,</span> required<span style='color:#800080; '>:</span> <span style='color:#0086b3; '>true</span><span style='color:#800080; '>}</span><span style='color:#808030; '>,</span>
+        <span style='color:#800080; '>{</span>name<span style='color:#800080; '>:</span> <span style='color:#183691; '>"date"</span><span style='color:#808030; '>,</span>        type<span style='color:#800080; '>:</span> <span style='color:#183691; '>"date"</span><span style='color:#800080; '>}</span><span style='color:#808030; '>,</span>
+        <span style='color:#800080; '>{</span>name<span style='color:#800080; '>:</span> <span style='color:#183691; '>"order_in_conversation"</span><span style='color:#808030; '>,</span> type<span style='color:#800080; '>:</span> <span style='color:#183691; '>"int"</span><span style='color:#800080; '>}</span><span style='color:#808030; '>,</span>
+        <span style='color:#800080; '>{</span>name<span style='color:#800080; '>:</span> <span style='color:#183691; '>"conversation_id"</span><span style='color:#808030; '>,</span> type<span style='color:#800080; '>:</span> <span style='color:#183691; '>"int"</span><span style='color:#800080; '>}</span><span style='color:#808030; '>,</span>
+    <span style='color:#808030; '>]</span><span style='color:#808030; '>)</span><span style='color:#800080; '>;</span>
+<span style='color:#800080; '>}</span>
 </pre>
                     </div>
                     <div class="box-text el-padding-right">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam et arcu a mi imperdiet pharetra ac id est. Integer aliquam dolor id mollis efficitur. Sed facilisis tincidunt ligula non euismod. Nulla ut neque id metus feugiat convallis.</div>
                 </div>
                 <div class="box">
-                    <div class="box-text-title el-padding-left">Create your own modules</div>
-                    <div class="box-img">
-                        <div class="box-text el-padding-left">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam et arcu a mi imperdiet pharetra ac id est. Integer aliquam dolor id mollis efficitur. Sed facilisis tincidunt ligula non euismod. Nulla ut neque id metus feugiat convallis.</div>
+                    <div class="box-text-title el-padding-left">Easily build applications</div>
+                    <div class="box-code el-left">
+                        <pre><span style="color: #555555">{</span>
+    <span style="color: #183691;">&quot;name&quot;</span><span style="color: #555555">:</span> <span style="color: #0086d2">&quot;your_app&quot;</span><span style="color: #555555">,</span>
+    <span style="color: #183691;">&quot;uses&quot;</span><span style="color: #555555">:</span> <span style="color: #555555">[</span>
+        <span style="color: #0086d2">&quot;channel.www_server&quot;</span><span style="color: #555555">,</span>
+        <span style="color: #0086d2">&quot;channel.rest&quot;</span>
+    <span style="color: #555555">],</span>
+    <span style="color: #183691;">&quot;defines&quot;</span><span style="color: #555555">:</span> <span style="color: #555555">[</span>
+        <span style="color: #0086d2">&quot;resource_type.chat_message&quot;</span>
+    <span style="color: #555555">]</span>
+<span style="color: #555555">}</span>
+</pre>
                     </div>
+                    <div class="box-text el-padding-left">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam et arcu a mi imperdiet pharetra ac id est. Integer aliquam dolor id mollis efficitur. Sed facilisis tincidunt ligula non euismod. Nulla ut neque id metus feugiat convallis.</div>
                 </div>
             </div>
         </div>
-        <div class="pg3">
+        <div class="pg4">
             <div class="wrapper">
-                <div class="box">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed at purus vel erat aliquet finibus vel ac ex. Praesent commodo lorem at rhoncus tempor. Curabitur nec faucibus diam. Fusce et pellentesque enim. Integer eget nunc dapibus, efficitur ante in, viverra massa. Maecenas vitae felis urna. Nulla dolor enim, tempor nec sagittis egestas, pharetra in diam. Praesent id aliquet est. Vivamus tempus turpis est, non dignissim nisl tincidunt sit amet. Integer tincidunt est ut diam tristique dapibus. Donec ut sem auctor, tempus eros sit amet, pellentesque tellus. Proin finibus feugiat leo, pharetra dapibus sem lobortis in. In egestas euismod ligula, id tristique nibh blandit in. Nunc nec ante quis lacus dapibus placerat. Vivamus ut elementum eros, sed ornare sapien. Praesent mollis quam libero, eu porta metus ultrices sit amet. Nunc finibus rhoncus nisi id auctor. Suspendisse in felis enim. Etiam varius lectus vel elit mollis, non semper nulla condimentum. Vestibulum vestibulum volutpat nisl, ut mattis mauris ultrices vel. Curabitur faucibus, arcu et rhoncus laoreet, sapien sapien lobortis lorem, non vestibulum sem magna eu mi.</div>
-                <br> The header photo was taken by Andreas Trepte.
+                <div class="box">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed at purus vel erat aliquet finibus vel ac ex. Praesent commodo lorem at rhoncus tempor. Curabitur nec faucibus diam. Fusce et pellentesque enim. Integer eget nunc dapibus, efficitur ante in, viverra massa. Maecenas vitae felis urna. Nulla dolor enim, tempor nec sagittis egestas, pharetra in diam.</div>
+                </br>
+                <div class="footer el-left">The seal photo was taken by Andreas Trepte.</div>
+                <div class="footer el-right">An extensible, declarative node framework © 2015 Sealious</div>
+
             </div>
         </div>
 </body>

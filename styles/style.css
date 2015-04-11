@@ -163,11 +163,12 @@ header {
 .col-img {
     position: relative;
     display: inline-block;
-    height: 10rem;
+    height: 12rem;
     width: 40%;
     vertical-align: middle;
     background: url(../img/fishes.svg) no-repeat;
 }
+
 .col-img-left {
     float: left;
 }
@@ -198,7 +199,6 @@ header {
 
 /*------------------ GET STARTED CONTENT PAGE ----------------------*/
 .pg3 {
-    padding-top: 2rem;
     position: relative;
     height: 100%;
     background-color: #FFF;
@@ -206,15 +206,15 @@ header {
 .box {
     display: inline-block;
     margin-top: 2rem;
-    margin-bottom: 6rem;
+    margin-bottom: 2rem;
 }
 
 .box-code {
     position: relative;
     display: inline-block;
-    background-color: #efefef;
-    border: 1px solid #ddd;
-    width: 40%;
+    background-color: #fafafa;
+    border-bottom: 5px solid hsl(195, 14%, 90%);
+    width: 50%;
     /* height: 12.5rem; */
     padding-top: 1rem;
     padding-bottom: 1rem;
@@ -222,9 +222,17 @@ header {
     vertical-align: middle;
 }
 
+.main-js-code{
+    position: relative;
+    display: table;
+    margin: 0 auto;
+    width: 100%;
+}
+
 pre{
     font-family: 'Inconsolata';
-    font-size: 1rem;
+    font-size: 0.9rem;
+    color: #637c84;
     white-space: pre-wrap; 
     line-height: 125%;
     margin: 0; 
@@ -245,7 +253,7 @@ pre{
     line-height: 110%;
     vertical-align: middle;
     margin-bottom: 1.2rem;
-    width: 60%;
+    width: 50%;
 }
 
 .box-padding-left{
@@ -262,7 +270,7 @@ pre{
     font-size: 1.2rem;
     vertical-align: middle;
     text-align: justify;
-    width: 60%;
+    width: 50%;
 }
 
 
@@ -271,14 +279,13 @@ pre{
 .pg4 {
     position: relative;
     height: auto;
-    padding-top: 2rem;
-    background-color: hsl(213, 38%, 22%);
-    color: #FFF;
-    border-bottom-style: solid;
-    border-bottom-width: 20px;
-    border-bottom-color: hsl(213, 38%, 18%);
+    color: #637c84;
+    padding-bottom: 4rem;
 }
 
+.footer{
+    color: #637c84;
+}
 
 
 
