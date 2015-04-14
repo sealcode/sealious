@@ -4,6 +4,14 @@
 		{
 			"follow_symlinks": true,
 			"path": "."
+		},
+		{
+			"follow_symlinks": true,
+			"path": "/home/kuba/Dropbox/Desktop/Sealious/sealious-example-app"
+		},
+		{
+			"follow_symlinks": true,
+			"path": "/home/kuba/Dropbox/Desktop/Sealious/sealious-base-chips"
 		}
 	]
 }
