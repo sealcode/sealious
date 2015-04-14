@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/groovy354/Prometheus.git"
+    "url": "https://github.com/Sealious/Sealious/"
   },
   "keywords": [
     "sealious"
@@ -16,7 +16,7 @@
   "author": "Kuba Orlik",
   "license": "BSD-2-Clause",
   "bugs": {
-    "url": "https://github.com/groovy354/Prometheus/issues"
+    "url": "https://github.com/Sealious/Sealious/issues"
   },
   "dependencies": {
     "Set": "~0.4.1",
