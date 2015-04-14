@@ -20,7 +20,7 @@
   },
   "dependencies": {
     "Set": "~0.4.1",
-    "bluebird": "~2.3.11",
+    "bluebird": "~2.9.9",
     "glue": "~1.0.0",
     "ip": "~0.3.2",
     "merge": "^1.2.0",
