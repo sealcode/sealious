@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-var PrometheusCore = require("./lib/core.js");
+var SealiousCore = require("./lib/core.js");
 
 var mode = "local";
 var layer_name = null;
@@ -15,4 +15,4 @@ if(argument && argument.slice(0,2)=="--"){
 app_location = process.argv[index];
 
 
-PrometheusCore.start(mode, layer_name, app_location);
+SealiousCore.start(mode, layer_name, app_location);
