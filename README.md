@@ -1,6 +1,6 @@
 Sealious 
 ==========
-Warning! Sealious is still in very early stages of development. You are welcome to look around (even more so to contact us via [issues](https://github.com/Sealious/Sealious/issues)!)
+Warning! Sealious is still in very early stages of development. You are welcome to look around (even more so to contact us via [issue tracker](https://github.com/Sealious/Sealious/issues)!)
 
 What it is?
 ----------
