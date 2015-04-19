@@ -22,7 +22,7 @@
         text-align: center;
     }
 
-    .pg1{
+    .header-wrapper{
         height: auto;
     }
 
@@ -210,7 +210,7 @@
 }
 
 @media all and  (max-height: 38.75em){
-    .pg1{
+    .header-wrapper{
         height: auto;
     }
 }

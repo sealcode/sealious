@@ -6,19 +6,22 @@
     <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1, maximum-scale=1">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta name="robots" content="all" />
-    <link href="styles/fonts.css" rel="stylesheet" type="text/css" >
-    <link href="styles/style.css" rel="stylesheet" type="text/css" >
+    <link href="styles/fonts.css" rel="stylesheet" type="text/css">
+    <link href="styles/style.css" rel="stylesheet" type="text/css">
     <link href="styles/style-responsive.css" rel="stylesheet" type="text/css">
     <link href="img/seal.svg" rel="shortcut icon" type="image/x-icon">
 </head>
 
 <body>
-    <div class="pg1">
+    <div class="header-wrapper">
         <header>
             <nav></nav>
             <div class="title">Sealious</div>
-            <div class="title-description"><p class="npm-install-sealious">$ npm install sealious </p><p class="install-prompt">  </p></div>
-            <a href="#get-started" class="button">Get started</a>
+            <div class="title-description">
+                <p class="npm-install-sealious">$ npm install sealious</p>
+                <p class="install-prompt" id="blink">_</p>
+            </div>
+            <a href="#get-started" class="button hvr-bounce-to-right">Get started</a>
             <a href="http://github.com/sealious/Sealious" class="button">Download</a>
             <a href="http://github.com/sealious/Sealious" class="button">GitHub</a>
         </header>
@@ -47,15 +50,11 @@
     <div class="pg3">
         <div class="wrapper">
             <div class="content" id="get-started">
-
-
-
                 <div class="box">
                     <h1 class="box-text-title" style="width: 100%;">Example sealious chat application</h1>
                     <div class="box-text" style="width: 100%;">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam et arcu a mi imperdiet pharetra ac id est. Integer aliquam dolor id mollis efficitur. Sed facilisis tincidunt ligula non euismod. Nulla ut neque id metus feugiat convallis.</div>
-                
                     <div class="box-code main-js-code">
-<pre>
+                        <pre>
 <span style='color:#a71d5d;'>var</span> path <span style='color:#308080; '>=</span><span style='color:#0086b3;'> require</span><span style='color:#308080; '>(</span><span style='color:#183691; '>"path"</span><span style='color:#308080; '>)</span><span style='color:#406080; '>;</span>
 <span style='color:#a71d5d;'>var</span> Sealious <span style='color:#308080; '>=</span><span style='color:#0086b3;'> require</span><span style='color:#308080; '>(</span><span style='color:#183691; '>"sealious"</span><span style='color:#308080; '>)</span><span style='color:#406080; '>;</span>
 <span style='color:#a71d5d;'>var</span> app <span style='color:#308080; '>=</span> <span style='color:#a71d5d  ;'>new</span><span style='color: #795da3;'> Sealious.App</span><span style='color:#308080; '>(</span><span style='color:#0086b3; '>__dirname</span><span style='color:#308080; '>+</span><span style='color:#183691; '>"/package.json"</span><span style='color:#595979; '>/*, mode, layer_name*/</span><span style='color:#308080; '>)</span><span style='color:#406080; '>;</span>
@@ -75,12 +74,10 @@ app<span style='color:#308080; '>.</span><span style='color:#0086b3;'>start</spa
 </pre>
                     </div>
                 </div>
-
-
                 <div class="box">
                     <h1 class="box-text-title el-padding-right">Create your own modules</h1>
                     <div class="box-code el-right">
-<pre>
+                        <pre>
 <span style='color:#0086b3;'>module</span><span style='color:#808030; '>.</span><span style='color:#183691;'>require </span><span style='color:#808030; '>=</span> <span style='color:#a71d5d;'>function</span><span style='color:#808030; '>(</span>chat_message<span style='color:#808030; '>)</span><span style='color:#800080; '>{</span>
     chat_message<span style='color:#808030; '>.</span>add_fields<span style='color:#808030; '>(</span><span style='color:#808030; '>[</span>
         <span style='color:#800080; '>{</span>name<span style='color:#800080; '>:</span> <span style='color:#183691; '>"form"</span><span style='color:#808030; '>,</span>        type<span style='color:#800080; '>:</span> <span style='color:#183691; '>"text"</span> <span style='color:#800080; '>}</span><span style='color:#808030; '>,</span>
@@ -119,7 +116,6 @@ app<span style='color:#308080; '>.</span><span style='color:#0086b3;'>start</spa
                 </br>
                 <div class="footer el-left">The seal photo was taken by Andreas Trepte.</div>
                 <div class="footer el-right">An extensible, declarative node framework © 2015 Sealious</div>
-
             </div>
         </div>
 </body>

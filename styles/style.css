@@ -3,18 +3,29 @@
     padding: 0px;
     box-sizing: border-box;
     text-rendering: optimizeLegibility;
-
 }
 
-article, aside, details, figcaption, figure, footer, header, hgroup, main, nav, section, summary {  display: block;}
-
+article,
+aside,
+details,
+figcaption,
+figure,
+footer,
+header,
+hgroup,
+main,
+nav,
+section,
+summary {
+    display: block;
+}
 
 body {
     font-family: 'Source Sans Pro Light';
     color: #333;
 }
 
-h1{
+h1 {
     font-weight: normal;
 }
 
@@ -28,9 +39,8 @@ header {
     max-width: 60rem;
     color: #FFF;
 }
-
-
 /*------------------ POSITION ----------------------*/
+
 .el-left {
     float: left;
 }
@@ -39,22 +49,25 @@ header {
     float: right;
 }
 
-.el-padding-left, .col-padding-left{
+.el-padding-left,
+.col-padding-left {
     padding-left: 2rem;
 }
 
-.el-padding-right, .col-padding-right{
+.el-padding-right,
+.col-padding-right {
     padding-right: 2rem;
 }
-
 /*------------------ FIRST PAGE ----------------------*/
-.pg1 {
+
+.header-wrapper {
     position: relative;
     height: 75vh;
     background-size: cover;
     background-repeat: no-repeat;
     background-image: url(../img/background.jpg);
 }
+
 .title {
     position: relative;
     font-size: 6rem;
@@ -65,57 +78,74 @@ header {
 .title-description {
     position: relative;
     /* font-size: 6.4rem; */
+    
     max-width: 100%;
     /* margin-bottom: 1.4rem; */
+    
     line-height: 4.8rem;
 }
 
-p{
+p {
     display: inline;
 }
 
-.npm-install-sealious{
+.npm-install-sealious {
     font-size: 2.4rem;
     line-height: 3rem;
+    padding-right: 0.25rem;
+    overflow: hidden;
 
 }
 
 .install-prompt {
+    display: inline;
     font-size: 1.8rem;
-    background-color: #FFF;
+    color: #FFF;
     white-space: pre;
-    -webkit-animation-name: blinker;
-    -webkit-animation-duration: 1.4s;
-    -webkit-animation-timing-function: ease;
-    -webkit-animation-iteration-count: infinite;
-    
-    -moz-animation-name: blinker;
-    -moz-animation-duration: 1.4s;
-    -moz-animation-timing-function: linear;
-    -moz-animation-iteration-count: infinite;
-    
-    animation-name: blinker;
-    animation-duration: 1.4s;
-    animation-timing-function: linear;
-    animation-iteration-count: infinite;
+    font-weight: bold;
 }
 
-@-moz-keyframes blinker {  
-    0% { opacity: 1.0; }
-    50% { opacity: 0.0; }
-    100% { opacity: 1.0; }
+#blink {
+    -webkit-animation: blink 1s linear infinite;
+    -moz-animation: blink 1s linear infinite;
+    -ms-animation: blink 1s linear infinite;
+    -o-animation: blink 1s linear infinite;
+    animation: blink 1s linear infinite;
 }
 
-@-webkit-keyframes blinker {  
-    0% { opacity: 1.0; }
-    50% { opacity: 0.0; }
-    100% { opacity: 1.0; }
+@-webkit-keyframes blink {
+    0% {opacity: 1;}
+    50% {opacity: 1;}
+    50.01% {opacity: 0;}
+    100% {opacity: 0;}
 }
 
-@keyframes blinker {  
-    0% { opacity: 1.0; }
-    50% { opacity: 0.0; }
-    100% { opacity: 1.0; }
+@-moz-keyframes blink {
+    0% {opacity: 1;}
+    50% {opacity: 1;}
+    50.01% {opacity: 0;}
+    100% {opacity: 0;}
+}
+
+@-ms-keyframes blink {
+    0% {opacity: 1;}
+    50% {opacity: 1;}
+    50.01% {opacity: 0;}
+    100% {opacity: 0;}
+}
+
+@-o-keyframes blink {
+    0% {opacity: 1;}
+    50% {opacity: 1;}
+    50.01% {opacity: 0;}
+    100% {opacity: 0;}
+}
+
+@keyframes blink {
+    0% {opacity: 1;}
+    50% {opacity: 1;}
+    50.01% {opacity: 0;}
+    100% {opacity: 0;}
 }
 
 .button {
@@ -126,6 +156,7 @@ p{
     background-color: hsl(220, 60%, 15%);
     border: none;
     /* padding: 20px 0; */
+    
     width: 33%;
     transition: all 800ms;
     text-decoration: none;
@@ -136,8 +167,9 @@ p{
 }
 
 .button:hover {
-    background: hsl(128, 53%, 36%);
-    transition: all 800ms;
+    background-color: hsl(128, 53%, 36%);
+    border-radius: 0.1rem;
+    transition: all 200ms;
 }
 
 /*------------------ FEATURES PAGE ----------------------*/
@@ -145,11 +177,12 @@ p{
 .pg2 {
     position: relative;
     /* padding-top: 1rem; */
+    
     height: 100%;
     background-color: #FFF;
 }
 
-.col{
+.col {
     display: inline-block;
     margin-top: 3rem;
     /* margin-bottom: 4rem; */
@@ -162,16 +195,17 @@ p{
     line-height: 3rem;
     vertical-align: middle;
     /* margin-bottom: 1.2rem; */
+    
     margin-top: 0.5rem;
     margin-bottom: 0.5rem;
     width: 60%;
 }
 
-.col-padding-left{
+.col-padding-left {
     padding-left: 2rem;
 }
 
-.col-padding-right{
+.col-padding-right {
     padding-right: 2rem;
 }
 
@@ -192,17 +226,18 @@ p{
     float: right;
 }
 
-.col-text{
+.col-text {
     position: relative;
     display: inline-block;
     font-size: 1.2rem;
     /* line-height: 2rem; */
+    
     vertical-align: middle;
     text-align: justify;
     width: 60%;
 }
-
 /*------------------ GET STARTED HEADER ----------------------*/
+
 .pg2-3 {
     position: relative;
     padding-top: 2rem;
@@ -210,15 +245,14 @@ p{
     height: 100%;
     /* background-color: #33404a; */
 }
-
-
-
 /*------------------ GET STARTED CONTENT PAGE ----------------------*/
+
 .pg3 {
     position: relative;
     height: 100%;
     background-color: #FFF;
 }
+
 .box {
     display: inline-block;
     margin-top: 2rem;
@@ -231,6 +265,7 @@ p{
     border-bottom: 5px solid hsl(195, 14%, 90%);
     width: 50%;
     /* height: 12.5rem; */
+    
     padding-top: 1rem;
     padding-bottom: 1rem;
     padding-left: 1rem;
@@ -238,21 +273,22 @@ p{
     margin-bottom: -5px;
 }
 
-.main-js-code{
+.main-js-code {
     position: relative;
     display: table;
     /* margin: 0 auto; */
+    
     margin-top: 1rem;
     width: 100%;
 }
 
-pre{
+pre {
     font-family: 'Inconsolata';
     font-size: 0.9rem;
     color: #637c84;
-    white-space: pre-wrap; 
+    white-space: pre-wrap;
     line-height: 125%;
-    margin: 0; 
+    margin: 0;
 }
 
 .box-code-left {
@@ -270,18 +306,19 @@ pre{
     line-height: 3rem;
     vertical-align: middle;
     /* margin-bottom: 1.2rem; */
+    
     width: 50%;
 }
 
-.box-padding-left{
+.box-padding-left {
     padding-left: 2rem;
 }
 
-.box-padding-right{
+.box-padding-right {
     padding-right: 2rem;
 }
 
-.box-text{
+.box-text {
     position: relative;
     display: inline-block;
     font-size: 1.2rem;
@@ -289,22 +326,20 @@ pre{
     text-align: justify;
     width: 50%;
 }
-
-
 /*------------------ FOOTER PAGE ----------------------*/
 
 .pg4 {
     position: relative;
     height: auto;
+    background-color: hsl(195, 14%, 90%);
     color: #637c84;
+    margin-top: 2rem;   
     padding-bottom: 4rem;
 }
 
-.footer{
+.footer {
     color: #637c84;
 }
-
-
 
 .wrapper {
     position: relative;
@@ -318,10 +353,9 @@ pre{
     width: 100%;
 }
 
-hr{
+hr {
     height: 4rem;
     background: url(../img/seal.svg) no-repeat 50% 50%;
     margin-top: 1rem;
     border: 0;
 }
-
