@@ -134,7 +134,6 @@
     }
 
     .title-description{
-        font-size: 2.25rem;
     }
 
     h1{
@@ -157,7 +156,17 @@
 
     }
     .title-description{
-        font-size: 2.15rem;
+        line-height: 1rem;
+    }
+
+    .npm-install-sealious{
+        font-size: 2.3rem;
+        line-height: 2rem;
+    }
+
+    .install-prompt{
+        font-size: 2.3rem;
+        line-height: 2rem;
     }
 
     h1{
@@ -171,7 +180,17 @@
     }
 
     .title-description{
-        font-size: 1.95rem;
+        line-height: 1rem;
+    }
+
+    .npm-install-sealious{
+        font-size: 2.1rem;
+        line-height: 3rem;
+    }
+
+    .install-prompt{
+        font-size: 2.1rem;
+        line-height: 3rem;
     }
 
     h1{
@@ -183,10 +202,20 @@
     .title {
         font-size: 4.5rem;
     }
-
     .title-description{
-        font-size: 1.75rem;
+        line-height: 1rem;
     }
+
+    .npm-install-sealious{
+        font-size: 1.8rem;
+        line-height: 2rem;
+    }
+
+    .install-prompt{
+        font-size: 1.8rem;
+        line-height: 2rem;
+    }
+
 
     h1{
         font-size: 3.6rem;
@@ -199,11 +228,6 @@
         font-size: 4rem;
 
     }
-
-    .title-description{
-        font-size: 1.55rem;
-    }
-
     h1{
         font-size: 3.2rem;
     }

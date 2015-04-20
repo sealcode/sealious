@@ -34,6 +34,8 @@
                     <div class="col-img el-left"></div>
                     <div class="col-text col-padding-left">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam et arcu a mi imperdiet pharetra ac id est. Integer aliquam dolor id mollis efficitur. Sed facilisis tincidunt ligula non euismod. Nulla ut neque id metus feugiat convallis.</div>
                 </div>
+
+                <!--
                 <div class="col">
                     <h1 class="col-text-title col-padding-right">Productive first</h1>
                     <div class="col-img el-right"></div>
@@ -44,6 +46,7 @@
                     <div class="col-img el-left"></div>
                     <div class="col-text el-padding-left">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam et arcu a mi imperdiet pharetra ac id est. Integer aliquam dolor id mollis efficitur. Sed facilisis tincidunt ligula non euismod. Nulla ut neque id metus feugiat convallis.</div>
                 </div>
+                -->
             </div>
         </div>
     </div>
@@ -51,14 +54,13 @@
         <div class="wrapper">
             <div class="content" id="get-started">
                 <div class="box">
-                    <h1 class="box-text-title" style="width: 100%;">Example sealious chat application</h1>
+                    <h1 class="box-text-title" style="width: 100%;">Example sealious rest implementation</h1>
                     <div class="box-text" style="width: 100%;">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam et arcu a mi imperdiet pharetra ac id est. Integer aliquam dolor id mollis efficitur. Sed facilisis tincidunt ligula non euismod. Nulla ut neque id metus feugiat convallis.</div>
                     <div class="box-code main-js-code">
                         <pre>
 <span style='color:#a71d5d;'>var</span> path <span style='color:#308080; '>=</span><span style='color:#0086b3;'> require</span><span style='color:#308080; '>(</span><span style='color:#183691; '>"path"</span><span style='color:#308080; '>)</span><span style='color:#406080; '>;</span>
 <span style='color:#a71d5d;'>var</span> Sealious <span style='color:#308080; '>=</span><span style='color:#0086b3;'> require</span><span style='color:#308080; '>(</span><span style='color:#183691; '>"sealious"</span><span style='color:#308080; '>)</span><span style='color:#406080; '>;</span>
-<span style='color:#a71d5d;'>var</span> app <span style='color:#308080; '>=</span> <span style='color:#a71d5d  ;'>new</span><span style='color: #795da3;'> Sealious.App</span><span style='color:#308080; '>(</span><span style='color:#0086b3; '>__dirname</span><span style='color:#308080; '>+</span><span style='color:#183691; '>"/package.json"</span><span style='color:#595979; '>/*, mode, layer_name*/</span><span style='color:#308080; '>)</span><span style='color:#406080; '>;</span>
-<span style='color:#a71d5d;'>var</span> www_server <span style='color:#308080; '>=</span> app<span style='color:#308080; '>.</span>ChipManager<span style='color:#308080; '>.</span>get_chip<span style='color:#308080; '>(</span><span style='color:#183691; '>"channel"</span><span style='color:#308080; '>,</span> <span style='color:#183691; '>"www_server"</span><span style='color:#308080; '>)</span><span style='color:#406080; '>;</span>
+<span style='color:#a71d5d;'>var</span> app <span style='color:#308080; '>=</span> <span style='color:#a71d5d  ;'>new</span><span style='color: #795da3;'> Sealious.App</span><span style='color:#308080; '>(</span><span style='color:#0086b3; '>__dirname</span><span style='color:#308080; '>+</span><span style='color:#183691; '>"/package.json"</span><span style='color:#595979; '></span><span style='color:#308080; '>)</span><span style='color:#406080; '>;</span>
 <span style='color:#a71d5d;'>
 var</span> form_entry <span style='color:#308080; '>=</span> <span style='color:#a71d5;'>new</span><span style='color: #795da3;'> Sealious.ChipTypes</span><span style='color:#308080; '>.</span>ResourceType<span style='color:#308080; '>(</span><span style='color:#183691; '>"form_entry"</span><span style='color:#308080; '>)</span><span style='color:#406080; '>;</span>  
 form_entry<span style='color:#308080; '>.</span>add_fields<span style='color:#308080; '>(</span><span style='color:#308080; '>[</span>
@@ -69,7 +71,7 @@ form_entry<span style='color:#308080; '>.</span>add_fields<span style='color:#30
 <span style='color:#a71d5d;'>
 var</span> rest <span style='color:#308080; '>=</span> app<span style='color:#308080; '>.</span>ChipManager<span style='color:#308080; '>.</span>get_chip<span style='color:#308080; '>(</span><span style='color:#183691; '>"channel"</span><span style='color:#308080; '>,</span> <span style='color:#183691; '>"rest"</span><span style='color:#308080; '>)</span><span style='color:#406080; '>;</span>
 rest<span style='color:#308080; '>.</span>add_path<span style='color:#308080; '>(</span><span style='color:#183691; '>"/api/v1/form_entry"</span><span style='color:#308080; '>,</span> <span style='color:#183691; '>"form_entry"</span><span style='color:#308080; '>)</span><span style='color:#406080; '>;</span>
-www_server<span style='color:#308080; '>.</span>static_route<span style='color:#308080; '>(</span>path<span style='color:#308080; '>.</span>resolve<span style='color:#308080; '>(</span> <span style='color:#0086b3; '>__dirname</span><span style='color:#308080; '>,</span> <span style='color:#183691; '>"./public"</span><span style='color:#308080; '>)</span><span style='color:#308080; '>,</span> <span style='color:#183691; '>""</span><span style='color:#308080; '>)</span><span style='color:#406080; '>;</span>
+
 app<span style='color:#308080; '>.</span><span style='color:#0086b3;'>start</span><span style='color:#308080; '>(</span><span style='color:#308080; '>)</span><span style='color:#406080; '>;</span>
 </pre>
                     </div>
@@ -110,14 +112,17 @@ app<span style='color:#308080; '>.</span><span style='color:#0086b3;'>start</spa
                 </div>
             </div>
         </div>
-        <div class="pg4">
+        <footer>
             <div class="wrapper">
-                <div class="box">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed at purus vel erat aliquet finibus vel ac ex. Praesent commodo lorem at rhoncus tempor. Curabitur nec faucibus diam. Fusce et pellentesque enim. Integer eget nunc dapibus, efficitur ante in, viverra massa. Maecenas vitae felis urna. Nulla dolor enim, tempor nec sagittis egestas, pharetra in diam.</div>
-                </br>
-                <div class="footer el-left">The seal photo was taken by Andreas Trepte.</div>
-                <div class="footer el-right">An extensible, declarative node framework © 2015 Sealious</div>
+                <div class="el-left">
+                    <a href="http://www.photo-natur.de/">The seal photo was taken by Andreas Trepte.</a>
+                </div>
+                <div class="el-right">
+                    <span>© 2015</span>
+                    <a href="https://github.com/Sealious">Sealious Inc.</a>
+                </div>
             </div>
-        </div>
+        </footer>
 </body>
 
 </html>

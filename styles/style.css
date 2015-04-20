@@ -81,8 +81,7 @@ header {
     
     max-width: 100%;
     /* margin-bottom: 1.4rem; */
-    
-    line-height: 4.8rem;
+    line-height: 4.5rem;
 }
 
 p {
@@ -98,10 +97,9 @@ p {
 
 .install-prompt {
     display: inline;
-    font-size: 1.8rem;
+    font-size: 2.4rem;
     color: #FFF;
     white-space: pre;
-    font-weight: bold;
 }
 
 #blink {
@@ -157,7 +155,7 @@ p {
     /* padding: 20px 0; */
     
     width: 33%;
-    transition: all 800ms;
+    transition: background-color 800ms;
     text-decoration: none;
     text-align: center;
     vertical-align: middle;
@@ -168,7 +166,7 @@ p {
 .button:hover {
     background-color: hsl(128, 53%, 36%);
     border-radius: 0.1rem;
-    transition: all 200ms;
+    transition: background-color 200ms;
 }
 
 /*------------------ FEATURES PAGE ----------------------*/
@@ -183,8 +181,8 @@ p {
 
 .col {
     display: inline-block;
-    margin-top: 3rem;
-    /* margin-bottom: 4rem; */
+    margin-top: 2rem;
+    margin-bottom: 2rem;
 }
 
 .col-text-title {
@@ -252,9 +250,9 @@ p {
     background-color: #FFF;
 }
 
-.box {
+.box:nth-child(n+2){
     display: inline-block;
-    margin-top: 2rem;
+    margin-top: 4rem;
 }
 
 .box-code {
@@ -306,6 +304,8 @@ pre {
     vertical-align: middle;
     /* margin-bottom: 1.2rem; */
     
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
     width: 50%;
 }
 
@@ -327,16 +327,19 @@ pre {
 }
 /*------------------ FOOTER PAGE ----------------------*/
 
-.pg4 {
+footer {
     position: relative;
     height: auto;
     background-color: hsl(195, 14%, 90%);
     color: #637c84;
-    margin-top: 2rem;   
-    padding-bottom: 4rem;
-}
+    margin-top: 4rem; 
+    padding-top: 2rem;  
+    padding-bottom: 2rem;
+    overflow: auto;
+}   
 
-.footer {
+a{
+    text-decoration: none;
     color: #637c84;
 }
 
