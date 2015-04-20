@@ -2,16 +2,13 @@
 	"folders":
 	[
 		{
-			"follow_symlinks": true,
 			"path": "."
 		},
 		{
-			"follow_symlinks": true,
-			"path": "/home/kuba/Dropbox/Desktop/Sealious/sealious-example-app"
+			"path": "C:\\Github\\sealious-base-chips"
 		},
 		{
-			"follow_symlinks": true,
-			"path": "/home/kuba/Dropbox/Desktop/Sealious/sealious-base-chips"
+			"path": "C:\\Github\\sealious-example-app"
 		}
 	]
 }
