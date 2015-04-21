@@ -1,4 +1,5 @@
-mkdir Sealious
+mkdir Sealious-dev
+cd Sealious-dev
 git clone https://github.com/Sealious/Sealious.git
 git clone https://github.com/Sealious/sealious-base-chips
 git clone https://github.com/Sealious/sealious-example-app
