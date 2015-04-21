@@ -81,6 +81,7 @@ header {
     
     max-width: 100%;
     /* margin-bottom: 1.4rem; */
+    
     line-height: 4.5rem;
 }
 
@@ -92,7 +93,6 @@ p {
     font-size: 2.4rem;
     line-height: 3rem;
     overflow: hidden;
-
 }
 
 .install-prompt {
@@ -111,38 +111,78 @@ p {
 }
 
 @-webkit-keyframes blink {
-    0% {opacity: 1;}
-    50% {opacity: 1;}
-    50.01% {opacity: 0;}
-    100% {opacity: 0;}
+    0% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 1;
+    }
+    50.01% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 0;
+    }
 }
 
 @-moz-keyframes blink {
-    0% {opacity: 1;}
-    50% {opacity: 1;}
-    50.01% {opacity: 0;}
-    100% {opacity: 0;}
+    0% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 1;
+    }
+    50.01% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 0;
+    }
 }
 
 @-ms-keyframes blink {
-    0% {opacity: 1;}
-    50% {opacity: 1;}
-    50.01% {opacity: 0;}
-    100% {opacity: 0;}
+    0% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 1;
+    }
+    50.01% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 0;
+    }
 }
 
 @-o-keyframes blink {
-    0% {opacity: 1;}
-    50% {opacity: 1;}
-    50.01% {opacity: 0;}
-    100% {opacity: 0;}
+    0% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 1;
+    }
+    50.01% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 0;
+    }
 }
 
 @keyframes blink {
-    0% {opacity: 1;}
-    50% {opacity: 1;}
-    50.01% {opacity: 0;}
-    100% {opacity: 0;}
+    0% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 1;
+    }
+    50.01% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 0;
+    }
 }
 
 .button {
@@ -168,7 +208,6 @@ p {
     border-radius: 0.1rem;
     transition: background-color 200ms;
 }
-
 /*------------------ FEATURES PAGE ----------------------*/
 
 .pg2 {
@@ -250,7 +289,7 @@ p {
     background-color: #FFF;
 }
 
-.box:nth-child(n+2){
+.box:nth-child(n+2) {
     display: inline-block;
     margin-top: 4rem;
 }
@@ -286,6 +325,7 @@ pre {
     white-space: pre-wrap;
     line-height: 125%;
     margin: 0;
+    overflow-wrap: break-word;
 }
 
 .box-code-left {
@@ -332,13 +372,21 @@ footer {
     height: auto;
     background-color: hsl(195, 14%, 90%);
     color: #637c84;
-    margin-top: 4rem; 
-    padding-top: 2rem;  
+    margin-top: 4rem;
+    padding-top: 2rem;
     padding-bottom: 2rem;
     overflow: auto;
-}   
+}
 
-a{
+.footer-left {
+    float: left;
+}
+
+.footer-right {
+    float: right;
+}
+
+a {
     text-decoration: none;
     color: #637c84;
 }

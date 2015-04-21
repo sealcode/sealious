@@ -1,111 +1,101 @@
-@media all and  (min-width: 60.75em) and (max-width: 68.75em){
-    header, .wrapper{
+@media all and (min-width: 60.75em) and (max-width: 68.75em) {
+    header,
+    .wrapper {
         max-width: none;
         padding-left: 4rem;
         padding-right: 4rem;
     }
 }
 
-
-@media all and  (max-width: 60.75em) {
-
-
+@media all and (max-width: 60.75em) {
     .title {
         text-align: center;
     }
-
-    .title-description{
+    .title-description {
         max-width: 100%;
         padding-left: 1rem;
         padding-right: 1rem;
         padding-bottom: 4rem;
         text-align: center;
     }
-
-    .header-wrapper{
+    .header-wrapper {
         height: auto;
     }
-
-    .pg2, .pg3{
+    .pg2,
+    .pg3 {
         margin-top: 2rem;
     }
-
-    header{
+    header {
         padding-left: 0;
         padding-right: 0;
     }
-
-    .button{
+    .button {
         width: 100%;
         margin-left: 0;
         margin-right: 0;
     }
 
+    .button:nth-child(1){
+        border-top: 0.1rem solid hsl(195, 14%, 20%);
+    }
     .wrapper {
         max-width: 100%;
         padding-left: 1rem;
         padding-right: 1rem;
     }
-
     .content {
         width: 100%;
         line-height: 160%;
     }
-
-    .col-text-title, .col-text, .col-img{
+    .col-text-title,
+    .col-text,
+    .col-img {
         width: 100%;
         text-align: center;
     }
-
-    .col-img{
+    .col-img {
         background: url(../img/fishes.svg) no-repeat 50% 50%;
         margin-bottom: 1rem;
     }
-    .col-padding-left, .col-padding-right{
+    .col-padding-left,
+    .col-padding-right {
         padding-left: 0;
         padding-right: 0;
         text-align: center;
     }
-
-    .el-padding-left{
+    .el-padding-left {
         padding-left: 0;
         text-align: right;
     }
-
     .el-padding-right {
         padding-right: 0;
         text-align: left;
     }
-
-    .box{
+    .box {
         margin-bottom: 2rem;
     }
-
-    .box-code{
+    .box-code {
         display: block;
         width: 100%;
         height: auto;
         padding-bottom: 1rem;
         margin-bottom: 2rem;
     }
-    .box-img{
+    .box-img {
         display: block;
         margin-bottom: 0;
         width: 100%;
     }
-
     .el-left {
         margin-right: 2rem;
     }
     .el-right {
         margin-left: 2rem;
     }
-
     .box-text-title {
         display: block;
         width: 100%;
     }
-
     .box-text {
         display: block;
         vertical-align: middle;
@@ -114,127 +104,111 @@
     }
 }
 
-@media all and  (max-width: 48em) {
-    .box-code{
+@media all and (max-width: 48em) {
+    .box-code {
         width: 100%;
     }
-
-    .col-text{
+    .col-text {
         text-align: justify;
     }
 }
 
-@media all and  (max-width: 40em) {
-    nav{
+@media all and (max-width: 40em) {
+    nav {
         height: 8rem;
     }
-
     .title {
         font-size: 5.75rem;
     }
-
-    .title-description{
-    }
-
-    h1{
+    .title-description {}
+    h1 {
         font-size: 4.6rem;
     }
-
     .box-text-title {
         display: block;
         text-align: left;
     }
 }
 
-@media all and  (max-width: 33.75em) {
-    nav{
+@media all and (max-width: 33.75em) {
+    nav {
         height: 6rem;
     }
-
     .title {
         font-size: 5.5rem;
-
     }
-    .title-description{
+    .title-description {
         line-height: 1rem;
     }
-
-    .npm-install-sealious{
+    .npm-install-sealious {
         font-size: 2.3rem;
         line-height: 2rem;
     }
-
-    .install-prompt{
+    .install-prompt {
         font-size: 2.3rem;
         line-height: 2rem;
     }
-
-    h1{
+    h1 {
         font-size: 4.4rem;
+    }
+    .footer-left,
+    .footer-right {
+        float: none;
+        text-align: center;
     }
 }
 
-@media all and  (max-width: 30em) {
+@media all and (max-width: 30em) {
     .title {
         font-size: 5rem;
     }
-
-    .title-description{
+    .title-description {
         line-height: 1rem;
     }
-
-    .npm-install-sealious{
+    .npm-install-sealious {
         font-size: 2.1rem;
         line-height: 3rem;
     }
-
-    .install-prompt{
+    .install-prompt {
         font-size: 2.1rem;
         line-height: 3rem;
     }
-
-    h1{
+    h1 {
         font-size: 4rem;
     }
 }
 
-@media all and  (max-width: 22.5em) {
+@media all and (max-width: 22.5em) {
     .title {
         font-size: 4.5rem;
     }
-    .title-description{
+    .title-description {
         line-height: 1rem;
     }
-
-    .npm-install-sealious{
+    .npm-install-sealious {
         font-size: 1.8rem;
         line-height: 2rem;
     }
-
-    .install-prompt{
+    .install-prompt {
         font-size: 1.8rem;
         line-height: 2rem;
     }
-
-
-    h1{
+    h1 {
         font-size: 3.6rem;
     }
 }
 
-@media all and  (max-width: 20em) {
-
+@media all and (max-width: 20em) {
     .title {
         font-size: 4rem;
-
     }
-    h1{
+    h1 {
         font-size: 3.2rem;
     }
 }
 
-@media all and  (max-height: 38.75em){
-    .header-wrapper{
+@media all and (max-height: 38.75em) {
+    .header-wrapper {
         height: auto;
     }
 }
