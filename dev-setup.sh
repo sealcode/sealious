@@ -1,3 +1,4 @@
+#!/bin/bash
 mkdir Sealious-dev
 cd Sealious-dev
 git clone https://github.com/Sealious/Sealious.git
