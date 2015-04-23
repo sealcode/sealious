@@ -1,6 +1,6 @@
 {
   "name": "sealious",
-  "version": "0.2.5",
+  "version": "0.2.8",
   "description": "",
   "main": "./main.js",
   "scripts": {

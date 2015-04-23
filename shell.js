@@ -14,5 +14,4 @@ if(argument && argument.slice(0,2)=="--"){
 }
 app_location = process.argv[index];
 
-
 SealiousCore.start(mode, layer_name, app_location);
