@@ -1,6 +1,6 @@
 {
   "name": "sealious",
-  "version": "0.2.1",
+  "version": "0.2.8",
   "description": "",
   "main": "./main.js",
   "scripts": {
@@ -25,7 +25,8 @@
     "merge": "^1.2.0",
     "open": "0.0.5",
     "socket.io": "~1.2.0",
-    "socket.io-client": "~1.2.0"
+    "socket.io-client": "~1.2.0",
+    "winston": "^1.0.0"
   },
   "devDependencies": {
     "blanket": "1.1.6",
