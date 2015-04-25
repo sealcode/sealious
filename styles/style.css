@@ -22,7 +22,7 @@ summary {
 
 body {
     font-family: 'SourceSansProLight';
-    color: #555;
+    color: rgb(34, 54, 77);
 }
 
 h1 {
@@ -224,13 +224,14 @@ p {
 }
 
 .col-text {
+    color: hsl(212, 39%, 19%);
     position: relative;
     display: inline-block;
     font-size: 1.2rem;
     /* line-height: 2rem; */
     
     vertical-align: middle;
-    text-align: justify;
+    /* text-align: justify; */
     width: 60%;
 }
 /*------------------ GET STARTED HEADER ----------------------*/
@@ -324,7 +325,7 @@ pre {
     display: inline-block;
     font-size: 1.2rem;
     vertical-align: middle;
-    text-align: justify;
+    /* text-align: justify; */
     width: 50%;
 }
 /*------------------ FOOTER PAGE ----------------------*/
