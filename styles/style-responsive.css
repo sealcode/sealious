@@ -46,6 +46,8 @@
     .content {
         width: 100%;
         line-height: 160%;
+        padding-left: 3rem;
+        padding-right: 3rem;
     }
     .col-text-title,
     .col-text,
@@ -156,6 +158,10 @@
         float: none;
         text-align: center;
     }
+    .content {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
 }
 
 @media all and (max-width: 30em) {
@@ -176,6 +182,10 @@
     h1 {
         font-size: 4rem;
     }
+    .content {
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+    }
 }
 
 @media all and (max-width: 22.5em) {
@@ -195,6 +205,11 @@
     }
     h1 {
         font-size: 3.6rem;
+    }
+
+    .content {
+        padding-left: 0;
+        padding-right: 0;
     }
 }
 
