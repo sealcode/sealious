@@ -11,7 +11,7 @@
 }
 
 @font-face{
-    font-family: 'Source Sans Pro Light';
+    font-family: 'SourceSansProLight';
     font-weight: 300;
     font-style: normal;
     font-stretch: normal;
@@ -23,7 +23,7 @@
 }
 
 @font-face{
-    font-family: 'Source Sans Pro Regular';
+    font-family: 'SourceSansProRegular';
     font-weight: 400;
     font-style: normal;
     font-stretch: normal;
@@ -43,4 +43,15 @@
         url('fonts/woff/inconsolata.woff') format('woff'),
         url('fonts/ttf/inconsolata.ttf') format('truetype'),
         url('fonts/otf/inconsolata.eot') format('embedded-opentype');
+}
+
+@font-face {
+    font-family: 'LatoLight';
+    src: url('fonts/eot/Lato-Light.eot'); /* IE9 Compat Modes */
+    src: url('fonts/eotLato-Light.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+         url('fonts/woff/Lato-Light.woff') format('woff'), /* Modern Browsers */
+         url('fonts/ttf/Lato-Light.ttf') format('truetype'); 
+    font-style: normal;
+    font-weight: normal;
+    text-rendering: optimizeLegibility;
 }

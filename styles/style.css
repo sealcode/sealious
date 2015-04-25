@@ -21,8 +21,8 @@ summary {
 }
 
 body {
-    font-family: 'Source Sans Pro Light';
-    color: #333;
+    font-family: 'SourceSansProLight';
+    color: #555;
 }
 
 h1 {
@@ -111,83 +111,43 @@ p {
 }
 
 @-webkit-keyframes blink {
-    0% {
-        opacity: 1;
-    }
-    50% {
-        opacity: 1;
-    }
-    50.01% {
-        opacity: 0;
-    }
-    100% {
-        opacity: 0;
-    }
+    0% {opacity: 1;}
+    50% {opacity: 1;}
+    50.01% {opacity: 0;}
+    100% {opacity: 0;}
 }
 
 @-moz-keyframes blink {
-    0% {
-        opacity: 1;
-    }
-    50% {
-        opacity: 1;
-    }
-    50.01% {
-        opacity: 0;
-    }
-    100% {
-        opacity: 0;
-    }
+    0% {opacity: 1;}
+    50% {opacity: 1;}
+    50.01% {opacity: 0;}
+    100% {opacity: 0;}
 }
 
 @-ms-keyframes blink {
-    0% {
-        opacity: 1;
-    }
-    50% {
-        opacity: 1;
-    }
-    50.01% {
-        opacity: 0;
-    }
-    100% {
-        opacity: 0;
-    }
+    0% {opacity: 1;}
+    50% {opacity: 1;}
+    50.01% {opacity: 0;}
+    100% {opacity: 0;}
 }
 
 @-o-keyframes blink {
-    0% {
-        opacity: 1;
-    }
-    50% {
-        opacity: 1;
-    }
-    50.01% {
-        opacity: 0;
-    }
-    100% {
-        opacity: 0;
-    }
+    0% {opacity: 1;}
+    50% {opacity: 1;}
+    50.01% {opacity: 0;}
+    100% {opacity: 0;}
 }
 
 @keyframes blink {
-    0% {
-        opacity: 1;
-    }
-    50% {
-        opacity: 1;
-    }
-    50.01% {
-        opacity: 0;
-    }
-    100% {
-        opacity: 0;
-    }
+    0% {opacity: 1;}
+    50% {opacity: 1;}
+    50.01% {opacity: 0;}
+    100% {opacity: 0;}
 }
 
 .button {
     display: inline-block;
-    font-family: 'Source Sans Pro Light';
+    font-family: 'SourceSansProLight';
     font-size: 1.6rem;
     color: white;
     background-color: hsl(220, 60%, 15%);
@@ -227,6 +187,7 @@ p {
 .col-text-title {
     position: relative;
     display: inline-block;
+    text-indent: -2px;
     font-size: 2.4rem;
     line-height: 3rem;
     vertical-align: middle;
@@ -342,6 +303,7 @@ pre {
     font-size: 2.4rem;
     line-height: 3rem;
     vertical-align: middle;
+    text-indent: -2px;
     /* margin-bottom: 1.2rem; */
     
     margin-top: 0.5rem;
