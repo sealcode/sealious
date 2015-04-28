@@ -2,7 +2,7 @@
   "name": "sealious",
   "version": "0.3.1",
   "description": "",
-  "main": "./main.js",
+  "main": "./lib/main.js",
   "scripts": {
     "test": "mocha ./tests/test.js && mocha ./tests/test.js -R travis-cov"
   },
