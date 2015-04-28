@@ -58,6 +58,11 @@ header {
 .col-padding-right {
     padding-right: 2rem;
 }
+
+.center{
+    text-align: center;
+    width: 100%;
+}
 /*------------------ FIRST PAGE ----------------------*/
 
 .header-wrapper {
@@ -246,7 +251,7 @@ p {
 /*------------------ GET STARTED CONTENT PAGE ----------------------*/
 
 .pg3 {
-    position: relative;
+    /*position: relative;*/
     height: 100%;
     background-color: #FFF;
 }
