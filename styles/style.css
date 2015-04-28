@@ -224,7 +224,7 @@ p {
 }
 
 .col-text {
-    color: hsl(212, 39%, 19%);
+    color: hsl(212, 0%, 40%);
     position: relative;
     display: inline-block;
     font-size: 1.2rem;
@@ -321,6 +321,7 @@ pre {
 }
 
 .box-text {
+    color: hsl(212, 0%, 40%);
     position: relative;
     display: inline-block;
     font-size: 1.2rem;
