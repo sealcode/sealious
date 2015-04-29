@@ -1,6 +1,4 @@
 var npmCheck = require('npm-check');
-var npm = require('npm');
-
 
 npmCheck({global: true})
 .then(function(data){
@@ -10,3 +8,4 @@ npmCheck({global: true})
 		console.log("false")
 });
 
+ 	
