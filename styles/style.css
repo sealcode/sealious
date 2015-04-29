@@ -59,7 +59,7 @@ header {
     padding-right: 2rem;
 }
 
-.center{
+.center {
     text-align: center;
     width: 100%;
 }
@@ -157,8 +157,6 @@ p {
     color: white;
     background-color: hsl(220, 60%, 15%);
     border: none;
-    /* padding: 20px 0; */
-    
     width: 33%;
     transition: background-color 800ms;
     text-decoration: none;
@@ -177,8 +175,6 @@ p {
 
 .pg2 {
     position: relative;
-    /* padding-top: 1rem; */
-    
     height: 100%;
     background-color: #FFF;
 }
@@ -196,8 +192,6 @@ p {
     font-size: 2.4rem;
     line-height: 3rem;
     vertical-align: middle;
-    /* margin-bottom: 1.2rem; */
-    
     margin-top: 0.5rem;
     margin-bottom: 0.5rem;
     width: 60%;
@@ -233,10 +227,7 @@ p {
     position: relative;
     display: inline-block;
     font-size: 1.2rem;
-    /* line-height: 2rem; */
-    
     vertical-align: middle;
-    /* text-align: justify; */
     width: 60%;
 }
 /*------------------ GET STARTED HEADER ----------------------*/
@@ -246,12 +237,10 @@ p {
     padding-top: 2rem;
     padding-bottom: 2rem;
     height: 100%;
-    /* background-color: #33404a; */
 }
 /*------------------ GET STARTED CONTENT PAGE ----------------------*/
 
 .pg3 {
-    /*position: relative;*/
     height: 100%;
     background-color: #FFF;
 }
@@ -267,8 +256,6 @@ p {
     background-color: #fafafa;
     border-bottom: 5px solid hsl(195, 14%, 90%);
     width: 50%;
-    /* height: 12.5rem; */
-    
     padding-top: 1rem;
     padding-bottom: 1rem;
     padding-left: 1rem;
@@ -279,8 +266,6 @@ p {
 .main-js-code {
     position: relative;
     display: table;
-    /* margin: 0 auto; */
-    
     margin-top: 1rem;
     width: 100%;
 }
@@ -310,8 +295,6 @@ pre {
     line-height: 3rem;
     vertical-align: middle;
     text-indent: -2px;
-    /* margin-bottom: 1.2rem; */
-    
     margin-top: 0.5rem;
     margin-bottom: 0.5rem;
     width: 50%;
@@ -331,7 +314,6 @@ pre {
     display: inline-block;
     font-size: 1.2rem;
     vertical-align: middle;
-    /* text-align: justify; */
     width: 50%;
 }
 /*------------------ FOOTER PAGE ----------------------*/
