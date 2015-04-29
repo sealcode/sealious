@@ -34,8 +34,7 @@
         margin-left: 0;
         margin-right: 0;
     }
-
-    .button:nth-child(1){
+    .button:nth-child(1) {
         border-top: 0.1rem solid hsl(195, 14%, 20%);
     }
     .wrapper {
@@ -43,7 +42,8 @@
         padding-left: 1rem;
         padding-right: 1rem;
     }
-    .content {
+    .content,
+    footer {
         width: 100%;
         line-height: 160%;
         padding-left: 3rem;
@@ -130,6 +130,11 @@
         display: block;
         text-align: left;
     }
+    .footer-left,
+    .footer-right {
+        float: none;
+        text-align: center;
+    }
 }
 
 @media all and (max-width: 33.75em) {
@@ -153,12 +158,8 @@
     h1 {
         font-size: 4.4rem;
     }
-    .footer-left,
-    .footer-right {
-        float: none;
-        text-align: center;
-    }
-    .content {
+    .content,
+    footer {
         padding-left: 1rem;
         padding-right: 1rem;
     }
@@ -182,7 +183,8 @@
     h1 {
         font-size: 4rem;
     }
-    .content {
+    .content,
+    footer {
         padding-left: 0.5rem;
         padding-right: 0.5rem;
     }
@@ -206,8 +208,8 @@
     h1 {
         font-size: 3.6rem;
     }
-
-    .content {
+    .content,
+    footer {
         padding-left: 0;
         padding-right: 0;
     }
