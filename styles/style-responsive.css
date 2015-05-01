@@ -18,11 +18,12 @@
         padding-bottom: 4rem;
         text-align: center;
     }
-    .header-wrapper {
+    .page-header {
         height: auto;
     }
-    .pg2,
-    .pg3 {
+    .page-2,
+    .page-codes,
+    .page-4 {
         margin-top: 2rem;
     }
     header {
@@ -225,7 +226,7 @@
 }
 
 @media all and (max-height: 38.75em) {
-    .header-wrapper {
+    .page-header {
         height: auto;
     }
 }

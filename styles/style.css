@@ -59,13 +59,9 @@ header {
     padding-right: 2rem;
 }
 
-.center {
-    text-align: center;
-    width: 100%;
-}
 /*------------------ FIRST PAGE ----------------------*/
 
-.header-wrapper {
+.page-header {
     position: relative;
     height: 75vh;
     background-size: cover;
@@ -173,8 +169,7 @@ p {
 }
 /*------------------ FEATURES PAGE ----------------------*/
 
-.pg2 {
-    position: relative;
+.page-2, .page-4 {
     height: 100%;
     background-color: #FFF;
 }
@@ -232,7 +227,7 @@ p {
 }
 /*------------------ GET STARTED HEADER ----------------------*/
 
-.pg2-3 {
+.page-2-3 {
     position: relative;
     padding-top: 2rem;
     padding-bottom: 2rem;
@@ -240,7 +235,7 @@ p {
 }
 /*------------------ GET STARTED CONTENT PAGE ----------------------*/
 
-.pg3 {
+.page-codes {
     height: 100%;
     background-color: #FFF;
 }
@@ -359,4 +354,11 @@ hr {
     background: url(../img/seal.svg) no-repeat 50% 50%;
     margin-top: 1rem;
     border: 0;
+}
+.center {
+    text-align: center;
+    width: 100%;
+}
+.half{
+    width: 50%;
 }
