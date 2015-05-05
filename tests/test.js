@@ -3,11 +3,7 @@ var path = require("path");
 var Sealious = require("sealious");
 
 
-var mode = process.argv[2]==undefined? "local": "distibuted";
-var layer_name = process.argv[3];
-
-
-Sealious.init(mode, layer_name);
+Sealious.init("local");
 
 var www_server = Sealious.ChipManager.get_chip("channel", "www_server");
 
