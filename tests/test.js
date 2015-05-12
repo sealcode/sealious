@@ -1,26 +1,59 @@
 var path = require("path");
-
+var Promise = require("bluebird");
 var Sealious = require("sealious");
-
 
 Sealious.init("local");
 
-var Promise = require("bluebird");
 
+// Creating resource always fails
 var always_fails = new Sealious.ChipTypes.FieldType("always_fails");	
-
 always_fails.prototype.isProperValue = function(value_in_code){
 	return new Promise(function(resolve, reject){
+		reject();
+	})
+}
+var always_fails_resource = new Sealious.ChipTypes.ResourceType("always_fails_resource");	
+always_fails_resource.add_fields([
+	{name: "#fail", type: "always_fails"},
+	]);
+
+
+//Creating resource never fails
+var never_fails = new Sealious.ChipTypes.FieldType("never_fails");
+never_fails.prototype.isProperValue = function(value_in_code){
+	return new Promise(function(resolve,reject){
 		resolve();
 	})
 }
-
-var always_fails_resource = new Sealious.ChipTypes.ResourceType("always_fails_resource");	
-
-always_fails_resource.add_fields([
-	{name: "#fail", type: "always_fails"},
+var never_fails_resource = new Sealious.ChipTypes.ResourceType("never_fails_resource");
+never_fails_resource.add_fields([
+	{name: "#success", type: "never_fails"},
 	])
 
+
+
+describe('Creating resource:', function(){
+    it('should not create a new resource', function(done){
+    	Sealious.start().then(function(){
+    		Sealious.Dispatcher.resources.create("always_fails_resource", { "#fail": "tak" })
+			.then(function(){
+				done(new Error("It didn't throw an error!"));
+			}).catch(function(error){
+				done();
+			});
+    	});
+ 	});
+ 	it('should create a new resource', function(done){
+ 		Sealious.start().then(function(){
+    		Sealious.Dispatcher.resources.create("never_fails_resource", { "#success": "tak" })
+			.then(function(){
+				done();
+			}).catch(function(error){
+				done(new Error("It threw an error!"));
+			});
+    	});
+ 	})
+});
 /*
 describe('Create resource', function() {
 	Sealious.start().then(function(){
@@ -51,20 +84,5 @@ describe('Array', function(){
 })
 */
 
-var assert = require("assert")
-describe('Create resource', function(){
-    describe('that should only return false', function(){
-	    it('should throw an error', function(done){
-        	Sealious.start().then(function(){
-	    		Sealious.Dispatcher.resources.create("always_fails_resource", { "#fail": "tak" })
-				.then(function(){
-					done(new Error("It didn't throw an error!"));
-				}).catch(function(error){
-					done();
-				});
-	    	});
-     	});
-    });
-});
 
 // always_fails should always fail
