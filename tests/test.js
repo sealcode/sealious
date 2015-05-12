@@ -19,10 +19,12 @@ var always_fails_resource = new Sealious.ChipTypes.ResourceType("always_fails_re
 
 always_fails_resource.add_fields([
 	{name: "#fail", type: "always_fails"},
-])
+	])
 
-Sealious.start().then(function(){
-	describe('Create resource', function() {
+/*
+describe('Create resource', function() {
+	Sealious.start().then(function(){
+		console.log("ON START");
 		context('that should only return false', function(){
 			it('should throw an error', function(done){
 				Sealious.Dispatcher.resources.create("always_fails_resource", { "#fail": "tak" })
@@ -35,7 +37,18 @@ Sealious.start().then(function(){
 		});
 	});
 });
+*/
 
-
+var assert = require("assert")
+describe('Array', function(){
+  describe('#indexOf()', function(){
+    it('should return -1 when the value is not present', function(){
+      Sealious.start().then(function(){
+	      assert.equal(-1, [1,2,3].indexOf(5));
+	      assert.equal(-1, [1,2,3].indexOf(0));
+      });
+    })
+  })
+})
 
 // always_fails should always fail
