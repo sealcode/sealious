@@ -32,7 +32,7 @@ never_fails_resource.add_fields([
 
 
 
-describe('Creating resource:', function(){
+describe('Resources:', function(){
     it('should not create a new resource', function(done){
     	Sealious.start().then(function(){
     		Sealious.Dispatcher.resources.create("always_fails_resource", { "#fail": "tak" })
@@ -53,6 +53,29 @@ describe('Creating resource:', function(){
 			});
     	});
  	})
+});
+
+describe("Users:", function(){
+	it('should create a new user', function(done){
+		Sealious.start().then(function(){
+			Sealious.Dispatcher.users.create_user("Testuser", "Testuser")
+			.then(function(){
+				done();
+			}).catch(function(error){
+				done(new Error(error));
+			});
+		});
+	});
+	it('should get data about all users', function(done){
+		Sealious.start().then(function(){
+			Sealious.Dispatcher.users.get_all_users()
+			.then(function(){
+				done();
+			}).catch(function(error){
+				done(new Error(error));
+			});
+		});
+	});
 });
 /*
 describe('Create resource', function() {
