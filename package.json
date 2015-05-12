@@ -30,7 +30,6 @@
   "devDependencies": {
     "blanket": "1.1.6",
     "mocha": "*",
-    "should": "~4.4.0",
     "travis-cov ": "*"
   },
   "config": {
