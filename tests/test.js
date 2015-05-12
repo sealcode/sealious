@@ -37,7 +37,6 @@ describe('Create resource', function() {
 		});
 	});
 });
-*/
 
 var assert = require("assert")
 describe('Array', function(){
@@ -50,5 +49,22 @@ describe('Array', function(){
     })
   })
 })
+*/
+
+var assert = require("assert")
+describe('Create resource', function(){
+    describe('that should only return false', function(){
+	    it('should throw an error', function(done){
+        	Sealious.start().then(function(){
+	    		Sealious.Dispatcher.resources.create("always_fails_resource", { "#fail": "tak" })
+				.then(function(){
+					done(new Error("It didn't throw an error!"));
+				}).catch(function(error){
+					done();
+				});
+	    	});
+     	});
+    });
+});
 
 // always_fails should always fail
