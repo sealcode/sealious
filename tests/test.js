@@ -46,13 +46,78 @@ describe('Resources:', function(){
  	it('should create a new resource', function(done){
  		Sealious.start().then(function(){
     		Sealious.Dispatcher.resources.create("never_fails_resource", { "#success": "tak" })
-			.then(function(){
+			.then(function(result){
 				done();
 			}).catch(function(error){
 				done(new Error("It threw an error!"));
 			});
     	});
- 	})
+ 	});
+ 	it('should get data about the resource', function(done){
+ 		Sealious.start().then(function(){
+    		Sealious.Dispatcher.resources.create("never_fails_resource", { "#success": "tak" })
+			.then(function(result){
+				Sealious.Dispatcher.resources.get_by_id(result.id)
+				.then(function(resource){
+					done();	
+				}).catch(function(error){
+					done(new Error(error));
+				})
+			}).catch(function(error){
+				done(new Error("It threw an error!"));
+			});
+    	});
+ 	});
+ 	it('should delete the resource', function(done){
+ 		Sealious.start().then(function(){
+    		Sealious.Dispatcher.resources.create("never_fails_resource", { "#success": "tak" })
+			.then(function(result){
+				Sealious.Dispatcher.resources.delete("never_fails_resource", result.id)
+				.then(function(resource){
+					done();	
+				}).catch(function(error){
+					done(new Error(error));
+				})
+			}).catch(function(error){
+				done(new Error("It threw an error!"));
+			});
+    	});
+ 	});
+ 	it('should update the resource', function(done){
+ 		Sealious.start().then(function(){
+    		Sealious.Dispatcher.resources.create("never_fails_resource", { "#success": "tak" })
+			.then(function(result){
+				Sealious.Dispatcher.resources.update_resource(result.id, {"#success" : "tak2"})
+				.then(function(resource){
+					done();	
+				}).catch(function(error){
+					done(new Error(error));
+				})
+			}).catch(function(error){
+				done(new Error("It threw an error!"));
+			});
+    	});
+ 	});
+ 	it('should list resources by type', function(done){
+ 		Sealious.start().then(function(){
+    		Sealious.Dispatcher.resources.list_by_type("never_fails_resource")
+			.then(function(result){
+				done();
+			}).catch(function(error){
+				done(new Error("It threw an error!"));
+			});
+    	});
+ 	});
+ 	it('should get resource type signature (schema)', function(done){
+ 		Sealious.start().then(function(){
+    		Sealious.Dispatcher.resources.get_resource_type_signature("never_fails_resource")
+			.then(function(result){
+				done();
+			}).catch(function(error){
+				done(new Error("It threw an error!"));
+			});
+    	});
+ 	});
 });
 
 describe("Users:", function(){
