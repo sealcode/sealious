@@ -120,10 +120,12 @@ describe('Resources:', function(){
  	});
 });
 
+
+
 describe("Users:", function(){
 	it('should create a new user', function(done){
 		Sealious.start().then(function(){
-			Sealious.Dispatcher.users.create_user("Testuser", "Testuser")
+			Sealious.Dispatcher.users.create_user(Math.random().toString(), Math.random().toString())
 			.then(function(){
 				done();
 			}).catch(function(error){
@@ -135,7 +137,64 @@ describe("Users:", function(){
 		Sealious.start().then(function(){
 			Sealious.Dispatcher.users.get_all_users()
 			.then(function(){
+				done();				
+			}).catch(function(error){
+				done(new Error(error));
+			});
+		});
+	});
+	it('should update user data', function(done){
+		Sealious.start().then(function(){
+			Sealious.Dispatcher.users.create_user(Math.random().toString(), Math.random().toString())
+			.then(function(result){
+				Sealious.Dispatcher.users.update_user_data(result.id, {username: "Testuser", password: "Testuser"})
+				.then(function() {
+					done();
+				}).catch(function(error){
+					done(new Error(error));
+				});
+			}).catch(function(error){
+				done(new Error(error));
+			});
+		});
+	});
+	it('should delete the user', function(done){
+		Sealious.start().then(function(){
+			Sealious.Dispatcher.users.create_user(Math.random().toString(), Math.random().toString())
+			.then(function(result){
+				Sealious.Dispatcher.users.delete_user(result.id)
+				.then(function() {
+					done();
+				}).catch(function(error){
+					done(new Error(error));
+				});
+			}).catch(function(error){
+				done(new Error(error));
+			});
+		});
+	});
+	it('should not find a user', function(done){
+		Sealious.start().then(function(){
+			Sealious.Dispatcher.users.password_match(Math.random().toString(), Math.random().toString())
+			.then(function(result){
+				done(new Error("User was found"));
+			}).catch(function(error){
 				done();
+			});
+		});
+	});
+	it('should find a user', function(done){
+		var username = Math.random().toString();
+		var password = Math.random().toString();
+		Sealious.start().then(function(){
+			Sealious.Dispatcher.users.create_user(username, password)
+			.then(function(result){
+				Sealious.Dispatcher.users.password_match(username, password)
+				.then(function() {
+					done();
+				}).catch(function(error){
+					done(new Error(error));
+				});
 			}).catch(function(error){
 				done(new Error(error));
 			});
