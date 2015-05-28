@@ -45,8 +45,5 @@
     "blanket": {
       "pattern": "node_modules"
     }
-  },
-  "peerDependencies": {
-    "sealious-base-chips": "^0.4.0"
   }
 }
