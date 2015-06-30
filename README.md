@@ -42,7 +42,7 @@ Sealious is not strictly MVC, MVCC, MVW or anything along those lines. It's code
 
 Every Sealious application consists of *chips*. Chips are small pieces of functionality, coded in JavaScript (you can think of them as of *tiny classes*, if you **really** have to). Each chip has its name, and `type`. Available *chip types* are predefined and determine when the functionality of a chip is used and what methods should that chip implement.
 
-Currently there are **X** chip types in Sealious:
+Currently there are **5** chip types in Sealious:
 * `access_strategy` - it consumes a [context](#todo_context) and decides whether an arbitraty action can be performed on an arbitrary resource. **Example**: `public` - accepts any context.
 * `channel` - takes any input it wants to (keyboard, http request, open socket, anything) and is tasked with translating it to Sealious resource method calls. It's responsibility is to deduce which user is responsible for each input and provide Sealious with a context, so `access_strategy` can make a good use of it. **Example**: `rest` - translates HTTP requests to CRUD operations.
 * `datastore` - it's responsibility is, you guessed it, data storage. When bootstrapping, Sealious will tell the datastore what is the schema of the application. The datastore has to translate that information into a *database* schema. Sealious comes with a mongoDB datastore, but there's no stopping you from creating a datastore for any other driver (MySQL is on it's way) :) **Example**: `mongodb` - translates Sealious schema into mongodb collections.
