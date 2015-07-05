@@ -14,7 +14,7 @@ Sealious proposes an application architecture that enables creating applications
 new Sealious.ChipTypes.ResourceType("employee", {
 	fields: [
 		{name: "first-name", type: "text", required: true},
-		{name: "last-name", type: "text", required: false}       
+		{name: "last-name", type: "text", required: false}, 
 		{name: "photo", type: "file", required: true},
 		{name: "is-friends-with", type: "reference", allowed_types:["employee"]}
 	],
