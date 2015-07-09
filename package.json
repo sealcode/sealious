@@ -1,6 +1,6 @@
 {
   "name": "sealious",
-  "version": "0.3.4",
+  "version": "0.4.8.beta",
   "description": "",
   "main": "./lib/main.js",
   "scripts": {
@@ -12,7 +12,7 @@
   },
   "keywords": [
     "sealious"
-  ],  
+  ],
   "author": "Kuba Orlik",
   "license": "BSD-2-Clause",
   "bugs": {
@@ -21,11 +21,19 @@
   "dependencies": {
     "Set": "~0.4.1",
     "bluebird": "~2.9.9",
+    "clone": "^1.0.2",
+    "fs": "0.0.2",
+    "fs-extra": "^0.18.2",
+    "hapi": "^8.5.0",
+    "immutable": "^3.7.2",
     "merge": "^1.2.0",
+    "path": "^0.11.14",
+    "sanitize-html": "^1.6.1",
+    "sha1": "^1.1.0",
     "socket.io": "~1.2.0",
     "socket.io-client": "~1.2.0",
-    "winston": "^1.0.0",
-    "uid": "0.0.2"
+    "uid": "0.0.2",
+    "winston": "^1.0.0"
   },
   "devDependencies": {
     "blanket": "1.1.6",
@@ -36,8 +44,5 @@
     "blanket": {
       "pattern": "node_modules"
     }
-  },
-  "peerDependencies": {
-    "sealious-base-chips": "^0.2.0"
   }
 }
