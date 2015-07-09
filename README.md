@@ -1,4 +1,4 @@
-Sealious 
+Sealious [![Build Status](https://travis-ci.org/Sealious/Sealious.svg?branch=dev)](https://travis-ci.org/Sealious/Sealious)
 ==========
 Warning! Sealious is still in very early stages of development. You are welcome to look around (even more so to contact us via [issue tracker](https://github.com/Sealious/Sealious/issues)!)
 
