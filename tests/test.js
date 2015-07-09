@@ -1,4 +1,4 @@
-require("sealious");
+require("../lib/main.js"); //Sealious
 var assert = require("assert");
 
 Sealious.init();
