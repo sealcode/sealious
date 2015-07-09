@@ -4,7 +4,8 @@
   "description": "",
   "main": "./lib/main.js",
   "scripts": {
-    "test": "mocha ./tests/test.js && mocha ./tests/test.js -R travis-cov"
+    "test": "multi='dot=- html-cov=coverage.html' ./node_modules/mocha/bin/mocha -r blanket --reporter mocha-multi --delay ./tests/test.js",
+    "test-no-blanket": "mocha --delay ./tests/test.js"
   },
   "repository": {
     "type": "git",
@@ -27,22 +28,33 @@
     "hapi": "^8.5.0",
     "immutable": "^3.7.2",
     "merge": "^1.2.0",
+    "mongodb": "^1.4.30",
     "path": "^0.11.14",
     "sanitize-html": "^1.6.1",
     "sha1": "^1.1.0",
     "socket.io": "~1.2.0",
     "socket.io-client": "~1.2.0",
+    "tingodb": "^0.3.5",
     "uid": "0.0.2",
     "winston": "^1.0.0"
   },
   "devDependencies": {
-    "blanket": "1.1.6",
+    "blanket": "git://github.com/alex-seville/blanket.git",
     "mocha": "*",
+    "mocha-multi": "^0.7.1",
     "travis-cov ": "*"
   },
   "config": {
     "blanket": {
-      "pattern": "node_modules"
+      "pattern": "lib",
+      "data-cover-never": [
+        "node_modules",
+        "public"
+      ],
+      "data-cover-reporter-options": {
+        "shortnames": false,
+        "relativepath": true
+      }
     }
   }
 }
