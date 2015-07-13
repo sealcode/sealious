@@ -62,4 +62,5 @@ Plugins
 Sealious' functionality can be extended with plugins. Plugins can register new [chips](#todo-docs) with arbitrary functionality.
 
 Existing Sealious plugins:
+
 * [sealious-www-server](https://github.com/Sealious/sealious-www-server) - for serving static files and providing a REST-ful API.
