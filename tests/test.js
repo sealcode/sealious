@@ -26,7 +26,7 @@ never_fails.prototype.isProperValue = function(value_in_code){
 var never_fails_resource = new Sealious.ChipTypes.ResourceType("never_fails_resource");
 never_fails_resource.add_fields([
 	{name: "#success", type: "never_fails"},
-	])
+])
 
 
 
