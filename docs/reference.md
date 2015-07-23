@@ -68,15 +68,55 @@ var CliChannel = new Sealious.ChipTypes.Channel("cli");
 
 The constructor takes only one argument, which is a string that represents the channel's name and has to be unique amongst all other channels.
 
-The constructor returns an object (which has a Chip a s its prototype). This object can be extended with any desired methods.
+The constructor returns an object (which has a Chip as its prototype). This object can be extended with any desired methods.
 
 ####Simple Channel example - command-line-interface
 
-We're going to create a simple channel, that reads from standard input and listens for simple commands: 
-* create [resource_type_name] - creates a resource of given type 
+We're going to create a simple channel, that reads from standard input and listens for a simple command: 
 * list [resource_type_name] - lists all resources of given type
 
+We'll use `readline` module, which is built-in into node.
 
+Consider following code:
+
+```js
+var Sealious = require("sealious");
+var readline = require("readline");
+
+var CliChannel = new Sealious.ChipTypes.Channel("cli");
+
+CliChannel.start = function(){
+  console.log("Welcome to Sealious CLI Channel. Your wish is my command.")
+  console.log("Please enter your wish:");
+  var rl = readline.createInterface({
+    input: process.stdin,
+  });
+
+  function process_line(line){
+    var words = line.split(" ");
+    switch(words[0]){
+      case "list":
+        var resource_type_name = words[1];
+        var context = new Sealious.Context();
+        Sealious.Dispatcher.resources.list_by_type(context, resource_type_name)
+        .then(function(list){
+          console.log(list);          
+        })
+        break;
+    }
+  }
+
+  rl.on("line", process_line);
+}
+```
+
+The main functionality is achieved by calling:
+
+```js
+Sealious.Dispatcher.resources.list_by_type(context, resource_type_name)
+```
+
+It's an asynchronous method, that returns a Promise.
 ##Plugins
 
 Plugins are npm modules that can be required and used within a Sealious application. Usually a plugin just registers some new chips in Sealious' ChipManager.
