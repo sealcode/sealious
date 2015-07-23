@@ -52,14 +52,12 @@ describe("Sealious", function(){
 	 	it('should get data about the resource', function(done){
 			Sealious.Dispatcher.resources.create({}, "never_fails_resource", { "#success": "tak" })
 			.then(function(result){
-				Sealious.Dispatcher.resources.get_by_id({}, result.id)
+				return Sealious.Dispatcher.resources.get_by_id({}, result.id)
 				.then(function(resource){
 					done();	
-				}).catch(function(error){
-					done(new Error(error));
 				})
 			}).catch(function(error){
-				done(new Error("It threw an error!"));
+				done(error);
 			});
 	 	});
 	 	it('should delete the resource', function(done){

@@ -133,8 +133,11 @@ Datastores are chips responsible for all the data storage for your application. 
 var my_datastore = new Sealious.ChipTypes.Datastore("my_datastore");
 ```
 
-In above code snippet the `my_datastore` variable contains a Datastore object, that needs to be extended with the following methods:
-* `find` - Retrieves documents from datastore. A function with signature
+In above code snippet the `my_datastore` variable contains a Datastore object, that needs to be extended with methods which signatures are described below. 
+
+IMPORTANT! All these methods need to return a promise that resolves on success.
+
+* `find` - Retrieves documents from datastore. Its promise has to resolve with an array of documents (objects). A function with signature
   
   ```js
   function(collection_name, query, options, output_options)
@@ -153,7 +156,7 @@ In above code snippet the `my_datastore` variable contains a Datastore object, t
     * `skip` (number) - how many documents from the beginning to  omit (analogous to the first argument in SQL's "LIMIT" statement)
     * `amount` (number) - how many documents to return at most (analogous to to the second argument in SQL's "LIMIT" statement)
 
-* `insert` - Inserts a document to a datastore. A function with signature
+* `insert` - Inserts a document to a datastore. **Resolves with the inserted document.** A function with signature
   
   ```js
   function(collection_name, to_insert, options)
@@ -172,10 +175,10 @@ In above code snippet the `my_datastore` variable contains a Datastore object, t
   ```
 
   where:
-  
+
   * `collection_name` (string) - the name of the desired collection
   * `query` (object) - datastore query, which defines which document to update. Uses [MongoDB find query syntax](http://docs.mongodb.org/manual/reference/method/db.collection.find/)
-  * `new_value` (object) - what changes to apply to the document. Uses [MongoDB update syntax] (http://docs.mongodb.org/manual/reference/method/db.collection.update/#example-update-specific-fields)
+  * `new_value` (object) - what changes to apply to the document. Uses [MongoDB update syntax](http://docs.mongodb.org/manual/reference/method/db.collection.update/#example-update-specific-fields)
 
 * `remove` - removes a specified document from the datastore. A function with signature
 
@@ -195,6 +198,8 @@ Because of the fact that Sealious currently supports only one active datastore a
 Sealious.ConfigManager.set_config("datastore_chip_name", "my_datastore")
 ```
 before calling `Sealious.start()`;
+
+#### Example Datastore
 
 ##Plugins
 
