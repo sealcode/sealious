@@ -141,6 +141,7 @@ In above code snippet the `my_datastore` variable contains a Datastore object, t
   ```
 
   where:
+
   * `collection_name` (string) - the name of the desired collection.
 
   * `query` (object) - an object containing db-query in [MongoDB query syntax](http://docs.mongodb.org/manual/tutorial/query-documents/)
@@ -159,6 +160,7 @@ In above code snippet the `my_datastore` variable contains a Datastore object, t
   ```
 
   where:
+
   * `collection_name` (string) - the name of the desired collection
   * `to_insert` (object) - an object containing key-value pairs describing what to insert
   * `options` (object) - currently not used
@@ -170,6 +172,7 @@ In above code snippet the `my_datastore` variable contains a Datastore object, t
   ```
 
   where:
+  
   * `collection_name` (string) - the name of the desired collection
   * `query` (object) - datastore query, which defines which document to update. Uses [MongoDB find query syntax](http://docs.mongodb.org/manual/reference/method/db.collection.find/)
   * `new_value` (object) - what changes to apply to the document. Uses [MongoDB update syntax] (http://docs.mongodb.org/manual/reference/method/db.collection.update/#example-update-specific-fields)
