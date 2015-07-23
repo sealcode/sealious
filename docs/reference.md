@@ -59,6 +59,11 @@ Considering it's structure, it's the most flexible of all chip types.
 
 The only method that Sealious will invoke on a channel is the optional `start` method, called on `Sealious.start()`.
 
+#### Existing channels
+
+Some noteworthy plugins that contain useful channels are:
+* [sealious-www-server](https://github.com/Sealious/sealious-www-server) - it can also automatically generate high-quality REST API.
+
 ####Constructor
 
 ```js
@@ -98,7 +103,7 @@ CliChannel.start = function(){
       case "list":
         var resource_type_name = words[1];
         var context = new Sealious.Context();
-        Sealious.Dispatcher.resources.list_by_type(context, resource_type_name)
+        Sealious.ResourceManager.list_by_type(context, resource_type_name)
         .then(function(list){
           console.log(list);          
         })
@@ -113,10 +118,81 @@ CliChannel.start = function(){
 The main functionality is achieved by calling:
 
 ```js
-Sealious.Dispatcher.resources.list_by_type(context, resource_type_name)
+Sealious.ResourceManager.list_by_type(context, resource_type_name)
 ```
 
-It's an asynchronous method, that returns a Promise.
+It's an asynchronous method, that returns a Promise, that resolves to an array of objects representing all of the resources of a given type that are accessible in presence of a given `context`. We're using a simple, empty context, that can be thought of as representing an unauthorized user. You can read more about contexts [here](#context)
+
+### Datastore
+
+Datastores are chips responsible for all the data storage for your application. Currently Sealious supports only one active datastore at a time, but it's subject to change in the near future. 
+
+#### Constructor
+
+```js
+var my_datastore = new Sealious.ChipTypes.Datastore("my_datastore");
+```
+
+In above code snippet the `my_datastore` variable contains a Datastore object, that needs to be extended with the following methods:
+* `find` - Retrieves documents from datastore. A function with signature
+  
+  ```js
+  function(collection_name, query, options, output_options)
+  ```
+
+  where:
+  * `collection_name` (string) - the name of the desired collection.
+
+  * `query` (object) - an object containing db-query in [MongoDB query syntax](http://docs.mongodb.org/manual/tutorial/query-documents/)
+
+  * `options` - optional argument. In MongoDB datastore it is passed as `projection` argument to `find` method. Currently no core Sealious code uses that parameter
+
+  * `output_options` (object) - allows to further filter or sort the query result. It can contain the following properties:
+    * `sort` (object) - uses [MongoDB Sort syntax](http://docs.mongodb.org/manual/reference/method/cursor.sort/). Allows to sort the query results using any amount of attributes (fields);
+    * `skip` (number) - how many documents from the beginning to  omit (analogous to the first argument in SQL's "LIMIT" statement)
+    * `amount` (number) - how many documents to return at most (analogous to to the second argument in SQL's "LIMIT" statement)
+
+* `insert` - Inserts a document to a datastore. A function with signature
+  
+  ```js
+  function(collection_name, to_insert, options)
+  ```
+
+  where:
+  * `collection_name` (string) - the name of the desired collection
+  * `to_insert` (object) - an object containing key-value pairs describing what to insert
+  * `options` (object) - currently not used
+
+* `update` - Updates a document in datastore. A function with signature
+
+  ```js
+  function(collection_name, query, new_value)
+  ```
+
+  where:
+  * `collection_name` (string) - the name of the desired collection
+  * `query` (object) - datastore query, which defines which document to update. Uses [MongoDB find query syntax](http://docs.mongodb.org/manual/reference/method/db.collection.find/)
+  * `new_value` (object) - what changes to apply to the document. Uses [MongoDB update syntax] (http://docs.mongodb.org/manual/reference/method/db.collection.update/#example-update-specific-fields)
+
+* `remove` - removes a specified document from the datastore. A function with signature
+
+  ```js
+  function(collection_name, query, just_one)
+  ```
+
+  where:
+  * `collection_name` (string) - the name of the desired collection
+  * `query` (object) - datastore query, which defines which document to remove. Uses [MongoDB find query syntax](http://docs.mongodb.org/manual/reference/method/db.collection.find/)
+  * `just_one` (boolean) - if set to true, datastore has to remove only one element matching the `query`. It might need to be removed in future versions.
+
+#### Multiple Datastores
+
+Because of the fact that Sealious currently supports only one active datastore at a time, you have to sleect which one it is. You can do so by invoking 
+```js
+Sealious.ConfigManager.set_config("datastore_chip_name", "my_datastore")
+```
+before calling `Sealious.start()`;
+
 ##Plugins
 
 Plugins are npm modules that can be required and used within a Sealious application. Usually a plugin just registers some new chips in Sealious' ChipManager.
