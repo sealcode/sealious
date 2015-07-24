@@ -202,6 +202,12 @@ before calling `Sealious.start()`;
 
 #### Example Datastore
 
+We've created a simple file-based datastore for demonstratory purposes:
+
+> [Sealious-datastore-file](https://github.com/Sealious/sealious-datastore-file)
+
+It's not the most efficient one (for any real-life applications the currently default datastore-mongo is recommended), but it highlights all the necessary inner workings of a Datastore, so it makes a good starting point if you want to create your own Datastore.
+
 ##Plugins
 
 Plugins are npm modules that can be required and used within a Sealious application. Usually a plugin just registers some new chips in Sealious' ChipManager.
