@@ -22,6 +22,7 @@ This access strategy accepts any context.
 ####Constructor
 
 The `AccessStrategy` constructor takes one argument, which is an object with attributes:
+
  * `name` - string, **required**. The name of the access strategy - it has to be a string unique amongst any other access strategies in your application.
  * `checker_function` - function, **required**. It's a function that takes a context instance as an argument and implements the logic of the access strategy. Its return values can be:
      - `boolean` - `true` for granting the access and `false` for denying.
@@ -133,7 +134,7 @@ Datastores are chips responsible for all the data storage for your application. 
 var my_datastore = new Sealious.ChipTypes.Datastore("my_datastore");
 ```
 
-In above code snippet the `my_datastore` variable contains a Datastore object, that needs to be extended with methods which signatures are described below. 
+In above code snippet the `my_datastore` variable contains a Datastore object, that needs to be extended with methods which signatures are described below.  
 
 IMPORTANT! All these methods need to return a promise that resolves on success.
 
