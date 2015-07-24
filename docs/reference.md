@@ -19,7 +19,7 @@ var Public = new Sealious.ChipTypes.AccessStrategy({
 
 This access strategy accepts any context.
 
-####Constructor
+#### AccessStrategy: Constructor
 
 The `AccessStrategy` constructor takes one argument, which is an object with attributes:
 
@@ -32,11 +32,14 @@ The `AccessStrategy` constructor takes one argument, which is an object with att
 ####A more advanced example
 
 ```js
+
+var _is_number = /^[0-9]/;
+
 new Sealious.ChipTypes.AccessStrategy({
     name: "id_starts_with_digit",
     checker_function: function(context, item){
         return new Promise(function(resolve, reject){
-            if(number_test.test(item.id)){
+            if(_is_number.test(item.id)){
                 resolve("id ok!");              
             }else{
                 reject("bad id");
@@ -47,9 +50,10 @@ new Sealious.ChipTypes.AccessStrategy({
 });
 ```
 
-It's a slightly more complex access strategy, that allows access only if given resource's id starts with a digit. Note that it was not necessary to use a Promise in the above `checker_function`, but it was included for example's sake.
+It's a slightly more complex access strategy, that allows access only if given resource's id starts with a digit. Note that it was not necessary to use a Promise in the above `checker_function`, but it was included for example's sake. 
 
-TODO: example of a checker_function that uses contexts.
+TODO: example of a checker_function that uses contexts. 
+
 TODO: example of how ResourceTypes use access strategies.
 
 ###Channel
@@ -63,25 +67,27 @@ The only method that Sealious will invoke on a channel is the optional `start` m
 #### Existing channels
 
 Some noteworthy plugins that contain useful channels are:
+
 * [sealious-www-server](https://github.com/Sealious/sealious-www-server) - it can also automatically generate high-quality REST API.
 
-####Constructor
+#### Channel: Constructor
 
 ```js
 var Sealious = require("sealious");
 var CliChannel = new Sealious.ChipTypes.Channel("cli");
 ```
 
-The constructor takes only one argument, which is a string that represents the channel's name and has to be unique amongst all other channels.
+The constructor takes only one argument, which is a string that represents the channel's name and has to be unique amongst all other channels. 
 
 The constructor returns an object (which has a Chip as its prototype). This object can be extended with any desired methods.
 
-####Simple Channel example - command-line-interface
+####Simple Channel example: command-line-interface
 
 We're going to create a simple channel, that reads from standard input and listens for a simple command: 
-* list [resource_type_name] - lists all resources of given type
 
-We'll use `readline` module, which is built-in into node.
+> `list [resource_type_name]` - lists all resources of given type
+
+We'll be using the `readline` module, which is built-in into node. 
 
 Consider following code:
 
@@ -116,19 +122,19 @@ CliChannel.start = function(){
 }
 ```
 
-The main functionality is achieved by calling:
+The main functionality of the channel is contained within the line:
 
 ```js
 Sealious.ResourceManager.list_by_type(context, resource_type_name)
 ```
 
-It's an asynchronous method, that returns a Promise, that resolves to an array of objects representing all of the resources of a given type that are accessible in presence of a given `context`. We're using a simple, empty context, that can be thought of as representing an unauthorized user. You can read more about contexts [here](#context)
+`ResourceManager.list_by_type` is an asynchronous method that returns a Promise that resolves to an array of objects representing all of the resources of a given type that are accessible in presence of a given `context`. We're using a simple, empty context, that can be thought of as representing an unauthorized user. You can read more about contexts [here](#context)
 
 ### Datastore
 
-Datastores are chips responsible for all the data storage for your application. Currently Sealious supports only one active datastore at a time, but it's subject to change in the near future. 
+Datastores are chips responsible for all the data storage for your application. Currently Sealious supports only one active datastore at a time, but it's subject to change in future versions. 
 
-#### Constructor
+#### Datastore: Constructor
 
 ```js
 var my_datastore = new Sealious.ChipTypes.Datastore("my_datastore");
@@ -194,7 +200,7 @@ IMPORTANT! All these methods need to return a promise that resolves on success.
 
 #### Multiple Datastores
 
-Because of the fact that Sealious currently supports only one active datastore at a time, you have to sleect which one it is. You can do so by invoking 
+Because of the fact that Sealious currently supports only one active datastore at a time, you have the ability to manually select which one it is. You can do so by invoking 
 ```js
 Sealious.ConfigManager.set_config("datastore_chip_name", "my_datastore")
 ```
