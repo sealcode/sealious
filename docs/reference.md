@@ -32,7 +32,6 @@ The `AccessStrategy` constructor takes one argument, which is an object with att
 ####A more advanced example
 
 ```js
-
 var _is_number = /^[0-9]/;
 
 new Sealious.ChipTypes.AccessStrategy({
