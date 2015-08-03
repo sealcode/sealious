@@ -2,7 +2,7 @@
 
 ##Chip Types
 
-###Acess Strategy
+###Access Strategy
 
 Access strategies are functions that take a context as an argument and based on it either allow or deny access to certain resources or operations.
 
