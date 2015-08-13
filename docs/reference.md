@@ -60,7 +60,9 @@ TODO: example of how ResourceTypes use access strategies.
 
 A channel's responsibility is to take any input it wants to (keyboard, http request, open socket, anything) and translate it to Sealious resource method calls.
 
-Considering it's structure, it's the most flexible of all chip types.
+Considering it's structure, it's the most flexible of all chip types. 
+
+You don't need a channel to create an application in Sealious, as Sealious gives you a programmatic API for CRUD operations on all of the resources (see ResourceManager), though channels are good for abstracting out the workings of an external API (such as REST, SMTP, XMPP etc.) and turning it into a reusable plugin.
 
 The only method that Sealious will invoke on a channel is the optional `start` method, called on `Sealious.start()`.
 
