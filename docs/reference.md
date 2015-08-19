@@ -2,7 +2,7 @@
 
 ##Chip Types
 
-###Acess Strategy
+###Access Strategy
 
 Access strategies are functions that take a context as an argument and based on it either allow or deny access to certain resources or operations.
 
@@ -32,7 +32,6 @@ The `AccessStrategy` constructor takes one argument, which is an object with att
 ####A more advanced example
 
 ```js
-
 var _is_number = /^[0-9]/;
 
 new Sealious.ChipTypes.AccessStrategy({
