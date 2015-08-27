@@ -214,6 +214,8 @@ Sealious.ConfigManager.set_config("datastore_chip_name", "my_datastore")
 ```
 before calling `Sealious.start()`;
 
+There's no need to specify which datastore to use if there's only one datastore available.
+
 #### Example Datastore
 
 We've created a simple file-based datastore for demonstratory purposes:
@@ -402,6 +404,34 @@ my_field_type.isProperValue = function(context, new_value){
   }
 }
 ```
+
+### Resource-type
+
+Every time a user interacts with a Sealious application, they interact with resources. A Resource in Sealious can be thought of as an equivalent of a row in a SQL database table. A Resource-type would be the columns for said table - a list of fields, each with its name and type.
+
+A Resource-type is construted based on a Resource-type description.
+
+#### Creating a resource-type
+
+Creating a resource-type is very straightforward - you only have to provide the constructor with a proper resource-type description.
+
+##### A simple resource-type example
+
+```js
+var Sealious = require("sealious");
+
+new Sealious.ChipTypes.ResourceType({
+  name: "person",
+  fields: [
+    {name: "first-name", type: "text", required: true},
+    {name: "age", type: "int"}
+  ]
+})
+```
+
+There's not much to analyze here, except for the syntax of the resource-type description, which is discussed below.
+
+#### Resource-type description syntax
 
 
 
