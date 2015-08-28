@@ -433,7 +433,26 @@ There's not much to analyze here, except for the syntax of the resource-type des
 
 #### Resource-type description syntax
 
+Every resource type is described by a hashmap: 
 
+```js
+{
+  name: String,
+  fields: Array<FieldDescription>,
+  access_strategy: AccessStrategyDescription
+}
+```
+
+* `name`, **required** - the name of the resource-type. It becomes the name of the chip representing the resource type, as well. It has to be unique amongst all other resource-types.
+* `fields`, **required** - an array of field descriptions. You can read about field description syntax below.
+* access_strategy, optional. A hashmap or string compatible with access strategy description syntax, described below. **Defaults to `public`**.
+
+#### Field description syntax
+
+
+#### Resource-type methods and attributes
+
+##### The constructor
 
 ## Plugins
 
