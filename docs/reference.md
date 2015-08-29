@@ -445,7 +445,7 @@ Every resource type is described by a hashmap:
 
 * `name`, **required** - the name of the resource-type. It becomes the name of the chip representing the resource type, as well. It has to be unique amongst all other resource-types.
 * `fields`, **required** - an array of field descriptions. You can read about field description syntax below.
-* access_strategy, optional. A hashmap or string compatible with access strategy description syntax, described below. **Defaults to `public`**.
+* `access_strategy`, optional. A hashmap or string compatible with access strategy description syntax, described below. **Defaults to `public`**.
 
 #### Field description syntax
 
@@ -463,7 +463,7 @@ A field-type description is a hashmap, as well. It looks like this:
 * `name`, **required** - a string representing the machine-readable name for the field. Should be short. No spaces allowed. All lower-case letters, the `_` and `-` symbols are allowed.
 * `human_readable_name`, optional - a string representing a human-readable version of the field's name. No restrictions on what is and what is not allowed here. When not specified, the value of 'name' is used instead.
 * `type`, **required** - a string representing a resource-type name that is already registred in your Sealious application.
-* `params`, **required** - a hashmap of parameters that will be passed to the field-type. These parameters are also a part of the field's signature.
+* `params`, optional - a hashmap of parameters that will be passed to the field-type. These parameters are also a part of the field's signature.
 
 #### Resource-type methods and attributes
 
