@@ -461,7 +461,7 @@ A field-type description is a hashmap, as well. It looks like this:
 ```
 
 * `name`, **required** - a string representing the machine-readable name for the field. Should be short. No spaces allowed. All lower-case letters, the `_` and `-` symbols are allowed.
-* `human_readable_name`, optional - a string representing a human-readable version of the field's name. No restrictions on what is and what is not allowed here. When not specified, the value of 'name' is used instead.
+* `human_readable_name`, optional - a string representing a human-readable version of the field's name. No restrictions on what is and what is not allowed here. **When not specified, the value of 'name' attribute is used instead**.
 * `type`, **required** - a string representing a resource-type name that is already registred in your Sealious application.
 * `params`, optional - a hashmap of parameters that will be passed to the field-type. These parameters are also a part of the field's signature.
 
