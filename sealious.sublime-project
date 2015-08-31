@@ -2,13 +2,8 @@
 	"folders":
 	[
 		{
-			"path": "."
-		},
-		{
-			"path": "C:\\Github\\sealious-base-chips"
-		},
-		{
-			"path": "C:\\Github\\sealious-example-app"
+			"path": ".",
+			"folder_exclude_patterns": ["node_modules"]
 		}
 	]
 }
