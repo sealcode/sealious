@@ -71,7 +71,7 @@ Currently there are **5** chip types in Sealious:
 Plugins
 -------
 
-Sealious' functionality can be extended with plugins. Plugins can register new [chips](#todo-docs) with arbitrary functionality.
+Sealious' functionality can be extended with plugins. Plugins can register new [chips](https://github.com/Sealious/Sealious/blob/dev/README.md#structure) with arbitrary functionality.
 
 Existing Sealious plugins:
 
