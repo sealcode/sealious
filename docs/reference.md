@@ -299,7 +299,7 @@ my_field_type.prototype.isProperValue:
   (context: Context, new_value : any, old_value: any) => Promise|Boolean
 ```
 
-This method should either return a boolean value (`true` for valid values and `false` for invalid), or a Promise that `resolve`s for correct values and `reject`s for incorrect ones.
+This method should either return a boolean value (`true` for valid values and `false` for invalid), or a [Promise](#accessstrategy-constructor) that `resolve`s for correct values and `reject`s for incorrect ones.
 
 Simply returning `false` is discouraged. It's better to `Promise.reject` with an error message (a string). The error message is then supposed to be shown to user as a part of the validation error message. Example:
 
