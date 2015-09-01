@@ -226,7 +226,7 @@ It's not the most efficient one (for any real-life applications the currently de
 
 ### Field-type
 
-Each "field" in a ResourceType must be assigned a field-*type*. 
+Each "field" in a [ResourceType](#resource-type) must be assigned a field-*type*. 
 Field-types describe which values can and which cannot be assigned to a field.
 Field-type's behaviour can be adjusted using field-type parameters.
 
