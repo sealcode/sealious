@@ -61,7 +61,7 @@ Currently there are **5** chip types in Sealious:
   
     **Example**: `shopping_cart_entry` - contains fields such as `product_id` (of field_type "reference"), or `product_name` (of field_type "text"). Also, it uses access_strategy `public` so each entry is visible only by the user who created it.
     
-  * `field-type` - it's something big, responsible for something very small. As it's name suggests, it describes a *type* of a *field*. Many *fields* can be of the same *field type* (although they might use different field type parameters - see docs). It seems minor, but does quite a bit of heavy lifting, namely it:
+  * `field-type` - it's something big, responsible for something very small. As it's name suggests, it describes a *type* of a *field*. Many *fields* can be of the same *field type* (although they might use different field type parameters - see [docs](https://github.com/Sealious/Sealious/tree/dev/docs). It seems minor, but does quite a bit of heavy lifting, namely it:
 	- decides whether a value provided by the user is a valid value (by implementing `is_proper_value` method)
 	- is responsible for *encoding* a value before storing it in database. For example, a "color" field type might receive a value "red" (which is accepted by `is_proper_value`), but store it in database as `#ff0000`.
 	- is responsible for *decoding* the value - a process opposite to the one decribed above.
