@@ -45,15 +45,15 @@ Every Sealious application consists of *chips*. Chips are small pieces of functi
 
 Currently there are **5** chip types in Sealious:
 
-  * `access_strategy` - it consumes a [context](#todo_context) and decides whether an arbitrary action can be performed on an arbitrary resource. 
+  * `access_strategy` - it consumes a [context](#todo_context) and decides whether an arbitrary action can be performed on an arbitrary resource. - more details [see](https://github.com/Sealious/Sealious/blob/dev/docs/reference.md#access-strategy)
     
     **Example**: `public` - accepts any context.
 
-  * `channel` - takes any input it wants to (keyboard, http request, open socket, anything) and is tasked with translating it to Sealious resource method calls. It's responsibility is to deduce which user is responsible for each input and provide Sealious with a context, so `access_strategy` can make a good use of it. 
+  * `channel` - takes any input it wants to (keyboard, http request, open socket, anything) and is tasked with translating it to Sealious resource method calls. It's responsibility is to deduce which user is responsible for each input and provide Sealious with a context, so `access_strategy` can make a good use of it. - more details [see](https://github.com/Sealious/Sealious/blob/dev/docs/reference.md#channel)
     
     **Example**: `rest` - translates HTTP requests to CRUD operations.
 
-  * `datastore` - it's responsibility is, you guessed it, data storage. When bootstrapping, Sealious will tell the datastore what is the schema of the application. The datastore has to translate that information into a *database* schema. Sealious comes with a mongoDB datastore, but there's no stopping you from creating a datastore for any other driver (MySQL is on it's way) :) 
+  * `datastore` - it's responsibility is, you guessed it, data storage. When bootstrapping, Sealious will tell the datastore what is the schema of the application. The datastore has to translate that information into a *database* schema. Sealious comes with a mongoDB datastore, but there's no stopping you from creating a datastore for any other driver (MySQL is on it's way) :) - more details [see](https://github.com/Sealious/Sealious/blob/dev/docs/reference.md#datastore)
    
    **Example**: `mongodb` - translates Sealious schema into mongodb collections.
 
