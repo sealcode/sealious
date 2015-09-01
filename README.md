@@ -57,7 +57,7 @@ Currently there are **5** chip types in Sealious:
    
    **Example**: `mongodb` - translates Sealious schema into mongodb collections.
 
-  * `resource_type` - is a description of a part of the application's schema. It contains *fields*. Every such field is of a certain *`field_type`* (described below). Resource type uses access strategies to describe who and in what arbitratances, can perform CRUD operations on a given resource instance. 
+  * `resource_type` - is a description of a part of the application's schema. It contains *fields*. Every such field is of a certain *`field_type`* (described below). Resource type uses access strategies to describe who and in what arbitratances, can perform CRUD operations on a given resource instance. - more details [see](https://github.com/Sealious/Sealious/blob/dev/docs/reference.md#resource-type)
   
     **Example**: `shopping_cart_entry` - contains fields such as `product_id` (of field_type "reference"), or `product_name` (of field_type "text"). Also, it uses access_strategy `public` so each entry is visible only by the user who created it.
     
