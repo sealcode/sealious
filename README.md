@@ -45,23 +45,23 @@ Every Sealious application consists of *chips*. Chips are small pieces of functi
 
 Currently there are **5** chip types in Sealious:
 
-  * `access_strategy` - it consumes a [context](#todo_context) and decides whether an arbitrary action can be performed on an arbitrary resource. 
+  * `access_strategy` - it consumes a [context](#todo_context) and decides whether an arbitrary action can be performed on an arbitrary resource. - more details [see](https://github.com/Sealious/Sealious/blob/dev/docs/reference.md#access-strategy)
     
     **Example**: `public` - accepts any context.
 
-  * `channel` - takes any input it wants to (keyboard, http request, open socket, anything) and is tasked with translating it to Sealious resource method calls. It's responsibility is to deduce which user is responsible for each input and provide Sealious with a context, so `access_strategy` can make a good use of it. 
+  * `channel` - takes any input it wants to (keyboard, http request, open socket, anything) and is tasked with translating it to Sealious resource method calls. It's responsibility is to deduce which user is responsible for each input and provide Sealious with a context, so `access_strategy` can make a good use of it. - more details [see](https://github.com/Sealious/Sealious/blob/dev/docs/reference.md#channel)
     
     **Example**: `rest` - translates HTTP requests to CRUD operations.
 
-  * `datastore` - it's responsibility is, you guessed it, data storage. When bootstrapping, Sealious will tell the datastore what is the schema of the application. The datastore has to translate that information into a *database* schema. Sealious comes with a mongoDB datastore, but there's no stopping you from creating a datastore for any other driver (MySQL is on it's way) :) 
+  * `datastore` - it's responsibility is, you guessed it, data storage. When bootstrapping, Sealious will tell the datastore what is the schema of the application. The datastore has to translate that information into a *database* schema. Sealious comes with a mongoDB datastore, but there's no stopping you from creating a datastore for any other driver (MySQL is on it's way) :) - more details [see](https://github.com/Sealious/Sealious/blob/dev/docs/reference.md#datastore)
    
    **Example**: `mongodb` - translates Sealious schema into mongodb collections.
 
-  * `resource_type` - is a description of a part of the application's schema. It contains *fields*. Every such field is of a certain *`field_type`* (described below). Resource type uses access strategies to describe who and in what arbitratances, can perform CRUD operations on a given resource instance. 
+  * `resource_type` - is a description of a part of the application's schema. It contains *fields*. Every such field is of a certain *`field_type`* (described below). Resource type uses access strategies to describe who and in what arbitratances, can perform CRUD operations on a given resource instance. - more details [see](https://github.com/Sealious/Sealious/blob/dev/docs/reference.md#resource-type)
   
     **Example**: `shopping_cart_entry` - contains fields such as `product_id` (of field_type "reference"), or `product_name` (of field_type "text"). Also, it uses access_strategy `public` so each entry is visible only by the user who created it.
     
-  * `field-type` - it's something big, responsible for something very small. As it's name suggests, it describes a *type* of a *field*. Many *fields* can be of the same *field type* (although they might use different field type parameters - see docs). It seems minor, but does quite a bit of heavy lifting, namely it:
+  * `field-type` - it's something big, responsible for something very small. As it's name suggests, it describes a *type* of a *field*. Many *fields* can be of the same *field type* (although they might use different field type parameters - see [docs](https://github.com/Sealious/Sealious/blob/dev/docs/reference.md#field-type). It seems minor, but does quite a bit of heavy lifting, namely it:
 	- decides whether a value provided by the user is a valid value (by implementing `is_proper_value` method)
 	- is responsible for *encoding* a value before storing it in database. For example, a "color" field type might receive a value "red" (which is accepted by `is_proper_value`), but store it in database as `#ff0000`.
 	- is responsible for *decoding* the value - a process opposite to the one decribed above.
@@ -71,7 +71,7 @@ Currently there are **5** chip types in Sealious:
 Plugins
 -------
 
-Sealious' functionality can be extended with plugins. Plugins can register new [chips](#todo-docs) with arbitrary functionality.
+Sealious' functionality can be extended with plugins. Plugins can register new [chips](https://github.com/Sealious/Sealious/blob/dev/README.md#structure) with arbitrary functionality.
 
 Existing Sealious plugins:
 
