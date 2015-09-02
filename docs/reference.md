@@ -201,7 +201,7 @@ IMPORTANT! All these methods need to return a promise that resolves on success.
 
 #### Built-in datastore methods
 
-As all chips, initiated datastores have two default methods:
+As all [chips](https://github.com/Sealious/Sealious#structure), initiated datastores have two default methods:
 
   * `start` - takes no arguments and is meant to be called automatically by Sealious. Usually of no concern for a developer.
   * `test` - perfoms unit tests on the datastore.
@@ -226,7 +226,7 @@ It's not the most efficient one (for any real-life applications the currently de
 
 ### Field-type
 
-Each "field" in a ResourceType must be assigned a field-*type*. 
+Each "field" in a [ResourceType](#resource-type) must be assigned a field-*type*. 
 Field-types describe which values can and which cannot be assigned to a field.
 Field-type's behaviour can be adjusted using field-type parameters.
 
@@ -299,9 +299,9 @@ my_field_type.prototype.isProperValue:
   (context: Context, new_value : any, old_value: any) => Promise|Boolean
 ```
 
-This method should either return a boolean value (`true` for valid values and `false` for invalid), or a Promise that `resolve`s for correct values and `reject`s for incorrect ones.
+This method should either return a boolean value (`true` for valid values and `false` for invalid), or a [Promise](#accessstrategy-constructor) that `resolve`s for correct values and `reject`s for incorrect ones.
 
-Simply returning `false` is discauraged. It's better to `Promise.reject` with an error message (a string). The error message is then supposed to be shown to user as a part of the validation error message. Example:
+Simply returning `false` is discouraged. It's better to `Promise.reject` with an error message (a string). The error message is then supposed to be shown to user as a part of the validation error message. Example:
 
 ```js
 my_field_type.isProperValue = function(context, new_value){
@@ -443,7 +443,7 @@ Every resource type is described by a hashmap:
 }
 ```
 
-* `name`, **required** - the name of the resource-type. It becomes the name of the chip representing the resource type, as well. It has to be unique amongst all other resource-types.
+* `name`, **required** - the name of the resource-type. It becomes the name of the [chip](https://github.com/Sealious/Sealious/blob/dev/README.md#structure) representing the resource type, as well. It has to be unique amongst all other resource-types.
 * `fields`, **required** - an array of field descriptions. You can read about field description syntax below.
 * `access_strategy`, optional. A hashmap or string compatible with access strategy description syntax, described below. **Defaults to `public`**.
 
@@ -471,7 +471,7 @@ A field-type description is a hashmap, as well. It looks like this:
 
 ## Plugins
 
-Plugins are npm modules that can be required and used within a Sealious application. Usually a plugin just registers some new chips in Sealious' ChipManager.
+Plugins are npm modules that can be required and used within a Sealious application. Usually a plugin just registers some new [chips](https://github.com/Sealious/Sealious/blob/dev/README.md#structure) in Sealious' ChipManager.
 
 ### Creating a plugin
 In order for Sealious to recognize an npm module as a plugin, the plugin has to contain a `"sealious-plugin"` keyword in it's `package.json`.
