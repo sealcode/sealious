@@ -5,6 +5,7 @@
   "description": "",
   "main": "./lib/main.js",
   "scripts": {
+    "prepublish": "require-self",
     "test": "multi='dot=- html-cov=coverage.html' ./node_modules/mocha/bin/mocha -r blanket --reporter mocha-multi --delay ./tests/test.js",
     "test-no-blanket": "mocha --delay ./tests/test.js"
   },
@@ -42,6 +43,7 @@
     "blanket": "git://github.com/alex-seville/blanket.git",
     "mocha": "*",
     "mocha-multi": "^0.7.1",
+    "require-self": "^0.1.0",
     "travis-cov ": "*"
   },
   "config": {
