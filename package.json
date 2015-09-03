@@ -1,7 +1,7 @@
 {
   "name": "sealious",
   "homepage": "http://sealious.github.io/",
-  "version": "0.5.4",
+  "version": "0.5.5",
   "description": "",
   "main": "./lib/main.js",
   "scripts": {
