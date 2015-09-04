@@ -6,7 +6,7 @@
   "main": "./lib/main.js",
   "scripts": {
     "prepublish": "require-self",
-    "test": "mocha --delay .\\tests\\test.js",
+    "test": "./node_modules/mocha/bin/mocha --delay ./tests/test.js",
     "test-coverage": "./node_modules/mocha/bin/mocha -R html-cov --delay ./tests/test.js >> coverage.html && xdg-open coverage.html",
     "test-no-blanket": "mocha --delay ./tests/test.js"
   },
@@ -33,7 +33,7 @@
     "merge": "^1.2.0",
     "path": "^0.11.14",
     "sanitize-html": "^1.6.1",
-    "sealious-datastore-tingo": "^0.1.1",
+    "sealious-datastore-mongo": "^0.1.3",
     "sha1": "^1.1.0",
     "socket.io": "~1.2.0",
     "socket.io-client": "~1.2.0",
