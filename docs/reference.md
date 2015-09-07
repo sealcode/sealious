@@ -148,7 +148,7 @@ IMPORTANT! All these methods need to return a promise that resolves on success.
 * `find` - Retrieves documents from datastore. Its promise has to resolve with an array of documents (objects). A function with signature
   
   ```
-  function(collection_name, query, options, output_options)
+  find : function(collection_name: String, query: Object, options: Object, output_options: Object) => Object
   ```
 
   where:
@@ -167,7 +167,7 @@ IMPORTANT! All these methods need to return a promise that resolves on success.
 * `insert` - Inserts a document to a datastore. **Resolves with the inserted document.** A function with signature
   
   ```
-  function(collection_name, to_insert, options)
+  insert: function(collection_name: String, to_insert: Object, options: Object) => void
   ```
 
   where:
@@ -179,7 +179,7 @@ IMPORTANT! All these methods need to return a promise that resolves on success.
 * `update` - Updates a document in datastore. A function with signature
 
   ```
-  function(collection_name, query, new_value)
+  update: function(collection_name: String, query: Object, new_value: Object) => void
   ```
 
   where:
@@ -191,7 +191,7 @@ IMPORTANT! All these methods need to return a promise that resolves on success.
 * `remove` - removes a specified document from the datastore. A function with signature
 
   ```
-  function(collection_name, query, just_one)
+  remove : function(collection_name: String, query: Object, just_one: Boolean) => void
   ```
 
   where:
