@@ -1,7 +1,7 @@
 {
   "name": "sealious",
   "homepage": "http://sealious.github.io/",
-  "version": "0.5.9",
+  "version": "0.5.10",
   "description": "",
   "main": "./lib/main.js",
   "scripts": {
@@ -35,8 +35,6 @@
     "sanitize-html": "^1.6.1",
     "sealious-datastore-tingo": "^0.1.3",
     "sha1": "^1.1.0",
-    "socket.io": "~1.2.0",
-    "socket.io-client": "~1.2.0",
     "uid": "0.0.2",
     "winston": "^1.0.0"
   },
