@@ -304,10 +304,20 @@ new Sealiuos.ChipTypes.FieldType({
 
 ```
 type fieldTypeDeclaration: {
-  get_description: (context: Context, params: Object) => String|FieldTypeDescription,
-  is_proper_value: (accept: ()=>void, reject: (error_message: String)=>void, context: Context, params: Object, new_value: Any, old_value: Any) => void,
-  encode: (context: Context, params: Object, value_in_code: Any),
-  decode: (context: Context, params: Object, value_in_database: Any)
+  get_description?: (
+    context: Context, 
+    params: Object
+    ) => String|FieldTypeDescription,
+  is_proper_value?: (
+    accept: ()=>void, 
+    reject: (error_message: String)=>void, 
+    context: Context, 
+    params: Object, 
+    new_value: Any, 
+    old_value: Any
+    ) => void,
+  encode?: (context: Context, params: Object, value_in_code: Any),
+  decode?: (context: Context, params: Object, value_in_database: Any)
 }
 ```
 
@@ -317,7 +327,7 @@ type fieldTypeDeclaration: {
 ```
 is_proper_value: (
   accept: ()=>void, 
-  reject:  (error_message: String)=>void, 
+  reject: (error_message: String)=>void, 
   context: Context, 
   params: Object, 
   new_value: Any, 
@@ -484,7 +494,7 @@ Every resource type is described by a hashmap:
 ```js
 {
   name: String,
-  fields: Array<FieldDescription>,
+  fields: Array<FieldDeclaration>,
   access_strategy?: AccessStrategyDescription
 }
 ```
@@ -493,7 +503,7 @@ Every resource type is described by a hashmap:
 * `fields`, **required** - an array of field descriptions. You can read about field description syntax below.
 * `access_strategy`, optional. A hashmap or string compatible with access strategy description syntax, described below. **Defaults to `public`**.
 
-#### Field description syntax
+#### FieldDeclaration
 
 A field-type description is a hashmap, as well. It looks like this:
 
