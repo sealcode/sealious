@@ -8,7 +8,8 @@
 		"prepublish": "require-self",
 		"test": "./node_modules/mocha/bin/mocha --delay ./tests/test.js",
 		"test-coverage": "./node_modules/mocha/bin/mocha -R html-cov --delay ./tests/test.js >> coverage.html && xdg-open coverage.html",
-		"test-no-blanket": "mocha --delay ./tests/test.js"
+		"test-no-blanket": "mocha --delay ./tests/test.js",
+    "prepare-coverage": "jscoverage lib lib-cov"
 	},
 	"repository": {
 		"type": "git",
