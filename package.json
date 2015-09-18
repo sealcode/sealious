@@ -40,6 +40,7 @@
   "devDependencies": {
     "blanket": "git://github.com/alex-seville/blanket.git",
     "coveralls": "^2.11.4",
+    "jscoverage": "^0.6.0",
     "mocha": "*",
     "mocha-lcov-reporter": "0.0.2",
     "mocha-multi": "^0.7.1",
