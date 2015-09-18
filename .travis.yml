@@ -6,5 +6,6 @@ services:
 script: npm install && npm test
 before_script: echo "before"
 after_success:
-- ./node_modules/.bin/jscoverage lib lib-cov
-- ./node_modules/.bin/mocha tests/test.js -R mocha-lcov-reporter | ./node_modules/coveralls/bin/coveralls.js 
+- node ./lib/tests/prepare-test.js
+- node ./node_modules/.bin/mocha tests/test.js -R mocha-lcov-reporter | ./node_modules/coveralls/bin/coveralls.js 
+- node ./lib/tests/undo-prepare-test.js
