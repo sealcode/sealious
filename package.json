@@ -3,13 +3,13 @@
 	"homepage": "http://sealious.github.io/",
 	"version": "0.5.12",
 	"description": "",
-	"main": "./lib-cov/main.js",
+	"main": "./lib/main.js",
 	"scripts": {
 		"prepublish": "require-self",
 		"test": "./node_modules/mocha/bin/mocha --delay ./tests/test.js",
-		"test-coverage": "./node_modules/mocha/bin/mocha -R html-cov --delay ./tests/test.js >> coverage.html && xdg-open coverage.html",
-		"test-no-blanket": "mocha --delay ./tests/test.js",
-		"coveralls": "node ./lib/tests/prepare-for-coverage.js && jscoverage lib lib-cov && ./node_modules/.bin/mocha ./lib-cov/tests/test.js -R mocha-lcov-reporter | ./node_modules/coveralls/bin/coveralls.js && node ./lib/tests/prepare-for-coverage-undo.js"
+		"precoveralls": "node ./tests/prepare-for-coverage.js && jscoverage lib lib-cov",
+		"coveralls": "./node_modules/.bin/mocha ./tests/test.js -R mocha-lcov-reporter | ./node_modules/coveralls/bin/coveralls.js || npm run postcoveralls",
+		"postcoveralls": "node ./tests/prepare-for-coverage-undo.js"
 	},
 	"repository": {
 		"type": "git",

@@ -4,6 +4,6 @@ var mocha = new Mocha();
 var fs = require("fs");
 var path = require("path");
 
-var Sealious = require("../main.js"); 
+var Sealious = require("sealious"); 
 
 Sealious.test();			
