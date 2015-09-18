@@ -39,7 +39,9 @@
   },
   "devDependencies": {
     "blanket": "git://github.com/alex-seville/blanket.git",
+    "coveralls": "^2.11.4",
     "mocha": "*",
+    "mocha-lcov-reporter": "0.0.2",
     "mocha-multi": "^0.7.1",
     "require-self": "^0.1.0",
     "travis-cov ": "*"
