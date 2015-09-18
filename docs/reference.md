@@ -411,7 +411,7 @@ It takes the following arguments:
 ##### old_value_sensitive
 
 ```
-my_field_type.prototype.old_value_sensitive_methods: {
+old_value_sensitive_methods: Boolean|{
   is_proper_value: Boolean,
   encode: Boolean
 }
