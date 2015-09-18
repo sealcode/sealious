@@ -8,7 +8,7 @@
 		"prepublish": "require-self",
 		"test": "./node_modules/mocha/bin/mocha --delay ./tests/test.js",
 		"precoveralls": "node ./tests/prepare-for-coverage.js && jscoverage lib lib-cov",
-		"coveralls": "./node_modules/.bin/mocha ./tests/test.js -R mocha-lcov-reporter | ./node_modules/coveralls/bin/coveralls.js || npm run postcoveralls",
+		"coveralls": "./node_modules/.bin/mocha ./tests/test.js --delay -R mocha-lcov-reporter | ./node_modules/coveralls/bin/coveralls.js || npm run postcoveralls",
 		"postcoveralls": "node ./tests/prepare-for-coverage-undo.js"
 	},
 	"repository": {
