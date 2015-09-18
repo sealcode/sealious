@@ -5,9 +5,5 @@ node_js:
 services:
   - mongodb
 script: npm install && npm test
-before_script: echo "before"
 after_success:
-- node ./lib/tests/prepare-for-coverage.js
-- npm run prepare-coverage
-- node ./node_modules/.bin/mocha tests/test.js -R mocha-lcov-reporter | ./node_modules/coveralls/bin/coveralls.js 
-- node ./lib/tests/undo-prepare-test.js
+- npm run coveralls
