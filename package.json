@@ -8,7 +8,8 @@
     "prepublish": "require-self",
     "test": "./node_modules/mocha/bin/mocha --delay ./tests/test.js",
     "test-coverage": "./node_modules/mocha/bin/mocha -R html-cov --delay ./tests/test.js >> coverage.html && xdg-open coverage.html",
-    "test-no-blanket": "mocha --delay ./tests/test.js"
+    "test-no-blanket": "mocha --delay ./tests/test.js",
+    "format-code": "./node_modules/js-beautify/js/bin/js-beautify.js -r -t ./lib/*.js ./lib/*/*.js ./lib/*/*/*.js ./tests/*.js"
   },
   "repository": {
     "type": "git",
@@ -43,7 +44,8 @@
     "mocha": "*",
     "mocha-multi": "^0.7.1",
     "require-self": "^0.1.0",
-    "travis-cov ": "*"
+    "travis-cov ": "*",
+    "js-beautify": "^1.5.10"
   },
   "config": {
     "blanket": {
