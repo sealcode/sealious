@@ -77,4 +77,5 @@ Sealious' functionality can be extended with plugins. Plugins can register new [
 
 Existing Sealious plugins:
 
-* [sealious-www-server](https://github.com/Sealious/sealious-www-server) - for serving static files and providing a REST-ful API.
+* [sealious-www-server](https://github.com/Sealious/sealious-www-server) - for serving static files
+* [sealious-channel-rest](https://github.com/Sealious/sealious-channel-rest) - creates a RESTful API for your application
