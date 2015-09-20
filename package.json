@@ -9,7 +9,8 @@
 		"test": "./node_modules/mocha/bin/mocha --delay ./tests/test.js",
 		"precoveralls": "node ./tests/prepare-for-coverage.js && jscoverage lib lib-cov",
 		"coveralls": "./node_modules/.bin/mocha ./tests/test.js --delay -R mocha-lcov-reporter | ./node_modules/coveralls/bin/coveralls.js || npm run postcoveralls",
-		"postcoveralls": "node ./tests/prepare-for-coverage-undo.js"
+		"postcoveralls": "node ./tests/prepare-for-coverage-undo.js",
+		"coverage": "npm run precoveralls && ./node_modules/.bin/mocha ./tests/test.js --delay -R html-cov > coverage.html && npm run postcoveralls && (xdg-open coverage.html || start coverage.html)"
 	},
 	"repository": {
 		"type": "git",
@@ -39,26 +40,10 @@
 		"winston": "^1.0.0"
 	},
 	"devDependencies": {
-		"blanket": "git://github.com/alex-seville/blanket.git",
 		"coveralls": "^2.11.4",
 		"jscoverage": "^0.6.0",
 		"mocha": "*",
 		"mocha-lcov-reporter": "0.0.2",
-		"mocha-multi": "^0.7.1",
-		"require-self": "^0.1.0",
-		"travis-cov ": "*"
-	},
-	"config": {
-		"blanket": {
-			"pattern": "lib",
-			"data-cover-never": [
-				"node_modules",
-				"public"
-			],
-			"data-cover-reporter-options": {
-				"shortnames": false,
-				"relativepath": true
-			}
-		}
+		"require-self": "^0.1.0"
 	}
 }
