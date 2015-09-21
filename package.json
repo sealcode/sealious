@@ -6,11 +6,13 @@
 	"main": "./lib/main.js",
 	"scripts": {
 		"prepublish": "require-self",
-		"test": "./node_modules/mocha/bin/mocha --delay ./tests/test.js",
-		"precoveralls": "node ./tests/prepare-for-coverage.js && jscoverage lib lib-cov",
-		"coveralls": "./node_modules/.bin/mocha ./tests/test.js --delay -R mocha-lcov-reporter | ./node_modules/coveralls/bin/coveralls.js || npm run postcoveralls",
-		"postcoveralls": "node ./tests/prepare-for-coverage-undo.js",
-		"coverage": "npm run precoveralls && ./node_modules/.bin/mocha ./tests/test.js --delay -R html-cov > coverage.html && npm run postcoveralls && (xdg-open coverage.html || start coverage.html)"
+    "test": "mocha --delay ./tests/test.js",
+    "test-coverage": "mocha -R html-cov --delay ./tests/test.js >> coverage.html && xdg-open coverage.html",
+    "precoveralls": "node ./tests/prepare-for-coverage.js && jscoverage lib lib-cov",
+    "coveralls": "./node_modules/.bin/mocha ./tests/test.js --delay -R mocha-lcov-reporter | ./node_modules/coveralls/bin/coveralls.js || npm run postcoveralls",
+    "postcoveralls": "node ./tests/prepare-for-coverage-undo.js",
+    "check-formatting": "jscs -c .jscsrc ./lib && echo \"\\n ✓ Code formatting O.K.!\\n\" || (echo \"\\nSome formatting errors found. Run 'npm run fix-formatting' to correct them.\\n\" && exit )",
+    "fix-formatting": "jscs -c .jscsrc ./lib --fix"
 	},
 	"repository": {
 		"type": "git",
@@ -43,6 +45,17 @@
 		"jscoverage": "^0.6.0",
 		"mocha": "*",
 		"mocha-lcov-reporter": "0.0.2",
-		"require-self": "^0.1.0"
+		"require-self": "^0.1.0",
+    "jscs": "^2.1.1",
+    "mocha": "*",
+    "pre-commit": "^1.1.1",
+    "require-self": "^0.1.0"
+  },
+  "pre-commit": {
+    "colors": true,
+    "run": [
+      "check-formatting"
+    ],
+    "silent": false
 	}
 }
