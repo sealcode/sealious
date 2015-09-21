@@ -6,11 +6,11 @@
   "main": "./lib/main.js",
   "scripts": {
     "prepublish": "require-self",
-    "test": "./node_modules/mocha/bin/mocha --delay ./tests/test.js",
-    "test-coverage": "./node_modules/mocha/bin/mocha -R html-cov --delay ./tests/test.js >> coverage.html && xdg-open coverage.html",
+    "test": "mocha --delay ./tests/test.js",
+    "test-coverage": "mocha -R html-cov --delay ./tests/test.js >> coverage.html && xdg-open coverage.html",
     "test-no-blanket": "mocha --delay ./tests/test.js",
-    "check-formatting": "node_modules/jscs/bin/jscs -c .jscsrc ./lib/* && echo \"\\n ✓ Code formatting O.K.!\\n\" || (echo \"\\nSome formatting errors found. Run 'npm run fix-formatting' to correct them.\\n\" && exit )",
-    "fix-formatting": "node_modules/jscs/bin/jscs -c .jscsrc ./lib/* --fix"
+    "check-formatting": "jscs -c .jscsrc ./lib && echo \"\\n ✓ Code formatting O.K.!\\n\" || (echo \"\\nSome formatting errors found. Run 'npm run fix-formatting' to correct them.\\n\" && exit )",
+    "fix-formatting": "jscs -c .jscsrc ./lib --fix"
   },
   "repository": {
     "type": "git",
