@@ -41,11 +41,12 @@
   },
   "devDependencies": {
     "blanket": "git://github.com/alex-seville/blanket.git",
+    "js-beautify": "^1.5.10",
     "mocha": "*",
     "mocha-multi": "^0.7.1",
+    "pre-commit": "^1.1.1",
     "require-self": "^0.1.0",
-    "travis-cov ": "*",
-    "js-beautify": "^1.5.10"
+    "travis-cov ": "*"
   },
   "config": {
     "blanket": {
@@ -59,5 +60,10 @@
         "relativepath": true
       }
     }
+  },
+  "pre-commit": {
+    "colors": true,
+    "run": ["format-code"],
+    "silent": false
   }
 }
