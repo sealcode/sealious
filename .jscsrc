@@ -1,0 +1,17 @@
+{
+	"disallowSpacesInAnonymousFunctionExpression": {
+		"beforeOpeningRoundBrace": true,
+		"beforeOpeningCurlyBrace": true
+	},
+	"requireSpacesInNamedFunctionExpression": {
+		"beforeOpeningRoundBrace": true,
+		"beforeOpeningCurlyBrace": true
+	},
+	"disallowSpacesInCallExpression": true,
+	"requireSpacesInFunctionDeclaration": {
+	    "beforeOpeningRoundBrace": true,
+	    "beforeOpeningCurlyBrace": true
+	},
+	"requireSpacesInForStatement": true,
+	"validateIndentation": "\t"
+}
