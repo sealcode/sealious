@@ -1,4 +1,5 @@
 {
+	"validateIndentation": "\t",
 	"disallowSpacesInAnonymousFunctionExpression": {
 		"beforeOpeningRoundBrace": true,
 		"beforeOpeningCurlyBrace": true
@@ -13,5 +14,23 @@
 	    "beforeOpeningCurlyBrace": true
 	},
 	"requireSpacesInForStatement": true,
-	"validateIndentation": "\t"
+	"requireSpaceBeforeKeywords": [
+	    "else",
+	    "while",
+	    "catch"
+	],
+	"requireSpaceAfterKeywords": [
+	    "do",
+	    "for",
+	    "if",
+	    "else",
+	    "switch",
+	    "case",
+	    "try",
+	    "catch",
+	    "while",
+	    "with",
+	    "return",
+	    "typeof"
+	]
 }
