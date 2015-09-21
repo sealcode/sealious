@@ -9,8 +9,8 @@
     "test": "./node_modules/mocha/bin/mocha --delay ./tests/test.js",
     "test-coverage": "./node_modules/mocha/bin/mocha -R html-cov --delay ./tests/test.js >> coverage.html && xdg-open coverage.html",
     "test-no-blanket": "mocha --delay ./tests/test.js",
-    "check-formatting": "node_modules/jscs/bin/jscs -c .jscsrc ./lib/* || echo \"Some formatting errors found. Run 'npm run fix-formatting' to correct them.",
-    "fix-formatting": "node_modules/jscs/bin/jscs -c .jscsrc ./lib/* --fix",
+    "check-formatting": "node_modules/jscs/bin/jscs -c .jscsrc ./lib/* || echo \"Some formatting errors found. Run 'npm run fix-formatting' to correct them.\"",
+    "fix-formatting": "node_modules/jscs/bin/jscs -c .jscsrc ./lib/* --fix"
   },
   "repository": {
     "type": "git",
