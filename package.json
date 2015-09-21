@@ -9,6 +9,8 @@
     "test": "./node_modules/mocha/bin/mocha --delay ./tests/test.js",
     "test-coverage": "./node_modules/mocha/bin/mocha -R html-cov --delay ./tests/test.js >> coverage.html && xdg-open coverage.html",
     "test-no-blanket": "mocha --delay ./tests/test.js",
+    "check-formatting": "node_modules/jscs/bin/jscs -c .jscsrc ./lib/*",
+    "fix-formatting": "node_modules/jscs/bin/jscs -c .jscsrc ./lib/* --fix",
     "format-code": "./node_modules/js-beautify/js/bin/js-beautify.js -r -t ./lib/*.js ./lib/*/*.js ./lib/*/*/*.js ./tests/*.js"
   },
   "repository": {
@@ -41,7 +43,7 @@
   },
   "devDependencies": {
     "blanket": "git://github.com/alex-seville/blanket.git",
-    "js-beautify": "^1.5.10",
+    "jscs": "^2.1.1",
     "mocha": "*",
     "mocha-multi": "^0.7.1",
     "pre-commit": "^1.1.1",
@@ -63,7 +65,9 @@
   },
   "pre-commit": {
     "colors": true,
-    "run": ["format-code"],
+    "run": [
+      "check-formatting"
+    ],
     "silent": false
   }
 }
