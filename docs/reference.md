@@ -259,18 +259,18 @@ var Color = require("color");
 
 var field_type_color = new Sealious.ChipTypes.FieldType({
   name: "color",
-  get_description: fnction(context, params){
+  get_description: function(context, params){
     return "Accepts colors, in various formats - rgb, hex, hsl, rgba, and html color name. Example correct values: `#ff0000`, `red`, `rgba(255, 0, 0, 1)`, `hsl(0, 100%, 50%)`."
   },
-  is_proper_value: function(context, new_value){
+  is_proper_value: function(accept, reject, context, params, new_value){
     try{
-      Color(value_in_code.toLowerCase());
+      Color(new_value.toLowerCase());
     } catch(e){
-      return Promise.reject("Value `" + value_in_code + "` could not be parsed as a color.");
+      return reject("Value `" + new_va + "` could not be parsed as a color.");
     }
-    return true;
+    accept();
   },
-  encode: function(context, new_value){
+  encode: function(context, params, value_in_code){
     var color = Color(value_in_code);
     return Promise.resolve(color.hexString())
   }
@@ -282,6 +282,8 @@ The above is a simple field-type that accepts color values in various notations 
 This field-type uses the very useful [color](https://www.npmjs.com/package/color) package.
 
 What's important to note here is the `encode` method - it takes any value already validated by `is_proper_value` and converts it to hex - that way all the color values in the database are uniform and easily searchable. 
+
+The `decode` method is not declared here, so the default one will be used - one that returns the value from the database unchanged. In this case `decode` will always return the color in hex format (because that's how the values are stored).
 
 #### Field-type methods and attributes
 
@@ -316,7 +318,7 @@ type fieldTypeDeclaration: {
     new_value: Any, 
     old_value: Any
     ) => void,
-  encode?: (context: Context, params: Object, value_in_code: Any),
+  encode?: (context: Context, params: Object, value_in_code: Any, old_value: Any),
   decode?: (context: Context, params: Object, value_in_database: Any)
 }
 ```
@@ -358,7 +360,7 @@ This method wil be given the following arguments:
  * `accept: ()=>void` - call it if the `new_value` is a correct value
  * `reject: (error_message: String)=>void` - call it if the `new_value` is not a correct value.
  * `context: Context` - a Context object representing the context in which the value was submitted. The field-type may or may not take context into consideration.
- * `params: Object` - an object representing the params given to the FieldDeclaration which referenced our current field-type
+ * `params: Object` - an object representing the [params passed to the field declaration](#field-type-parameters) referencing this field type
  * `new_value: Any` - Represents the value to be checked. Usually directly represents user input.
  * `old_value: Any` - represents the value previously residing in in a field that this field-type is assigned to. This argument can be used e. g. for creating a field type that accepts only values that are higher than the current value.
  
@@ -381,7 +383,7 @@ Specifying this method is **optional**. If this method is not defined in a field
 
 It takes the following arguments: 
  * `context: Context` - a Context object representing the context in which the value was submitted. The field-type may or may not take context into consideration.
- * `params: Object` - an object representing the params passed to the field declaration referencing this field type
+ * `params: Object` - an object representing the [params passed to the field declaration](#field-type-parameters) referencing this field type
  * `new_value: Any` - can be of any type. Represents the value to be encoded. Usually directly represents user input.
  * `old_value: Any` - represents the value previously residing in in a field that this field-type is assigned to.
    
@@ -405,7 +407,7 @@ Specifying this method is **optional**. If this method is not defined in a field
 
 It takes the following arguments:
   * `context` - a `Context` object representing the context in which the value is read. The field-type may or may not take context into consideration.
-  * `params: Object` - an object representing the params passed to the field declaration referencing this field type
+  * `params: Object` - an object representing the [params passed to the field declaration](#field-type-parameters) referencing this field type
   * `value_in_datastore` - a raw value that the datastore returned. Encoded by calling the field-type's `encode` method. 
 
 ##### old_value_sensitive
