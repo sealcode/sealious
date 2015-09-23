@@ -43,12 +43,13 @@
 	},
 	"devDependencies": {
 		"coveralls": "^2.11.4",
+		"deep-equal": "^1.0.1",
 		"jscoverage": "^0.6.0",
+		"jscs": "^2.1.1",
 		"mocha": "*",
 		"mocha-lcov-reporter": "0.0.2",
-		"require-self": "^0.1.0",
-		"jscs": "^2.1.1",
-		"pre-commit": "^1.1.1"
+		"pre-commit": "^1.1.1",
+		"require-self": "^0.1.0"
 	},
 	"pre-commit": {
 		"colors": true,

@@ -243,7 +243,6 @@ module.exports = {
 				it("should use child's .get_description method when a child has it's own .get_description method", function(done) {
 					accepting_son.get_description()
 						.then(function(description) {
-							console.log(description);
 							if (description.summary == "from_son") {
 								done();
 							} else {

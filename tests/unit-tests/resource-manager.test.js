@@ -1,6 +1,7 @@
 var Sealious = require("sealious");
 var ResourceManager = Sealious.ResourceManager;
 var assert = require("assert");
+var deepEqual = require("deep-equal");
 
 module.exports = {
 	test_init: function(){
@@ -124,226 +125,338 @@ module.exports = {
 			var context = Sealious.Context();
 
 			describe(".create", function(){
-				it("should provide resource_type.validate_field_values method with the previous field values, if it is needed", function(done){
-					ResourceManager.create(new Sealious.Context(), "old_value_sensitive", {
-							value: "any"
-						})
-						.then(function(created_resource){
-							done();
-						}).catch(function(){
-							done(new Error("But it didn't"));
-						})
-				});
-				it("should NOT provide resource_type.validate_field_values method with the previous field value if it's not needed", function(done){
-					ResourceManager.create(new Sealious.Context(), "old_value_insensitive", {
-							value: "any"
-						})
-						.then(function(){
-							done();
-						}).catch(function(){
-							done(new Error("But it didn't"));
-						})
-				});
-			});
-
-			describe(".update", function(){
-				it("should remove a value if it's not provided", function(done){
-					ResourceManager.create(new Sealious.Context(), "multifield", {
-						value1: "1",
-						value2: "2"
-					}).then(function(created_resource){
-						return ResourceManager.update_resource(new Sealious.Context(), "multifield", created_resource.id, {
-							value1: "3"
-						})
-					}).then(function(updated_resource){
-						if (updated_resource.body.value2 === null) {
-							done();
-						} else {
-							done(new Error("But it didn't"));
-						}
-					})
-				});
-			});
-
-			describe(".patch", function(){
-				it("should provide resource_type.validate_field_values method with the previous field value if it is needed", function(done){
-					ResourceManager.create(new Sealious.Context(), "old_value_sensitive", {
-							value: "any"
-						})
-						.then(function(created_resource){
-							return ResourceManager.patch_resource(new Sealious.Context(), "old_value_sensitive", created_resource.id, {
-								value: "any2"
-							})
-						}).then(function(){
-							done();
-						}).catch(function(){
-							done(new Error("But it didn't."));
-						})
-				});
-				describe("should provide real old value, if old_value is needed", function(){
-					it("always_the_same_resource can be patched with the same value it was created", function(done){
-						ResourceManager.create(new Sealious.Context(), "always_the_same", {
-								value: 33
-							})
-							.then(function(created_resource){
-								return ResourceManager.patch_resource(new Sealious.Context(), "always_the_same", created_resource.id, {
-									value: 33
-								})
-							}).then(function(){
-								done();
-							}).catch(function(){
-								done(new Error("But it didn't."));
-							})
-					});
-					it("always_the_same_resource can't be patched with other value than the one it was created with", function(done){
-						ResourceManager.create(new Sealious.Context(), "always_the_same", {
-								value: 33
-						})
-						.then(function(created_resource){
-							return ResourceManager.patch_resource(new Sealious.Context(), "always_the_same", created_resource.id, {
-								value: 42
-							})
-						}).then(function(){
-							done(new Error("But it was."));
-						}).catch(function(){
-							done();
-						})
-					});
-				})
-				it("should NOT provide resource_type.validate_field_values method with the previous field value if it's not needed", function(done){
-					ResourceManager.create(new Sealious.Context(), "old_value_insensitive", {
-							value: "any"
-						})
-						.then(function(created_resource){
-							return ResourceManager.patch_resource(new Sealious.Context(), "old_value_insensitive", created_resource.id, {
-									value: "any2"
-							})
-							.then(function(){
-								done();
-							}).catch(function(){
-								done(new Error("But it didn't"));
-							})
-						})
-				});
-			});
-
-			it('should not create a new resource', function(done){
-				ResourceManager.create(context, "always_fails_resource", {
-						"#fail": "tak"
-					})
-					.then(function(){
-						done(new Error("It didn't throw an error!"));
-					}).catch(function(error){
-						done();
-					});
-			});
-			it('should create a new resource', function(done){
-				ResourceManager.create(context, "never_fails_resource", {
-						"#success": "tak"
-					})
-					.then(function(result){
-						done();
-					}).catch(function(error){
-						done(error);
-					});
-			});
-			it('should get data about the resource', function(done){
-				ResourceManager.create(context, "never_fails_resource", {
-						"#success": "tak"
-					})
-					.then(function(result){
-						return ResourceManager.get_by_id(context, result.id)
-							.then(function(resource){
-								done();
-							})
-					}).catch(function(error){
-						done(error);
-					});
-			});
-			it('should delete the resource', function(done){
-				ResourceManager.create(context, "never_fails_resource", {
-						"#success": "tak"
-					})
-					.then(function(result){
-						ResourceManager.delete(context, "never_fails_resource", result.id)
-							.then(function(resource){
-								done();
-							}).catch(function(error){
-								done(new Error(error));
-							})
-					}).catch(function(error){
-						done(new Error("It threw an error!"));
-					});
-			});
-
-			it('should update the resource', function(done){
-				ResourceManager.create(context, "never_fails_resource", {
-						"#success": "tak"
-					})
-					.then(function(result){
-						ResourceManager.update_resource(context, "never_fails_resource", result.id, {
-								"#success": "tak2"
-							})
-							.then(function(resource){
-								done();
-							}).catch(function(error){
-								done(new Error(error));
-							})
-					}).catch(function(error){
-						done(error);
-					});
-			});
-			it('should list resources by type', function(done){
-				ResourceManager.list_by_type(context, "never_fails_resource")
-					.then(function(result){
-						done();
-					}).catch(function(error){
-						done(new Error("It threw an error!"));
-					});
-			});
-			it('should get resource type signature (schema)', function(done){
-				ResourceManager.get_resource_type_signature(context, "never_fails_resource")
-					.then(function(result){
-						done();
-					}).catch(function(error){
-						done(new Error("It threw an error!"));
-					});
-			});
-
-
-
-			it('should store creation and modification context', function(done){
-				var creation_context = new Sealious.Context();
-
-				ResourceManager.create(creation_context, "never_fails_resource", {
-						"#success": "yes"
+				it("should create resource", function(done){
+					var context = new Sealious.Context();
+					ResourceManager.create(context,"never_fails_resource", {
+						"#success": "specific_value"
 					})
 					.then(function(created_resource){
-						assert.deepEqual(created_resource.created_context, creation_context.toObject(), "Context info stored in resource's `created_context` attribute should reflect the actual context of creating this resource");
-						return Promise.resolve(created_resource.id);
-					}).then(function(created_resource_id){
-						var modification_context = new Sealious.Context();
-						return ResourceManager.patch_resource(modification_context, "never_fails_resource", created_resource_id, {
-								"#success": "yiss"
-							})
-							.then(function(patched_resource){
-								assert.deepEqual(patched_resource.last_modified_context, modification_context.toObject(), "Context info stored in resource's `last_modified` attribute should reflect the actual context of last modification to this resource after performing `patch` on it.")
-								return Promise.resolve(created_resource_id);
-							});
-					}).then(function(created_resource_id){
-						var update_context = new Sealious.Context();
-						ResourceManager.update_resource(update_context, "never_fails_resource", created_resource_id, {
-								"#success": "yiss plis"
-							})
-							.then(function(patched_resource){
-								assert.deepEqual(patched_resource.last_modified_context, update_context.toObject(), "Context info stored in resource's `last_modified` attribute should reflect the actual context of last modification to this resource after performing `update` on it.")
-							});
-						done();
+						return ResourceManager.get_by_id(new Sealious.Context(), created_resource.id)
 					})
+					.then(function(gotten_resource){
+						if (gotten_resource.body["#success"] == "specific_value" && deepEqual(context.toObject(), gotten_resource.created_context)) {
+							done();
+						}else{
+							done(new Error("Created resource differs from what was intended to create."))
+						}
+					}).catch(function(error){
+						done(error)
+					})
+				})
+				it("should resolve with created resource", function(done){
+					var context = new Sealious.Context();
+					ResourceManager.create(context,"never_fails_resource", {
+						"#success": "specific_value"
+					})
+					.then(function(created_resource){
+						if (created_resource.body["#success"] == "specific_value" && deepEqual(context.toObject(), created_resource.created_context)) {
+							done();
+						}else{
+							done(new Error(".create resolves with something else than created resource."))
+						}
+					}).catch(function(error){
+						done(error)
+					})
+				})
+				it("should throw proper error, if given resouce-type name is non-existent", function(done){
+					ResourceManager.create(new Sealious.Context(), "non_existent_resource_type", {})
+					.then(function(){
+						done(new Error("But it succedded instad of failing"));
+					}).catch(function(error){
+						if (error.type="validation"){
+							done();
+						} else {
+							done(new Error("But threw an error that is not an instance of ValidationError"));
+						}
+					})
+				})
+				it("should provide resource_type.validate_field_values method with the previous field values, if it is needed", function(done){
+					ResourceManager.create(new Sealious.Context(), "old_value_sensitive", {
+						value: "any"
+					})
+					.then(function(created_resource){
+						done();
+					}).catch(function(){
+						done(new Error("But it didn't"));
+					})
+				});
+				it("should NOT provide resource_type.validate_field_values method with the previous field value if it's not needed", function(done){
+					ResourceManager.create(new Sealious.Context(), "old_value_insensitive", {
+						value: "any"
+					})
+					.then(function(){
+						done();
+					}).catch(function(){
+						done(new Error("But it didn't"));
+					})
+				});
 			});
 
-			run(); //!!important	
+describe(".get_by_id", function(){
+	it("should find resource of given id", function(done){
+		ResourceManager.create(new Sealious.Context(), "never_fails_resource", {
+			"#success": "specific_value"
 		})
+		.then(function(created_resource){
+			return ResourceManager.get_by_id(new Sealious.Context(), created_resource.id)
+		})
+		.then(function(gotten_resource){
+			if (gotten_resource.body["#success"] == "specific_value") {
+				done();
+			}else{
+				done(new Error("It didn't get proper resource."))
+			}
+		}).catch(function(error){
+			done(error)
+		})
+	})
+})
+
+describe(".update", function(){
+	it("should throw proper error, if given resouce-type name is non-existent", function(done){
+		ResourceManager.update_resource(new Sealious.Context(), "non_existent_resource_type", "id",{})
+		.then(function(){
+			done(new Error("But it succedded instad of failing"));
+		}).catch(function(error){
+			if (error.type="validation"){
+				done();
+			} else {
+				done(new Error("But threw an error that is not an instance of ValidationError"));
+			}
+		})
+	})
+	it("should remove a value if it's not provided", function(done){
+		ResourceManager.create(new Sealious.Context(), "multifield", {
+			value1: "1",
+			value2: "2"
+		}).then(function(created_resource){
+			return ResourceManager.update_resource(new Sealious.Context(), "multifield", created_resource.id, {
+				value1: "3"
+			})
+		}).then(function(updated_resource){
+			if (updated_resource.body.value2 === null) {
+				done();
+			} else {
+				done(new Error("But it didn't"));
+			}
+		})
+	});
+
+});
+
+describe(".patch", function(){
+	it("should throw proper error, if given resouce-type name is non-existent", function(done){
+		ResourceManager.patch_resource(new Sealious.Context(), "non_existent_resource_type", "id",{})
+		.then(function(){
+			done(new Error("But it succedded instad of failing"));
+		}).catch(function(error){
+			if (error.type="validation"){
+				done();
+			} else {
+				done(new Error("But threw an error that is not an instance of ValidationError"));
+			}
+		})
+	})
+	it("should provide resource_type.validate_field_values method with the previous field value if it is needed", function(done){
+		ResourceManager.create(new Sealious.Context(), "old_value_sensitive", {
+			value: "any"
+		})
+		.then(function(created_resource){
+			return ResourceManager.patch_resource(new Sealious.Context(), "old_value_sensitive", created_resource.id, {
+				value: "any2"
+			})
+		}).then(function(){
+			done();
+		}).catch(function(){
+			done(new Error("But it didn't."));
+		})
+	});
+	describe("should provide real old value, if old_value is needed", function(){
+		it("always_the_same_resource can be patched with the same value it was created", function(done){
+			ResourceManager.create(new Sealious.Context(), "always_the_same", {
+				value: 33
+			})
+			.then(function(created_resource){
+				return ResourceManager.patch_resource(new Sealious.Context(), "always_the_same", created_resource.id, {
+					value: 33
+				})
+			}).then(function(){
+				done();
+			}).catch(function(){
+				done(new Error("But it didn't."));
+			})
+		});
+		it("always_the_same_resource can't be patched with other value than the one it was created with", function(done){
+			ResourceManager.create(new Sealious.Context(), "always_the_same", {
+				value: 33
+			})
+			.then(function(created_resource){
+				return ResourceManager.patch_resource(new Sealious.Context(), "always_the_same", created_resource.id, {
+					value: 42
+				})
+			}).then(function(){
+				done(new Error("But it was."));
+			}).catch(function(){
+				done();
+			})
+		});
+	})
+it("should NOT provide resource_type.validate_field_values method with the previous field value if it's not needed", function(done){
+	ResourceManager.create(new Sealious.Context(), "old_value_insensitive", {
+		value: "any"
+	})
+	.then(function(created_resource){
+		return ResourceManager.patch_resource(new Sealious.Context(), "old_value_insensitive", created_resource.id, {
+			value: "any2"
+		})
+		.then(function(){
+			done();
+		}).catch(function(){
+			done(new Error("But it didn't"));
+		})
+	})
+});
+});
+
+describe(".delete", function(){
+	it("should throw proper error, if given resouce-type name is non-existent", function(done){
+		ResourceManager.delete(new Sealious.Context(), "non_existent_resource_type", "id",{})
+		.then(function(){
+			done(new Error("But it succedded instad of failing"));
+		}).catch(function(error){
+			if (error.type="validation"){
+				done();
+			} else {
+				done(new Error("But threw an error that is not an instance of ValidationError"));
+			}
+		});
+	});
+	it('should delete the resource', function(done){
+		var created_resource_id;
+		ResourceManager.create(context, "never_fails_resource", {"#success": "tak" })
+		.then(function(created_resource){
+			created_resource_id = created_resource.id;
+			return ResourceManager.delete(context, "never_fails_resource", created_resource_id);
+		})
+		.then(function(){
+			return ResourceManager.get_by_id(new Sealious.Context, created_resource_id);
+		})
+		.then(function(result){
+			done(new Error("But it didn't"));
+		})
+		.catch(function(error){
+			if (error.type == "not_found"){
+				done();
+			} else {
+				done(error);
+			}					
+		})
+	});
+})
+
+it('should not create a new resource', function(done){
+	ResourceManager.create(context, "always_fails_resource", {
+		"#fail": "tak"
+	})
+	.then(function(){
+		done(new Error("It didn't throw an error!"));
+	}).catch(function(error){
+		done();
+	});
+});
+it('should create a new resource', function(done){
+	ResourceManager.create(context, "never_fails_resource", {
+		"#success": "tak"
+	})
+	.then(function(result){
+		done();
+	}).catch(function(error){
+		done(error);
+	});
+});
+it('should get data about the resource', function(done){
+	ResourceManager.create(context, "never_fails_resource", {
+		"#success": "tak"
+	})
+	.then(function(result){
+		return ResourceManager.get_by_id(context, result.id)
+		.then(function(resource){
+			done();
+		})
+	}).catch(function(error){
+		done(error);
+	});
+});
+
+
+it('should update the resource', function(done){
+	ResourceManager.create(context, "never_fails_resource", {
+		"#success": "tak"
+	})
+	.then(function(result){
+		ResourceManager.update_resource(context, "never_fails_resource", result.id, {
+			"#success": "tak2"
+		})
+		.then(function(resource){
+			done();
+		}).catch(function(error){
+			done(new Error(error));
+		})
+	}).catch(function(error){
+		done(error);
+	});
+});
+it('should list resources by type', function(done){
+	ResourceManager.list_by_type(context, "never_fails_resource")
+	.then(function(result){
+		done();
+	}).catch(function(error){
+		done(new Error("It threw an error!"));
+	});
+});
+it('should get resource type signature (schema)', function(done){
+	ResourceManager.get_resource_type_signature(context, "never_fails_resource")
+	.then(function(result){
+		done();
+	}).catch(function(error){
+		done(new Error("It threw an error!"));
+	});
+});
+
+
+
+it('should store creation and modification context', function(done){
+	var creation_context = new Sealious.Context();
+
+	ResourceManager.create(creation_context, "never_fails_resource", {
+		"#success": "yes"
+	})
+	.then(function(created_resource){
+		assert.deepEqual(created_resource.created_context, creation_context.toObject(), "Context info stored in resource's `created_context` attribute should reflect the actual context of creating this resource");
+		return Promise.resolve(created_resource.id);
+	}).then(function(created_resource_id){
+		var modification_context = new Sealious.Context();
+		return ResourceManager.patch_resource(modification_context, "never_fails_resource", created_resource_id, {
+			"#success": "yiss"
+		})
+		.then(function(patched_resource){
+			assert.deepEqual(patched_resource.last_modified_context, modification_context.toObject(), "Context info stored in resource's `last_modified` attribute should reflect the actual context of last modification to this resource after performing `patch` on it.")
+			return Promise.resolve(created_resource_id);
+		});
+	}).then(function(created_resource_id){
+		var update_context = new Sealious.Context();
+		ResourceManager.update_resource(update_context, "never_fails_resource", created_resource_id, {
+			"#success": "yiss plis"
+		})
+		.then(function(patched_resource){
+			assert.deepEqual(patched_resource.last_modified_context, update_context.toObject(), "Context info stored in resource's `last_modified` attribute should reflect the actual context of last modification to this resource after performing `update` on it.")
+		});
+		done();
+	})
+});
+})
+
+		//should test if ResourceManager properly asks AccessStrategy.
 
 	}
 }
