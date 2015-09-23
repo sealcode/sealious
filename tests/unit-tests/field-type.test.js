@@ -34,6 +34,9 @@ module.exports = {
 			},
 			decode: function() {
 				return "from_son";
+			},
+			get_description: function() {
+				return "from_son"
 			}
 		})
 
@@ -237,9 +240,33 @@ module.exports = {
 						})
 				});
 
+				it("should use child's .get_description method when a child has it's own .get_description method", function(done) {
+					accepting_son.get_description()
+						.then(function(description) {
+							console.log(description);
+							if (description.summary == "from_son") {
+								done();
+							} else {
+								done(new Error("But it didn't"));
+							}
+						});
+				});
+
+				it("should use parent's .get_description method when a child does not have it's own", function(done) {
+					hesitant_daughter.get_description()
+						.then(function(description) {
+							if (description.summary == "from_father") {
+								done();
+							} else {
+								done(new Error("But it didn't"));
+							}
+						})
+				});
+
+
 			});
 
-			//sprawdzanie get_description
+			
 		});
 	}
 }
