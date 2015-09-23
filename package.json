@@ -34,6 +34,7 @@
     "immutable": "^3.7.2",
     "merge": "^1.2.0",
     "path": "^0.11.14",
+    "require-dir": "^0.3.0",
     "sanitize-html": "^1.6.1",
     "sealious-datastore-tingo": "^0.1.3",
     "sha1": "^1.1.0",
