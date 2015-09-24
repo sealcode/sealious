@@ -7,6 +7,10 @@ module.exports = {
 	test_init: function(){
 		// Creating resource always fails
 
+		var listable = new Sealious.ChipTypes.ResourceType({
+			name: "listable"
+		})
+
 		var always_fails = new Sealious.ChipTypes.FieldType({
 			name: "always_fails",
 			is_proper_value: function(accept, reject, context, value_in_code){
@@ -116,7 +120,66 @@ module.exports = {
 				name: "value2",
 				type: "text"
 			}]
+		});
+
+		var nobody_can_create_me_resource = new Sealious.ChipTypes.ResourceType({
+			name:"nobody_can_create_me",
+			access_strategy: "noone"
+		});
+
+		var nobody_can_update_me_resource = new Sealious.ChipTypes.ResourceType({
+		 	name:"nobody_can_update_me",
+		 	fields:[{
+		 		name: "value",
+		 		type: "text"
+		 	}],
+		 	access_strategy: {
+		 		update: "noone"
+		 	}
+		});
+
+		var nobody_can_delete_me_resource = new Sealious.ChipTypes.ResourceType({
+		 	name:"nobody_can_delete_me",
+		 	fields:[{
+		 		name: "value",
+		 		type: "text"
+		 	}],
+		 	access_strategy: {
+		 		delete: "noone"
+		 	}
+		});
+		var nobody_can_list_me_resource = new Sealious.ChipTypes.ResourceType({
+		 	name:"nobody_can_list_me",
+		 	fields:[{
+		 		name: "value",
+		 		type: "text"
+		 	}],
+		 	access_strategy: {
+		 		retrieve: "noone"
+		 	}
+		});
+		var item_sensitive_accesss_strategy = new Sealious.ChipTypes.AccessStrategy({
+			name: "item_sensitive",
+			checker_function:function(context, item){
+        		if (item !== undefined){
+        			return Promise.resolve();
+        		}else{
+        			return Promise.reject(new Sealious.Errors.BadContext("No item provided"));
+        		}
+		    },
+		    item_sensitive: true
 		})
+
+		var item_sensitive_resource = new Sealious.ChipTypes.ResourceType({
+			name: "item_sensitive",
+			fields:[{
+				name: "value",
+				type: "text"
+			}],
+			access_strategy: "item_sensitive"
+			
+		})
+
 	},
 
 	test_start: function(){
@@ -163,7 +226,7 @@ module.exports = {
 					.then(function(){
 						done(new Error("But it succedded instad of failing"));
 					}).catch(function(error){
-						if (error.type="validation"){
+						if (error.data.short_message="chip_not_found"){
 							done();
 						} else {
 							done(new Error("But threw an error that is not an instance of ValidationError"));
@@ -190,6 +253,33 @@ module.exports = {
 						done(new Error("But it didn't"));
 					})
 				});
+				it("doesn't create resource, when access_strategy doesn't allow it", function(done){
+					ResourceManager.create(new Sealious.Context(), "nobody_can_create_me", {})
+					.then(function(){
+						done(new Error("It succedded instead of failing"))
+					}).catch(function(error){
+						if(error.type == "permission"){
+							done()		
+						}else{
+							done(new Error("It didn't throw proper error."))
+						}
+					})
+				})
+				it("should provide access_strategy.check with null if the access_strategy is item_sensitive", function(done){
+					ResourceManager.create(new Sealious.Context(), "item_sensitive", {
+						value: "any"
+					})
+					.then(function(created_resource){
+						done();
+					}).catch(function(error){
+						console.log(error);
+						if (error.type == "permission"){
+							done(new Error("But it didn't"));
+						}else{
+							done(error);
+						}
+					})
+				});
 			});
 
 describe(".get_by_id", function(){
@@ -209,6 +299,79 @@ describe(".get_by_id", function(){
 		}).catch(function(error){
 			done(error)
 		})
+	})
+	it("should return proper error, if provided id is incorrect", function(done){
+		ResourceManager.get_by_id(new Sealious.Context(), "incorrect_resource_id*!@#R%^&*()")
+		.then(function(){
+			done(new Error("But it succeded instead of failing"))
+		}).catch(function(error){
+			if (error.type="not_found"){
+				done();
+			} else {
+				done(new Error("But threw an error that is not an instance of NotFoundError"));
+			}
+		})
+	});
+	it("doesn't get resource, when access_strategy doesn't allow it", function(done){
+					ResourceManager.create(new Sealious.Context(), "nobody_can_list_me", {})
+					.then(function(created_resource){
+						return ResourceManager.get_by_id(new Sealious.Context(), created_resource.id)
+					})
+					.then(function(){
+						done(new Error("It succedded instead of failing"))
+					}).catch(function(error){
+						if(error.type == "permission"){
+							done()		
+						}else{
+							done(new Error("It didn't throw proper error."))
+						}
+					})
+				})
+
+})
+
+describe(".list_by_type", function(){
+	it("throws proper error, if given resouce-type name is non-existent", function(done){
+		ResourceManager.list_by_type(new Sealious.Context(), "non_existent_resource_type")
+		.then(function(){
+			done(new Error("It succedded instad of failing"));
+		}).catch(function(error){
+			if (error.type="validation"){
+				done();
+			} else {
+				done(new Error("It threw an error that is not an instance of ValidationError"));
+			}
+		})
+	})
+	it("lists resources of given type", function(done){
+		var promises = [];
+		var resource_ids;
+		for(var i=1; i<=3; i++){
+			var promise = ResourceManager.create(new Sealious.Context(), "listable", {});
+			promises.push(promise);
+		}
+		Promise.all(promises)
+		.then(function(created_resources){
+			resource_ids = created_resources.map(function(resource){
+				return resource.id;
+			})
+			return ResourceManager.list_by_type(new Sealious.Context(), "listable")
+		})
+		.then(function(listed_resources){
+			var listed_resources_ids = listed_resources.map(function(resource){
+				return resource.id;
+			})
+			listed_resources_ids.sort();
+			resource_ids.sort();
+			if(deepEqual(listed_resources_ids, resource_ids)){
+				done()
+			}else if(listed_resources_ids.length != resource_ids.length){
+				done(new Error("It listed wrong amount of resources"))
+			}else{
+				done(new Error("It didn't return proper resources"))
+			}
+		})
+
 	})
 })
 
