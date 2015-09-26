@@ -35,7 +35,7 @@
     "merge": "^1.2.0",
     "path": "^0.11.14",
     "sanitize-html": "^1.6.1",
-    "sealious-datastore-tingo": "^0.1.3",
+    "sealious-datastore-tingo": "^0.1.5",
     "sha1": "^1.1.0",
     "uid": "0.0.2",
     "winston": "^1.0.0"
