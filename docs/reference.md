@@ -246,9 +246,7 @@ You can find out more about built-in field-types and other chips in the "Chips t
 
 #### Creating a field-type
 
-Field types are a little bit different from other chips, as they are to be instantiated multiple times for different fields in multiple resource types. This means that:
-  * field-types are never *started* - they just contain some logic that Sealious uses when validating user input and encoding/decoding data to/from datastores.
-  * methods of a field-type reside in its *prototype* (as technically speaking field-types are constructor functions), as you can see in the example below
+Field types are a little bit different from other chips, as they are to be instantiated multiple times for different fields in multiple resource types.
 
 ##### A simple Field-Type example
 
@@ -259,73 +257,124 @@ var Sealious = require("sealious");
 var Promise = require("bluebird");
 var Color = require("color");
 
-var field_type_color = new Sealious.ChipTypes.FieldType("color");
-
-field_type_color.prototype.isProperValue = function(context, new_value){
-  try{
-    Color(value_in_code.toLowerCase());
-  } catch(e){
-    return Promise.reject("Value `" + value_in_code + "` could not be parsed as a color.");
+var field_type_color = new Sealious.ChipTypes.FieldType({
+  name: "color",
+  get_description: function(context, params){
+    return "Accepts colors, in various formats - rgb, hex, hsl, rgba, and html color name. Example correct values: `#ff0000`, `red`, `rgba(255, 0, 0, 1)`, `hsl(0, 100%, 50%)`."
+  },
+  is_proper_value: function(accept, reject, context, params, new_value){
+    try{
+      Color(new_value.toLowerCase());
+    } catch(e){
+      return reject("Value `" + new_va + "` could not be parsed as a color.");
+    }
+    accept();
+  },
+  encode: function(context, params, value_in_code){
+    var color = Color(value_in_code);
+    return Promise.resolve(color.hexString())
   }
-  return true;
-}
-
-field_type_color.prototype.encode = function(context, new_value){
-  var color = Color(value_in_code);
-  return Promise.resolve(color.hexString())
-}
+});
 ```
 
-This is a simple field-type that accepts color values in various notations (html color names, hex, rgba, hsl...). It will reject any value that does not name a color. 
+The above is a simple field-type that accepts color values in various notations (html color names, hex, rgba, hsl...). It will reject any value that does not name a color. 
 
-This field-type uses the very useful [color package](https://www.npmjs.com/package/color).
+This field-type uses the very useful [color](https://www.npmjs.com/package/color) package.
 
-What's important to note here is the `encode` method - it takes any value already validated by `isProperValue` and converts it to hex - that way all the color values in the database are uniform and easily searchable. 
+What's important to note here is the `encode` method - it takes any value already validated by `is_proper_value` and converts it to hex - that way all the color values in the database are uniform and easily searchable. 
+
+The `decode` method is not declared here, so the default one will be used - one that returns the value from the database unchanged. In this case `decode` will always return the color in hex format (because that's how the values are stored).
 
 #### Field-type methods and attributes
 
 ##### The constructor
 To create a field-type, call the FieldType constructor function:
    
-```js
-var my_field_type = new Sealious.ChipTypes.FieldType("my_field_type");
 ```
-the return value of the constructor function is itself a function, whose `prototype` we're interested in extending.
-
-##### isProperValue
-
-```
-my_field_type.prototype.isProperValue: 
-  (context: Context, new_value : any, old_value: any) => Promise|Boolean
+Sealious.ChipTypes.FieldType: (declaration: FieldTypeDeclaration)
 ```
 
-This method should either return a boolean value (`true` for valid values and `false` for invalid), or a [Promise](#accessstrategy-constructor) that `resolve`s for correct values and `reject`s for incorrect ones.
-
-Simply returning `false` is discouraged. It's better to `Promise.reject` with an error message (a string). The error message is then supposed to be shown to user as a part of the validation error message. Example:
+Usage: 
 
 ```js
-my_field_type.isProperValue = function(context, new_value){
-  if(new_value=="good"){
-    return true;
-  }else{
-    return Promise.reject("I will only accept `good` as value for this field.");
-  }
+new Sealiuos.ChipTypes.FieldType({
+  //...
+})
+```
+
+##### FieldTypeDeclaration
+
+```
+type fieldTypeDeclaration: {
+  get_description?: (
+    context: Context, 
+    params: Object
+    ) => String|FieldTypeDescription,
+  is_proper_value?: (
+    accept: ()=>void, 
+    reject: (error_message: String)=>void, 
+    context: Context, 
+    params: Object, 
+    new_value: Any, 
+    old_value: Any
+    ) => void,
+  encode?: (context: Context, params: Object, value_in_code: Any, old_value: Any),
+  decode?: (context: Context, params: Object, value_in_database: Any)
 }
 ```
 
+
+##### is_proper_value
+
+```
+is_proper_value: (
+  accept: ()=>void, 
+  reject: (error_message: String)=>void, 
+  context: Context, 
+  params: Object, 
+  new_value: Any, 
+  old_value: Any
+) => void,
+```
+
+This method should check if the `new_value` variable contains a value that is correct for the field-type. If the value is correct, the method should call `accept`, otherwise it should call `reject`, passing the error message.
+
 Specifying this method is **optional**. If this method is not defined in a field-type, a default one is used - one that accepts any value.
 
-It takes the following arguments: 
- * `context` - a Context object representing the context in which the value was submitted. The field-type may or may not take context into consideration.
- * `new_value` - can be of any type. Represents the value to be checked. Usually directly represents user input.
- * `old_value` - represents the value previously residing in in a field that this field-type is assigned to. This argument can be used e. g. for creating a field type that accepts only values that are higher than the current value.
+A simple example of `is_proper_value` method: 
+
+```js
+new Sealious.ChipTypes.FieldTypes({
+  name: "only_event_numbers",
+  is_proper_value: function(accept, reject, context, params, new_value){
+    if(new_value%2==0){
+      accept();
+    }else{
+      reject("Only even numbers are accepted.");
+    }
+  }
+})
+```
+
+This method wil be given the following arguments: 
+ * `accept: ()=>void` - call it if the `new_value` is a correct value
+ * `reject: (error_message: String)=>void` - call it if the `new_value` is not a correct value.
+ * `context: Context` - a Context object representing the context in which the value was submitted. The field-type may or may not take context into consideration.
+ * `params: Object` - an object representing the [params passed to the field declaration](#field-type-parameters) referencing this field type
+ * `new_value: Any` - Represents the value to be checked. Usually directly represents user input.
+ * `old_value: Any` - represents the value previously residing in in a field that this field-type is assigned to. This argument can be used e. g. for creating a field type that accepts only values that are higher than the current value.
+ 
    **Important!** For performance reasons, this argument is automatically set to `undefined`, unless Sealious is specifically instructed to provide this field-type with previous values. See `old_value_sensitive` section below for more details
 
 ##### encode
 
 ```
-my_field_type.prototype.encode: 
-  (context: Context, new_value: Any, old_value: Any) => Promise<Any>|Any
+my_field_type.prototype.encode: (
+  context: Context, 
+  params: Object,
+  new_value: Any, 
+  old_value: Any
+) => Promise<Any>|Any
 ```
 
 This method takes a field value (usually coming from user input) and encodes it in something that the datastore can understand. There's no set restrictions on how the encoding process works. What this method returns will be stored in the datastore and passed on to `decode` when reading the resource's contents.
@@ -333,16 +382,21 @@ This method takes a field value (usually coming from user input) and encodes it 
 Specifying this method is **optional**. If this method is not defined in a field-type, a default one is used - one that returns `new_value` unchanged.
 
 It takes the following arguments: 
- * `context` - a Context object representing the context in which the value was submitted. The field-type may or may not take context into consideration.
- * `new_value` - can be of any type. Represents the value to be encoded. Usually directly represents user input.
- * `old_value` - represents the value previously residing in in a field that this field-type is assigned to.
+ * `context: Context` - a Context object representing the context in which the value was submitted. The field-type may or may not take context into consideration.
+ * `params: Object` - an object representing the [params passed to the field declaration](#field-type-parameters) referencing this field type
+ * `new_value: Any` - can be of any type. Represents the value to be encoded. Usually directly represents user input.
+ * `old_value: Any` - represents the value previously residing in in a field that this field-type is assigned to.
+   
    **Important!** For performance reasons, this argument is automatically set to `undefined`, unless Sealious is specifically instructed to provide this field-type with previous values. See `old_value_sensitive` section below for more details
 
 ##### decode
 
 ```
-my_field_type.prototype.decode:
-  (context: Context, value_in_datastore: Any) => Promise<Any>|Any
+my_field_type.prototype.decode: (
+  context: Context, 
+  params: Object,
+  value_in_datastore: Any
+) => Promise<Any>|Any
 ```
 
 This method is used to transform a value stored in a datastore(encoded by calling the `encode` method of the field-type) into something more readable or user-friendly. It's return value is usually what the users of the API will see. It can be thought of as the reverse of `encode` function, but that doesn't have to be the case.
@@ -353,17 +407,21 @@ Specifying this method is **optional**. If this method is not defined in a field
 
 It takes the following arguments:
   * `context` - a `Context` object representing the context in which the value is read. The field-type may or may not take context into consideration.
+  * `params: Object` - an object representing the [params passed to the field declaration](#field-type-parameters) referencing this field type
   * `value_in_datastore` - a raw value that the datastore returned. Encoded by calling the field-type's `encode` method. 
 
 ##### old_value_sensitive
 
 ```
-my_field_type.prototype.old_value_sensitive: bool
+old_value_sensitive_methods: Boolean|{
+  is_proper_value: Boolean,
+  encode: Boolean
+}
 ```
 
 Set to `false` for each field-type by default, for performance reasons. 
 
-When it's set to true, Sealious will provide the `isProperValue` and `encode` methods with the current value of the requested/modified field by passing it as `old_value` argument.
+When it's set to `true`, Sealious will provide the `is_proper_value` and `encode` methods with the current value of the requested/modified field by passing it as `old_value` argument.
 
 #### Field-type parameters
 
@@ -394,7 +452,7 @@ Text entered in the field described by the above snippet will have any html tags
 Parameters are accessible as `this.params` in every field-type method, like so:
 
 ```js
-my_field_type.isProperValue = function(context, new_value){
+my_field_type.is_proper_value = function(context, new_value){
   if(this.params.max_length){
     if(new_value.length>this.params.max_length){
       return false;
@@ -438,7 +496,7 @@ Every resource type is described by a hashmap:
 ```js
 {
   name: String,
-  fields: Array<FieldDescription>,
+  fields: Array<FieldDeclaration>,
   access_strategy?: AccessStrategyDescription
 }
 ```
@@ -447,7 +505,7 @@ Every resource type is described by a hashmap:
 * `fields`, **required** - an array of field descriptions. You can read about field description syntax below.
 * `access_strategy`, optional. A hashmap or string compatible with access strategy description syntax, described below. **Defaults to `public`**.
 
-#### Field description syntax
+#### FieldDeclaration
 
 A field-type description is a hashmap, as well. It looks like this:
 
