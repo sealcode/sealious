@@ -1,5 +1,9 @@
-Sealious [![Build Status](https://travis-ci.org/Sealious/Sealious.svg?branch=dev)](https://travis-ci.org/Sealious/Sealious)
+[![Sealious Logo](https://cldup.com/ggbys1XotB.png)](http://sealious.github.io/)
+
+Sealious 
 ==========
+[![Build Status](https://travis-ci.org/Sealious/Sealious.svg?branch=dev)](https://travis-ci.org/Sealious/Sealious) [![Coverage Status](https://coveralls.io/repos/Sealious/Sealious/badge.svg?branch=dev&service=github)](https://coveralls.io/github/Sealious/Sealious?branch=dev)
+
 Warning! Sealious is still in very early stages of development. You are welcome to look around (even more so to contact us via [issue tracker](https://github.com/Sealious/Sealious/issues))!
 
 What is it?
@@ -11,7 +15,8 @@ Advantages
 Sealious proposes an application architecture that enables creating applications in a highly declarative way. A simple app that would keep information about employees needs not much more code than: 
 
 ```js
-new Sealious.ChipTypes.ResourceType("employee", {
+new Sealious.ChipTypes.ResourceType({
+	name: "employee",
 	fields: [
 		{name: "first-name", type: "text", required: true},
 		{name: "last-name", type: "text", required: false}, 
@@ -75,4 +80,5 @@ Sealious' functionality can be extended with plugins. Plugins can register new [
 
 Existing Sealious plugins:
 
-* [sealious-www-server](https://github.com/Sealious/sealious-www-server) - for serving static files and providing a REST-ful API.
+* [sealious-www-server](https://github.com/Sealious/sealious-www-server) - for serving static files
+* [sealious-channel-rest](https://github.com/Sealious/sealious-channel-rest) - creates a RESTful API for your application
