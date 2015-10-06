@@ -1,7 +1,7 @@
 {
 	"name": "sealious",
 	"homepage": "http://sealious.github.io/",
-	"version": "0.6.3",
+  "version": "0.6.11",
 	"description": "A declarative framework for fast & easy app development.",
 	"main": "./lib/main.js",
 	"scripts": {
@@ -33,10 +33,9 @@
 		"fs-extra": "^0.18.2",
 		"immutable": "^3.7.2",
 		"merge": "^1.2.0",
-		"path": "^0.11.14",
 		"require-dir": "^0.3.0",
 		"sanitize-html": "^1.6.1",
-		"sealious-datastore-tingo": "^0.1.3",
+    "sealious-datastore-tingo": "^0.1.5",
 		"sha1": "^1.1.0",
 		"uid": "0.0.2",
 		"winston": "^1.0.0"
