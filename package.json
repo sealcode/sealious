@@ -1,14 +1,18 @@
 {
   "name": "sealious",
   "homepage": "http://sealious.github.io/",
-  "version": "0.5.9",
-  "description": "",
+  "version": "0.6.10",
+  "description": "A declarative framework for fast & easy app development.",
   "main": "./lib/main.js",
   "scripts": {
     "prepublish": "require-self",
-    "test": "./node_modules/mocha/bin/mocha --delay ./tests/test.js",
-    "test-coverage": "./node_modules/mocha/bin/mocha -R html-cov --delay ./tests/test.js >> coverage.html && xdg-open coverage.html",
-    "test-no-blanket": "mocha --delay ./tests/test.js"
+    "test": "mocha --delay ./tests/test.js",
+    "test-coverage": "mocha -R html-cov --delay ./tests/test.js >> coverage.html && xdg-open coverage.html",
+    "precoveralls": "node ./tests/prepare-for-coverage.js && jscoverage lib lib-cov",
+    "coveralls": "./node_modules/.bin/mocha ./tests/test.js --delay -R mocha-lcov-reporter | ./node_modules/coveralls/bin/coveralls.js || npm run postcoveralls",
+    "postcoveralls": "node ./tests/prepare-for-coverage-undo.js",
+    "check-formatting": "jscs -c .jscsrc ./lib && echo \"\\n ✓ Code formatting O.K.!\\n\" || (echo \"\\nSome formatting errors found. Run 'npm run fix-formatting' to correct them.\\n\" && exit )",
+    "fix-formatting": "jscs -c .jscsrc ./lib --fix"
   },
   "repository": {
     "type": "git",
@@ -17,7 +21,7 @@
   "keywords": [
     "sealious"
   ],
-  "author": "Kuba Orlik",
+  "author": "The Sealious team (http://github.com/Sealious)",
   "license": "BSD-2-Clause",
   "bugs": {
     "url": "https://github.com/Sealious/Sealious/issues"
@@ -26,38 +30,29 @@
     "Set": "~0.4.1",
     "bluebird": "~2.9.9",
     "clone": "^1.0.2",
-    "fs": "0.0.2",
     "fs-extra": "^0.18.2",
-    "hapi": "^8.5.0",
     "immutable": "^3.7.2",
     "merge": "^1.2.0",
-    "path": "^0.11.14",
     "sanitize-html": "^1.6.1",
-    "sealious-datastore-tingo": "^0.1.3",
+    "sealious-datastore-tingo": "^0.1.5",
     "sha1": "^1.1.0",
-    "socket.io": "~1.2.0",
-    "socket.io-client": "~1.2.0",
     "uid": "0.0.2",
     "winston": "^1.0.0"
   },
   "devDependencies": {
-    "blanket": "git://github.com/alex-seville/blanket.git",
+    "coveralls": "^2.11.4",
+    "jscoverage": "^0.6.0",
     "mocha": "*",
-    "mocha-multi": "^0.7.1",
+    "mocha-lcov-reporter": "0.0.2",
     "require-self": "^0.1.0",
-    "travis-cov ": "*"
+    "jscs": "^2.1.1",
+    "pre-commit": "^1.1.1"
   },
-  "config": {
-    "blanket": {
-      "pattern": "lib",
-      "data-cover-never": [
-        "node_modules",
-        "public"
-      ],
-      "data-cover-reporter-options": {
-        "shortnames": false,
-        "relativepath": true
-      }
-    }
+  "pre-commit": {
+    "colors": true,
+    "run": [
+      "check-formatting"
+    ],
+    "silent": false
   }
 }
