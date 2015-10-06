@@ -89,12 +89,12 @@ module.exports = {
 
 					it("should use default .decode", function(done) {
 						var what_its_been_fed = "dogfood";
-						test_field_type.decode(what_its_been_fed)
+						test_field_type.decode(new Sealious.Context(), {}, what_its_been_fed)
 							.then(function(decoded) {
 								if (decoded == what_its_been_fed) {
 									done();
 								} else {
-									done(new Error("But it returnet something else"));
+									done(new Error("But it returnett something else"));
 								}
 							}).catch(function(error) {
 								console.error(error);

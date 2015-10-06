@@ -15,7 +15,8 @@ Advantages
 Sealious proposes an application architecture that enables creating applications in a highly declarative way. A simple app that would keep information about employees needs not much more code than: 
 
 ```js
-new Sealious.ChipTypes.ResourceType("employee", {
+new Sealious.ChipTypes.ResourceType({
+	name: "employee",
 	fields: [
 		{name: "first-name", type: "text", required: true},
 		{name: "last-name", type: "text", required: false}, 
