@@ -185,7 +185,7 @@ module.exports = {
     test_start: function() {
 
         describe("ResourceManager", function() {
-            var context = Sealious.Context();
+            var context = new Sealious.Context();
 
             it('should store creation and modification context', function(done) {
                 var creation_context = new Sealious.Context();
@@ -452,7 +452,11 @@ module.exports = {
                 it('should find all resources', function(done){
                     ResourceManager.find(context)
                     .then(function(found_resource){
-                        done();
+                        if (found_resource[0] !== undefined){
+                            done();
+                        } else {
+                            done(new Error ("It didn't find any resources"));
+                        }
                     })
                     .catch(function(error){
                         done(error);
@@ -466,7 +470,7 @@ module.exports = {
                             if (found_resource[0]["#success"] == "absolutely"){
                                 done();
                             } else if (found_resource[1] !== undefined) {
-                                done(new Error("Found more resourced than should have"))
+                                done(new Error("Found more resources than should have"))
                             } else {
                                 done(new Error("It didn't find the resource"));
                             }
@@ -527,7 +531,7 @@ module.exports = {
                                         done(error);
                                     })
                                 })
-                                .catch(function(error){
+                                .catch(function(error){book.com/
                                     done(error);
                                 })
                             } else {
@@ -555,13 +559,9 @@ module.exports = {
                         })
                 })
                 it("should provide resource_type.validate_field_values method with the previous field value if it is needed", function(done) {
-                    ResourceManager.create(new Sealious.Context(), "old_value_sensitive", {
-                            value: "any"
-                        })
+                    ResourceManager.create(new Sealious.Context(), "old_value_sensitive", { value: "any" })
                         .then(function(created_resource) {
-                            return ResourceManager.patch_resource(new Sealious.Context(), "old_value_sensitive", created_resource.id, {
-                                value: "any2"
-                            })
+                            return ResourceManager.patch_resource(new Sealious.Context(), "old_value_sensitive", created_resource.id, { value: "any2" })
                         }).then(function() {
                             done();
                         }).catch(function() {
@@ -584,13 +584,9 @@ module.exports = {
                             })
                     });
                     it("always_the_same_resource can't be patched with other value than the one it was created with", function(done) {
-                        ResourceManager.create(new Sealious.Context(), "always_the_same", {
-                                value: 33
-                            })
+                        ResourceManager.create(new Sealious.Context(), "always_the_same", { value: 33 })
                             .then(function(created_resource) {
-                                return ResourceManager.patch_resource(new Sealious.Context(), "always_the_same", created_resource.id, {
-                                    value: 42
-                                })
+                                return ResourceManager.patch_resource(new Sealious.Context(), "always_the_same", created_resource.id, { value: 42 })
                             }).then(function() {
                                 done(new Error("But it was."));
                             }).catch(function() {
