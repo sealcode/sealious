@@ -487,7 +487,7 @@ module.exports = {
                         .then(function() {
                             done(new Error("But it succedded instad of failing"));
                         }).catch(function(error) {
-                            if (error.type = "validation") {
+                            if (error.type == "validation") {
                                 done();
                             } else {
                                 done(new Error("But threw an error that is not an instance of ValidationError"));
