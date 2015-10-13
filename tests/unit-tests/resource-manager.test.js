@@ -280,6 +280,19 @@ module.exports = {
                             }
                         })
                 });
+
+                it('should not create a new resource', function(done) {
+                    ResourceManager.create(new Sealious.Context(), "always_fails_resource", { "#fail": "tak" })
+                    .then(function() {
+                        done(new Error("It didn't throw an error!"));
+                    }).catch(function(error) {
+                        if (error.type == "validation"){
+                            done();
+                        } else {
+                            done(new Error("It did throw an error, but not THE error"));
+                        }
+                    });
+                });
             });
 
             describe(".get_by_id", function() {
@@ -408,7 +421,7 @@ module.exports = {
             });
 
             describe(".patch", function() {
-                it("should throw proper error, if given resouce-type name is non-existent", function(done) {
+                it("should throw proper error, if given resource-type name is non-existent", function(done) {
                     ResourceManager.patch_resource(new Sealious.Context(), "non_existent_resource_type", "id", {})
                         .then(function() {
                             done(new Error("But it succedded instad of failing"));
@@ -519,41 +532,6 @@ module.exports = {
                 });
             })
 
-            it('should not create a new resource', function(done) {
-                ResourceManager.create(context, "always_fails_resource", {
-                        "#fail": "tak"
-                    })
-                    .then(function() {
-                        done(new Error("It didn't throw an error!"));
-                    }).catch(function(error) {
-                        done();
-                    });
-            });
-            it('should create a new resource', function(done) {
-                ResourceManager.create(context, "never_fails_resource", {
-                        "#success": "tak"
-                    })
-                    .then(function(result) {
-                        done();
-                    }).catch(function(error) {
-                        done(error);
-                    });
-            });
-            it('should get data about the resource', function(done) {
-                ResourceManager.create(context, "never_fails_resource", {
-                        "#success": "tak"
-                    })
-                    .then(function(result) {
-                        return ResourceManager.get_by_id(context, result.id)
-                            .then(function(resource) {
-                                done();
-                            })
-                    }).catch(function(error) {
-                        done(error);
-                    });
-            });
-
-
             it('should update the resource', function(done) {
                 ResourceManager.create(context, "never_fails_resource", {
                         "#success": "tak"
@@ -562,33 +540,23 @@ module.exports = {
                         ResourceManager.update_resource(context, "never_fails_resource", result.id, {
                                 "#success": "tak2"
                             })
-                            .then(function(resource) {
-                                done();
-                            }).catch(function(error) {
+                            .then(function(updated_resource) {
+                                return ResourceManager.get_by_id(context, updated_resource.id);
+                            })
+                            .then(function(gotten_resource) {
+                                if (gotten_resource.body["#success"] == "tak2" && deepEqual(context.toObject(), gotten_resource.created_context)) {
+                                    done();
+                                } else {
+                                    done(new Error("Updated resource differs from what was intended to update."))
+                                }
+                            })
+                            .catch(function(error) {
                                 done(new Error(error));
                             })
                     }).catch(function(error) {
                         done(error);
                     });
             });
-            it('should list resources by type', function(done) {
-                ResourceManager.list_by_type(context, "never_fails_resource")
-                    .then(function(result) {
-                        done();
-                    }).catch(function(error) {
-                        done(new Error("It threw an error!"));
-                    });
-            });
-            it('should get resource type signature (schema)', function(done) {
-                ResourceManager.get_resource_type_signature(context, "never_fails_resource")
-                    .then(function(result) {
-                        done();
-                    }).catch(function(error) {
-                        done(new Error("It threw an error!"));
-                    });
-            });
-
-
 
             it('should store creation and modification context', function(done) {
                 var creation_context = new Sealious.Context();
