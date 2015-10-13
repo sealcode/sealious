@@ -389,6 +389,31 @@ module.exports = {
             })
 
             describe(".update", function() {
+                it('should update the resource', function(done) {
+                    ResourceManager.create(context, "never_fails_resource", {
+                        "#success": "tak"
+                    })
+                    .then(function(result) {
+                        ResourceManager.update_resource(context, "never_fails_resource", result.id, {
+                                "#success": "tak2"
+                            })
+                            .then(function(updated_resource) {
+                                return ResourceManager.get_by_id(context, updated_resource.id);
+                            })
+                            .then(function(gotten_resource) {
+                                if (gotten_resource.body["#success"] == "tak2" && deepEqual(context.toObject(), gotten_resource.created_context)) {
+                                    done();
+                                } else {
+                                    done(new Error("Updated resource differs from what was intended to update."))
+                                }
+                            })
+                            .catch(function(error) {
+                                done(new Error(error));
+                            })
+                    }).catch(function(error) {
+                        done(error);
+                    });
+                });
                 it("should throw proper error, if given resouce-type name is non-existent", function(done) {
                     ResourceManager.update_resource(new Sealious.Context(), "non_existent_resource_type", "id", {})
                         .then(function() {
@@ -532,31 +557,7 @@ module.exports = {
                 });
             })
 
-            it('should update the resource', function(done) {
-                ResourceManager.create(context, "never_fails_resource", {
-                        "#success": "tak"
-                    })
-                    .then(function(result) {
-                        ResourceManager.update_resource(context, "never_fails_resource", result.id, {
-                                "#success": "tak2"
-                            })
-                            .then(function(updated_resource) {
-                                return ResourceManager.get_by_id(context, updated_resource.id);
-                            })
-                            .then(function(gotten_resource) {
-                                if (gotten_resource.body["#success"] == "tak2" && deepEqual(context.toObject(), gotten_resource.created_context)) {
-                                    done();
-                                } else {
-                                    done(new Error("Updated resource differs from what was intended to update."))
-                                }
-                            })
-                            .catch(function(error) {
-                                done(new Error(error));
-                            })
-                    }).catch(function(error) {
-                        done(error);
-                    });
-            });
+           
 
             it('should store creation and modification context', function(done) {
                 var creation_context = new Sealious.Context();
