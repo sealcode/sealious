@@ -187,6 +187,32 @@ module.exports = {
         describe("ResourceManager", function() {
             var context = Sealious.Context();
 
+            it('should store creation and modification context', function(done) {
+                var creation_context = new Sealious.Context();
+
+                ResourceManager.create(creation_context, "never_fails_resource", { "#success": "yes" })
+                .then(function(created_resource) {
+                    assert.deepEqual(created_resource.created_context, creation_context.toObject(), "Context info stored in resource's `created_context` attribute should reflect the actual context of creating this resource");
+                    return Promise.resolve(created_resource.id);
+                })
+                .then(function(created_resource_id) {
+                    var modification_context = new Sealious.Context();
+                   return ResourceManager.patch_resource(modification_context, "never_fails_resource", created_resource_id, { "#success": "yiss" })
+                        .then(function(patched_resource) {
+                            assert.deepEqual(patched_resource.last_modified_context, modification_context.toObject(), "Context info stored in resource's `last_modified` attribute should reflect the actual context of last modification to this resource after performing `patch` on it.")
+                            return Promise.resolve(created_resource_id);
+                        });
+                })
+                .then(function(created_resource_id) {
+                    var update_context = new Sealious.Context();
+                    ResourceManager.update_resource(update_context, "never_fails_resource", created_resource_id, { "#success": "yiss plis" })
+                        .then(function(patched_resource) {
+                            assert.deepEqual(patched_resource.last_modified_context, update_context.toObject(), "Context info stored in resource's `last_modified` attribute should reflect the actual context of last modification to this resource after performing `update` on it.")
+                        });
+                    done();
+                })
+            });
+
             describe(".create", function() {
                 it("should create resource", function(done) {
                     var context = new Sealious.Context();
@@ -266,13 +292,10 @@ module.exports = {
                         })
                 })
                 it("should provide access_strategy.check with null if the access_strategy is item_sensitive", function(done) {
-                    ResourceManager.create(new Sealious.Context(), "item_sensitive", {
-                            value: "any"
-                        })
+                    ResourceManager.create(new Sealious.Context(), "item_sensitive", { value: "any" })
                         .then(function(created_resource) {
                             done();
                         }).catch(function(error) {
-                            console.log(error);
                             if (error.type == "permission") {
                                 done(new Error("But it didn't"));
                             } else {
@@ -292,6 +315,44 @@ module.exports = {
                             done(new Error("It did throw an error, but not THE error"));
                         }
                     });
+                });
+            });
+
+            describe(".delete", function() {
+                it("should throw proper error, if given resouce-type name is non-existent", function(done) {
+                    ResourceManager.delete(new Sealious.Context(), "non_existent_resource_type", "id", {})
+                        .then(function() {
+                            done(new Error("But it succedded instad of failing"));
+                        }).catch(function(error) {
+                            if (error.type == "validation") {
+                                done();
+                            } else {
+                                done(new Error("But threw an error that is not an instance of ValidationError"));
+                            }
+                        });
+                });
+                it('should delete the resource', function(done) {
+                    var created_resource_id;
+                    ResourceManager.create(context, "never_fails_resource", {
+                            "#success": "tak"
+                        })
+                        .then(function(created_resource) {
+                            created_resource_id = created_resource.id;
+                            return ResourceManager.delete(context, "never_fails_resource", created_resource_id);
+                        })
+                        .then(function() {
+                            return ResourceManager.get_by_id(new Sealious.Context, created_resource_id);
+                        })
+                        .then(function(result) {
+                            done(new Error("But it didn't"));
+                        })
+                        .catch(function(error) {
+                            if (error.type == "not_found") {
+                                done();
+                            } else {
+                                done(error);
+                            }
+                        })
                 });
             });
 
@@ -340,8 +401,7 @@ module.exports = {
                             }
                         })
                 })
-
-            })
+            });
 
             describe(".list_by_type", function() {
                 it("throws proper error, if given resouce-type name is non-existent", function(done) {
@@ -386,66 +446,102 @@ module.exports = {
                         })
 
                 })
-            })
-
-            describe(".update", function() {
-                it('should update the resource', function(done) {
-                    ResourceManager.create(context, "never_fails_resource", {
-                        "#success": "tak"
-                    })
-                    .then(function(result) {
-                        ResourceManager.update_resource(context, "never_fails_resource", result.id, {
-                                "#success": "tak2"
-                            })
-                            .then(function(updated_resource) {
-                                return ResourceManager.get_by_id(context, updated_resource.id);
-                            })
-                            .then(function(gotten_resource) {
-                                if (gotten_resource.body["#success"] == "tak2" && deepEqual(context.toObject(), gotten_resource.created_context)) {
-                                    done();
-                                } else {
-                                    done(new Error("Updated resource differs from what was intended to update."))
-                                }
-                            })
-                            .catch(function(error) {
-                                done(new Error(error));
-                            })
-                    }).catch(function(error) {
-                        done(error);
-                    });
-                });
-                it("should throw proper error, if given resouce-type name is non-existent", function(done) {
-                    ResourceManager.update_resource(new Sealious.Context(), "non_existent_resource_type", "id", {})
-                        .then(function() {
-                            done(new Error("But it succedded instad of failing"));
-                        }).catch(function(error) {
-                            if (error.type = "validation") {
-                                done();
-                            } else {
-                                done(new Error("But threw an error that is not an instance of ValidationError"));
-                            }
-                        })
-                })
-                it("should remove a value if it's not provided", function(done) {
-                    ResourceManager.create(new Sealious.Context(), "multifield", {
-                        value1: "1",
-                        value2: "2"
-                    }).then(function(created_resource) {
-                        return ResourceManager.update_resource(new Sealious.Context(), "multifield", created_resource.id, {
-                            value1: "3"
-                        })
-                    }).then(function(updated_resource) {
-                        if (updated_resource.body.value2 === null) {
-                            done();
-                        } else {
-                            done(new Error("But it didn't"));
-                        }
-                    })
-                });
-
             });
 
-            describe(".patch", function() {
+            describe(".find", function() {
+                it('should find all resources', function(done){
+                    ResourceManager.find(context)
+                    .then(function(found_resource){
+                        done();
+                    })
+                    .catch(function(error){
+                        done(error);
+                    })
+                });
+                it('should create a new resource and find it', function(done){
+                    ResourceManager.create(context, "never_fails_resource", { "#success": "absolutely" })
+                    .then(function(created_resource){
+                        ResourceManager.find(context, {"#success": created_resource.body["#success"]}, "never_fails_resource")
+                        .then(function(found_resource){
+                            if (found_resource[0]["#success"] == "absolutely"){
+                                done();
+                            } else if (found_resource[1] !== undefined) {
+                                done(new Error("Found more resourced than should have"))
+                            } else {
+                                done(new Error("It didn't find the resource"));
+                            }
+                        })
+                        .catch(function(error){
+                            done(error);
+                        })
+                    })
+                });
+                it('should create a new resource and find it with without specifing the type', function(done){
+                    ResourceManager.create(context, "never_fails_resource", { "#success": "absolutely" })
+                    .then(function(created_resource){
+                        ResourceManager.find(context, {"#success": created_resource.body["#success"]})
+                        .then(function(found_resource){
+                            if (found_resource[0]["#success"] == "absolutely"){
+                                done();
+                            } else if (found_resource[1] !== undefined) {
+                                done(new Error("Found more resourced than should have"))
+                            } else {
+                                done(new Error("It didn't find the resource"));
+                            }
+                        })
+                        .catch(function(error){
+                            done(error);
+                        })
+                    })
+                });
+                it('should not find a resource', function(done){
+                    ResourceManager.find(context, {"#troll_field": "troll_value"}, "troll_resource_type")
+                    .then(function(found_resource){
+                        if (found_resource[0] === undefined){
+                            done();
+                        } else {
+                            done(new Error("It found a resource"));
+                        }
+                    })
+                    .catch(function(error){
+                        done(error);
+                    })
+                });
+                it('should create a new resource it, find it, then delete it and not find it', function(done){
+                    ResourceManager.create(context, "never_fails_resource", { "#success": "yep" })
+                    .then(function(created_resource){
+                        ResourceManager.find(context, {"#success": created_resource.body["#success"]}, "never_fails_resource")
+                        .then(function(found_resource){
+                            if (found_resource[0]["#success"] == "yep"){
+                                ResourceManager.delete(context, "never_fails_resource", found_resource[0]["id"])
+                                .then(function(success){
+                                    ResourceManager.find(context, {"#success": "yep"}, "never_fails_resource")
+                                    .then(function(found_resource){
+                                        if (found_resource[0] === undefined){
+                                            done();
+                                        } else {
+                                            done(new Error("It found the resource which should be deleted"));
+                                        }
+                                    })
+                                    .catch(function(error){
+                                        done(error);
+                                    })
+                                })
+                                .catch(function(error){
+                                    done(error);
+                                })
+                            } else {
+                                done(new Error("It didn't find the resource after creating it"))
+                            }
+                        })
+                        .catch(function(error){
+                            done(error);
+                        })
+                    })
+                });
+            });
+
+            describe(".patch_resource", function() {
                 it("should throw proper error, if given resource-type name is non-existent", function(done) {
                     ResourceManager.patch_resource(new Sealious.Context(), "non_existent_resource_type", "id", {})
                         .then(function() {
@@ -519,9 +615,34 @@ module.exports = {
                 });
             });
 
-            describe(".delete", function() {
+            describe(".update_resource", function() {
+                it('should update the resource', function(done) {
+                    ResourceManager.create(context, "never_fails_resource", {
+                        "#success": "tak"
+                    })
+                    .then(function(result) {
+                        ResourceManager.update_resource(context, "never_fails_resource", result.id, {
+                                "#success": "tak2"
+                            })
+                            .then(function(updated_resource) {
+                                return ResourceManager.get_by_id(context, updated_resource.id);
+                            })
+                            .then(function(gotten_resource) {
+                                if (gotten_resource.body["#success"] == "tak2" && deepEqual(context.toObject(), gotten_resource.created_context)) {
+                                    done();
+                                } else {
+                                    done(new Error("Updated resource differs from what was intended to update."))
+                                }
+                            })
+                            .catch(function(error) {
+                                done(new Error(error));
+                            })
+                    }).catch(function(error) {
+                        done(error);
+                    });
+                });
                 it("should throw proper error, if given resouce-type name is non-existent", function(done) {
-                    ResourceManager.delete(new Sealious.Context(), "non_existent_resource_type", "id", {})
+                    ResourceManager.update_resource(new Sealious.Context(), "non_existent_resource_type", "id", {})
                         .then(function() {
                             done(new Error("But it succedded instad of failing"));
                         }).catch(function(error) {
@@ -530,64 +651,28 @@ module.exports = {
                             } else {
                                 done(new Error("But threw an error that is not an instance of ValidationError"));
                             }
-                        });
-                });
-                it('should delete the resource', function(done) {
-                    var created_resource_id;
-                    ResourceManager.create(context, "never_fails_resource", {
-                            "#success": "tak"
                         })
-                        .then(function(created_resource) {
-                            created_resource_id = created_resource.id;
-                            return ResourceManager.delete(context, "never_fails_resource", created_resource_id);
+                })
+                it("should remove a value if it's not provided", function(done) {
+                    ResourceManager.create(new Sealious.Context(), "multifield", {
+                        value1: "1",
+                        value2: "2"
+                    }).then(function(created_resource) {
+                        return ResourceManager.update_resource(new Sealious.Context(), "multifield", created_resource.id, {
+                            value1: "3"
                         })
-                        .then(function() {
-                            return ResourceManager.get_by_id(new Sealious.Context, created_resource_id);
-                        })
-                        .then(function(result) {
+                    }).then(function(updated_resource) {
+                        if (updated_resource.body.value2 === null) {
+                            done();
+                        } else {
                             done(new Error("But it didn't"));
-                        })
-                        .catch(function(error) {
-                            if (error.type == "not_found") {
-                                done();
-                            } else {
-                                done(error);
-                            }
-                        })
+                        }
+                    })
                 });
-            })
-
-           
-
-            it('should store creation and modification context', function(done) {
-                var creation_context = new Sealious.Context();
-
-                ResourceManager.create(creation_context, "never_fails_resource", {
-                        "#success": "yes"
-                    })
-                    .then(function(created_resource) {
-                        assert.deepEqual(created_resource.created_context, creation_context.toObject(), "Context info stored in resource's `created_context` attribute should reflect the actual context of creating this resource");
-                        return Promise.resolve(created_resource.id);
-                    }).then(function(created_resource_id) {
-                        var modification_context = new Sealious.Context();
-                        return ResourceManager.patch_resource(modification_context, "never_fails_resource", created_resource_id, {
-                                "#success": "yiss"
-                            })
-                            .then(function(patched_resource) {
-                                assert.deepEqual(patched_resource.last_modified_context, modification_context.toObject(), "Context info stored in resource's `last_modified` attribute should reflect the actual context of last modification to this resource after performing `patch` on it.")
-                                return Promise.resolve(created_resource_id);
-                            });
-                    }).then(function(created_resource_id) {
-                        var update_context = new Sealious.Context();
-                        ResourceManager.update_resource(update_context, "never_fails_resource", created_resource_id, {
-                                "#success": "yiss plis"
-                            })
-                            .then(function(patched_resource) {
-                                assert.deepEqual(patched_resource.last_modified_context, update_context.toObject(), "Context info stored in resource's `last_modified` attribute should reflect the actual context of last modification to this resource after performing `update` on it.")
-                            });
-                        done();
-                    })
             });
+
+
+            
         })
 
         //should test if ResourceManager properly asks AccessStrategy.
