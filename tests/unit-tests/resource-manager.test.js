@@ -436,7 +436,7 @@ module.exports = {
                     ResourceManager.create(new Sealious.Context(), "item_sensitive_second", { value: "any" })
                         .then(function(created_resource) {
                         }).catch(function(error) {
-                            console.log(error);
+                            
                         })
 
 
