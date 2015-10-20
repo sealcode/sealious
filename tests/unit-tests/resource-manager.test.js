@@ -158,7 +158,7 @@ module.exports = {
                 retrieve: "noone"
             }
         });
-        var item_sensitive_accesss_strategy = new Sealious.ChipTypes.AccessStrategy({
+        var item_sensitive_access_strategy = new Sealious.ChipTypes.AccessStrategy({
             name: "item_sensitive",
             checker_function: function(context, item) {
                 if (item !== undefined) {
@@ -170,6 +170,16 @@ module.exports = {
             item_sensitive: true
         })
 
+        var item_sensitive_access_strategy_second = new Sealious.ChipTypes.AccessStrategy({
+            name: "item_sensitive_second",
+            checker_function: function(context, item) {
+                console.log("REJECTING!!");
+                return Promise.reject(new Sealious.Errors.BadContext("No item provided"));
+                
+            },
+            item_sensitive: true
+        })
+
         var item_sensitive_resource = new Sealious.ChipTypes.ResourceType({
             name: "item_sensitive",
             fields: [{
@@ -177,6 +187,16 @@ module.exports = {
                 type: "text"
             }],
             access_strategy: "item_sensitive"
+
+        })
+
+        var item_sensitive_resource_second = new Sealious.ChipTypes.ResourceType({
+            name: "item_sensitive_second",
+            fields: [{
+                name: "value",
+                type: "text"
+            }],
+            access_strategy: "item_sensitive_second"
 
         })
 
@@ -404,17 +424,44 @@ module.exports = {
             });
 
             describe(".list_by_type", function() {
+                it("uses a resource with item_sensitive access strategy", function(done) {
+                    ResourceManager.list_by_type(new Sealious.Context(),"item_sensitive")
+                        .then(function(){
+                            done();
+                        })
+                        .catch(function(error) {
+                            done(error);
+                        });
+                });
+                it("uses a resource with item_sensitive access strategy and should throw an error", function(done) {
+                    ResourceManager.create(new Sealious.Context(), "item_sensitive_second", { value: "any" })
+                        .then(function(created_resource) {
+                        }).catch(function(error) {
+                            console.log(error);
+                        })
+
+
+                    ResourceManager.list_by_type(new Sealious.Context(),"item_sensitive_second")
+                        .then(function(ok){
+                            done();
+                        })
+                        .catch(function(error) {
+                            done(error);
+                        });
+                });
+
                 it("throws proper error, if given resouce-type name is non-existent", function(done) {
                     ResourceManager.list_by_type(new Sealious.Context(), "non_existent_resource_type")
                         .then(function() {
-                            done(new Error("It succedded instad of failing"));
-                        }).catch(function(error) {
+                            done(new Error("It succedded instead of failing"));
+                        })
+                        .catch(function(error) {
                             if (error.type = "validation") {
                                 done();
                             } else {
                                 done(new Error("It threw an error that is not an instance of ValidationError"));
                             }
-                        })
+                        });
                 })
                 it("lists resources of given type", function(done) {
                     var promises = [];
@@ -549,7 +596,7 @@ module.exports = {
                 it("should throw proper error, if given resource-type name is non-existent", function(done) {
                     ResourceManager.patch_resource(new Sealious.Context(), "non_existent_resource_type", "id", {})
                         .then(function() {
-                            done(new Error("But it succedded instad of failing"));
+                            done(new Error("But it succedded instead of failing"));
                         }).catch(function(error) {
                             if (error.type = "validation") {
                                 done();
@@ -640,7 +687,7 @@ module.exports = {
                 it("should throw proper error, if given resouce-type name is non-existent", function(done) {
                     ResourceManager.update_resource(new Sealious.Context(), "non_existent_resource_type", "id", {})
                         .then(function() {
-                            done(new Error("But it succedded instad of failing"));
+                            done(new Error("But it succedded instead of failing"));
                         }).catch(function(error) {
                             if (error.type == "validation") {
                                 done();
