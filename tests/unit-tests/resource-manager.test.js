@@ -173,7 +173,6 @@ module.exports = {
         var item_sensitive_access_strategy_second = new Sealious.ChipTypes.AccessStrategy({
             name: "item_sensitive_second",
             checker_function: function(context, item) {
-                console.log("REJECTING!!");
                 return Promise.reject(new Sealious.Errors.BadContext("No item provided"));
                 
             },
