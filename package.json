@@ -7,7 +7,7 @@
   "scripts": {
     "prepublish": "require-self",
     "test": "mocha --delay ./tests/test.js",
-    "test-coverage": "mocha -R html-cov --delay ./tests/test.js >> coverage.html && xdg-open coverage.html",
+		"test-coverage": "npm run precoveralls && mocha -R html-cov --delay ./tests/test.js > coverage.html && npm run postcoveralls && ( xdg-open coverage.html || start coverage.html) &",
     "precoveralls": "node ./tests/prepare-for-coverage.js && jscoverage lib lib-cov",
     "coveralls": "./node_modules/.bin/mocha ./tests/test.js --delay -R mocha-lcov-reporter | ./node_modules/coveralls/bin/coveralls.js || npm run postcoveralls",
     "postcoveralls": "node ./tests/prepare-for-coverage-undo.js",
@@ -33,6 +33,7 @@
     "fs-extra": "^0.18.2",
     "immutable": "^3.7.2",
     "merge": "^1.2.0",
+		"require-dir": "^0.3.0",
     "sanitize-html": "^1.6.1",
     "sealious-datastore-tingo": "^0.1.5",
     "sha1": "^1.1.0",
@@ -41,12 +42,13 @@
   },
   "devDependencies": {
     "coveralls": "^2.11.4",
+		"deep-equal": "^1.0.1",
     "jscoverage": "^0.6.0",
+		"jscs": "^2.1.1",
     "mocha": "*",
     "mocha-lcov-reporter": "0.0.2",
-    "require-self": "^0.1.0",
-    "jscs": "^2.1.1",
-    "pre-commit": "^1.1.1"
+		"pre-commit": "^1.1.1",
+		"require-self": "^0.1.0"
   },
   "pre-commit": {
     "colors": true,
