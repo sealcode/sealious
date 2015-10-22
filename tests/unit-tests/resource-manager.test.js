@@ -18,8 +18,8 @@ module.exports = {
             }
         })
 
-        var always_fails_resource = new Sealious.ChipTypes.ResourceType({
-            name: "always_fails_resource",
+        var one_field_always_fails = new Sealious.ChipTypes.ResourceType({
+            name: "one_field_always_fails",
             fields: [{
                 name: "#fail",
                 type: "always_fails"
@@ -324,7 +324,7 @@ module.exports = {
                 });
 
                 it('should not create a new resource', function(done) {
-                    ResourceManager.create(new Sealious.Context(), "always_fails_resource", { "#fail": "tak" })
+                    ResourceManager.create(new Sealious.Context(), "one_field_always_fails", { "#fail": "tak" })
                     .then(function() {
                         done(new Error("It didn't throw an error!"));
                     }).catch(function(error) {
@@ -711,6 +711,17 @@ module.exports = {
                         }
                     })
                 });
+                it("should not result in calling 'is_proper_value' for fields with no value (issue #235)", function(done){
+                    ResourceManager.create(new Sealious.Context(), "one_field_always_fails", {})
+                    .then(function(created_resource){
+                        return ResourceManager.update_resource(new Sealious.Context(), "one_field_always_fails", created_resource.id, {})
+                    }).then(function(){
+                        //if the field's 'is_proper_value' method wasn't called, it shouldn't throw an error
+                        done();
+                    }).catch(function(error){
+                        done(error);
+                    })
+                })
             });
 
 
