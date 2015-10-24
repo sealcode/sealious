@@ -199,6 +199,13 @@ module.exports = {
 
         })
 
+        var has_required_field = new Sealious.ChipTypes.ResourceType({
+            name: "has_required_field",
+            fields: [
+                {name: "required", type: "int", required: true}
+            ]
+        })
+
     },
 
     test_start: function() {
@@ -641,19 +648,14 @@ module.exports = {
                     });
                 })
                 it("should NOT provide resource_type.validate_field_values method with the previous field value if it's not needed", function(done) {
-                    ResourceManager.create(new Sealious.Context(), "old_value_insensitive", {
-                            value: "any"
-                        })
-                        .then(function(created_resource) {
-                            return ResourceManager.patch_resource(new Sealious.Context(), "old_value_insensitive", created_resource.id, {
-                                    value: "any2"
-                                })
-                                .then(function() {
-                                    done();
-                                }).catch(function() {
-                                    done(new Error("But it didn't"));
-                                })
-                        })
+                    ResourceManager.create(new Sealious.Context(), "has_required_field", {required: 1})
+                    .then(function(created_resource){
+                        return ResourceManager.patch_resource(new Sealious.Context(), "has_required_field", created_resource.id, {})
+                    }).then(function(){
+                        done();
+                    }).catch(function(error){
+                        done(error)
+                    })
                 });
             });
 
