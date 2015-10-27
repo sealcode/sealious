@@ -1,7 +1,16 @@
 language: node_js
 sudo: false
 node_js:
-  - "0.12"
+- '0.12'
 script: npm install && npm test
 after_success:
 - npm run coveralls
+deploy:
+  provider: npm
+  email: kontakt@jakub-orlik.pl
+  api_key:
+    secure: jRcAYLwKjkAlM7Im2vZsYiGS/4EAaVhs9XD3toL4Hlt+9CopRhydyKJtOBxgylfe+XBEhFzjRhfqZNjIS5dgm9f9YeCAkmuPNlrYDDYRwRoGEFvvtUVHy06tn6mRv1N7prdH9cblicwY94iu0C7Rbv3XUGQPi506cdj5H4qjR9k=
+  on:
+    tags: true
+    repo: Sealious/sealious
+    branch: next
