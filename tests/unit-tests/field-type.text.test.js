@@ -1,73 +1,47 @@
 var Sealious = require("sealious");
-var ResourceManager = Sealious.ResourceManager;
 
 module.exports = {
-	test_init: function() {
-		var resource_type_text_without_max_length = new Sealious.ChipTypes.ResourceType({
-			name: "text_resource_without_max_length",
-			fields: [
-				{name: "test", type: "text", required: true}
-			]
-		});
-
-		var resource_type_text_with_max_length = new Sealious.ChipTypes.ResourceType({
-			name: "text_resource_with_max_length",
-			fields: [
-				{name: "test", type: "text", params: {max_length: 9}, required: true}
-			]
-		});
-	},
+	test_init: function() {},
 
 	test_start: function() {
+		var field_type_text = Sealious.ChipManager.get_chip("field_type", "text");		
 		describe("FieldType.Text", function() {
-			it("should validate the text field successfully (without max_length param, given string)", function(done) {
-				ResourceManager.create(new Sealious.Context(), "text_resource_without_max_length", {test: "test string"})
-				.then(function(ok){
+			it("should return the description of the field type", function(done) {
+				if (typeof field_type_text.declaration.get_description() === "string")
+					done();
+				else
+					done(new Error("But it didn't"));
+			});
+			it("should check if is_proper_value works correctly", function(done) {
+				field_type_text.is_proper_value(new Sealious.Context(), {}, 2)
+				.then(function() {
 					done();
 				})
-				.catch(function(error){
-					done(error);
+				.catch(function(error) {
+					done(new Error(error));
 				})
 			});
-			it("should validate the text field successfully (without max_length param, given integer)", function(done) {
-				ResourceManager.create(new Sealious.Context(), "text_resource_without_max_length", {test: 123456789})
-				.then(function(ok){
+			it("should check if is_proper_value works correctly", function(done) {
+				field_type_text.is_proper_value(new Sealious.Context(), {max_length: 5}, 2)
+				.then(function() {
 					done();
 				})
-				.catch(function(error){
-					done(error);
+				.catch(function(error) {
+					done(new Error(error));
 				})
 			});
-			it("should validate the text field successfully (with max_length param, given string)", function(done) {
-				ResourceManager.create(new Sealious.Context(), "text_resource_with_max_length", {test: "ok string"})
-				.then(function(ok){
-					done();
+			it("should check if is_proper_value works correctly", function(done) {
+				field_type_text.is_proper_value(new Sealious.Context(), {max_length: 5}, "asdfghjkl")
+				.then(function() {
+					done(new Error("It worked correctly"));
 				})
-				.catch(function(error){
-					done(error);
-				})
-			});
-			it("should validate the text field successfully (with max_length param, given integer)", function(done) {
-				ResourceManager.create(new Sealious.Context(), "text_resource_with_max_length", {test: 1})
-				.then(function(ok){
-					done();
-				})
-				.catch(function(error){
-					done(error);
-				})
-			});
-			it("should not validate the text field successfully (with max_length param)", function(done) {
-				ResourceManager.create(new Sealious.Context(), "text_resource_with_max_length", {test: "too long string"})
-				.then(function(ok){
-					done(new Error("...but it did"));
-				})
-				.catch(function(error){
-					if (error.type == "validation")
+				.catch(function(error) {
+					if (error.type === "validation")
 						done();
 					else
 						done(new Error(error));
 				})
-			})
-		})
+			});
+		});
 	}
 };
