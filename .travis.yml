@@ -5,6 +5,8 @@ node_js:
 script: npm install && npm test
 after_success:
 - npm run coveralls
+after_deploy:
+- npm dist-tag add sealious@`npm view sealious version` next
 deploy:
   provider: npm
   email: kontakt@jakub-orlik.pl
