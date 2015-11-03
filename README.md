@@ -2,7 +2,7 @@
 
 Sealious 
 ==========
-[![Build Status](https://travis-ci.org/Sealious/Sealious.svg?branch=dev)](https://travis-ci.org/Sealious/Sealious) [![Coverage Status](https://coveralls.io/repos/Sealious/Sealious/badge.svg?branch=dev&service=github)](https://coveralls.io/github/Sealious/Sealious?branch=dev)
+[![Build Status](https://travis-ci.org/Sealious/sealious.svg?branch=latest)](https://travis-ci.org/Sealious/sealious) [![Coverage Status](https://coveralls.io/repos/Sealious/Sealious/badge.svg?branch=dev&service=github)](https://coveralls.io/github/Sealious/Sealious?branch=latest)
 
 Warning! Sealious is still in very early stages of development. You are welcome to look around (even more so to contact us via [issue tracker](https://github.com/Sealious/Sealious/issues))!
 
