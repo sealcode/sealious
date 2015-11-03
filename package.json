@@ -12,7 +12,9 @@
     "coveralls": "./node_modules/.bin/mocha ./tests/test.js --delay -R mocha-lcov-reporter | ./node_modules/coveralls/bin/coveralls.js || npm run postcoveralls",
     "postcoveralls": "node ./tests/prepare-for-coverage-undo.js",
     "check-formatting": "jscs -c .jscsrc ./lib && echo \"\\n ✓ Code formatting O.K.!\\n\" || (echo \"\\nSome formatting errors found. Run 'npm run fix-formatting' to correct them.\\n\" && exit )",
-    "fix-formatting": "jscs -c .jscsrc ./lib --fix"
+    "fix-formatting": "jscs -c .jscsrc ./lib --fix",
+    "check-hint": "jshint chip-types/ config/ core-services/ data-structures/ logger/ plugins/ response/ tests/ *.js",
+    "hint": "jshint chip-types/ config/ core-services/ data-structures/ logger/ plugins/ response/ tests/ *.js && echo \"\\n ✓ Code guidelines O.K.!\\n\" || (echo \"\\nSome JSHint errors found. Fix errors and run 'check-hint' to correct them.\\n\" && exit )"
   },
   "repository": {
     "type": "git",
@@ -53,7 +55,8 @@
   "pre-commit": {
     "colors": true,
     "run": [
-      "check-formatting"
+      "check-formatting",
+      "hint"
     ],
     "silent": false
   }
