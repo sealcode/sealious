@@ -13,8 +13,8 @@
     "postcoveralls": "node ./tests/prepare-for-coverage-undo.js",
     "check-formatting": "jscs -c .jscsrc ./lib && echo \"\\n ✓ Code formatting O.K.!\\n\" || (echo \"\\nSome formatting errors found. Run 'npm run fix-formatting' to correct them.\\n\" && exit )",
     "fix-formatting": "jscs -c .jscsrc ./lib --fix",
-    "check-hint": "jshint chip-types/ config/ core-services/ data-structures/ logger/ plugins/ response/ *.js",
-    "hint": "jshint chip-types/ config/ core-services/ data-structures/ logger/ plugins/ response/ *.js && echo \"\\n ✓ Code guidelines O.K.!\\n\" || (echo \"\\nSome JSHint errors found. Fix errors and run 'npm run check-hint' to correct them.\\n\" && exit )"
+    "check-hint": "jshint ./chip-types/ ./config/ ./core-services/ ./data-structures/ ./logger/ ./plugins/ ./response/ *.js",
+    "hint": "jshint ./chip-types/ ./config/ ./core-services/ ./data-structures/ ./logger/ ./plugins/ ./response/ *.js && echo \"\\n ✓ Code guidelines O.K.!\\n\" || (echo \"\\nSome JSHint errors found. Fix errors and run 'npm run check-hint' to correct them.\\n\" && exit )"
   },
   "repository": {
     "type": "git",
