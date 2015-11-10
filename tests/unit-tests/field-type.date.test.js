@@ -1,142 +1,44 @@
 var Sealious = require("sealious");
-var ResourceManager = Sealious.ResourceManager;
 
 module.exports = {
-	test_init: function() {
-		var resource_type_date = new Sealious.ChipTypes.ResourceType({
-			name: "date_resource",
-			fields: [
-				{name: "test", type: "date", required: true}
-			]
-		});
-	},
+	test_init: function() {},
 
 	test_start: function() {
-		describe("FieldType.Date", function(){
-			it("should validate the date field correctly", function(done){
-				ResourceManager.create(new Sealious.Context(), "date_resource", {test: "2015-10-20"})
-				.then(function(ok){
+		var field_type_date = Sealious.ChipManager.get_chip("field_type", "date");
+		describe("FieldType.Date", function() {
+			it("should return the description of the field type", function(done) {
+				if (typeof field_type_date.declaration.get_description() === "string")
+					done();
+				else
+					done(new Error("But it didn't"));
+			});
+			it("should check if is_proper_value works correctly(given correct date format)", function(done) {
+				field_type_date.is_proper_value(new Sealious.Context(), {}, "2015-10-27")
+				.then(function() {
 					done();
 				})
-				.catch(function(error){
+				.catch(function(error) {
 					done(new Error(error));
 				})
 			});
-			it("should throw an error because of wrong month", function(done){
-				ResourceManager.create(new Sealious.Context(), "date_resource", {test: "2015-13-20"})
-				.then(function(ok){
-					done(new Error("but it didn't"));
+			it("should check if is_proper_value works correctly(given incorrect date format)", function(done) {
+				field_type_date.is_proper_value(new Sealious.Context(), {}, "2015/10/27")
+				.then(function() {
+					done(new Error("It worked correctly"));
 				})
-				.catch(function(error){
+				.catch(function(error) {
+					if (error.type === "validation")
+						done();
+					else 
+						done(new Error(error));
+				})
+			});
+			it("should check if encode works properly (given \"1\")", function(done) {
+				if (field_type_date.declaration.encode(new Sealious.Context(), {}, "2015/10/27") === 1445900400000)
 					done();
-					
-				})
-			})
-			it("should throw an error because of wrong day", function(done){
-				ResourceManager.create(new Sealious.Context(), "date_resource", {test: "2015-13-32"})
-				.then(function(ok){
-					done(new Error("but it didn't"));
-				})
-				.catch(function(error){
-					done();
-				})
-			})
-			it("should throw an error because of wrong date (too many days in given month)", function(done){
-				ResourceManager.create(new Sealious.Context(), "date_resource", {test: "2015-12-32"})
-				.then(function(ok){
-					done(new Error("but it didn't"));
-				})
-				.catch(function(error){
-					if (error.type === "validation")
-						done();
-					else
-						done(new Error(error))
-				})
-			})
-			it("should throw an error because of wrong date format (wrong YYYY-MM-DD order)", function(done){
-				ResourceManager.create(new Sealious.Context(), "date_resource", {test: "20-10-2015"})
-				.then(function(ok){
-					done(new Error("but it didn't"));
-				})
-				.catch(function(error){
-					if (error.type === "validation")
-						done();
-					else
-						done(new Error(error))
-				})
-			})
-			it("should throw an error because of wrong date format (dots instead of dashes)", function(done){
-				ResourceManager.create(new Sealious.Context(), "date_resource", {test: "20.10.2015"})
-				.then(function(ok){
-					done(new Error("but it didn't"));
-				})
-				.catch(function(error){
-					if (error.type === "validation")
-						done();
-					else
-						done(new Error(error))
-				})
-			})
-			it("should throw an error because of wrong date format (slashes instead of dashes)", function(done){
-				ResourceManager.create(new Sealious.Context(), "date_resource", {test: "20/10/2015"})
-				.then(function(ok){
-					done(new Error("but it didn't"));
-				})
-				.catch(function(error){
-					if (error.type === "validation")
-						done();
-					else
-						done(new Error(error))
-				})
-			})
-			it("should throw an error because of wrong value (string)", function(done){
-				ResourceManager.create(new Sealious.Context(), "date_resource", {test: "silly sealy"})
-				.then(function(ok){
-					done(new Error("but it didn't"));
-				})
-				.catch(function(error){
-					if (error.type === "validation")
-						done();
-					else
-						done(new Error(error))
-				})
-			})
-			it("should throw an error because of wrong value (integer)", function(done){
-				ResourceManager.create(new Sealious.Context(), "date_resource", {test: 1})
-				.then(function(ok){
-					done(new Error("but it didn't"));
-				})
-				.catch(function(error){
-					if (error.type === "validation")
-						done();
-					else
-						done(new Error(error))
-				})
-			})
-			it("should throw an error because of wrong value (boolean)", function(done){
-				ResourceManager.create(new Sealious.Context(), "date_resource", {test: true})
-				.then(function(ok){
-					done(new Error("but it didn't"));
-				})
-				.catch(function(error){
-					if (error.type === "validation")
-						done();
-					else
-						done(new Error(error))
-				})
-			})
-			it("should throw an error because of no value", function(done){
-				ResourceManager.create(new Sealious.Context(), "date_resource", {})
-				.then(function(ok){
-					done(new Error("but it didn't"));
-				})
-				.catch(function(error){
-					if (error.type === "validation")
-						done();
-					else
-						done(new Error(error))
-				})
-			})
-		})
+				else
+					done(new Error("It didn't parse the value correctly"))
+			});
+		});
 	}
 };
