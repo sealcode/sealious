@@ -1,100 +1,86 @@
 var Sealious = require("sealious");
-var ResourceManager = Sealious.ResourceManager;
-
 
 module.exports = {
-	test_init: function() {
-		var resource_type_boolean = new Sealious.ChipTypes.ResourceType({
-			name: "boolean_resource",
-			fields: [
-				{name: "test", type: "boolean", required: true}
-			]
-		});
-	},
+	test_init: function() {},
 
 	test_start: function() {
+		var field_type_boolean = Sealious.ChipManager.get_chip("field_type", "boolean");		
 		describe("FieldType.Boolean", function() {
-			it("should validate the email field successfully with boolean true and return true", function(done) {
-				ResourceManager.create(new Sealious.Context(), "boolean_resource", {test: true})
-				.then(function(ok){
+			it("should return the description of the field type", function(done) {
+				if (typeof field_type_boolean.declaration.get_description() === "string")
+					done();
+				else
+					done(new Error("But it didn't"));
+			});
+			it("should check if is_proper_value works correctly (given boolean)", function(done) {
+				field_type_boolean.is_proper_value(new Sealious.Context(), {}, true)
+				.then(function() {
 					done();
 				})
-				.catch(function(error){
-					done(error);
-				})
-			})
-			it("should validate the email field successfully with 1 and return true", function(done) {
-				ResourceManager.create(new Sealious.Context(), "boolean_resource", {test: 1})
-				.then(function(ok){
-					done();
-				})
-				.catch(function(error){
-					done(error);
-				})
-			})
-			it("should validate the email field successfully with string true and return true", function(done) {
-				ResourceManager.create(new Sealious.Context(), "boolean_resource", {test: "true"})
-				.then(function(ok){
-					done();
-				})
-				.catch(function(error){
-					done(error);
-				})
-			})
-			it("should throw an error with string", function(done) {
-				ResourceManager.create(new Sealious.Context(), "boolean_resource", {test: "silly sealy"})
-				.then(function(ok){
-					done(new Error("it validated it correctly"));
-				})
-				.catch(function(error){
-					if (error.type === "validation")
-						done();
-					else
-						done(new Error(error))
-				})
-			})
-			it("should throw an error with number", function(done) {
-				ResourceManager.create(new Sealious.Context(), "boolean_resource", {test: 123456789})
-				.then(function(ok){
-					done(new Error("it validated it correctly"));
-				})
-				.catch(function(error){
-					if (error.type === "validation")
-						done();
-					else
-						done(new Error(error))
-				})
-			})
-			it("should return false with 0", function(done) {
-				ResourceManager.create(new Sealious.Context(), "boolean_resource", {test: 0})
-				.then(function(ok){
-					done();
-				})
-				.catch(function(error){
+				.catch(function(error) {
 					done(new Error(error));
 				})
-			})
-			it("should return false with string false", function(done) {
-				ResourceManager.create(new Sealious.Context(), "boolean_resource", {test: "false"})
-				.then(function(ok){
+			});
+			it("should check if is_proper_value works correctly (given 1)", function(done) {
+				field_type_boolean.is_proper_value(new Sealious.Context(), {}, 1)
+				.then(function() {
 					done();
 				})
-				.catch(function(error){
+				.catch(function(error) {
 					done(new Error(error));
 				})
-			})
-			it("should throw an error because of no value", function(done){
-				ResourceManager.create(new Sealious.Context(), "boolean_resource", {})
-				.then(function(ok){
-					done(new Error("but it didn't"));
+			});
+			it("should check if is_proper_value works correctly (given \"true\")", function(done) {
+				field_type_boolean.is_proper_value(new Sealious.Context(), {}, "true")
+				.then(function() {
+					done();
 				})
-				.catch(function(error){
+				.catch(function(error) {
+					done(new Error(error));
+				})
+			});
+			it("should check if is_proper_value works correctly (given 2)", function(done) {
+				field_type_boolean.is_proper_value(new Sealious.Context(), {}, 2)
+				.then(function() {
+					done(new Error("It didn't throw an error"));
+				})
+				.catch(function(error) {
 					if (error.type === "validation")
 						done();
 					else
-						done(new Error(error))
+						done(new Error(error));
 				})
-			})
-		})
-	}	
+			});
+			it("should encode the value corretly (given boolean)", function(done) {
+				if (field_type_boolean.declaration.encode(new Sealious.Context(), {}, true) === true)
+					done();
+				else
+					done(new Error("It didn't parse the value correctly"))
+			});
+			it("should encode the value corretly (given 1)", function(done) {
+				if (field_type_boolean.declaration.encode(new Sealious.Context(), {}, 1) === true)
+					done();
+				else
+					done(new Error("It didn't parse the value correctly"))
+			});
+			it("should encode the value corretly (given 0)", function(done) {
+				if (field_type_boolean.declaration.encode(new Sealious.Context(), {}, 0) === false)
+					done();
+				else
+					done(new Error("It didn't parse the value correctly"))
+			});
+			it("should encode the value corretly (given \"false\")", function(done) {
+				if (field_type_boolean.declaration.encode(new Sealious.Context(), {}, "false") === false)
+					done();
+				else
+					done(new Error("It didn't parse the value correctly"))
+			});
+			it("should encode the value corretly (given \"true\")", function(done) {
+				if (field_type_boolean.declaration.encode(new Sealious.Context(), {}, "true") === true)
+					done();
+				else
+					done(new Error("It didn't parse the value correctly"))
+			});
+		});
+	}
 };

@@ -1,63 +1,44 @@
 var Sealious = require("sealious");
-var ResourceManager = Sealious.ResourceManager;
 
 module.exports = {
-	test_init: function() {
-		var resource_type_int = new Sealious.ChipTypes.ResourceType({
-			name: "int_resource",
-			fields: [
-				{name: "test", type: "int", required: true}
-			]
-		});
-	},
+	test_init: function() {},
 
 	test_start: function() {
+		var field_type_int = Sealious.ChipManager.get_chip("field_type", "int");		
 		describe("FieldType.Int", function() {
-			it("should validate the int field successfully (given int)", function(done) {
-				ResourceManager.create(new Sealious.Context(), "int_resource", {test: 1})
-				.then(function(ok){
+			it("should return the description of the field type", function(done) {
+				if (typeof field_type_int.declaration.get_description() === "string")
+					done();
+				else
+					done(new Error("But it didn't"));
+			});
+			it("should check if is_proper_value works correctly", function(done) {
+				field_type_int.is_proper_value(new Sealious.Context(), {}, 2)
+				.then(function() {
 					done();
 				})
-				.catch(function(error){
-					done(error);
+				.catch(function(error) {
+					done(new Error(error));
 				})
-			})
-			it("should not validate the int field successfully (given float)", function(done) {
-				ResourceManager.create(new Sealious.Context(), "int_resource", {test: 1.2})
-				.then(function(ok){
-					done(new Error("but it did..."));
-				})
-				.catch(function(error){
-					if (error.type === "validation")
-						done();
-					else
-						done(new Error(error))
-				})
-			})
-			it("should not validate the int field successfully (given string)", function(done) {
-				ResourceManager.create(new Sealious.Context(), "int_resource", {test: "silly sealy"})
-				.then(function(ok){
-					done(new Error("but it did..."));
+			});
+			it("should return error because new_value is not an integer", function(done) {
+				field_type_int.is_proper_value(new Sealious.Context(), {}, "janusz")
+				.then(function() {
+					done("But it didn't");
 				})
 				.catch(function(error){
 					if (error.type === "validation")
 						done();
-					else
-						done(new Error(error))
+					else 
+						done(new Error(error));
 				})
-			})
-			it("should not validate the int field successfully (no value)", function(done) {
-				ResourceManager.create(new Sealious.Context(), "int_resource", {})
-				.then(function(ok){
-					done(new Error("but it did..."));
-				})
-				.catch(function(error){
-					if (error.type === "validation")
-						done();
-					else
-						done(new Error(error))
-				})
-			})
-		})
+			});
+			it("should check if encode works properly (given \"2\")", function(done) {
+				if (field_type_int.declaration.encode(new Sealious.Context(), {}, "2") === 2)
+					done();
+				else
+					done(new Error("It didn't parse the value correctly"));
+			});
+		});
 	}
 };
