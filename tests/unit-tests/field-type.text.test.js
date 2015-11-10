@@ -42,6 +42,24 @@ module.exports = {
 						done(new Error(error));
 				})
 			});
+			it("should check if encode works correctly", function(done) {
+				if (field_type_text.declaration.encode(new Sealious.Context(), {strip_html: true}, "<script>console.log(\"silly sealy\")</script>"))
+					done();
+				else 
+					done(new Error("But it doesn't"))
+			})
+			it("should check if encode works correctly", function(done) {
+				if (field_type_text.declaration.encode(new Sealious.Context(), {}, null))
+					done();
+				else 
+					done(new Error("But it doesn't"))
+			})
+			it("should check if encode works correctly", function(done) {
+				if (field_type_text.declaration.encode(new Sealious.Context(), {}, {}))
+					done();
+				else 
+					done(new Error("But it doesn't"))
+			})
 		});
 	}
 };
