@@ -108,6 +108,39 @@ module.exports = {
 						done(new Error(error));
 				})
 			})
+			//for some reason these tests don't cover the reference field type :/
+			it("checks if encode works correctly (resolves a promise with value_in_code which is NOT and instance of Object", function(done){
+				field_type_reference.encode(new Sealious.Context(), {}, "test")
+				.then(function(result){
+					if (result === "test")
+						done();
+					else
+						done(new Error("It didn't resolved correctly"));
+				})
+			})
+			it("checks if decode works correctly (resolves a promise with value_in_db not defined)", function(done){
+				field_type_reference.encode(new Sealious.Context(), {}, undefined)
+				.then(function(result){
+					if (result === undefined)
+						done();
+					else
+						done(new Error("It didn't resolved correctly"));
+				})
+			})
+			it("checks if decode works correctly (resolves a promise with value_in_db not defined)", function(done){
+				Sealious.ResourceManager.create(new Sealious.Context(), "never_fails_resource", {
+                    "#success": "specific_value"
+                })
+                .then(function(created_resource) {
+					field_type_reference.encode(new Sealious.Context(), {}, created_resource.id)
+					.then(function(result){
+						if (created_resource.id === result)
+							done();
+						else 
+							done(new Error("It didn't return the correct value"))
+					})
+				})
+			})
 		})
 	}
 }
