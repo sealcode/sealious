@@ -46,20 +46,6 @@ module.exports = {
 						done(new Error(e))
 				}
 			});
-			it("checks if chip_is_registered returns true when longid exists", function(done) {
-				if(Sealious.ChipManager.chip_is_registred("resource_type.chip_manager_tests_resource"))
-					done();
-				else
-					done(new Error("It didn't return true"))
-			});
-			/*
-			it("checks if chip_is_registered returns false when longid doesn't exist", function(done) {
-				if(Sealious.ChipManager.chip_is_registred("doesn't exist"))
-					done(new Error("It didin't return false"));
-				else
-					done();
-			});
-*/
 			it("gets chip amount by type and returns 0 (non existent type)", function(done) {
 				var amount = Sealious.ChipManager.get_chip_amount_by_type("non existent");
 				if (amount === 0)
