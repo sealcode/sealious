@@ -18,8 +18,8 @@ module.exports = {
             }
         })
 
-        var always_fails_resource = new Sealious.ChipTypes.ResourceType({
-            name: "always_fails_resource",
+        var one_field_always_fails = new Sealious.ChipTypes.ResourceType({
+            name: "one_field_always_fails",
             fields: [{
                 name: "#fail",
                 type: "always_fails"
@@ -199,6 +199,13 @@ module.exports = {
 
         })
 
+        var has_required_field = new Sealious.ChipTypes.ResourceType({
+            name: "has_required_field",
+            fields: [
+                {name: "required", type: "int", required: true}
+            ]
+        })
+
     },
 
     test_start: function() {
@@ -324,7 +331,7 @@ module.exports = {
                 });
 
                 it('should not create a new resource', function(done) {
-                    ResourceManager.create(new Sealious.Context(), "always_fails_resource", { "#fail": "tak" })
+                    ResourceManager.create(new Sealious.Context(), "one_field_always_fails", { "#fail": "tak" })
                     .then(function() {
                         done(new Error("It didn't throw an error!"));
                     }).catch(function(error) {
@@ -641,19 +648,14 @@ module.exports = {
                     });
                 })
                 it("should NOT provide resource_type.validate_field_values method with the previous field value if it's not needed", function(done) {
-                    ResourceManager.create(new Sealious.Context(), "old_value_insensitive", {
-                            value: "any"
-                        })
-                        .then(function(created_resource) {
-                            return ResourceManager.patch_resource(new Sealious.Context(), "old_value_insensitive", created_resource.id, {
-                                    value: "any2"
-                                })
-                                .then(function() {
-                                    done();
-                                }).catch(function() {
-                                    done(new Error("But it didn't"));
-                                })
-                        })
+                    ResourceManager.create(new Sealious.Context(), "has_required_field", {required: 1})
+                    .then(function(created_resource){
+                        return ResourceManager.patch_resource(new Sealious.Context(), "has_required_field", created_resource.id, {})
+                    }).then(function(){
+                        done();
+                    }).catch(function(error){
+                        done(error)
+                    })
                 });
             });
 
@@ -711,6 +713,17 @@ module.exports = {
                         }
                     })
                 });
+                it("should not result in calling 'is_proper_value' for fields with no value (issue #235)", function(done){
+                    ResourceManager.create(new Sealious.Context(), "one_field_always_fails", {})
+                    .then(function(created_resource){
+                        return ResourceManager.update_resource(new Sealious.Context(), "one_field_always_fails", created_resource.id, {})
+                    }).then(function(){
+                        //if the field's 'is_proper_value' method wasn't called, it shouldn't throw an error
+                        done();
+                    }).catch(function(error){
+                        done(error);
+                    })
+                })
             });
 
 
