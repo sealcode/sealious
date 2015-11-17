@@ -9,6 +9,7 @@ wait
 (
         cd Sealious;
         npm install && npm link;
+        npm link sealious;
 
         cd ../sealious-www-server;
 
