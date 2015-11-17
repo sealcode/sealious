@@ -4,7 +4,6 @@ module.exports = {
 	test_init: function() {},
 
 	test_start: function() {
-		/*
 		var field_type_color = Sealious.ChipManager.get_chip("field_type", "color");		
 		describe("FieldType.Color", function() {
 			it("checks if is_proper_value throws an error (wrong value)", function(done) {
@@ -89,6 +88,5 @@ module.exports = {
 					done("It didnt work correctly");
 			})
 		})
-*/
 	}
 }
