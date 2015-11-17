@@ -26,7 +26,6 @@ module.exports = {
             }]
         });
 
-
         //Creating resource never fails
         var never_fails = new Sealious.ChipTypes.FieldType({
             name: "never_fails",
@@ -238,6 +237,29 @@ module.exports = {
                     done();
                 })
             });
+
+            it('throws an error due to field name duplication', function(done) {
+                try {
+                    new Sealious.ChipTypes.ResourceType({
+                        name: "testing_name_duplication",
+                        fields: [{
+                            name: "duplicate_name",
+                            type: "text"
+                        },
+                        {
+                            name: "duplicate_name",
+                            type: "text"
+                        }],
+                        access_strategy: "item_sensitive"
+                    })
+                }
+                catch (e) {
+                    if (e.type === "dev_error")
+                        done();
+                    else(
+                        done(new Error(e)))
+                }
+            })
 
             describe(".create", function() {
                 it("should create resource", function(done) {
