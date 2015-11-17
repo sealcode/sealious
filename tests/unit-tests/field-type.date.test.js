@@ -33,7 +33,8 @@ module.exports = {
 						done(new Error(error));
 				})
 			});
-			it("should check if encode works properly (given \"1\")", function(done) {
+			it("should check if encode works properly (given \"2015/10/27\")", function(done) {
+				console.log(field_type_date.declaration.encode(new Sealious.Context(), {}, "2015/10/27"));
 				if (field_type_date.declaration.encode(new Sealious.Context(), {}, "2015/10/27") === 1445900400000)
 					done();
 				else
