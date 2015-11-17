@@ -1,62 +1,43 @@
 var Sealious = require("sealious");
-var ResourceManager = Sealious.ResourceManager;
 
 module.exports = {
-	test_init: function() {
-		var resource_type_datetime = new Sealious.ChipTypes.ResourceType({
-			name: "datetime_resource",
-			fields: [
-				{name: "test", type: "datetime", required: true}
-			]
-		});
-	},
+	test_init: function() {},
 
 	test_start: function() {
-		describe("FieldType.Datetime", function(){
-			it("should validate the datetime field successfully", function(done) {
-				ResourceManager.create(new Sealious.Context(), "datetime_resource", {test: 1})
-				.then(function(ok){
+		var field_type_datetime = Sealious.ChipManager.get_chip("field_type", "datetime");
+		describe("FieldType.Datetime", function() {
+			it("should return the description of the field type", function(done) {
+				if (typeof field_type_datetime.declaration.get_description() === "string")
+					done();
+				else
+					done(new Error("But it didn't"));
+			});
+			it("should check if is_proper_value works correctly(given timestamp)", function(done) {
+				field_type_datetime.is_proper_value(new Sealious.Context(), {}, 1)
+				.then(function() {
 					done();
 				})
-				.catch(function(error){
-					done(error);
-				})
-		})
-			it("should not validate the datetime field successfully (given string)", function(done) {
-				ResourceManager.create(new Sealious.Context(), "datetime_resource", {test: "silly sealy"})
-				.then(function(ok){
-					done(new Error("but it did..."));
-				})
-				.catch(function(error){
-					if (error.type === "validation")
-						done();
-					else
-						done(new Error(error))
+				.catch(function(error) {
+					done(new Error(error));
 				})
 			});
-			it("should not validate the datetime field successfully (given float)", function(done) {
-				ResourceManager.create(new Sealious.Context(), "datetime_resource", {test: 1.2})
-				.then(function(ok){
-					done(new Error("but it did..."));
+			it("should check if is_proper_value works correctly(given string)", function(done) {
+				field_type_datetime.is_proper_value(new Sealious.Context(), {}, "test")
+				.then(function() {
+					done(new Error("It worked correctly"));
 				})
-				.catch(function(error){
+				.catch(function(error) {
 					if (error.type === "validation")
-						done();
+						done()
 					else
-						done(new Error(error))
+						done(new Error(error));
 				})
 			});
-			it("should not validate the datetime field successfully (no value)", function(done) {
-				ResourceManager.create(new Sealious.Context(), "datetime_resource", {})
-				.then(function(ok){
-					done(new Error("but it did..."));
-				})
-				.catch(function(error){
-					if (error.type === "validation")
-						done();
-					else
-						done(new Error(error))
-				})
+			it("should check if encode works properly (given \"1\")", function(done) {
+				if (field_type_datetime.declaration.encode(new Sealious.Context(), {}, "1") === 1)
+					done();
+				else
+					done(new Error("It didn't parse the value correctly"))
 			});
 		});
 	}
