@@ -54,6 +54,18 @@ module.exports = {
 					done(new Error(error));
 				})
 			});
+			it("resolved with null when value_in_code is null", function(done) {
+				field_type_text.declaration.encode(new Sealious.Context(), {}, null)
+				.then(function(result) {
+					if (result === null)
+						done();
+					else
+						done(new Error("It didn't resolve with null"))
+				})
+				.catch(function(error) {
+					done(new Error(error));
+				})
+			})
 			it("checks if encode works properly", function(done) {
 				field_type_text.declaration.encode(new Sealious.Context(), {}, {})
 				.then(function(result) {
