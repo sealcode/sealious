@@ -9,7 +9,7 @@
     "test": "mocha --delay ./tests/test.js",
     "test-coverage": "npm run precoveralls && mocha -R html-cov --delay ./tests/test.js > coverage.html && npm run postcoveralls && ( xdg-open coverage.html || start coverage.html) &",
     "precoveralls": "node ./tests/prepare-for-coverage.js && jscoverage lib lib-cov",
-    "coveralls": "./node_modules/.bin/mocha ./tests/test.js --delay -R mocha-lcov-reporter | ./node_modules/coveralls/bin/coveralls.js || npm run postcoveralls",
+    "coveralls": "./node_modules/.bin/mocha  ./tests/test.js --delay -R mocha-lcov-reporter | ./node_modules/coveralls/bin/coveralls.js || npm run postcoveralls",
     "postcoveralls": "node ./tests/prepare-for-coverage-undo.js",
     "check-formatting": "jscs -c .jscsrc ./lib && echo \"\\n ✓ Code formatting O.K.!\\n\" || (echo \"\\nSome formatting errors found. Run 'npm run fix-formatting' to correct them.\\n\" && exit )",
     "fix-formatting": "jscs -c .jscsrc ./lib --fix"
