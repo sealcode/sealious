@@ -1,14 +1,14 @@
 #!/bin/sh
 
-(git clone --depth 100 https://github.com/Sealious/Sealious.git) &
+(git clone --depth 100 https://github.com/Sealious/sealious.git) &
 (git clone https://github.com/Sealious/sealious-www-server.git) &
 (git clone https://github.com/Sealious/sealious-channel-rest.git) &
 
 wait
 
 (
-        cd Sealious;
-        npm install && npm link;
+        cd sealious;
+        npm install && npm link &&
 
         cd ../sealious-www-server;
 
