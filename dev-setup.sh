@@ -1,6 +1,6 @@
 #!/bin/sh
 
-(git clone https://github.com/Sealious/Sealious.git) &
+(git clone --depth 100 https://github.com/Sealious/Sealious.git) &
 (git clone https://github.com/Sealious/sealious-www-server.git) &
 (git clone https://github.com/Sealious/sealious-channel-rest.git) &
 
