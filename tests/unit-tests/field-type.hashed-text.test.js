@@ -1,4 +1,5 @@
 var Sealious = require("sealious");
+var crypto = require('crypto');
 
 module.exports = {
 	test_init: function() {
@@ -6,14 +7,52 @@ module.exports = {
 	},
 	test_start: function() {
 		var field_type_hashed_text = Sealious.ChipManager.get_chip("field_type", "hashed-text");
-		describe("FieldType.Password", function() {
-			it("resolved with a hash", function(done) {
+		describe("FieldType.HashedText", function() {
+			it("should return the description of the field type", function(done) {
+				if (typeof field_type_hashed_text.declaration.get_description() === "string")
+					done();
+				else
+					done(new Error("But it didn't"));
+			});
+			it("accepts given password ('pas1sw24rd1')", function(done) {
+				field_type_hashed_text.is_proper_value(new Sealious.Context(), {numbers: 3}, "pas1sw24rd1")
+				.then(function() {
+					done();
+				})
+				.catch(function(error) {
+					done(new Error(error));
+				})
+			});
+			it("accepts given password ('PAs1sW24rD1')", function(done) {
+				field_type_hashed_text.is_proper_value(new Sealious.Context(), {capitals: 3}, "PAs1sW24rD1")
+				.then(function() {
+					done();
+				})
+				.catch(function(error) {
+					done(new Error(error));
+				})
+			});
+			it("accepts given password ('PaSw0rd23')", function(done) {
+				field_type_hashed_text.is_proper_value(new Sealious.Context(), {capitals: 2, number: 3}, "PaSw0rd23")
+				.then(function() {
+					done();
+				})
+				.catch(function(error) {
+					done(new Error(error));
+				})
+			});
+			it("resolved with a hash (algorithm: 'md5', salt: '')", function(done) {
 				field_type_hashed_text.encode(new Sealious.Context(), {}, "test")
-				.then(function(result){
-					if (result === "937851b9666b7c662e66ad01dec52c6c365c5d89cfae45abb34c2c825cff193113768c613c8af9353f47b1a729719e56f45ec8c8058487871cc611a78a5157c8")
-						done();
-					else
-						done(new Error("Wrong hash"));
+				.then(function(result){		
+					crypto.pbkdf2("test", "", 4096, 64, "md5", function(err, key){
+						if (err)
+							done(new Error(err));
+
+						if (key.toString('hex') === result)
+							done();
+						else 
+							done(new Error("Wrong hash"))
+					});
 				})
 				.catch(function(error){
 					done(new Error(error))
