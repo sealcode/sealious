@@ -1,64 +1,38 @@
 var Sealious = require("sealious");
-var ResourceManager = Sealious.ResourceManager;
 
 module.exports = {
-	test_init: function() {
-		var resource_type_email = new Sealious.ChipTypes.ResourceType({
-			name: "email_resource",
-			fields: [
-				{name: "email", type: "email", required: true}
-			]
-		});
-	},
+	test_init: function() {},
 
 	test_start: function() {
+		var field_type_email = Sealious.ChipManager.get_chip("field_type", "email");
 		describe("FieldType.Email", function() {
-			it("should validate the email field successfully", function(done) {
-				ResourceManager.create(new Sealious.Context(), "email_resource", {email: "test@test.com"})
-				.then(function(ok){
+			it("should return the description of the field type", function(done) {
+				if (typeof field_type_email.declaration.get_description() === "string")
+					done();
+				else
+					done(new Error("But it didn't"));
+			});
+			it("should check if is_proper_value works correctly(given correct date format)", function(done) {
+				field_type_email.is_proper_value(new Sealious.Context(), {}, "test@mail.com")
+				.then(function() {
 					done();
 				})
-				.catch(function(error){
-					done(error);
+				.catch(function(error) {
+					done(new Error(error));
 				})
-			})
-			it("should reject given email address (string)", function(done){
-				ResourceManager.create(new Sealious.Context(), "email_resource", {email: "troll"})
-				.then(function(ok){
-					done(new Error("...but it decided the email address was correct"));
+			});
+			it("should check if is_proper_value works correctly(given incorrect date format)", function(done) {
+				field_type_email.is_proper_value(new Sealious.Context(), {}, "test")
+				.then(function() {
+					done(new Error("It worked correctly"));
 				})
-				.catch(function(error){
+				.catch(function(error) {
 					if (error.type === "validation")
 						done();
-					else
-						done(new Error(error))
+					else 
+						done(new Error(error));
 				})
-			})
-			it("should reject given email address (integer)", function(done){
-				ResourceManager.create(new Sealious.Context(), "email_resource", {email: 1})
-				.then(function(ok){
-					done(new Error("...but it decided the email address was correct"));
-				})
-				.catch(function(error){
-					if (error.type === "validation")					
-						done();
-					else
-						done(new Error(error))
-				})
-			})
-			it("should throw an error because of no value", function(done){
-				ResourceManager.create(new Sealious.Context(), "email_resource", {})
-				.then(function(ok){
-					done(new Error("but it didn't"));
-				})
-				.catch(function(error){
-					if (error.type === "validation")
-						done();
-					else
-						done(new Error(error))
-				})
-			})
-		})
+			});
+		});
 	}
-	
 };
