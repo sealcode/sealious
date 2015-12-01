@@ -8,6 +8,7 @@ wait
 
 (
         cd sealious;
+        git checkout next;
         npm install && sudo npm link &&
 
         cd ../sealious-www-server;
