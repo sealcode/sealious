@@ -15,7 +15,16 @@ module.exports = {
 					done(new Error("But it didn't"));
 			});
 			it("accepts given password ('pas1sw24rd1')", function(done) {
-				field_type_hashed_text.is_proper_value(new Sealious.Context(), {numbers: 3}, "pas1sw24rd1")
+				field_type_hashed_text.is_proper_value(new Sealious.Context(), {}, "pas1sw24rd1")
+				.then(function() {
+					done();
+				})
+				.catch(function(error) {
+					done(new Error(error));
+				})
+			});
+			it("accepts given password ('pas1sw24rd1')", function(done) {
+				field_type_hashed_text.is_proper_value(new Sealious.Context(), {digits: 3}, "pas1sw24rd1")
 				.then(function() {
 					done();
 				})
@@ -33,7 +42,7 @@ module.exports = {
 				})
 			});
 			it("accepts given password ('PaSw0rd23')", function(done) {
-				field_type_hashed_text.is_proper_value(new Sealious.Context(), {capitals: 2, numbers: 3}, "PaSw0rd23")
+				field_type_hashed_text.is_proper_value(new Sealious.Context(), {capitals: 2, digits: 3}, "PaSw0rd23")
 				.then(function() {
 					done();
 				})
@@ -44,6 +53,7 @@ module.exports = {
 			it("resolved with a hash (algorithm: 'md5', salt: '')", function(done) {
 				field_type_hashed_text.encode(new Sealious.Context(), {}, "test")
 				.then(function(result){		
+					console.log(result);
 					crypto.pbkdf2("test", "", 4096, 64, "md5", function(err, key){
 						if (err)
 							done(new Error(err));
