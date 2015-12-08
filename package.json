@@ -3,7 +3,7 @@
 	"homepage": "http://sealious.github.io/",
 	"version": "0.7.7",
 	"description": "A declarative framework for fast & easy app development.",
-	"main": "./lib-cov/main.js",
+	"main": "./lib/main.js",
 	"scripts": {
 		"prepublish": "require-self",
 		"test": "mocha --delay ./tests/test.js",
