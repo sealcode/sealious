@@ -53,7 +53,6 @@ module.exports = {
 			it("resolved with a hash (algorithm: 'md5', salt: '')", function(done) {
 				field_type_hashed_text.encode(new Sealious.Context(), {}, "test")
 				.then(function(result){		
-					console.log(result);
 					crypto.pbkdf2("test", "", 4096, 64, "md5", function(err, key){
 						if (err)
 							done(new Error(err));
