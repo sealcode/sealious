@@ -1,61 +1,61 @@
 {
-  "name": "sealious",
-  "homepage": "http://sealious.github.io/",
-  "version": "0.7.7",
-  "description": "A declarative framework for fast & easy app development.",
-  "main": "./lib/main.js",
-  "scripts": {
-    "prepublish": "require-self",
-    "test": "mocha --delay ./tests/test.js",
-    "test-coverage": "npm run precoveralls && mocha -R html-cov --delay ./tests/test.js > coverage.html && npm run postcoveralls && ( xdg-open coverage.html || start coverage.html) &",
-    "precoveralls": "node ./tests/prepare-for-coverage.js && jscoverage lib lib-cov",
-    "coveralls": "./node_modules/.bin/mocha ./tests/test.js --delay -R mocha-lcov-reporter | ./node_modules/coveralls/bin/coveralls.js || npm run postcoveralls",
-    "postcoveralls": "node ./tests/prepare-for-coverage-undo.js",
-    "check-formatting": "jscs -c .jscsrc ./lib && echo \"\\n ✓ Code formatting O.K.!\\n\" || (echo \"\\nSome formatting errors found. Run 'npm run fix-formatting' to correct them.\\n\" && exit )",
-    "fix-formatting": "jscs -c .jscsrc ./lib --fix"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/Sealious/Sealious/"
-  },
-  "keywords": [
-    "sealious"
-  ],
-  "author": "The Sealious team (http://github.com/Sealious)",
-  "license": "BSD-2-Clause",
-  "bugs": {
-    "url": "https://github.com/Sealious/Sealious/issues"
-  },
-  "dependencies": {
-    "Set": "~0.4.1",
-    "bluebird": "~2.9.9",
-    "clone": "^1.0.2",
-    "fs-extra": "^0.18.2",
-    "immutable": "^3.7.2",
-    "merge": "^1.2.0",
-    "require-dir": "^0.3.0",
-    "sanitize-html": "^1.6.1",
-    "sealious-datastore-tingo": "^0.1.5",
-    "sha1": "^1.1.0",
-    "uid": "0.0.2",
-    "winston": "^1.0.0",
-    "color": "latest"
-  },
-  "devDependencies": {
-    "coveralls": "^2.11.4",
-    "deep-equal": "^1.0.1",
-    "jscoverage": "^0.6.0",
-    "jscs": "^2.1.1",
-    "mocha": "*",
-    "mocha-lcov-reporter": "0.0.2",
-    "pre-commit": "^1.1.1",
-    "require-self": "^0.1.0"
-  },
-  "pre-commit": {
-    "colors": true,
-    "run": [
-      "check-formatting"
-    ],
-    "silent": false
-  }
+	"name": "sealious",
+	"homepage": "http://sealious.github.io/",
+	"version": "0.7.7",
+	"description": "A declarative framework for fast & easy app development.",
+	"main": "./lib-cov/main.js",
+	"scripts": {
+		"prepublish": "require-self",
+		"test": "mocha --delay ./tests/test.js",
+		"test-coverage": "npm run precoveralls && mocha -R html-cov --delay ./tests/test.js > coverage.html && npm run postcoveralls && ( xdg-open coverage.html || start coverage.html) &",
+		"precoveralls": "node ./tests/prepare-for-coverage.js && jscoverage lib lib-cov",
+		"coveralls": "./node_modules/.bin/mocha ./tests/test.js --delay -R mocha-lcov-reporter | ./node_modules/coveralls/bin/coveralls.js || npm run postcoveralls",
+		"postcoveralls": "node ./tests/prepare-for-coverage-undo.js",
+		"check-formatting": "jscs -c .jscsrc ./lib && echo \"\\n ✓ Code formatting O.K.!\\n\" || (echo \"\\nSome formatting errors found. Run 'npm run fix-formatting' to correct them.\\n\" && exit )",
+		"fix-formatting": "jscs -c .jscsrc ./lib --fix"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/Sealious/Sealious/"
+	},
+	"keywords": [
+		"sealious"
+	],
+	"author": "The Sealious team (http://github.com/Sealious)",
+	"license": "BSD-2-Clause",
+	"bugs": {
+		"url": "https://github.com/Sealious/Sealious/issues"
+	},
+	"dependencies": {
+		"Set": "~0.4.1",
+		"bluebird": "~2.9.9",
+		"clone": "^1.0.2",
+		"fs-extra": "^0.18.2",
+		"immutable": "^3.7.2",
+		"merge": "^1.2.0",
+		"require-dir": "^0.3.0",
+		"sanitize-html": "^1.6.1",
+		"sealious-datastore-tingo": "^0.1.5",
+		"sha1": "^1.1.0",
+		"uid": "0.0.2",
+		"winston": "^1.0.0",
+		"color": "latest"
+	},
+	"devDependencies": {
+		"coveralls": "^2.11.4",
+		"deep-equal": "^1.0.1",
+		"jscoverage": "^0.6.0",
+		"jscs": "^2.1.1",
+		"mocha": "*",
+		"mocha-lcov-reporter": "0.0.2",
+		"pre-commit": "^1.1.1",
+		"require-self": "^0.1.0"
+	},
+	"pre-commit": {
+		"colors": true,
+		"run": [
+			"check-formatting"
+		],
+		"silent": false
+	}
 }
