@@ -33,7 +33,7 @@ module.exports = {
 				})
 			});
 			it("accepts given password ('PaSw0rd23')", function(done) {
-				field_type_hashed_text.is_proper_value(new Sealious.Context(), {capitals: 2, number: 3}, "PaSw0rd23")
+				field_type_hashed_text.is_proper_value(new Sealious.Context(), {capitals: 2, numbers: 3}, "PaSw0rd23")
 				.then(function() {
 					done();
 				})
