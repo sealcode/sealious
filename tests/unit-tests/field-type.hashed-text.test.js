@@ -2,9 +2,6 @@ var Sealious = require("sealious");
 var crypto = require('crypto');
 
 module.exports = {
-	test_init: function() {
-
-	},
 	test_start: function() {
 		var field_type_hashed_text = Sealious.ChipManager.get_chip("field_type", "hashed-text");
 		describe("FieldType.HashedText", function() {
