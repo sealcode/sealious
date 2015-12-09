@@ -51,13 +51,9 @@ module.exports = {
 				field_type_hashed_text.encode(new Sealious.Context(), {}, "test")
 				.then(function(result){		
 					crypto.pbkdf2("test", "", 4096, 64, "md5", function(err, key){
-						if (err)
-							done(new Error(err));
+						if (err) done(new Error(err));
 
-						if (key.toString('hex') === result)
-							done();
-						else 
-							done(new Error("Wrong hash"))
+						key.toString('hex') === result ? done() : done(new Error("Wrong hash"))
 					});
 				})
 				.catch(function(error){
