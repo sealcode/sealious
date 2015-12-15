@@ -1,8 +1,8 @@
 var Sealious = require("sealious");
 var requireDir = require("require-dir");
-var Mocha = require('mocha'),
-    fs = require('fs'),
-    path = require('path');
+var Mocha = require('mocha');
+var fs = require('fs');
+var path = require('path');
 
 // Instantiate a Mocha instance.
 var mocha = new Mocha();
