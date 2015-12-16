@@ -42,6 +42,9 @@ nvm_ls_current() {
   fi
 }
 
+# First argument is supposed to be selected branch name
+branch=${1:-'stable'}
+
 case "`nvm_ls_current`" in
 "system")
     sudo='sudo'
@@ -60,18 +63,20 @@ wait
 
 (
     cd sealious
-    git checkout next
+    git checkout $branch
     npm install
     $sudo npm link
     git remote set-url origin ssh://git@github.com/Sealious/sealious
 
     cd ../sealious-www-server
+    git checkout $branch
     npm install
     npm link sealious
     $sudo npm link
     git remote set-url origin ssh://git@github.com/Sealious/sealious-www-server
 
     cd ../sealious-channel-rest
+    git checkout $branch
     npm install
     npm link sealious
     npm link sealious-www-server
