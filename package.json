@@ -1,18 +1,18 @@
 {
   "name": "sealious",
   "homepage": "http://sealious.github.io/",
-  "version": "0.6.18",
+  "version": "0.7.11",
   "description": "A declarative framework for fast & easy app development.",
   "main": "./lib/main.js",
   "scripts": {
     "prepublish": "require-self",
-    "test": "mocha --delay ./tests/test.js",
-    "test-coverage": "npm run precoveralls && mocha -R html-cov --delay ./tests/test.js > coverage.html && npm run postcoveralls && ( xdg-open coverage.html || start coverage.html) &",
-    "precoveralls": "node ./tests/prepare-for-coverage.js && jscoverage lib lib-cov",
-    "coveralls": "./node_modules/.bin/mocha ./tests/test.js --delay -R mocha-lcov-reporter | ./node_modules/coveralls/bin/coveralls.js || npm run postcoveralls",
-    "postcoveralls": "node ./tests/prepare-for-coverage-undo.js",
+    "test": "node ./tests/test.js",
+    "test-coverage": "istanbul cover ./tests/test.js",
+    "coveralls": "npm run test-coverage && cat coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js",
     "check-formatting": "jscs -c .jscsrc ./lib && echo \"\\n ✓ Code formatting O.K.!\\n\" || (echo \"\\nSome formatting errors found. Run 'npm run fix-formatting' to correct them.\\n\" && exit )",
-    "fix-formatting": "jscs -c .jscsrc ./lib --fix"
+    "fix-formatting": "jscs -c .jscsrc ./lib --fix",
+    "check-hint": "jshint ./lib/chip-types/ ./lib/config/ ./lib/core-services/ ./lib/data-structures/ ./lib/logger/ ./lib/plugins/ ./lib/response/ ./lib/*.js",
+    "hint": "jshint ./lib/chip-types/ ./lib/config/ ./lib/core-services/ ./lib/data-structures/ ./lib/logger/ ./lib/plugins/ ./lib/response/ ./lib/*.js  && echo \"\\n ✓ Code guidelines O.K.!\\n\" || (echo \"\\nSome JSHint errors found. Fix errors and run 'npm run check-hint' to correct them.\\n\" && exit )"
   },
   "repository": {
     "type": "git",
@@ -38,22 +38,24 @@
     "sealious-datastore-tingo": "^0.1.5",
     "sha1": "^1.1.0",
     "uid": "0.0.2",
-    "winston": "^1.0.0"
+    "winston": "^1.0.0",
+    "color": "latest"
   },
   "devDependencies": {
     "coveralls": "^2.11.4",
     "deep-equal": "^1.0.1",
-    "jscoverage": "^0.6.0",
+    "istanbul": "^0.4.1",
     "jscs": "^2.1.1",
     "mocha": "*",
-    "mocha-lcov-reporter": "0.0.2",
+    "mocha-istanbul": "^0.2.0",
     "pre-commit": "^1.1.1",
     "require-self": "^0.1.0"
   },
   "pre-commit": {
     "colors": true,
     "run": [
-      "check-formatting"
+      "check-formatting",
+      "hint"
     ],
     "silent": false
   }
