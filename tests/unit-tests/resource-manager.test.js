@@ -7,7 +7,7 @@ module.exports = {
     test_init: function() {
         // Creating resource always fails
 
-        var listable = new Sealious.ChipTypes.ResourceType({
+        var listable = new Sealious.ResourceType({
             name: "listable"
         })
 
@@ -18,7 +18,7 @@ module.exports = {
             }
         })
 
-        var one_field_always_fails = new Sealious.ChipTypes.ResourceType({
+        var one_field_always_fails = new Sealious.ResourceType({
             name: "one_field_always_fails",
             fields: [{
                 name: "#fail",
@@ -26,16 +26,15 @@ module.exports = {
             }]
         });
 
-
         //Creating resource never fails
-        var never_fails = new Sealious.ChipTypes.FieldType({
+        var never_fails = new Sealious.FieldType({
             name: "never_fails",
             is_proper_value: function(accept, reject, context, value_in_code) {
                 accept();
             }
         })
 
-        var never_fails_resource = new Sealious.ChipTypes.ResourceType({
+        var never_fails_resource = new Sealious.ResourceType({
             name: "never_fails_resource",
             fields: [{
                 name: "#success",
@@ -43,7 +42,7 @@ module.exports = {
             }, ]
         });
 
-        var requires_old_value = new Sealious.ChipTypes.FieldType({
+        var requires_old_value = new Sealious.FieldType({
             name: "requires_old_value",
             is_proper_value: function(accept, reject, context, params, new_value, old_value) {
                 if (old_value === undefined) {
@@ -57,7 +56,7 @@ module.exports = {
             }
         })
 
-        var rejects_with_old_value = new Sealious.ChipTypes.FieldType({
+        var rejects_with_old_value = new Sealious.FieldType({
             name: "rejects_with_old_value",
             is_proper_value: function(accept, reject, context, params, new_value, old_value) {
                 if (old_value === undefined) {
@@ -71,7 +70,7 @@ module.exports = {
             }
         })
 
-        var always_the_same = new Sealious.ChipTypes.FieldType({
+        var always_the_same = new Sealious.FieldType({
             name: "always_the_same",
             is_proper_value: function(accept, reject, context, params, new_value, old_value) {
                 if (old_value === null) {
@@ -87,7 +86,7 @@ module.exports = {
             }
         })
 
-        var old_value_sensitive_resource = new Sealious.ChipTypes.ResourceType({
+        var old_value_sensitive_resource = new Sealious.ResourceType({
             name: "old_value_sensitive",
             fields: [{
                 name: "value",
@@ -95,7 +94,7 @@ module.exports = {
             }, ]
         })
 
-        var old_value_insensitive_resource = new Sealious.ChipTypes.ResourceType({
+        var old_value_insensitive_resource = new Sealious.ResourceType({
             name: "old_value_insensitive",
             fields: [{
                 name: "value",
@@ -103,7 +102,7 @@ module.exports = {
             }, ]
         })
 
-        var always_the_same_resource = new Sealious.ChipTypes.ResourceType({
+        var always_the_same_resource = new Sealious.ResourceType({
             name: "always_the_same",
             fields: [{
                 name: "value",
@@ -111,7 +110,7 @@ module.exports = {
             }, ]
         })
 
-        var multifield_resource = new Sealious.ChipTypes.ResourceType({
+        var multifield_resource = new Sealious.ResourceType({
             name: "multifield",
             fields: [{
                 name: "value1",
@@ -122,12 +121,12 @@ module.exports = {
             }]
         });
 
-        var nobody_can_create_me_resource = new Sealious.ChipTypes.ResourceType({
+        var nobody_can_create_me_resource = new Sealious.ResourceType({
             name: "nobody_can_create_me",
             access_strategy: "noone"
         });
 
-        var nobody_can_update_me_resource = new Sealious.ChipTypes.ResourceType({
+        var nobody_can_update_me_resource = new Sealious.ResourceType({
             name: "nobody_can_update_me",
             fields: [{
                 name: "value",
@@ -138,7 +137,7 @@ module.exports = {
             }
         });
 
-        var nobody_can_delete_me_resource = new Sealious.ChipTypes.ResourceType({
+        var nobody_can_delete_me_resource = new Sealious.ResourceType({
             name: "nobody_can_delete_me",
             fields: [{
                 name: "value",
@@ -148,7 +147,7 @@ module.exports = {
                 delete: "noone"
             }
         });
-        var nobody_can_list_me_resource = new Sealious.ChipTypes.ResourceType({
+        var nobody_can_list_me_resource = new Sealious.ResourceType({
             name: "nobody_can_list_me",
             fields: [{
                 name: "value",
@@ -158,7 +157,7 @@ module.exports = {
                 retrieve: "noone"
             }
         });
-        var item_sensitive_access_strategy = new Sealious.ChipTypes.AccessStrategy({
+        var item_sensitive_access_strategy = new Sealious.AccessStrategy({
             name: "item_sensitive",
             checker_function: function(context, item) {
                 if (item !== undefined) {
@@ -170,7 +169,7 @@ module.exports = {
             item_sensitive: true
         })
 
-        var item_sensitive_access_strategy_second = new Sealious.ChipTypes.AccessStrategy({
+        var item_sensitive_access_strategy_second = new Sealious.AccessStrategy({
             name: "item_sensitive_second",
             checker_function: function(context, item) {
                 return Promise.reject(new Sealious.Errors.BadContext("No item provided"));
@@ -179,7 +178,7 @@ module.exports = {
             item_sensitive: true
         })
 
-        var item_sensitive_resource = new Sealious.ChipTypes.ResourceType({
+        var item_sensitive_resource = new Sealious.ResourceType({
             name: "item_sensitive",
             fields: [{
                 name: "value",
@@ -189,7 +188,7 @@ module.exports = {
 
         })
 
-        var item_sensitive_resource_second = new Sealious.ChipTypes.ResourceType({
+        var item_sensitive_resource_second = new Sealious.ResourceType({
             name: "item_sensitive_second",
             fields: [{
                 name: "value",
@@ -199,7 +198,7 @@ module.exports = {
 
         })
 
-        var has_required_field = new Sealious.ChipTypes.ResourceType({
+        var has_required_field = new Sealious.ResourceType({
             name: "has_required_field",
             fields: [
                 {name: "required", type: "int", required: true}
@@ -238,6 +237,29 @@ module.exports = {
                     done();
                 })
             });
+
+            it('throws an error due to field name duplication', function(done) {
+                try {
+                    new Sealious.ChipTypes.ResourceType({
+                        name: "testing_name_duplication",
+                        fields: [{
+                            name: "duplicate_name",
+                            type: "text"
+                        },
+                        {
+                            name: "duplicate_name",
+                            type: "text"
+                        }],
+                        access_strategy: "item_sensitive"
+                    })
+                }
+                catch (e) {
+                    if (e.type === "dev_error")
+                        done();
+                    else(
+                        done(new Error(e)))
+                }
+            })
 
             describe(".create", function() {
                 it("should create resource", function(done) {
@@ -690,7 +712,7 @@ module.exports = {
                         .then(function() {
                             done(new Error("But it succedded instead of failing"));
                         }).catch(function(error) {
-                            if (error.type == "validation") {
+                            if (error.type === "validation") {
                                 done();
                             } else {
                                 done(new Error("But threw an error that is not an instance of ValidationError"));
