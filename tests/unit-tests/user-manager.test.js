@@ -6,7 +6,7 @@ module.exports = {
 	test_start: function() {
 		describe("UserManager", function() {
 			it("creates a new user", function(done) {
-				Sealious.Dispatcher.users.create_user(new Sealious.Context(), "user", "pass")
+				Sealious.UserManager.create_user(new Sealious.Context(), "user", "pass")
 				.then(function(result) {
 					if (result.body.username === "user" && result.body.password === "pass") {
 						done();
@@ -20,9 +20,10 @@ module.exports = {
 				})
 			})
 			it("tries to create a user that already exists", function(done) {
-				Sealious.Dispatcher.users.create_user(new Sealious.Context(), "user_exists", "pass_exists")
+				var context = new Sealious.Context()
+				Sealious.UserManager.create_user(context, "user_exists", "pass_exists")
 				.then(function(result) {
-					Sealious.Dispatcher.users.create_user(new Sealious.Context(), "user_exists", "pass_exists")
+					Sealious.UserManager.create_user(context, "user_exists", "pass_exists")
 					.then(function(result){
 						done(new Error("It created a user"));
 					})
@@ -40,7 +41,7 @@ module.exports = {
 				});
 			});
 			it("gets all users", function(done) {
-				Sealious.Dispatcher.users.get_all_users(new Sealious.Context)
+				Sealious.UserManager.get_all_users(new Sealious.Context)
 				.then(function(result) {
 					if (typeof result === "object"){
 						if (result.length >= 2) {
@@ -59,7 +60,7 @@ module.exports = {
 				})
 			})
 			it("matched given credentials", function(done) {
-				Sealious.Dispatcher.users.password_match(new Sealious.Context(), "user_exists", "pass_exists")
+				Sealious.UserManager.password_match(new Sealious.Context(), "user_exists", "pass_exists")
 				.then(function(result) {
 					done();
 				})
@@ -68,7 +69,7 @@ module.exports = {
 				})
 			});
 			it("didn't match given credentials", function(done) {
-				Sealious.Dispatcher.users.password_match(new Sealious.Context(), "blablagarbage", "blablagarbage")
+				Sealious.UserManager.password_match(new Sealious.Context(), "blablagarbage", "blablagarbage")
 				.then(function(result) {
 					done("It found the user");
 				})
@@ -82,7 +83,7 @@ module.exports = {
 				})
 			})
 			it("misses username and password", function(done) {
-				Sealious.Dispatcher.users.password_match(new Sealious.Context)
+				Sealious.UserManager.password_match(new Sealious.Context)
 				.then(function(result) {
 					done("It worked");
 				})
@@ -96,7 +97,7 @@ module.exports = {
 				})
 			})
 			it("misses username and password", function(done) {
-				Sealious.Dispatcher.users.password_match(new Sealious.Context, "username")
+				Sealious.UserManager.password_match(new Sealious.Context, "username")
 				.then(function(result) {
 					done("It worked");
 				})
