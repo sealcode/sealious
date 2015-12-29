@@ -380,6 +380,14 @@ module.exports = {
                             }
                         })
                 });
+                it("provides access_strategy with a resource instance when the access_strategy is item_sensitive", function(done){
+                    ResourceManager.create(context, "item_sensitive", {})
+                    .then(function(resource){
+                        return ResourceManager.delete(new Sealious.Context(), "item_sensitive", resource.id)
+                    }).then(function(){
+                        done();
+                    }).catch(done);
+                })
             });
 
             describe(".get_by_id", function() {
