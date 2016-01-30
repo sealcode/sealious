@@ -30,16 +30,18 @@
     "Set": "~0.4.1",
     "bluebird": "~2.9.9",
     "clone": "^1.0.2",
+    "color": "latest",
     "fs-extra": "^0.18.2",
     "immutable": "^3.7.2",
+    "jshint": "^2.9.1",
     "merge": "^1.2.0",
     "require-dir": "^0.3.0",
+    "resolve": "^1.1.7",
     "sanitize-html": "^1.6.1",
     "sealious-datastore-tingo": "^0.1.5",
     "sha1": "^1.1.0",
     "uid": "0.0.2",
-    "winston": "^1.0.0",
-    "color": "latest"
+    "winston": "^1.0.0"
   },
   "devDependencies": {
     "coveralls": "^2.11.4",
