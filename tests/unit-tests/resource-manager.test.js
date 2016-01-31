@@ -705,7 +705,7 @@ module.exports = {
                             }
                         })
                 })
-                /*
+                
                 it("should remove a value if it's not provided", function(done) {
                     ResourceManager.create(new Sealious.Context(), "multifield", {
                         value1: "1",
@@ -722,7 +722,7 @@ module.exports = {
                         }
                     })
                 });
-*/
+
                 it("should not result in calling 'is_proper_value' for fields with no value (issue #235)", function(done){
                     ResourceManager.create(new Sealious.Context(), "one_field_always_fails", {})
                     .then(function(created_resource){
