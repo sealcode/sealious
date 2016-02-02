@@ -68,8 +68,8 @@ wait
 
     cd ../sealious-www-server
     npm install
-    npm link sealious
     $sudo npm link
+    npm link sealious
     git remote set-url origin ssh://git@github.com/Sealious/sealious-www-server
 
     cd ../sealious-channel-rest
