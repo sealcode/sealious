@@ -62,6 +62,7 @@ wait
     cd sealious
     git checkout next
     npm install
+    npm link sealious
     $sudo npm link
     git remote set-url origin ssh://git@github.com/Sealious/sealious
 
