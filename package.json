@@ -29,7 +29,11 @@
     "Set": "~0.4.1",
     "bluebird": "~2.9.9",
     "clone": "^1.0.2",
+<<<<<<< HEAD
     "color": "latest",
+=======
+    "escape-html": "^1.0.3",
+>>>>>>> f04440e... Add object with original & safe fields in field type text
     "fs-extra": "^0.18.2",
     "immutable": "^3.7.2",
     "merge": "^1.2.0",
