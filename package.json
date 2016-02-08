@@ -30,6 +30,7 @@
     "Set": "~0.4.1",
     "bluebird": "~2.9.9",
     "clone": "^1.0.2",
+    "escape-html": "^1.0.3",
     "fs-extra": "^0.18.2",
     "html-to-text": "^1.6.0",
     "immutable": "^3.7.2",

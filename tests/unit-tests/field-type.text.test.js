@@ -31,7 +31,7 @@ module.exports = {
 				})
 			});
 			it("should check if is_proper_value works correctly", function(done) {
-				field_type_text.is_proper_value(new Sealious.Context(), {chars_in_line: 40}, "<script src='js/lib/malicious-code.js'></script><script>destroy();</script>")
+				field_type_text.is_proper_value(new Sealious.Context(), {}, "<script src='js/lib/malicious-code.js'></script><script>destroy();</script>")
 				.then(function() {
 					done();
 				})
