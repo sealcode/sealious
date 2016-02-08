@@ -30,7 +30,20 @@ module.exports = {
 					done(new Error(error));
 				})
 			});
+<<<<<<< HEAD
 			it("checks if is_proper_value works correctly", function(done) {
+=======
+			it("should check if is_proper_value works correctly", function(done) {
+				field_type_text.is_proper_value(new Sealious.Context(), {}, "<script src='js/lib/malicious-code.js'></script><script>destroy();</script>")
+				.then(function() {
+					done();
+				})
+				.catch(function(error) {
+					done(new Error(error));
+				})
+			});
+			it("should check if is_proper_value works correctly", function(done) {
+>>>>>>> f04440e... Add object with original & safe fields in field type text
 				field_type_text.is_proper_value(new Sealious.Context(), {max_length: 5}, "asdfghjkl")
 				.then(function() {
 					done(new Error("It worked correctly"));
