@@ -28,7 +28,7 @@
     "globalstrict"  : true,  // Allow global "use strict" (also enables 'strict').
 
     // ECMAScript 6
-    "esnext"        : false,
+    "esnext"        : true,
 
 
 
@@ -54,6 +54,10 @@
     "shadow"        : false,  // Allows re-define variables later in code e.g. `var x=1; x=2;`.
     "supernew"      : true,  // Tolerate `new function () { ... };` and `new Object;`.
     "undef"         : true,   // Require all non-global variables be declared before they are used.
+
+    "globals"       : {
+        "Promise"       : true
+    },
 
 
     // Personal styling preferences.
