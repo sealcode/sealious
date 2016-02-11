@@ -1,7 +1,7 @@
 var Sealious = require('sealious');
 
 module.exports = {
-	test_init: function() {
+	test_init: function(){
 		new Sealious.ChipTypes.AccessStrategy({
 			name: "test_access_strategy",
 			checker_function: function(context){
@@ -10,9 +10,9 @@ module.exports = {
 			item_sensitive: false,
 		});
 	},
-	test_start: function() {
-		describe("AccessStrategy", function() {
-			it("finds tests_access_strategy", function(done) {
+	test_start: function(){
+		describe("AccessStrategy", function(){
+			it("finds tests_access_strategy", function(done){
 				var result = Sealious.ChipManager.get_chip("access_strategy", "test_access_strategy")
 				if (result.name === "test_access_strategy")
 					done();
