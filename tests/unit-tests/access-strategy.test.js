@@ -12,17 +12,6 @@ module.exports = {
 	},
 	test_start: function() {
 		describe("AccessStrategy", function() {
-			it("throws an error because declaration.name isn't string", function(done) {
-				try {
-					new Sealious.ChipTypes.AccessStrategy({})
-				}
-				catch (e) {
-					if (e.type === "dev_error")
-						done();
-					else
-						done(new Error("It didn't throw a developer error"))
-				}
-			})
 			it("finds tests_access_strategy", function(done) {
 				var result = Sealious.ChipManager.get_chip("access_strategy", "test_access_strategy")
 				if (result.name === "test_access_strategy")
