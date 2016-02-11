@@ -1,9 +1,9 @@
 var Sealious = require("sealious");
 
 module.exports = {
-	test_start: function() {
-		describe("Sealious.Datastore", function() {
-			it("returns a developer error \"not implemented\"", function(done) {
+	test_start: function(){
+		describe("Sealious.Datastore", function(){
+			it("returns a developer error \"not implemented\"", function(done){
 				var func = Sealious.Datastore.return_not_implemented("not implemented");
 				try {
 					func();

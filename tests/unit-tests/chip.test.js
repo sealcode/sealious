@@ -2,10 +2,10 @@ var Chip = require('../../lib/chip-types/chip.js');
 var Sealious = require('sealious')
 
 module.exports = {
-	test_init: function() {
+	test_init: function(){
 	},
-	test_start: function() {
-		describe("Chip", function() {
+	test_start: function(){
+		describe("Chip", function(){
 			/*
 			it("configures chip", function(done) {
 				Chip(true, "test_type_chip", "test_name_chip");

@@ -12,9 +12,9 @@ module.exports = {
 						fields: [],
 						access_strategy: new Sealious.AccessStrategy({
 							checker_function: function(context){
-								if(context.get("user_id")==1){
+								if (context.get("user_id")==1){
 									return Promise.resolve();
-								}else{
+								} else {
 									return Promise.reject("You are not user1!!");
 								}
 							}
@@ -50,9 +50,9 @@ module.exports = {
 							name: 'value',
 							type: new Sealious.FieldType({
 								is_proper_value: function(accept, reject, value){
-									if(value!=="correct"){
+									if (value!=="correct"){
 										reject("The value isn't correct");
-									}else{
+									} else {
 										accept();
 									}
 								}
@@ -88,7 +88,7 @@ module.exports = {
 							name: "value",
 							type: new Sealious.FieldType({
 								encode: function(context, params, value_in_code){
-									return  value_in_code + "_encoded";
+									return value_in_code + "_encoded";
 								}
 							})
 						}]
@@ -98,9 +98,9 @@ module.exports = {
 
 					rt_with_fancy_field_subject.perform_action(new Sealious.Context(), "create", {value: "i_am"})
 					.then(function(resource_representation){
-						if(resource_representation.body.value === "i_am_encoded"){
+						if (resource_representation.body.value === "i_am_encoded"){
 							done();
-						}else{
+						} else {
 							done(new Error("But apparently it did not."));
 						}
 					});

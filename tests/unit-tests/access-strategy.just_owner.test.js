@@ -1,13 +1,13 @@
 var Sealious = require("sealious");
 
 module.exports = {
-	test_init: function() {
+	test_init: function(){
 
 	},
-	test_start: function() {
+	test_start: function(){
 		var just_owner = Sealious.ChipManager.get_chip("access_strategy", "just_owner")
-		describe("AccessStrategy.JustOwner", function() {
-			it("checks if the user is the owner and returns true", function(done) {
+		describe("AccessStrategy.JustOwner", function(){
+			it("checks if the user is the owner and returns true", function(done){
 				var context = new Sealious.Context(undefined, "ip", "user_id");
 				var item = {
 					created_context: {
@@ -15,10 +15,10 @@ module.exports = {
 					}
 				}
 				just_owner.checker_function(context, item)
-				.then(function() {
+				.then(function(){
 					done();
 				})
-				.catch(function(error) {
+				.catch(function(error){
 					done(new Error(error))
 				})
 			})
