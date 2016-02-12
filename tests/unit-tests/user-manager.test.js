@@ -49,7 +49,7 @@ module.exports = {
 						}
 					} else {
 						done(new Error("It didn't return an array with users"));
-					}	
+					}
 				})
 				.catch(function(error){
 					done(new Error(error));

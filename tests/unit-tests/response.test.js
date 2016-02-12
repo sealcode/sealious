@@ -15,7 +15,7 @@ module.exports = {
 							done();
 				else
 					done("Wrong status_message")
-				else 
+				else
 					done("Wrong type")
 				else
 					done("Wrong data")

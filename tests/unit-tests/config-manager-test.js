@@ -37,7 +37,7 @@ module.exports = {
 				var config = Sealious.ConfigManager.get_configuration("this.key");
 				if (config instanceof Object)
 					done();
-				else 
+				else
 					done(new Error("It didn't return an object"))
 			})
 			it("gets dispatcher config", function(done){
@@ -54,7 +54,7 @@ module.exports = {
 				var dispatcher_config = Sealious.ConfigManager.get_chip_config("some_non_existent_longid");
 				if (dispatcher_config === undefined)
 					done();
-				else 
+				else
 					done(new Error("It didn't return undefined"))
 			})
 		})

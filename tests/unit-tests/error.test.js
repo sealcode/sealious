@@ -13,7 +13,7 @@ module.exports = {
 				catch (e) {
 					if (e.type === "test_error")
 						done();
-					else 
+					else
 						done(new Error("It didn't throw a Sealious Error"))
 				}
 			})
@@ -24,7 +24,7 @@ module.exports = {
 				catch (e) {
 					if (e.type === "validation")
 						done();
-					else 
+					else
 						done(new Error("It didn't throw a Sealious ValidationError"))
 				}
 			})
@@ -35,7 +35,7 @@ module.exports = {
 				catch (e) {
 					if (e.type === "valueExists")
 						done();
-					else 
+					else
 						done(new Error("It didn't throw a Sealious ValueExists Error"))
 				}
 			})
@@ -46,7 +46,7 @@ module.exports = {
 				catch (e) {
 					if (e.type === "authorization")
 						done();
-					else 
+					else
 						done(new Error("It didn't throw a Sealious InvalidCredentials Error"))
 				}
 			})
@@ -57,7 +57,7 @@ module.exports = {
 				catch (e) {
 					if (e.type === "not_found")
 						done();
-					else 
+					else
 						done(new Error("It didn't throw a Sealious NotFound Error"))
 				}
 			})
@@ -68,7 +68,7 @@ module.exports = {
 				catch (e) {
 					if (e.type === "internal_connection_error")
 						done();
-					else 
+					else
 						done(new Error("It didn't throw a Sealious InternalConnectionError Error"))
 				}
 			})
@@ -79,7 +79,7 @@ module.exports = {
 				catch (e) {
 					if (e.type === "dependency_error")
 						done();
-					else 
+					else
 						done(new Error("It didn't throw a Sealious DependencyError Error"))
 				}
 			})
@@ -90,7 +90,7 @@ module.exports = {
 				catch (e) {
 					if (e.type === "unauthorized_request")
 						done();
-					else 
+					else
 						done(new Error("It didn't throw a Sealious UnauthorizedRequest Error"))
 				}
 			})
@@ -101,7 +101,7 @@ module.exports = {
 				catch (e) {
 					if (e.type === "dev_error")
 						done();
-					else 
+					else
 						done(new Error("It didn't throw a Sealious DeveloperError"))
 				}
 			})
@@ -112,7 +112,7 @@ module.exports = {
 				catch (e) {
 					if (e.type === "permission")
 						done();
-					else 
+					else
 						done(new Error("It didn't throw a Sealious BadContext Error"))
 				}
 			})
