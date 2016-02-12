@@ -10,10 +10,10 @@ module.exports = {
 		describe("ChipManager", function(){
 			it("gets all resource types", function(done){
 				var names = Sealious.ChipManager.get_all_resource_types();
-				if (names instanceof Array) 
+				if (names instanceof Array)
 					if (names.indexOf("chip_manager_tests_resource") > -1)
 						done();
-				else 
+				else
 					done(new Error("It doesn't contains the created resource"))
 				else
 					done(new Error("It didn't return the array"))
@@ -25,13 +25,13 @@ module.exports = {
 						if (chip.name === "chip_manager_tests_resource")
 							if (chip.longid === "resource_type.chip_manager_tests_resource")
 								done();
-				else 
+				else
 					done(new Error("It didn't return the correct longid"));
-				else 
+				else
 					done(new Error("It didn't return the correct chip name"));
-				else 
+				else
 					done(new Error("It didn't return the correct chip type"));
-				else 
+				else
 					done(new Error("It didn't return an object"))
 			});
 			it("throws an error when get_chip_by_longid has non existent longid", function(done){

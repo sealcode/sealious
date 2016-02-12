@@ -4,7 +4,7 @@ module.exports = {
 	test_init: function(){},
 
 	test_start: function(){
-		var field_type_boolean = Sealious.ChipManager.get_chip("field_type", "boolean");		
+		var field_type_boolean = Sealious.ChipManager.get_chip("field_type", "boolean");
 		describe("FieldType.Boolean", function(){
 			it("should return the description of the field type", function(done){
 				if (typeof field_type_boolean.declaration.get_description() === "string")

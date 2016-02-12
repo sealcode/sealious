@@ -4,9 +4,9 @@ module.exports = {
 	test_init: function(){},
 
 	test_start: function(){
-		var field_type_text = Sealious.ChipManager.get_chip("field_type", "text");		
+		var field_type_text = Sealious.ChipManager.get_chip("field_type", "text");
 		describe("FieldType.Text", function(){
-			it("returns the description of the field type", function(done){	 
+			it("returns the description of the field type", function(done){
 				if (typeof field_type_text.declaration.get_description(new Sealious.Context(), {max_length: 10}) === "string")
 					done();
 				else
@@ -47,7 +47,7 @@ module.exports = {
 				.then(function(result){
 					if (result === "outside")
 						done();
-					else 
+					else
 						done("It didn't sanitize the string")
 				})
 				.catch(function(error){

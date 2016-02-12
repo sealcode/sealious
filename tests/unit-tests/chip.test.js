@@ -16,7 +16,7 @@ module.exports = {
 					done();
 				else
 					done(new Error("It didn't return the configuration"))
-				
+
 				//test_chip.configure({field: "test_value"});
 
 			})

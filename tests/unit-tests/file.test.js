@@ -21,7 +21,7 @@ module.exports = {
 				.then(function(result){
 					if (result === undefined)
 						done();
-					else 
+					else
 						done(new Error("Result isn't undefined"))
 				})
 				.catch(function(error){

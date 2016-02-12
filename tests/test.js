@@ -22,7 +22,7 @@ fs.readdirSync(testDir).filter(function(file){
 });
 
 try {
-	fs.unlinkSync(path.resolve(module.filename, "../../db/resources")); 
+	fs.unlinkSync(path.resolve(module.filename, "../../db/resources"));
 } catch (e){
 	console.log("Did not found `db/resources` file")
 }
@@ -39,7 +39,7 @@ Sealious.start().then(function(){
 	for (var i in tests){
 		tests[i].test_start && tests[i].test_start();
 	}
-	run();  
+	run();
 })
 
 // Run the tests.

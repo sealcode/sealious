@@ -29,7 +29,7 @@ module.exports = {
 				.catch(function(error){
 					if (error.type === "validation")
 						done();
-					else 
+					else
 						done(new Error(error));
 				})
 			});

@@ -4,7 +4,7 @@ module.exports = {
 	test_init: function(){},
 
 	test_start: function(){
-		var field_type_float = Sealious.ChipManager.get_chip("field_type", "float");		
+		var field_type_float = Sealious.ChipManager.get_chip("field_type", "float");
 		describe("FieldType.Float", function(){
 			it("should return the description of the field type", function(done){
 				if (typeof field_type_float.declaration.get_description() === "string")
@@ -29,7 +29,7 @@ module.exports = {
 				.catch(function(error){
 					if (error.type === "validation")
 						done();
-					else 
+					else
 						done(new Error(error));
 				})
 			});
