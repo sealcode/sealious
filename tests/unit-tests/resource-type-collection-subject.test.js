@@ -385,6 +385,44 @@ module.exports = {
 					})
 
 				})
+
+				it("should filter the results according to the 'filter' parameter", function(done){
+					var rt = new Sealious.ResourceType({
+						name: UUIDGenerator(10),
+						fields: [{name: "value", type: "text"}]
+					})
+
+					var accessible_amount = Math.ceil(Math.random()*5);
+					var total_amount = accessible_amount + Math.ceil(Math.random()*5);
+
+					var promises = [];
+					var p;
+
+					var subject = new ResourceTypeCollectionSubject(rt);
+
+					for (var i=1; i<=accessible_amount; i++){
+						p = subject.perform_action(new Sealious.Context(), "create", {value: "1"});
+						promises.push(p);
+					}
+
+					for (var i=accessible_amount+1; i<=total_amount; i++){
+						p = subject.perform_action(new Sealious.Context(), "create", {value: "2"});
+						promises.push(p);
+					}
+
+					Promise.all(promises)
+					.then(function(){
+						return subject.perform_action(new Sealious.Context(), "show", {filter: {value: "1"}})
+					}).then(function(filtered_resources){
+						if (filtered_resources.length===accessible_amount){
+							done();
+						} else {
+							done(new Error("But it seems it did not."));
+						}
+					})
+
+
+				})
 			})
 
 			describe(".perform_action", function(){
