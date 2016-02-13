@@ -7,7 +7,7 @@
   "scripts": {
     "prepublish": "require-self",
     "test": "node ./tests/test.js",
-    "test-coverage": "istanbul cover ./tests/test.js",
+    "test-coverage": "istanbul cover ./tests/test.js && xdg-open ./coverage/lcov-report/index.html",
     "coveralls": "npm run test-coverage && cat coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js",
     "check-formatting": "jscs -c .jscsrc ./lib ./tests && echo \"\\n ✓ Code formatting O.K.!\\n\" || (echo \"\\nSome formatting errors found. Run 'npm run fix-formatting' to correct them.\\n\" && exit )",
     "fix-formatting": "jscs -c .jscsrc ./lib ./tests --fix",
