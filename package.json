@@ -28,6 +28,7 @@
   },
   "dependencies": {
     "Set": "~0.4.1",
+    "blns": "^2.0.2",
     "bluebird": "~2.9.9",
     "clone": "^1.0.2",
     "fs-extra": "^0.18.2",
