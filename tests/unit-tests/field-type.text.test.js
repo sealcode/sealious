@@ -30,9 +30,6 @@ module.exports = {
 					done(new Error(error));
 				})
 			});
-<<<<<<< HEAD
-			it("checks if is_proper_value works correctly", function(done) {
-=======
 			it("should check if is_proper_value works correctly", function(done) {
 				field_type_text.is_proper_value(new Sealious.Context(), {}, "<script src='js/lib/malicious-code.js'></script><script>destroy();</script>")
 				.then(function() {
@@ -43,7 +40,6 @@ module.exports = {
 				})
 			});
 			it("should check if is_proper_value works correctly", function(done) {
->>>>>>> f04440e... Add object with original & safe fields in field type text
 				field_type_text.is_proper_value(new Sealious.Context(), {max_length: 5}, "asdfghjkl")
 				.then(function() {
 					done(new Error("It worked correctly"));
@@ -56,9 +52,9 @@ module.exports = {
 				})
 			});
 			it("checks if encode works properly (sanitizes html)", function(done) {
-				field_type_text.declaration.encode(new Sealious.Context(), {strip_html: true}, "outside<script>alert(\"a\")</script>")
+				field_type_text.encode(new Sealious.Context(), {}, "outside<script>alert(\"a\")</script>")
 				.then(function(result) {
-					if (result === "outside")
+					if (result.safe === "outside&lt;script&gt;alert(&quot;a&quot;)&lt;/script&gt;")
 						done();
 					else 
 						done("It didn't sanitize the string")
