@@ -9,10 +9,9 @@
     "test": "node ./tests/test.js",
     "test-coverage": "istanbul cover ./tests/test.js",
     "coveralls": "npm run test-coverage && cat coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js",
-    "check-formatting": "jscs -c .jscsrc ./lib && echo \"\\n ✓ Code formatting O.K.!\\n\" || (echo \"\\nSome formatting errors found. Run 'npm run fix-formatting' to correct them.\\n\" && exit )",
+    "check-formatting": "jscs -c .jscsrc ./lib && echo \"\\n ✓ Code formatting O.K.!\\n\" || (echo \"\\nSome formatting errors found. Run 'npm run fix-formatting' to correct them.\\n\" && exit 1 )",
     "fix-formatting": "jscs -c .jscsrc ./lib --fix",
-    "check-hint": "jshint ./lib/chip-types/ ./lib/config/ ./lib/core-services/ ./lib/data-structures/ ./lib/logger/ ./lib/plugins/ ./lib/response/ ./lib/*.js",
-    "hint": "jshint ./lib/chip-types/ ./lib/config/ ./lib/core-services/ ./lib/data-structures/ ./lib/logger/ ./lib/plugins/ ./lib/response/ ./lib/*.js  && echo \"\\n ✓ Code guidelines O.K.!\\n\" || (echo \"\\nSome JSHint errors found. Fix errors and run 'npm run check-hint' to correct them.\\n\" && exit )"
+    "jshint": "jshint ./lib/*/*.js ./lib/*.js  && echo \"\\n ✓ Code guidelines O.K.!\\n\" || (echo \"\\nSome JSHint errors found. Fix errors and run 'npm run check-hint' to correct them.\\n\" && exit 1)"
   },
   "repository": {
     "type": "git",
@@ -57,7 +56,7 @@
     "colors": true,
     "run": [
       "check-formatting",
-      "hint"
+      "jshint"
     ],
     "silent": false
   }
