@@ -4,6 +4,7 @@
 		"beforeOpeningRoundBrace": true,
 		"beforeOpeningCurlyBrace": true
 	},
+	"disallowNewlineBeforeBlockStatements" : true,
 	"requireSpacesInNamedFunctionExpression": {
 		"beforeOpeningRoundBrace": true,
 		"beforeOpeningCurlyBrace": true
