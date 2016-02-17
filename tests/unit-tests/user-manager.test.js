@@ -8,7 +8,7 @@ module.exports = {
 			it("creates a new user", function(done) {
 				Sealious.UserManager.create_user(new Sealious.Context(), "user", "pass")
 				.then(function(result) {
-					if (result.body.username === "user" && result.body.password === "pass") {
+					if (result.body.username == "user" && result.body.password == "pass") {
 						done();
 					}
 					else {
