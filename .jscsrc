@@ -1,10 +1,13 @@
 {
 	"disallowTrailingWhitespace": true,
 	"validateIndentation": "\t",
+	"requireSpaceAfterBinaryOperators": true,
+	"requireSpaceBeforeBinaryOperators": true,
 	"disallowSpacesInAnonymousFunctionExpression": {
 		"beforeOpeningRoundBrace": true,
 		"beforeOpeningCurlyBrace": true
 	},
+	"disallowNewlineBeforeBlockStatements" : true,
 	"requireSpacesInNamedFunctionExpression": {
 		"beforeOpeningRoundBrace": true,
 		"beforeOpeningCurlyBrace": true

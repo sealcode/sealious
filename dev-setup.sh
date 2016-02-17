@@ -32,15 +32,14 @@ nvm_ls_current() {
   elif nvm_tree_contains_path "$NVM_DIR" "$NVM_LS_CURRENT_NODE_PATH"; then
     local VERSION
     VERSION="$(node --version 2>/dev/null)"
-    if [ "$VERSION" = "v0.6.21-pre" ]; then
-      echo "v0.6.21"
-    else
-      echo "$VERSION"
-    fi
+    echo "$VERSION"
   else
     echo 'system'
   fi
 }
+
+# First argument is supposed to be selected branch name
+branch=${1:-'stable'}
 
 case "`nvm_ls_current`" in
 "system")
@@ -60,20 +59,21 @@ wait
 
 (
     cd sealious
-    git checkout next
+    git checkout $branch
     npm install
-    npm link sealious
     $sudo npm link
-    npm link sealious;
+    npm link sealious
     git remote set-url origin ssh://git@github.com/Sealious/sealious
 
     cd ../sealious-www-server
+    git checkout $branch
     npm install
     $sudo npm link
     npm link sealious
     git remote set-url origin ssh://git@github.com/Sealious/sealious-www-server
 
     cd ../sealious-channel-rest
+    git checkout $branch
     npm install
     npm link sealious
     npm link sealious-www-server
