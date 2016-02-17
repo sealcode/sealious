@@ -16,7 +16,7 @@ module.exports = {
 						fields: [],
 						access_strategy: new Sealious.AccessStrategy({
 							checker_function: function(context){
-								if (context.get("user_id")==1){
+								if (context.get("user_id") == 1){
 									return Promise.resolve();
 								} else {
 									return Promise.reject("You are not user1!!");
@@ -54,7 +54,7 @@ module.exports = {
 							name: 'value',
 							type: new Sealious.FieldType({
 								is_proper_value: function(accept, reject, value){
-									if (value!=="correct"){
+									if (value !== "correct"){
 										reject("The value isn't correct");
 									} else {
 										accept();
@@ -99,7 +99,7 @@ module.exports = {
 
 					simple_rt_subject.perform_action(new Sealious.Context(), "create", {value1: text, value2: int})
 					.then(function(created_resource){
-						if (created_resource.body.value1==text && created_resource.body.value2==int){
+						if (created_resource.body.value1 == text && created_resource.body.value2 == int){
 							done();
 						} else {
 							done(new Error("The saved values don't match"));
@@ -139,9 +139,9 @@ module.exports = {
 					var simple_rt_subject = new ResourceTypeCollectionSubject(new Sealious.ResourceType({name: resource_type_name}))
 					.perform_action(context, "create", {})
 					.then(function(created_resource){
-						if (created_resource.id===undefined || created_resource.id===null){
+						if (created_resource.id === undefined || created_resource.id === null){
 							done(new Error("It didn't create the 'sealious_id' attribute"));
-						} else if (created_resource.type_name!==resource_type_name){
+						} else if (created_resource.type_name !== resource_type_name){
 							done(new Error("It didn't properly set the 'type' attribute in db document"));
 						} else if (created_resource.created_context.timestamp !== context.get("timestamp")){
 							done(new Error("It didn't properly set the 'created_context' attribute"));
@@ -230,7 +230,7 @@ module.exports = {
 						fields: [{name: "value", type: "text"}],
 						access_strategy: new Sealious.AccessStrategy({
 							checker_function: function(context){
-								if (context.get("user_id")==1){
+								if (context.get("user_id") == 1){
 									return Promise.reject("User 1 cannot access this resource");
 								}
 							}
@@ -245,7 +245,7 @@ module.exports = {
 					.then(function(){
 						done(new Error("But it did not throw any error at all"));
 					}).catch(function(err){
-						if (err.type==="permission"){
+						if (err.type === "permission"){
 							done();
 						} else {
 							done(new Error("But it threw an error of bad type"));
@@ -283,12 +283,12 @@ module.exports = {
 					var promises = [];
 					var p;
 
-					for (var i=1; i<=accessible_amount; i++){
+					for (var i = 1; i <= accessible_amount; i++){
 						p = subject.perform_action(new Sealious.Context(), "create", {who_can_access: "1"});
 						promises.push(p);
 					}
 
-					for (var i=accessible_amount+1; i<=total_amount; i++){
+					for (var i = accessible_amount + 1; i <= total_amount; i++){
 						p = subject.perform_action(new Sealious.Context(), "create", {who_can_access: i});
 						promises.push(p);
 					}
@@ -331,12 +331,12 @@ module.exports = {
 					var promises = [];
 					var p;
 
-					for (var i=1; i<=accessible_amount; i++){
+					for (var i = 1; i <= accessible_amount; i++){
 						p = subject1.perform_action(new Sealious.Context(), "create", {value: i});
 						promises.push(p);
 					}
 
-					for (var i=accessible_amount+1; i<=total_amount; i++){
+					for (var i = accessible_amount + 1; i <= total_amount; i++){
 						p = subject2.perform_action(new Sealious.Context(), "create", {value: i});
 						promises.push(p);
 					}
@@ -392,20 +392,20 @@ module.exports = {
 						fields: [{name: "value", type: "text"}]
 					})
 
-					var accessible_amount = Math.ceil(Math.random()*5);
-					var total_amount = accessible_amount + Math.ceil(Math.random()*5);
+					var accessible_amount = Math.ceil(Math.random() * 5);
+					var total_amount = accessible_amount + Math.ceil(Math.random() * 5);
 
 					var promises = [];
 					var p;
 
 					var subject = new ResourceTypeCollectionSubject(rt);
 
-					for (var i=1; i<=accessible_amount; i++){
+					for (var i = 1; i <= accessible_amount; i++){
 						p = subject.perform_action(new Sealious.Context(), "create", {value: "1"});
 						promises.push(p);
 					}
 
-					for (var i=accessible_amount+1; i<=total_amount; i++){
+					for (var i = accessible_amount + 1; i <= total_amount; i++){
 						p = subject.perform_action(new Sealious.Context(), "create", {value: "2"});
 						promises.push(p);
 					}
@@ -414,7 +414,7 @@ module.exports = {
 					.then(function(){
 						return subject.perform_action(new Sealious.Context(), "show", {filter: {value: "1"}})
 					}).then(function(filtered_resources){
-						if (filtered_resources.length===accessible_amount){
+						if (filtered_resources.length === accessible_amount){
 							done();
 						} else {
 							done(new Error("But it seems it did not."));
