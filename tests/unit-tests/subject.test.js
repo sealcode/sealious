@@ -13,14 +13,14 @@ module.exports = {
 
 					var my_dad = new Subject();
 					my_dad.get_child_subject = function(key){
-						if (key=="son"){
+						if (key == "son"){
 							return me;
 						}
 					}
 
 					var my_granddad = new Subject();
 					my_granddad.get_child_subject = function(key){
-						if (key=="son"){
+						if (key == "son"){
 							return my_dad;
 						}
 					}
