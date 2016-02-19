@@ -28,7 +28,7 @@ module.exports = {
 					})
 			})
 
-			var methods = ["is_proper_value", "encode"];
+			var methods = ["is_proper_value", "decode"];
 			methods.forEach(function(method_name) {
 				it("shouldn't crash when trying to " + method_name + " a naugthy string", function(done) {
 					var promises = naugthyStrings.map(function(string) {
@@ -51,10 +51,10 @@ module.exports = {
 			}
 
 			for (prop in values) {
-				it("should check if encode works properly given '"+prop+"'", function(done) {
-					field_type_html.encode(new Sealious.Context(), {}, prop)
-						.then(function(encoded_value) {
-							if (encoded_value === values[prop]) {
+				it("should check if decode works properly given '"+prop+"'", function(done) {
+					field_type_html.decode(new Sealious.Context(), {}, prop)
+						.then(function(decoded_value) {
+							if (decoded_value === values[prop]) {
 								done();
 							} else {
 								done(new Error("It didn't parse the value correctly"));
@@ -68,14 +68,14 @@ module.exports = {
 
 
 			it("should remove attributes that were not explicitly allowed (in params)", function(done) {
-				field_type_html.encode(new Sealious.Context(), {
-						tags: ['a', 'p', 'h2', 'h3'],
-						attributes: {
+				field_type_html.decode(new Sealious.Context(), {
+						allowed_tags: ['a', 'p', 'h2', 'h3'],
+						allowed_attributes: {
 							a: ['id']
 						}
 					}, "<a link='sth' id='fuzzelement1'>test</a>")
-					.then(function(encoded_value) {
-						if (encoded_value === "<a id=\"fuzzelement1\">test</a>") {
+					.then(function(decoded_value) {
+						if (decoded_value === "<a id=\"fuzzelement1\">test</a>") {
 							done();
 						} else {
 							done(new Error("It didn't parse the value correctly"));
@@ -87,11 +87,11 @@ module.exports = {
 			});
 
 			it("should strip tags that were not explicitly allowed (in params)", function(done) {
-				field_type_html.encode(new Sealious.Context(), {
-						tags: ['a', 'p', 'h2', 'h3']
+				field_type_html.decode(new Sealious.Context(), {
+						allowed_tags: ['a', 'p', 'h2', 'h3']
 					}, "<a>test</a><h4>not found</h4><h2>here is</h2>")
-					.then(function(encoded_value) {
-						if (encoded_value === "<a>test</a>not found<h2>here is</h2>") {
+					.then(function(decoded_value) {
+						if (decoded_value === "<a>test</a>not found<h2>here is</h2>") {
 							done();
 						} else {
 							done(new Error("It didn't parse the value correctly"));
