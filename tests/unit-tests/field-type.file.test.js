@@ -1,5 +1,8 @@
 var Sealious = require("sealious");
 
+var assert_no_error = require("../util/assert-no-error.js");
+var assert_error_type = require("../util/assert-error-type.js");
+
 module.exports = {
 	test_init: function(){
 
@@ -14,29 +17,20 @@ module.exports = {
 					done(new Error("It didn't return undefined"));
 			})
 			it("accepts given value (which is an instance of Sealious.File)", function(done){
-				field_type_file.is_proper_value(new Sealious.Context(), {}, new Sealious.File())
-				.then(function(){
-					done();
-				})
+				var result = field_type_file.is_proper_value(new Sealious.Context(), {}, new Sealious.File());
+				assert_no_error(result, done);
 			})
 			it("accepts given value (which is an object with filename and data attributes)", function(done){
 				var value = {
 					filename: "test_filename",
 					data: new Buffer(1)
 				}
-				field_type_file.is_proper_value(new Sealious.Context(), {}, value)
-				.then(function(){
-					done();
-				})
+				var result = field_type_file.is_proper_value(new Sealious.Context(), {}, value);
+				assert_no_error(result, done);
 			})
 			it("rejects given value (which is an empty object)", function(done){
-				field_type_file.is_proper_value(new Sealious.Context(), {}, {})
-				.then(function(){
-					done(new Error("It didn't reject the value"));
-				})
-				.catch(function(error){
-					done();
-				})
+				var result = field_type_file.is_proper_value(new Sealious.Context(), {}, {});
+				assert_error_type(result, "validation", done);
 			})
 			it("rejects given value (which is an array)", function(done){
 				field_type_file.is_proper_value(new Sealious.Context(), {}, [])

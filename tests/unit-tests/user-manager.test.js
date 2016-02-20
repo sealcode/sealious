@@ -1,5 +1,8 @@
 var Sealious = require('sealious');
 
+var assert_no_error = require("../util/assert-no-error.js");
+var assert_error_type = require("../util/assert-error-type.js");
+
 module.exports = {
 	test_init: function(){
 	},
@@ -18,21 +21,12 @@ module.exports = {
 					done(new Error(error))
 				})
 			})
-			it("tries to create a user that already exists", function(done){
+			it("should not create a user that already exists", function(done){
 				var context = new Sealious.Context()
 				Sealious.UserManager.create_user(context, "user_exists", "pass_exists")
 				.then(function(result){
-					Sealious.UserManager.create_user(context, "user_exists", "pass_exists")
-					.then(function(result){
-						done(new Error("It created a user"));
-					})
-					.catch(function(error){
-						if (error.type === "valueExists"){
-							done();
-						} else {
-							done(new Error(error));
-						}
-					})
+					var result = Sealious.UserManager.create_user(context, "user_exists", "pass_exists");
+					assert_error_type(result, "valueExists", done);
 				})
 				.catch(function(error){
 					done(new Error(error))
@@ -56,13 +50,8 @@ module.exports = {
 				})
 			})
 			it("matched given credentials", function(done){
-				Sealious.UserManager.password_match(new Sealious.Context(), "user_exists", "pass_exists")
-				.then(function(result){
-					done();
-				})
-				.catch(function(error){
-					done(new Error(error));
-				})
+				var result = Sealious.UserManager.password_match(new Sealious.Context(), "user_exists", "pass_exists");
+				assert_no_error(result, done);
 			});
 			it("didn't match given credentials", function(done){
 				Sealious.UserManager.password_match(new Sealious.Context(), "blablagarbage", "blablagarbage")

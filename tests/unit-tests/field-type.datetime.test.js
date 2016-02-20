@@ -1,4 +1,5 @@
 var Sealious = require("sealious");
+var assert_no_error = require("../util/assert-no-error.js");
 
 module.exports = {
 	test_init: function(){},
@@ -13,13 +14,8 @@ module.exports = {
 					done(new Error("But it didn't"));
 			});
 			it("should check if is_proper_value works correctly(given timestamp)", function(done){
-				field_type_datetime.is_proper_value(new Sealious.Context(), {}, 1)
-				.then(function(){
-					done();
-				})
-				.catch(function(error){
-					done(new Error(error));
-				})
+				var result = field_type_datetime.is_proper_value(new Sealious.Context(), {}, 1);
+				assert_no_error(result, done);
 			});
 			it("should check if is_proper_value works correctly(given string)", function(done){
 				field_type_datetime.is_proper_value(new Sealious.Context(), {}, "test")

@@ -1,4 +1,6 @@
 var Sealious = require("sealious");
+var assert_no_error = require("../util/assert-no-error.js");
+var assert_error_type = require("../util/assert-error-type.js");
 
 module.exports = {
 	test_init: function(){},
@@ -13,69 +15,46 @@ module.exports = {
 					done(new Error("But it didn't"));
 			});
 			it("should check if is_proper_value works correctly (given boolean)", function(done){
-				field_type_boolean.is_proper_value(new Sealious.Context(), {}, true)
-				.then(function(){
-					done();
-				})
-				.catch(function(error){
-					done(new Error(error));
-				})
+				var result = field_type_boolean.is_proper_value(new Sealious.Context(), {}, true);
+				assert_no_error(result, done);
 			});
 			it("should check if is_proper_value works correctly (given 1)", function(done){
-				field_type_boolean.is_proper_value(new Sealious.Context(), {}, 1)
-				.then(function(){
-					done();
-				})
-				.catch(function(error){
-					done(new Error(error));
-				})
+				var result = field_type_boolean.is_proper_value(new Sealious.Context(), {}, 1);
+				assert_no_error(result, done);
 			});
 			it("should check if is_proper_value works correctly (given \"true\")", function(done){
-				field_type_boolean.is_proper_value(new Sealious.Context(), {}, "true")
-				.then(function(){
-					done();
-				})
-				.catch(function(error){
-					done(new Error(error));
-				})
+				var result = field_type_boolean.is_proper_value(new Sealious.Context(), {}, "true");
+				assert_no_error(result, done);
 			});
 			it("should check if is_proper_value works correctly (given 2)", function(done){
-				field_type_boolean.is_proper_value(new Sealious.Context(), {}, 2)
-				.then(function(){
-					done(new Error("It didn't throw an error"));
-				})
-				.catch(function(error){
-					if (error.type === "validation")
-						done();
-					else
-						done(new Error(error));
-				})
+				var result = field_type_boolean.is_proper_value(new Sealious.Context(), {}, 2);
+				assert_error_type(result, "validation", done);
 			});
-			it("should encode the value corretly (given boolean)", function(done){
+			it("should encode the value correctly (given boolean)", function(done){
 				if (field_type_boolean.declaration.encode(new Sealious.Context(), {}, true) === true)
 					done();
 				else
 					done(new Error("It didn't parse the value correctly"))
 			});
-			it("should encode the value corretly (given 1)", function(done){
+			it("should encode the value correctly (given 1)", function(done){
 				if (field_type_boolean.declaration.encode(new Sealious.Context(), {}, 1) === true)
 					done();
 				else
 					done(new Error("It didn't parse the value correctly"))
 			});
-			it("should encode the value corretly (given 0)", function(done){
+			it("should encode the value correctly (given 0)", function(done){
 				if (field_type_boolean.declaration.encode(new Sealious.Context(), {}, 0) === false)
 					done();
 				else
 					done(new Error("It didn't parse the value correctly"))
 			});
-			it("should encode the value corretly (given \"false\")", function(done){
+			it("should encode the value correctly (given \"false\")", function(done){
 				if (field_type_boolean.declaration.encode(new Sealious.Context(), {}, "false") === false)
 					done();
 				else
 					done(new Error("It didn't parse the value correctly"))
 			});
-			it("should encode the value corretly (given \"true\")", function(done){
+			it("should encode the value correctly (given \"true\")", function(done){
 				if (field_type_boolean.declaration.encode(new Sealious.Context(), {}, "true") === true)
 					done();
 				else
