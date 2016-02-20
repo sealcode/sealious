@@ -2,6 +2,9 @@ var Sealious = require("sealious");
 var UUIDGenerator = require("uid");
 var equal = require("deep-equal");
 
+var assert_no_error = require("../util/assert-no-error.js");
+var assert_error_type = require("../util/assert-error-type.js");
+
 var ResourceTypeCollectionSubject = require("../../lib/subject/subject-types/resource-type-collection-subject.js");
 var SingleResource = require("../../lib/subject/subject-types/single-resource-subject.js");
 
@@ -27,23 +30,15 @@ module.exports = {
 
 					var rt_user1_only_subject = new ResourceTypeCollectionSubject(rt_user1_only);
 					it("should not allow creating a resource when the access strategy forbids it", function(done){
-						rt_user1_only_subject.perform_action(new Sealious.Context(0, null, 2), "create", {})
-						.then(function(){
-							done(new Error("But it didn't throw an error"));
-						}).catch(function(){
-							done();
-						})
+						var result = rt_user1_only_subject.perform_action(new Sealious.Context(0, null, 2), "create", {});
+						assert_error_type(result, "permission", done);
 					})
 
 					it("should allow creating a resource when the access strategy does not forbid it", function(done){
 						var rt_user1_only_subject = new ResourceTypeCollectionSubject(rt_user1_only);
 
-						rt_user1_only_subject.perform_action(new Sealious.Context(0, null, 1), "create", {})
-						.then(function(){
-							done();
-						}).catch(function(err){
-							done(new Error(err));
-						})
+						var result = rt_user1_only_subject.perform_action(new Sealious.Context(0, null, 1), "create", {});
+						assert_no_error(result, done);
 					})
 
 				})
@@ -53,11 +48,11 @@ module.exports = {
 						fields: [{
 							name: 'value',
 							type: new Sealious.FieldType({
-								is_proper_value: function(accept, reject, value){
-									if (value !== "correct"){
-										reject("The value isn't correct");
-									} else {
+								is_proper_value: function(accept, reject, context, value){
+									if (value === "correct"){
 										accept();
+									} else {
+										reject("The value isn't correct");
 									}
 								}
 							})
@@ -67,21 +62,13 @@ module.exports = {
 					var rt_with_picky_field_subject = new ResourceTypeCollectionSubject(rt_with_picky_field);
 
 					it("should throw an error if they aren't", function(done){
-						rt_with_picky_field_subject.perform_action(new Sealious.Context(), "create", {value: "incorrect"})
-						.then(function(){
-							done(new Error("It didn't throw an error"));
-						}).catch(function(err){
-							done();
-						})
+						var result = rt_with_picky_field_subject.perform_action(new Sealious.Context(), "create", {value: "incorrect"});
+						assert_error_type(result, "validation", done);
 					})
 
 					it("should not throw an error if they are", function(done){
-						rt_with_picky_field_subject.perform_action(new Sealious.Context(), "create", {value: "correct"})
-						.then(function(){
-							done(new Error("It didn't throw an error"));
-						}).catch(function(err){
-							done();
-						})
+						var result = rt_with_picky_field_subject.perform_action(new Sealious.Context(), "create", {value: "correct"});
+						assert_no_error(result, done)
 					})
 
 				})
@@ -241,16 +228,8 @@ module.exports = {
 
 					var context = new Sealious.Context(0, null, 1);
 
-					subject.perform_action(context, "show")
-					.then(function(){
-						done(new Error("But it did not throw any error at all"));
-					}).catch(function(err){
-						if (err.type === "permission"){
-							done();
-						} else {
-							done(new Error("But it threw an error of bad type"));
-						}
-					})
+					var result = subject.perform_action(context, "show");
+					assert_error_type(result, "permission", done);
 				})
 
 				it("should only show resources that are allowed by the resource-type's deep access strategy", function(done){

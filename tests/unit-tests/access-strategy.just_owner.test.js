@@ -1,4 +1,5 @@
 var Sealious = require("sealious");
+var assert_no_error = require("../util/assert-no-error.js");
 
 module.exports = {
 	test_init: function(){
@@ -14,13 +15,8 @@ module.exports = {
 						user_id: "user_id"
 					}
 				}
-				just_owner.checker_function(context, item)
-				.then(function(){
-					done();
-				})
-				.catch(function(error){
-					done(new Error(error))
-				})
+				var result = just_owner.checker_function(context, item);
+				assert_no_error(result, done);
 			})
 			/*
 			it("checks if the user is the owner and returns false (the test doesn't pass because it doesn't reject with an error but with a string)", function(done) {

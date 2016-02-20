@@ -1,7 +1,10 @@
-function assert_no_error = function(promise, done){
+function assert_no_error (promise, done) {
 	promise.then(function(){
 		done();
 	}).catch(function(error){
-		done(error);			
+		console.error(error.data);
+		done(error);
 	})
 }
+
+module.exports = assert_no_error;

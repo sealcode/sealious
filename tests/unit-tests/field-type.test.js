@@ -1,5 +1,6 @@
 var Sealious = require("sealious");
 
+var assert_no_error = require("../util/assert-no-error.js");
 
 module.exports = {
 	test_init: function(){
@@ -54,13 +55,10 @@ module.exports = {
 
 			describe("default methods", function(){
 				describe("when not overwritten", function(){
+
 					it("should use default .is_proper_value", function(done){
-						var return_value = test_field_type.is_proper_value("any_value")
-							.then(function(){
-								done();
-							}).catch(function(error){
-								done(new Error("But it rejected."));
-							})
+						var result = test_field_type.is_proper_value("any_value");
+						assert_no_error(result, done);
 					})
 
 					it("should use default .is_proper_declaration", function(done){
@@ -75,42 +73,36 @@ module.exports = {
 					it("should use default .encode", function(done){
 						var what_its_been_fed = "dogfood";
 						test_field_type.encode(new Sealious.Context(), {}, what_its_been_fed)
-							.then(function(encoded){
-								if (encoded == what_its_been_fed) {
-									done();
-								} else {
-									done(new Error("But it returned something else"));
-								}
-							}).catch(function(error){
-								console.error(error);
-								done(new Error("but it threw an error"));
-							})
+						.then(function(encoded){
+							if (encoded == what_its_been_fed) {
+								done();
+							} else {
+								done(new Error("But it returned something else"));
+							}
+						}).catch(done)
 					});
 
 					it("should use default .decode", function(done){
 						var what_its_been_fed = "dogfood";
 						test_field_type.decode(new Sealious.Context(), {}, what_its_been_fed)
-							.then(function(decoded){
-								if (decoded == what_its_been_fed) {
-									done();
-								} else {
-									done(new Error("But it returned something else"));
-								}
-							}).catch(function(error){
-								console.error(error);
-								done(new Error("but it threw an error"));
-							})
+						.then(function(decoded){
+							if (decoded == what_its_been_fed) {
+								done();
+							} else {
+								done(new Error("But it returned something else"));
+							}
+						}).catch(done)
 					});
 
 					it("should use default .get_description", function(done){
 						test_field_type.get_description()
-							.then(function(description){
-								if (description.summary == "test_field_type") {
-									done();
-								} else {
-									done(new Error("But it didn't"));
-								}
-							});
+						.then(function(description){
+							if (description.summary == "test_field_type") {
+								done();
+							} else {
+								done(new Error("But it didn't"));
+							}
+						});
 					})
 				})
 
@@ -121,44 +113,44 @@ module.exports = {
 
 					it("should use the custom .is_proper_value method", function(done){
 						rejecting_father.is_proper_value("any_value")
-							.then(function(){
-								done(new Error("But it didn't (should have been rejected in this case, but wasn't)"));
-							}).catch(function(){
-								done();
-							});
+						.then(function(){
+							done(new Error("But it didn't (should have been rejected in this case, but wasn't)"));
+						}).catch(function(error){
+							done();
+						});
 					});
 
 					it("should use the custom .encode method", function(done){
 						rejecting_father.encode(new Sealious.Context(), {}, "anything")
-							.then(function(encoded_value){
-								if (encoded_value == "from_father") {
-									done();
-								} else {
-									done(new Error("But it didn't"));
-								}
-							})
+						.then(function(encoded_value){
+							if (encoded_value == "from_father") {
+								done();
+							} else {
+								done(new Error("But it didn't"));
+							}
+						})
 					});
 
 					it("should use the custom .decode method", function(done){
 						rejecting_father.decode("anything")
-							.then(function(decoded_value){
-								if (decoded_value == "from_father") {
-									done();
-								} else {
-									done(new Error("But it didn't"));
-								}
-							})
+						.then(function(decoded_value){
+							if (decoded_value == "from_father") {
+								done();
+							} else {
+								done(new Error("But it didn't"));
+							}
+						})
 					});
 
 					it("should use the custom .get_description method", function(done){
 						rejecting_father.get_description()
-							.then(function(description){
-								if (description.summary == "from_father") {
-									done();
-								} else {
-									done(new Error("But it didn't"));
-								}
-							});
+						.then(function(description){
+							if (description.summary == "from_father") {
+								done();
+							} else {
+								done(new Error("But it didn't"));
+							}
+						});
 					});
 				})
 			})
@@ -172,94 +164,94 @@ module.exports = {
 
 				it("should inherit is_proper_value", function(done){
 					accepting_son.is_proper_value(new Sealious.Context(), {}, "any")
-						.then(function(){
-							done(new Error("accepting_son accepted the value, which should have been rejected by his rejecting_father"));
-						}).catch(function(error){
-							if (error.message == "Rejected by the father") {
-								done();
-							} else {
-								done(new Error("But it didn't - it returned `" + error + "but should have returned \"Rejected by the father\""));
-							}
-						})
+					.then(function(){
+						done(new Error("accepting_son accepted the value, which should have been rejected by his rejecting_father"));
+					}).catch(function(error){
+						if (error.message == "Rejected by the father") {
+							done();
+						} else {
+							done(new Error("But it didn't - it returned `" + error + "but should have returned \"Rejected by the father\""));
+						}
+					})
 				});
 
 				it("should use parent's is_proper_value when not having its own", function(done){
 					hesitant_daughter.is_proper_value(new Sealious.Context(), {}, "any")
-						.then(function(){
-							done(new Error("But it accepted value, which should have been rejected by rejecting_father"));
-						}).catch(function(error){
-							if (error.message == "Rejected by the father") {
-								done();
-							} else {
-								done(new Error("But it didn't"));
-							}
-						});
+					.then(function(){
+						done(new Error("But it accepted value, which should have been rejected by rejecting_father"));
+					}).catch(function(error){
+						if (error.message == "Rejected by the father") {
+							done();
+						} else {
+							done(new Error("But it didn't"));
+						}
+					});
 				});
 
 				it("should use child's .encode method when a child has it's own encode method", function(done){
 					accepting_son.encode(new Sealious.Context(), {}, "anything")
-						.then(function(encoded_value){
-							if (encoded_value == "from_son") {
-								done();
-							} else {
-								done(new Error("But it didn't"));
-							}
-						});
+					.then(function(encoded_value){
+						if (encoded_value == "from_son") {
+							done();
+						} else {
+							done(new Error("But it didn't"));
+						}
+					});
 				});
 
 				it("should use parent's .encode method when a child does not have it's own", function(done){
 					hesitant_daughter.encode(new Sealious.Context(), {}, "anything")
-						.then(function(encoded_value){
-							if (encoded_value == "from_father") {
-								done();
-							} else {
-								done(new Error("But it didn't"));
-							}
-						})
+					.then(function(encoded_value){
+						if (encoded_value == "from_father") {
+							done();
+						} else {
+							done(new Error("But it didn't"));
+						}
+					})
 				});
 
 				it("should use child's .decode method when a child has it's own decode method", function(done){
 					accepting_son.decode("anything")
-						.then(function(decoded_value){
-							if (decoded_value == "from_son") {
-								done();
-							} else {
-								done(new Error("But it didn't"));
-							}
-						});
+					.then(function(decoded_value){
+						if (decoded_value == "from_son") {
+							done();
+						} else {
+							done(new Error("But it didn't"));
+						}
+					});
 				});
 
 				it("should use parent's .decode method when a child does not have it's own", function(done){
 					hesitant_daughter.decode("anything")
-						.then(function(decoded_value){
-							if (decoded_value == "from_father") {
-								done();
-							} else {
-								done(new Error("But it didn't"));
-							}
-						})
+					.then(function(decoded_value){
+						if (decoded_value == "from_father") {
+							done();
+						} else {
+							done(new Error("But it didn't"));
+						}
+					})
 				});
 
 				it("should use child's .get_description method when a child has it's own .get_description method", function(done){
 					accepting_son.get_description()
-						.then(function(description){
-							if (description.summary == "from_son") {
-								done();
-							} else {
-								done(new Error("But it didn't"));
-							}
-						});
+					.then(function(description){
+						if (description.summary == "from_son") {
+							done();
+						} else {
+							done(new Error("But it didn't"));
+						}
+					});
 				});
 
 				it("should use parent's .get_description method when a child does not have it's own", function(done){
 					hesitant_daughter.get_description()
-						.then(function(description){
-							if (description.summary == "from_father") {
-								done();
-							} else {
-								done(new Error("But it didn't"));
-							}
-						})
+					.then(function(description){
+						if (description.summary == "from_father") {
+							done();
+						} else {
+							done(new Error("But it didn't"));
+						}
+					})
 				});
 
 
