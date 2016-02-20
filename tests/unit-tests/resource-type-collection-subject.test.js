@@ -1,6 +1,7 @@
 var Sealious = require("sealious");
 var UUIDGenerator = require("uid");
 var equal = require("deep-equal");
+var Promise = require("bluebird");
 
 var assert_no_error = require("../util/assert-no-error.js");
 var assert_error_type = require("../util/assert-error-type.js");
@@ -48,7 +49,7 @@ module.exports = {
 						fields: [{
 							name: 'value',
 							type: new Sealious.FieldType({
-								is_proper_value: function(accept, reject, context, value){
+								is_proper_value: function(accept, reject, context, params, value){
 									if (value === "correct"){
 										accept();
 									} else {
@@ -232,7 +233,7 @@ module.exports = {
 					assert_error_type(result, "permission", done);
 				})
 
-				it("should only show resources that are allowed by the resource-type's deep access strategy", function(done){
+				it("should only show resources that are allowed by the resource-type's deep item-sensitive access strategy", function(done){
 
 					var resource_type_name = UUIDGenerator(10);
 
@@ -282,8 +283,8 @@ module.exports = {
 							} else {
 								done(new Error("It returned too many/didn't return enough resources"));
 							}
-						})
-					})
+						}).catch(done);
+					}).catch(done);
 				})
 
 				it("should only return resources of a given resource-type", function(done){
@@ -330,7 +331,7 @@ module.exports = {
 								done(new Error("Mismatch between expected visible resource amount and the actual amount"));
 							}
 						})
-					})
+					}).catch(done)
 
 				})
 
