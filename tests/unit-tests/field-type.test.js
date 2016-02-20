@@ -79,7 +79,7 @@ module.exports = {
 								if (encoded == what_its_been_fed) {
 									done();
 								} else {
-									done(new Error("But it returnet something else"));
+									done(new Error("But it returned something else"));
 								}
 							}).catch(function(error){
 								console.error(error);
@@ -94,7 +94,7 @@ module.exports = {
 								if (decoded == what_its_been_fed) {
 									done();
 								} else {
-									done(new Error("But it returnett something else"));
+									done(new Error("But it returned something else"));
 								}
 							}).catch(function(error){
 								console.error(error);
