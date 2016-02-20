@@ -5,6 +5,7 @@ function assert_error_type (promise, error_type, done) {
 		if (error.type === error_type){
 			done();
 		} else {
+			console.error(error);
 			done(new Error(`But it threw an error of wrong type: should be: '${error_type}', was: '${error.type}'`));
 		}
 	})

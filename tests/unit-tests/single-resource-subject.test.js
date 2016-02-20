@@ -1,7 +1,9 @@
+var Promise = require("bluebird");
 var Sealious = require("sealious");
 var UUIDGenerator = require("uid");
 
 var assert_error_type = require("../util/assert-error-type.js");
+var assert_no_error = require("../util/assert-no-error.js");
 
 var SingleResourceSubject = require("../../lib/subject/subject-types/single-resource-subject.js");
 
@@ -20,7 +22,6 @@ module.exports = {
 
 
 				it("should find an existing resource", function(done){
-
 					var create_action = new Sealious.Action(["resources", rt_name], "create");
 					create_action.run(new Sealious.Context(), {value: field_value})
 					.then(function(created_resource){
@@ -37,9 +38,87 @@ module.exports = {
 				})
 
 				it("should throw a 'not_found' error if the provided resource id does not exist", function(done){
-					var subject = new SingleResourceSubject(rt, "made-up_id");
+					var subject = new SingleResourceSubject(rt, "made-up-id");
 					var promise = subject.perform_action(new Sealious.Context(), "show");
 					assert_error_type(promise, "not_found", done);
+				})
+
+				it("should throw an error when asked to show a resource when access strategy rejects the context", function(done){
+					var rt = new Sealious.ResourceType({
+						name: UUIDGenerator(10),
+						fields: [{name: "value", type: "text"}],
+						access_strategy: new Sealious.AccessStrategy({
+							checker_function: function(context){
+								if (context.get("user_id") === 1){
+									return Promise.resolve();
+								} else {
+									return Promise.reject("Only user #1 can perform any operations on this resource");
+								}
+							}
+						})
+					})
+
+					var create_action = new Sealious.Action(["resources", rt.name], "create");
+					create_action.run(new Sealious.Context(0, null, 1), {value: UUIDGenerator(10)})
+					.then(function(created_resource){
+						var subject = new SingleResourceSubject(rt, created_resource.id);
+						var promise = subject.perform_action(new Sealious.Context(0, null, 2), "show");
+						assert_error_type(promise, "permission", done);
+					})
+				})
+
+				it("should throw an error when an item-sensitive access strategy rejects the 'show' method", function(done){
+					var rt = new Sealious.ResourceType({
+						name: UUIDGenerator(10),
+						fields: [{name: "value", type: "text"}],
+						access_strategy: {
+							create: "public",
+							retrieve: new Sealious.AccessStrategy({
+								checker_function: function(context, item){
+									if (item.body.value === "allow"){
+										return Promise.resolve();
+									} else {
+										return Promise.reject("You cannot see this item.");
+									}
+								}
+							})
+						}
+					})
+
+					var create_action = new Sealious.Action(["resources", rt.name], "create");
+					create_action.run(new Sealious.Context(), {value: "disallow"})
+					.then(function(created_resource){
+						var subject = new SingleResourceSubject(rt, created_resource.id);
+						var promise = subject.perform_action(new Sealious.Context(), "show");
+						assert_error_type(promise, "permission", done);
+					})
+				})
+
+				it("should not throw an error when an item-sensitive access strategy allows the 'show' method", function(done){
+					var rt = new Sealious.ResourceType({
+						name: UUIDGenerator(10),
+						fields: [{name: "value", type: "text"}],
+						access_strategy: {
+							create: "public",
+							show: new Sealious.AccessStrategy({
+								checker_function: function(context, item){
+									if (item.body.value === "allow"){
+										return Promise.resolve();
+									} else {
+										return Promise.reject("You cannot see this item.");
+									}
+								}
+							})
+						}
+					})
+
+					var create_action = new Sealious.Action(["resources", rt.name], "create");
+					create_action.run(new Sealious.Context(), {value: "allow"})
+					.then(function(created_resource){
+						var subject = new SingleResourceSubject(rt, created_resource.id);
+						var result = subject.perform_action(new Sealious.Context(), "show");
+						assert_no_error(result, done);
+					})
 				})
 			})
 		})
