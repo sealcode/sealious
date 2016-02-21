@@ -27,14 +27,13 @@
   },
   "dependencies": {
     "Set": "~0.4.1",
-    "blns": "^2.0.2",
     "bluebird": "~2.9.9",
     "clone": "^1.0.2",
     "color": "latest",
     "fs-extra": "^0.18.2",
+    "htmlparser2": "^3.9.0",
     "immutable": "^3.7.2",
     "merge": "^1.2.0",
-    "remove-attributes": "^1.0.0",
     "require-dir": "^0.3.0",
     "resolve": "^1.1.7",
     "sanitize-html": "^1.6.1",
@@ -45,6 +44,7 @@
     "winston": "^1.0.0"
   },
   "devDependencies": {
+    "blns": "^2.0.2",
     "coveralls": "^2.11.4",
     "deep-equal": "^1.0.1",
     "istanbul": "^0.4.1",
