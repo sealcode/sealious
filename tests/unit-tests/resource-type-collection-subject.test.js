@@ -338,10 +338,11 @@ module.exports = {
 
 				it("should throw an error when non-permission error is caught during filtering", function(done){
 					var rt = new Sealious.ResourceType({
+						name: UUIDGenerator(10),
 						access_strategy: {
 							default: "public",
-							item_sensitive: true,
 							retrieve: new Sealious.AccessStrategyType({
+								item_sensitive: true,
 								checker_function: function(){
 									throw new Error("Heil hydra");
 								}
