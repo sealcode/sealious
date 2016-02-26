@@ -6,7 +6,7 @@ module.exports = {
 
 	},
 	test_start: function(){
-		var just_owner = Sealious.ChipManager.get_chip("access_strategy", "just_owner")
+		var just_owner = Sealious.ChipManager.get_chip("access_strategy_type", "just_owner")
 		describe("AccessStrategy.JustOwner", function(){
 			it("checks if the user is the owner and returns true", function(done){
 				var context = new Sealious.Context(undefined, "ip", "user_id");
@@ -15,7 +15,7 @@ module.exports = {
 						user_id: "user_id"
 					}
 				}
-				var result = just_owner.checker_function(context, item);
+				var result = just_owner.checker_function(context, {}, item);
 				assert_no_error(result, done);
 			})
 			/*

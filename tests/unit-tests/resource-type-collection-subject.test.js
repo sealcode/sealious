@@ -18,7 +18,7 @@ module.exports = {
 					var rt_user1_only = new Sealious.ResourceType({
 						name: "impossible_to_manipulate",
 						fields: [],
-						access_strategy: new Sealious.AccessStrategy({
+						access_strategy: new Sealious.AccessStrategyType({
 							checker_function: function(context){
 								if (context.get("user_id") == 1){
 									return Promise.resolve();
@@ -216,7 +216,7 @@ module.exports = {
 				it("should throw a proper error when trying to list instances of resource type with a shallow access_strategy that disallows the context", function(done){
 					var rt = new Sealious.ResourceType({
 						fields: [{name: "value", type: "text"}],
-						access_strategy: new Sealious.AccessStrategy({
+						access_strategy: new Sealious.AccessStrategyType({
 							checker_function: function(context){
 								if (context.get("user_id") == 1){
 									return Promise.reject("User 1 cannot access this resource");
@@ -242,9 +242,10 @@ module.exports = {
 						fields: [{name: "who_can_access", type: "text"}],
 						access_strategy: {
 							create: "public",
-							default: new Sealious.AccessStrategy({
+							default: new Sealious.AccessStrategyType({
+								name: "hydra",
 								item_sensitive: true,
-								checker_function: function(context, item){
+								checker_function: function(context, params, item){
 									if (item.body.who_can_access.toString() === context.get("user_id").toString()){
 										return Promise.resolve();
 									} else {
@@ -340,7 +341,7 @@ module.exports = {
 						access_strategy: {
 							default: "public",
 							item_sensitive: true,
-							retrieve: new Sealious.AccessStrategy({
+							retrieve: new Sealious.AccessStrategyType({
 								checker_function: function(){
 									throw new Error("Heil hydra");
 								}

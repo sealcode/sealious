@@ -47,7 +47,7 @@ module.exports = {
 					var rt = new Sealious.ResourceType({
 						name: UUIDGenerator(10),
 						fields: [{name: "value", type: "text"}],
-						access_strategy: new Sealious.AccessStrategy({
+						access_strategy: new Sealious.AccessStrategyType({
 							checker_function: function(context){
 								if (context.get("user_id") === 1){
 									return Promise.resolve();
@@ -73,8 +73,8 @@ module.exports = {
 						fields: [{name: "value", type: "text"}],
 						access_strategy: {
 							create: "public",
-							retrieve: new Sealious.AccessStrategy({
-								checker_function: function(context, item){
+							retrieve: new Sealious.AccessStrategyType({
+								checker_function: function(context, params, item){
 									if (item.body.value === "allow"){
 										return Promise.resolve();
 									} else {
@@ -100,8 +100,8 @@ module.exports = {
 						fields: [{name: "value", type: "text"}],
 						access_strategy: {
 							create: "public",
-							show: new Sealious.AccessStrategy({
-								checker_function: function(context, item){
+							show: new Sealious.AccessStrategyType({
+								checker_function: function(context, params, item){
 									if (item.body.value === "allow"){
 										return Promise.resolve();
 									} else {
