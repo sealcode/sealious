@@ -44,7 +44,6 @@ module.exports = {
 			/*
 			it("checks if encode works correctly", function(done) {
 				// to add
-				//console.log(field_type_file.declaration.encode(new Sealious.Context(), {}, "test"))
 
 			})
 */
