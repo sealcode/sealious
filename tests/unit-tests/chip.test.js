@@ -10,7 +10,6 @@ module.exports = {
 			it("configures chip", function(done) {
 				Chip(true, "test_type_chip", "test_name_chip");
 				var chip = Sealious.ChipManager.get_chip("test_type_chip", "test_name_chip")
-				console.log(chip)
 				chip.prototype.configure({field: "value"});
 				if (chip.configuration.field === "value")
 					done();

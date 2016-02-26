@@ -9,9 +9,9 @@ module.exports = {
 	test_start: function(){
 		describe("UserManager", function(){
 			it("creates a new user", function(done){
-				Sealious.UserManager.create_user(new Sealious.Context(), "user", "pass")
+				Sealious.UserManager.create_user(new Sealious.Context(), "user", "passw0rd")
 				.then(function(result){
-					if (result.body.username === "user" && result.body.password === "pass") {
+					if (result.body.username === "user" && result.body.password === null) {
 						done();
 					} else {
 						done(new Error("It created wrong user"))
@@ -54,30 +54,12 @@ module.exports = {
 				assert_no_error(result, done);
 			});
 			it("didn't match given credentials", function(done){
-				Sealious.UserManager.password_match(new Sealious.Context(), "blablagarbage", "blablagarbage")
-				.then(function(result){
-					done("It found the user");
-				})
-				.catch(function(error){
-					if (error.type === "authorization") {
-						done();
-					} else {
-						done(new Error(error));
-					}
-				})
+				var result = Sealious.UserManager.password_match(new Sealious.Context(), "blablagarbage", "blablagarbage");
+				assert_error_type(result, "authorization", done);
 			})
 			it("misses username and password", function(done){
-				Sealious.UserManager.password_match(new Sealious.Context)
-				.then(function(result){
-					done("It worked");
-				})
-				.catch(function(error){
-					if (error.type === "authorization"){
-						done();
-					} else {
-						done(new Error(error));
-					}
-				})
+				var result = Sealious.UserManager.password_match(new Sealious.Context);
+				assert_error_type(result, "authorization", done);
 			})
 			it("misses username and password", function(done){
 				Sealious.UserManager.password_match(new Sealious.Context, "username")
