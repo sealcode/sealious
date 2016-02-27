@@ -1,6 +1,6 @@
 var Sealious = require("sealious");
 var Promise = require("bluebird");
-
+var utils = require("../../lib/base-chips/field_type.html.js")
 var naugthyStrings = require("blns");
 
 module.exports = {
@@ -27,7 +27,6 @@ module.exports = {
 							done(error);
 					})
 			})
-
 			var methods = ["is_proper_value", "decode"];
 			methods.forEach(function(method_name) {
 				it("shouldn't crash when trying to " + method_name + " a naugthy string", function(done) {
@@ -56,14 +55,11 @@ module.exports = {
 						})
 				});
 			});
-
-
 			var values = {
 				"<a href='\x0Ejavascript:javascript:alert(1)' id='fuzzelement1'>test</a>": "<a>test</a>",
 				"<h1>test<p>test2": "<h1>test<p>test2</p></h1>",
 				"h1>test<p>test2": "h1&gt;test<p>test2</p>"
 			}
-
 			for (prop in values) {
 				it("should check if decode works properly given '" + prop + "'", function(done) {
 					field_type_html.decode(new Sealious.Context(), {
@@ -90,8 +86,6 @@ module.exports = {
 						})
 				});
 			}
-
-
 			it("should remove attributes that were not explicitly declarated (in params)", function(done) {
 				field_type_html.decode(new Sealious.Context(), {
 						tags: {
@@ -116,7 +110,6 @@ module.exports = {
 						done(new Error("It didn't parse the value correctly"));
 					})
 			});
-
 			it("should strip tags that were not explicitly allowed (in params)", function(done) {
 				field_type_html.decode(new Sealious.Context(), {
 						tags: {
@@ -165,8 +158,69 @@ module.exports = {
 						done(new Error("It didn't parse the value correctly"));
 					})
 			});
-		})
-		describe('FieldType.Html - utils', function() {
+			it("utils.is_allowed function should return correct decision", function(done) {
+				var result = utils.is_allowed(new Set(['h1', 'h2']), new Set(['h1']), 'something', 'h1');
+				if (result === true || result === false) {
+					done()
+				} else {
+					done(new Error("The returned value wasn't true (keep) or false (remove)"));
+				}
+			})
+			it("utils.is_allowed function should return default_decision", function(done) {
+				var result = utils.is_allowed(new Set(['h1', 'h2']), new Set(['h1']), 'keep', 'h1');
+				if (result === true) {
+					done()
+				} else {
+					done(new Error("The returned value wasn't default_decision (keep)"));
+				}
+			})
+			it("utils.is_allowed function should return decision for defined element", function(done) {
+				var result = utils.is_allowed(new Set(['h2', 'p', 'a']), new Set(['h1', 'h3']), 'keep', 'p');
+				if (result === true) {
+					done()
+				} else {
+					done(new Error("The returned value wasn't true (keep)"));
+				}
+			})
+			it("utils.is_allowed function should return decision for defined element", function(done) {
+				var result = utils.is_allowed(new Set(['h2', 'a']), new Set(['p', 'h1', 'h3']), 'remove', 'p');
+				if (result === false) {
+					done()
+				} else {
+					done(new Error("The returned value wasn't false (remove)"));
+				}
+			})
+			it('utils.create_sets_from_params function should return correctly object with sets', function(done) {
+				var params = {
+					tags: {
+						default_decision: "keep",
+						keep: ['a', 'p', 'h3'],
+						remove: ['h4']
+					},
+					attributes: {
+						default_decision: "remove",
+						keep: [],
+						remove: ['href']
+					}
+				}
+				var is_correct = 0;
+				var result = utils.create_sets_from_params(params);
+				for (prop in result.tags) {
+					if (result.tags.hasOwnProperty(prop) && result.tags[prop] instanceof Set && params.tags[prop] instanceof Array) {
+						is_correct += 1;
+					}
+				}
+				for (prop in result.attributes) {
+					if (result.attributes.hasOwnProperty(prop) && result.attributes[prop] instanceof Set && params.attributes[prop] instanceof Array) {
+						is_correct += 1;
+					}
+				}
+				if (is_correct === 4) {
+					done();
+				} else {
+					done(new Error("Some returned property isn't set"))
+				}
+			})
 		})
 	}
 };
