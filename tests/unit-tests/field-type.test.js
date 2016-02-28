@@ -170,7 +170,7 @@ module.exports = {
 						if (error.message == "Rejected by the father") {
 							done();
 						} else {
-							done(new Error("But it didn't - it returned `" + error + "but should have returned \"Rejected by the father\""));
+							done(new Error("But it didn't - it returned '" + error + "' but should have returned \"Rejected by the father\""));
 						}
 					})
 				});

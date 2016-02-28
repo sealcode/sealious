@@ -33,7 +33,7 @@ module.exports = {
 					throw new Sealious.Errors.ValueExists("This is just an error");
 				}
 				catch (e) {
-					if (e.type === "valueExists")
+					if (e.type === "value_exists")
 						done();
 					else
 						done(new Error("It didn't throw a Sealious ValueExists Error"))
@@ -59,39 +59,6 @@ module.exports = {
 						done();
 					else
 						done(new Error("It didn't throw a Sealious NotFound Error"))
-				}
-			})
-			it("throws a Sealious.Errors.InternalConnectionError", function(done){
-				try {
-					throw new Sealious.Errors.InternalConnectionError("This is just an error");
-				}
-				catch (e) {
-					if (e.type === "internal_connection_error")
-						done();
-					else
-						done(new Error("It didn't throw a Sealious InternalConnectionError Error"))
-				}
-			})
-			it("throws a Sealious.Errors.DependencyError", function(done){
-				try {
-					throw new Sealious.Errors.DependencyError("This is just an error");
-				}
-				catch (e) {
-					if (e.type === "dependency_error")
-						done();
-					else
-						done(new Error("It didn't throw a Sealious DependencyError Error"))
-				}
-			})
-			it("throws a Sealious.Errors.UnauthorizedRequest", function(done){
-				try {
-					throw new Sealious.Errors.UnauthorizedRequest("This is just an error");
-				}
-				catch (e) {
-					if (e.type === "unauthorized_request")
-						done();
-					else
-						done(new Error("It didn't throw a Sealious UnauthorizedRequest Error"))
 				}
 			})
 			it("throws a Sealious.Errors.DeveloperError", function(done){
