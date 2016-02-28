@@ -44,7 +44,7 @@ module.exports = {
 					throw new Sealious.Errors.InvalidCredentials("This is just an error");
 				}
 				catch (e) {
-					if (e.type === "authorization")
+					if (e.type === "invalid_credentials")
 						done();
 					else
 						done(new Error("It didn't throw a Sealious InvalidCredentials Error"))
