@@ -20,7 +20,7 @@ module.exports = {
 						fields: [],
 						access_strategy: new Sealious.AccessStrategyType({
 							checker_function: function(context){
-								if (context.get("user_id") == 1){
+								if (context.user_id == 1){
 									return Promise.resolve();
 								} else {
 									return Promise.reject("You are not user1!!");
@@ -131,7 +131,7 @@ module.exports = {
 							done(new Error("It didn't create the 'sealious_id' attribute"));
 						} else if (created_resource.type_name !== resource_type_name){
 							done(new Error("It didn't properly set the 'type' attribute in db document"));
-						} else if (created_resource.created_context.timestamp !== context.get("timestamp")){
+						} else if (created_resource.created_context.timestamp !== context.timestamp){
 							done(new Error("It didn't properly set the 'created_context' attribute"));
 						} else if (created_resource.last_modified_context.timestamp !== created_resource.created_context.timestamp){
 							done(new Error("It didn't set the last_modified_context to the same value as created_context."));
@@ -218,7 +218,7 @@ module.exports = {
 						fields: [{name: "value", type: "text"}],
 						access_strategy: new Sealious.AccessStrategyType({
 							checker_function: function(context){
-								if (context.get("user_id") == 1){
+								if (context.user_id == 1){
 									return Promise.reject("User 1 cannot access this resource");
 								}
 							}
@@ -246,7 +246,7 @@ module.exports = {
 								name: "hydra",
 								item_sensitive: true,
 								checker_function: function(context, params, item){
-									if (item.body.who_can_access.toString() === context.get("user_id").toString()){
+									if (item.body.who_can_access.toString() === context.user_id.toString()){
 										return Promise.resolve();
 									} else {
 										return Promise.reject(`Only user #${item.body.who_can_access} can access this item.`)

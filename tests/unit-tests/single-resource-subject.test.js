@@ -49,7 +49,7 @@ module.exports = {
 						fields: [{name: "value", type: "text"}],
 						access_strategy: new Sealious.AccessStrategyType({
 							checker_function: function(context){
-								if (context.get("user_id") === 1){
+								if (context.user_id === 1){
 									return Promise.resolve();
 								} else {
 									return Promise.reject("Only user #1 can perform any operations on this resource");
