@@ -25,11 +25,14 @@ module.exports = {
 						}
 					}
 
-					if (my_granddad.get_subject(["son", "son"]) === me){
-						done();
-					} else {
-						done(new Error("It didn't navigate to a proper subject"));
-					}
+					my_granddad.get_subject(["son", "son"])
+					.then(function(result){
+						if (result === me){
+							done();
+						} else {
+							done(new Error("It didn't navigate to a proper subject"));
+						}
+					})
 
 				})
 			})

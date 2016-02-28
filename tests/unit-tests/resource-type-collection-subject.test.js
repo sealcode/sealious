@@ -436,17 +436,19 @@ module.exports = {
 
 					var resource_id = "resource_id";
 
-					var child_subject = subject.get_child_subject(resource_id);
+					subject.get_child_subject(resource_id)
+					.then(function(child_subject){
+						if (!(child_subject instanceof SingleResource)){
+							done(new Error("the child context was of wrong type"));
+						} else if (child_subject.resource_type !== rt){
+							done(new Error("the child context was tied to a different resource type"));
+						} else if (child_subject.resource_id !== resource_id){
+							done(new Error("the child context was tied to a different resource_id"));
+						} else {
+							done();
+						}
+					})
 
-					if (!(child_subject instanceof SingleResource)){
-						done(new Error("the child context was of wrong type"));
-					} else if (child_subject.resource_type !== rt){
-						done(new Error("the child context was tied to a different resource type"));
-					} else if (child_subject.resource_id !== resource_id){
-						done(new Error("the child context was tied to a different resource_id"));
-					} else {
-						done();
-					}
 				})
 			})
 		})
