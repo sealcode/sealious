@@ -163,7 +163,15 @@ module.exports = {
 				if (result === true || result === false) {
 					done()
 				} else {
-					done(new Error("The returned value wasn't true (keep) or false (remove)"));
+					done(new Error("The returned value isn't true (keep) or false (remove)"));
+				}
+			})
+			it("utils.is_allowed function should return default_decision", function(done) {
+				var result = utils.is_allowed(new Set(['h1', 'h2']), new Set(['h1']), 'keep', 'h3');
+				if (result === true) {
+					done()
+				} else {
+					done(new Error("The returned value wasn't default_decision (keep)"));
 				}
 			})
 			it("utils.is_allowed function should return default_decision", function(done) {
@@ -179,7 +187,7 @@ module.exports = {
 				if (result === true) {
 					done()
 				} else {
-					done(new Error("The returned value wasn't true (keep)"));
+					done(new Error("The returned value isn't true (keep)"));
 				}
 			})
 			it("utils.is_allowed function should return decision for defined element", function(done) {
@@ -187,7 +195,15 @@ module.exports = {
 				if (result === false) {
 					done()
 				} else {
-					done(new Error("The returned value wasn't false (remove)"));
+					done(new Error("The returned value isn't false (remove)"));
+				}
+			})
+			it("utils.is_allowed function should return decision for defined element", function(done) {
+				var result = utils.is_allowed(new Set(['h2', 'a']), new Set(['p', 'h1', 'h3']), 'keep', 'p');
+				if (result === false) {
+					done()
+				} else {
+					done(new Error("The returned value isn't true (keep)"));
 				}
 			})
 			it('utils.create_sets_from_params function should return correctly object with sets', function(done) {
@@ -219,6 +235,117 @@ module.exports = {
 					done();
 				} else {
 					done(new Error("Some returned property isn't set"))
+				}
+			})
+			it('utils.create_sets_from_params function should return correctly object with sets', function(done) {
+				var result = utils.create_sets_from_params({ tags: { keep: ['h1', 'h2'], remove: [] } });
+				if (result.attributes['keep'] === undefined) {
+					done()
+				} else {
+					done(new Error('The returned object have non-existent property'))
+				}
+			})
+			it('utils.create_sets_from_params function should return correctly object without sets', function(done) {
+				var result = utils.create_sets_from_params({});
+				if (Object.keys(result.tags).length === 0 && Object.keys(result.attributes).length === 0) {
+					done();
+				} else {
+					done(new Error("The returned object haven't empty properties"))
+				}
+			})
+			it('utils.default_values checks is object and have right objects', function(done) {
+				var dv = utils.default_values;
+				if (dv instanceof Object && dv.tags instanceof Object && dv.attributes instanceof Object) {
+					done()
+				} else {
+					done(new Error("The default_values property isn't object"))
+				}
+			})
+			it('utils.default_values checks is default_values have right properties', function(done) {
+				var dv = utils.default_values;
+				if (dv.tags.default_decision === "remove" && dv.attributes.default_decision === "remove") {
+					done()
+				} else {
+					done(new Error("The default_values default decisions properties haven't 'remove' value"))
+				}
+			})
+			it('utils.default_values checks is default_values have right properties', function(done) {
+				var dv = utils.default_values;
+				if (dv.tags.keep instanceof Array &&
+					dv.tags.remove instanceof Array &&
+					dv.attributes.keep instanceof Array &&
+					dv.attributes.remove instanceof Array) {
+					done();
+				} else {
+					done(new Error("The keep & remove properties aren't arrays"))
+				}
+			})
+			it('utils.merge_params function should return merged params object', function(done) {
+				var result = utils.merge_params({
+					"attributes": {
+						"default_decision": "remossve",
+						"keep": ["style", "width"],
+						"remove": []
+					}
+				});
+				if (result.attributes['default_decision'] === "remove" || result.attributes['default_decision'] === "keep") {
+					done();
+				} else {
+					done(new Error("The returned object have impermissible value for default_decision property: " + result.attributes['default_decision']))
+				}
+			})
+			it('utils.merge_params function should return merged params object', function(done) {
+				var result = utils.merge_params({
+					"attributes": {
+						"default_decision": "remove",
+						"keep": ["style", "width"],
+						"remove": []
+					}
+				});
+				var t = result.tags;
+				if (t['default_decision'] !== undefined && t['keep'] !== undefined && t['remove'] !== undefined) {
+					done();
+				} else {
+					done(new Error("The returned object shouldn't have default values for tags"))
+				}
+			})
+			it('utils.merge_params function should return merged params object', function(done) {
+				var result = utils.merge_params({
+					"tags": {
+						"default_decision": "keep",
+						"keep": [],
+						"remove": ['script', 'noscript']
+					}
+				});
+				var a = result.attributes;
+				if (a['default_decision'] !== undefined && a['keep'] !== undefined && a['remove'] !== undefined) {
+					done();
+				} else {
+					done(new Error("The returned object shouldn't have default values for attributes"))
+				}
+			})
+			it('utils.merge_params function should return merged params object', function(done) {
+				var result = utils.merge_params({ "tags": { "default_decision": "kee" } });
+				var t = result.tags;
+				if (t['default_decision'] !== undefined && t['default_decision'] === "remove") {
+					done();
+				} else {
+					done(new Error("The returned object have impermissible value for tags.default_decision property"))
+				}
+			})
+			it('utils.merge_params function should return merged params object', function(done) {
+				var result = utils.merge_params({
+					"tags": {
+						"default_decision": "keep",
+						"keep": [],
+						"remove": ['script', 'noscript']
+					}
+				});
+				var t = result.tags;
+				if (t['keep'] !== undefined && t['keep'].length === 0) {
+					done();
+				} else {
+					done(new Error("The returned object tags.keep array should be empty"))
 				}
 			})
 		})
