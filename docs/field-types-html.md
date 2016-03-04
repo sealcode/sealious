@@ -1,119 +1,130 @@
 ### field_type.html
-Field type html offers saving values which are HTML source codes with specifying tags and attributes. In declaration developer should indicate which tags and attributes have to be kept and removed. In the case not indicated elements developer must set default decision. All tags and attributes which won't be desirable will be kept or removed from received HTML source code through default decisions. 
 
-#### What is the difference relative to field type text?
-In the case field type text we receive object with two fields after sent value. The first field `original` stores original string typed through user whereas second field `safe` stores escaped value from special characters (every characters with an UTF-8 code above 127). Field type html stores only one safe string - HTML source code. The parameters make it possible to protect against XSS attacks.
+The `html` field type offers saving strings with HTML content and can be configured to remove certain tags and attributes.
 
-#### Predefined parameters
-Field type html has predefined parameters. 
+How is it different from field_type_text?
 
-```js
-new Sealious.ChipTypes.ResourceType({
-	name: "article",
-	fields: [{
-		name: "code",
-		type: "html"
-	}]
-});
+field_type_text makes strings html-safe by escaping all characters that are part of html syntax (e.g. changes `<` to `&lt;`). field_type_html makes strings html-safe by removing scripts and filtering attribute values that look like XSS attacks, while keeping the html syntax intact.
+
+#### Usage
+
+##### Params synopsis
+
+```jsig
+
+type Decision: "remove" | "keep"
+
+params: {
+	tags?: {
+		default_decision?: Decision,
+		keep?: Array<String>,
+		remove?: Array<String>,
+	},
+	attributes?: {
+		default_decision?: Decision,
+		keep?: Array<String>,
+		remove?: Array<String>,
+	}
+}
 ```
 
-If you don't defined parameters, field type html will use predefined parameters those as you can see below:
+The `keep`/`remove` arrays are lists of whitelisted/blacklisted names of elements/attributes.
 
-```js
+When an elements tag name is:
+
+* in `tags.keep` and not in `tags.remove` - it will be **kept**
+* in `tags.keep` *and* in `tags.remove` - the **`default_decision` applies**
+* not in `tags.keep` and *in* `tags.remove` - it will be **removed**
+* in neither `tags.keep` nor `tags.remove` - the **`default_decision` applies**
+
+When the element is "removed", it's opening and closing tags will be deleted. It's text content will remain untouched. It's children elements will be processed according to the same rules.
+
+Analogous rules apply to `attributes`, but when the decision for the attribute's name is `remove`, it will simply be removed from the output.
+
+#### Default params
+
+The params provided to a field constructor are merged with default values:
+
+```json
 {
 	tags: {
 		default_decision: "remove",
-		keep: ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'blockquote', 'p', 'a', 'ul', 'ol',
-			'nl', 'li', 'b', 'i', 'strong', 'em', 'strike', 'code', 'hr', 'br', 'div',
-			'table', 'thead', 'caption', 'tbody', 'tr', 'th', 'td', 'pre'
-		],
-		remove: ['script', 'input', 'form', 'noscript']
+		keep: ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', "blockquote", "p", "a", "ul", "ol", "nl", "li", "b", "i", "strong", "em", "strike", "code", "hr", "br", "div", "table", "thead", "caption", "tbody", "tr", "th", "td", "pre"	],
+		remove: ["script", "input", "form", "noscript"]
 	},
 	attributes: {
 		default_decision: "remove",
-		keep: ['href', 'name', 'target'],
-		remove: ['src']
+		keep: ["href", "name", "target"],
+		remove: ["src"]
 	}
 }
 ```
 
-#### Merging parameters
-Field type html also include `merge_params` function which task is merge your defined parameters with default predefined parameters in the case not defined some arrays of tags and attributes or incorrect `default_decision` through developer. In the case of typos in property name field type html uses predefined values. For example when you don't defined attributes property then your tags property will be merge with predefined attributes property.
+So providing an `html` field constructor with these params:
 
-```js
-new Sealious.ChipTypes.ResourceType({
-	name: "article",
-	fields: [{
-		name: "code",
-		type: "html",
-		params: {
-			"attributes": {
-				"default_decision": "keep",
-				"keep": [],
-				"remove": ["href", "src"]
-			}
-		}
-	}]
-});
+```json
+{
+	tags: {
+		keep: ["p"]
+	}
+}
 ```
 
-The above declaration will generate the following parameters to use:
+Actually becomes:
 
-```js
-params: {
+```json
+{
 	tags: {
 		default_decision: "remove",
-		keep: ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'blockquote', 'p', 'a', 'ul', 'ol',
-			'nl', 'li', 'b', 'i', 'strong', 'em', 'strike', 'code', 'hr', 'br', 'div',
-			'table', 'thead', 'caption', 'tbody', 'tr', 'th', 'td', 'pre'
-		],
-		remove: ['script', 'input', 'form', 'noscript']
+		keep: ["p"],
+		remove: ["script", "input", "form", "noscript"]
 	},
 	attributes: {
-		default_decision: "keep",
-		keep: [],
-		remove: ["href", "src"]
+		default_decision: "remove",
+		keep: ["href", "name", "target"],
+		remove: ["src"]
 	}
 }
 ```
 
-#### Own parameters
-In order to define own parameters you must declare two properties `tags` and `attributes`. In each of them you must define three values: `default_decision` variable also `keep` and `remove` arrays. Don't be afraid all values are saved to the database in a intact form. In the case change parameters hitherto saved values will be return in updated form.
-
-##### `default_decision`
-The purpose of the `default_decision` is indicate whether the value is to be removed or kept some currently considered element (tag or attribute). `default_decision` will use when the element there isn't in any array or is located in both arrays. Acceptable values: `keep` and `remove`. In the case of typos in property name (the same applies to arrays
-) or value will be allocated default predefined value i.e. `remove`. 
-
-##### `keep` array
-The `keep` array determines which tags or attributes you want to keep. In the case defined just empty array `keep: []` and set `default_decision: "remove"`, no tags or attributes will not be kept.
-
-##### `remove` array
-The `remove` array determines which tags or attributes you want to remove. In the case defined empty arrays `remove: []` and set `default_decision: "keep"`, no tags or attributes will not be removed.
-
-
-#### Examples
-
-This declaration permits all tags which aren't `script` tag and retains only `id` or `class` attributes.
-
+#### Example usage
 
 ```js
-new Sealious.ChipTypes.ResourceType({
+var article = new Sealious.ChipTypes.ResourceType({
 	name: "article",
 	fields: [{
-		name: "code",
+		name: "body",
 		type: "html",
 		params: {
-			"tags": {
-				"default_decision": "keep",
-				"keep": [],
-				"remove": ['script']
+			tags: {
+				default_decision: "keep",
+				remove: ["script"]
 			},
-			"attributes": {
-				"default_decision": "remove",
-				"keep": ["id", "class"],
-				"remove": ["href", "src"]
+			attributes: {
+				default_decision: "keep",
+				remove: []
 			}
 		}
 	}]
 });
+```
+
+The above describes a resource with a field named `body`. When a user enters a value: 
+
+```html
+<p>
+Hello,
+</p>
+<script>
+alert("world!");
+</script>
+```
+
+it will be turned into:
+
+```html
+<p>
+Hello,
+</p>
+alert("world!");
 ```
