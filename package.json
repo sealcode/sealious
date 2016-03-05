@@ -27,7 +27,7 @@
   },
   "dependencies": {
     "Set": "~0.4.1",
-    "bluebird": "~2.9.9",
+    "bluebird": "^3.3.3",
     "clone": "^1.0.2",
     "color": "latest",
     "fs-extra": "^0.18.2",
