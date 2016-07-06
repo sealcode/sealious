@@ -6,8 +6,8 @@
   "main": "./lib/main.js",
   "scripts": {
     "prepublish": "require-self",
-    "test": "node ./tests/test.js",
-    "test-coverage": "istanbul cover ./tests/test.js && (xdg-open ./coverage/lcov-report/index.html || exit 0)",
+    "test": "NODE_PATH=. mocha --recursive tests",
+    "test-coverage": "NODE_PATH=. istanbul cover --include-all-sources _mocha -- -R spec --recursive tests && (xdg-open ./coverage/lcov-report/index.html || exit 0)",
     "coveralls": "npm run test-coverage && cat coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js",
     "check-formatting": "jscs -c .jscsrc ./lib ./tests && echo \"\\n ✓ Code formatting O.K.!\\n\" || (echo \"\\nSome formatting errors found. Run 'npm run fix-formatting' to correct them.\\n\" && exit 1 )",
     "fix-formatting": "jscs -c .jscsrc ./lib ./tests --fix",
@@ -15,7 +15,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/Sealious/Sealious/"
+    "url": "https://github.com/sealcode/sealious"
   },
   "keywords": [
     "sealious"
@@ -32,7 +32,7 @@
     "clone": "^1.0.2",
     "color": "latest",
     "expand-hash": "^0.2.2",
-    "fs-extra": "^0.18.2",
+    "fs-extra": "^0.30.0",
     "merge": "^1.2.0",
     "node-uuid": "^1.4.7",
     "require-dir": "^0.3.0",
