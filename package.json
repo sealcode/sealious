@@ -7,8 +7,8 @@
   "scripts": {
     "prepublish": "require-self",
     "test": "mocha --recursive tests",
-    "test-coverage": "NODE_PATH=. istanbul cover --include-all-sources _mocha -- -R spec --recursive tests && (xdg-open ./coverage/lcov-report/index.html || exit 0)",
-    "coveralls": "npm run test-coverage && cat coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js",
+    "coverage-test": "NODE_PATH=. istanbul cover --include-all-sources _mocha -- -R spec --recursive tests && (xdg-open ./coverage/lcov-report/index.html || exit 0)",
+    "coveralls": "npm run coverage-test && cat coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js",
     "check-formatting": "jscs -c .jscsrc ./lib ./tests && echo \"\\n ✓ Code formatting O.K.!\\n\" || (echo \"\\nSome formatting errors found. Run 'npm run fix-formatting' to correct them.\\n\" && exit 1 )",
     "fix-formatting": "jscs -c .jscsrc ./lib ./tests --fix",
     "jshint": "jshint ./lib/*/*.js ./lib/*.js  && echo \"\\n ✓ Code guidelines O.K.!\\n\" || (echo \"\\nSome JSHint errors found. Fix errors and run 'npm run check-hint' to correct them.\\n\" && exit 1)"
