@@ -1,4 +1,3 @@
-var Sealious = require("sealious");
 var crypto = require('crypto');
 
 var assert_no_error = require("../util/assert-no-error.js");
