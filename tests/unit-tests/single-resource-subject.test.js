@@ -1,5 +1,4 @@
 var Promise = require("bluebird");
-var Sealious = require("sealious");
 var UUIDGenerator = require("uid");
 
 var assert_error_type = require("../util/assert-error-type.js");

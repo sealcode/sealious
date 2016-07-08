@@ -1,6 +1,3 @@
-var Sealious = require("sealious");
-SubjectPath = Sealious.SubjectPath;
-
 module.exports = {
 	test_start: function(){
 		describe("SubjectPath", function(){

@@ -1,8 +1,8 @@
-var AccessStrategyType = require("lib/chip-types/access-strategy-type.js");
-var SuperContext = require("lib/super-context.js");
-var Context = require("lib/context.js");
-var assert_no_error = require("tests/util/assert-no-error.js");
-var assert = require("assert");
+var AccessStrategyType = require.main.require("lib/chip-types/access-strategy-type.js");
+var SuperContext = require.main.require("lib/super-context.js");
+var Context = require.main.require("lib/context.js");
+var assert_no_error = require.main.require("tests/util/assert-no-error.js");
+var assert = require.main.require("assert");
 
 
 describe("AccessStrategyType", function(){

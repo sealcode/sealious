@@ -1,4 +1,3 @@
-var Sealious = require("sealious");
 
 module.exports = {
 	test_init: function(){},

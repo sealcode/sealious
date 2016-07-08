@@ -1,4 +1,4 @@
-var Sealious = require("sealious");
+
 var UUIDGenerator = require("uid");
 var equal = require("deep-equal");
 var Promise = require("bluebird");

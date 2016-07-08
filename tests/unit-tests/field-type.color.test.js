@@ -1,4 +1,4 @@
-var Sealious = require("sealious");
+
 
 var assert_error_type = require("../util/assert-error-type.js");
 var assert_no_error = require("../util/assert-no-error.js");

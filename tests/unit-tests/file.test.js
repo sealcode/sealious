@@ -1,5 +1,3 @@
-var Sealious = require("sealious");
-
 module.exports = {
 	test_init: function(){
 		Sealious.File(new Sealious.Context(), "filename", "just_data", "my_test_file", false)
