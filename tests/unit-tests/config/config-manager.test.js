@@ -1,62 +1,39 @@
 var ConfigManager = require.main.require("lib/config/config-manager.js");
-
+const assert = require("assert");
 
 describe("ConfigManager", function(){
 
-	it("sets config with arguments.length === 1", function(done){
-		try {
+	it("sets config with arguments.length === 1", function(){
+		assert.doesNotThrow(function() {
 			ConfigManager.set_config("some_key");
-			done();
-		}
-		catch (e) {
-			done(new Error(e));
-		}
-	})
+		});
+	});
 
-	it("sets config with arguments.length === 2 and uses modify_config private function", function(done){
-		try {
+	it("sets config with arguments.length === 2 and uses modify_config private function", function(){
+		assert.doesNotThrow(function() {
 			ConfigManager.set_config("this.key", "config");
-			done();
-		}
-		catch (e) {
-			done(new Error(e));
-		}
-	})
+		});
+	});
 
-	it("sets default config with arguments.length === 1", function(done){
-		try {
+	it("sets default config with arguments.length === 1", function(){
+		assert.doesNotThrow(function() {
 			ConfigManager.set_default_config("some_key");
-			done();
-		}
-		catch (e) {
-			done(new Error(e));
-		}
-	})
+		});
+	});
 
-	it("gets configuration", function(done){
+	it("gets configuration", function(){
 		var config = ConfigManager.get_configuration("this.key");
-		if (config instanceof Object)
-			done();
-		else
-			done(new Error("It didn't return an object"))
-	})
+		assert.strictEqual(config instanceof Object, true);
+	});
 
-	it("gets dispatcher config", function(done){
+	it("gets dispatcher config", function(){
 		var dispatcher_config = ConfigManager.get_dispatcher_config();
-		if (dispatcher_config instanceof Object)
-			if (Object.getOwnPropertyNames(dispatcher_config).length === 0)
-				done();
-		else
-			done(new Error("It didn't return an empty object"))
-		else
-			done(new Error("It didn't return an object"))
-	})
+		assert.strictEqual(dispatcher_config instanceof Object, true);
+		assert.strictEqual(Object.getOwnPropertyNames(dispatcher_config).length, 0);
+	});
 
-	it("gets non existent chip config and returns undefined", function(done){
+	it("gets non existent chip config and returns undefined", function(){
 		var dispatcher_config = ConfigManager.get_chip_config("some_non_existent_longid");
-		if (dispatcher_config === undefined)
-			done();
-		else
-			done(new Error("It didn't return undefined"))
-	})
+		assert.strictEqual(dispatcher_config, undefined);
+	});
 })
