@@ -6,8 +6,7 @@ var assert_error_type = require.main.require("tests/util/assert-error-type.js");
 var assert_error = require.main.require("tests/util/assert-error.js");
 var assert = require.main.require("assert");
 
-
-ASTP = AccessStrategyType.prototype;
+const ASTP = AccessStrategyType.prototype;
 
 describe("AccessStrategyType", function(){
 
@@ -69,12 +68,12 @@ describe("AccessStrategyType", function(){
 	describe(".prototype.__check", function(){
 		it("should resolve if given an instance of SuperContext", function(done){
 			var sc = new SuperContext();
-			var result = AccessStrategyType.prototype.__check({}, sc);
+			var result = ASTP.__check({}, sc);
 			assert_no_error(result, done);
 		});
 
 		it("should resolve with undefined if the strategy is item_sensitive but no item is provided", function(done){
-			AccessStrategyType.prototype.__check({item_sensitive: true}, new Context(), {})
+			ASTP.__check({item_sensitive: true}, new Context(), {})
 			.then(function(result){
 				done(assert.equal(result, undefined))
 			})
@@ -82,13 +81,13 @@ describe("AccessStrategyType", function(){
 
 		it("should accept 'false' as a return value in checker_function", function(done){
 			var declaration = {checker_function: () => false};
-			var result = AccessStrategyType.prototype.__check(declaration, new Context(), {});
+			var result = ASTP.__check(declaration, new Context(), {});
 			assert_error_type(result, "permission", done);
 		});
 
 		it("should accept 'true' as a return value in checker_function", function(done){
 			var declaration = {checker_function: () => true};
-			var result = AccessStrategyType.prototype.__check(declaration, new Context(), {});
+			var result = ASTP.__check(declaration, new Context(), {});
 			assert_no_error(result, done);
 		});
 
@@ -96,13 +95,13 @@ describe("AccessStrategyType", function(){
 			var declaration = {checker_function: function(){
 				throw new Error("Eat my shorts");
 			}};
-			var result = AccessStrategyType.prototype.__check(declaration, new Context(), {});
+			var result = ASTP.__check(declaration, new Context(), {});
 			assert_error(result, done);
 		});
 
 		it("should pass item as argument if the strategy is item_sensitive", function(done){
 			var item = {};
-			AccessStrategyType.prototype.__check(
+			ASTP.__check(
 				{
 					item_sensitive: true,
 					checker_function: function(context, params, _item){
