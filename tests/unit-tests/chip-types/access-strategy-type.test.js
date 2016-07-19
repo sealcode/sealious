@@ -4,15 +4,15 @@ var Context = require.main.require("lib/context.js");
 var assert_no_error = require.main.require("tests/util/assert-no-error.js");
 var assert_error_type = require.main.require("tests/util/assert-error-type.js");
 var assert_error = require.main.require("tests/util/assert-error.js");
-var assert = require.main.require("assert");
+var assert = require("assert");
 
 const ASTP = AccessStrategyType.prototype;
 
 describe("AccessStrategyType", function(){
 
-	it("when the declaration is just an AST instance, returns it unchanged", function(done){
+	it("when the declaration is just an AST instance, returns it unchanged", function(){
 		var AST = new AccessStrategyType({checker_function: ()=>true});
-		done(assert(new AccessStrategyType(AST) == AST));
+		assert.strictEqual(new AccessStrategyType(AST), AST);
 	});
 
 	describe(".prototype.__is_item_sensitive", function(){
@@ -20,7 +20,8 @@ describe("AccessStrategyType", function(){
 			ASTP.__is_item_sensitive({
 				item_sensitive: false
 			}).then(function(result){
-				done(assert(result == false));
+				assert.strictEqual(result, false);
+				done();
 			});
 		});
 
@@ -28,7 +29,8 @@ describe("AccessStrategyType", function(){
 			ASTP.__is_item_sensitive({
 				item_sensitive: true
 			}).then(function(result){
-				done(assert(result == true));
+				assert.strictEqual(result, true);
+				done();
 			});
 		});
 
@@ -36,7 +38,8 @@ describe("AccessStrategyType", function(){
 			ASTP.__is_item_sensitive({
 				item_sensitive: () => false
 			}).then(function(result){
-				done(assert(result == false));
+				assert.strictEqual(result, false);
+				done();
 			});
 		});
 
@@ -44,7 +47,8 @@ describe("AccessStrategyType", function(){
 			ASTP.__is_item_sensitive({
 				item_sensitive: () => true
 			}).then(function(result){
-				done(assert(result == true));
+				assert.strictEqual(result, true);
+				done();
 			});
 		});
 
@@ -52,7 +56,8 @@ describe("AccessStrategyType", function(){
 			ASTP.__is_item_sensitive({
 				item_sensitive: () => Promise.resolve(false)
 			}).then(function(result){
-				done(assert(result == false));
+				assert.strictEqual(result, false);
+				done();
 			});
 		});
 
@@ -60,7 +65,8 @@ describe("AccessStrategyType", function(){
 			ASTP.__is_item_sensitive({
 				item_sensitive: () => Promise.resolve(true)
 			}).then(function(result){
-				done(assert(result == true));
+				assert.strictEqual(result, true);
+				done();
 			});
 		});
 	})
@@ -75,8 +81,9 @@ describe("AccessStrategyType", function(){
 		it("should resolve with undefined if the strategy is item_sensitive but no item is provided", function(done){
 			ASTP.__check({item_sensitive: true}, new Context(), {})
 			.then(function(result){
-				done(assert.equal(result, undefined))
-			})
+				assert.strictEqual(result, undefined);
+				done();
+			});
 		});
 
 		it("should accept 'false' as a return value in checker_function", function(done){
@@ -105,7 +112,8 @@ describe("AccessStrategyType", function(){
 				{
 					item_sensitive: true,
 					checker_function: function(context, params, _item){
-						done(assert.equal(_item, item));
+						assert.strictEqual(_item, item);
+						done();
 					}
 				},
 				new Context(),
