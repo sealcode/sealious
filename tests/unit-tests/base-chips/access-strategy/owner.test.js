@@ -1,4 +1,5 @@
 var Context = require.main.require("lib/context.js");
+var assert = require("assert");
 var assert_no_error = require.main.require("tests/util/assert-no-error.js");
 var assert_error = require.main.require("tests/util/assert-error.js");
 
