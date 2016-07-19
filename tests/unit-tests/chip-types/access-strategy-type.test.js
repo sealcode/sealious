@@ -1,17 +1,17 @@
-var AccessStrategyType = require.main.require("lib/chip-types/access-strategy-type.js");
-var SuperContext = require.main.require("lib/super-context.js");
-var Context = require.main.require("lib/context.js");
-var assert_no_error = require.main.require("tests/util/assert-no-error.js");
-var assert_error_type = require.main.require("tests/util/assert-error-type.js");
-var assert_error = require.main.require("tests/util/assert-error.js");
-var assert = require("assert");
+const AccessStrategyType = require.main.require("lib/chip-types/access-strategy-type.js");
+const SuperContext = require.main.require("lib/super-context.js");
+const Context = require.main.require("lib/context.js");
+const assert_no_error = require.main.require("tests/util/assert-no-error.js");
+const assert_error_type = require.main.require("tests/util/assert-error-type.js");
+const assert_error = require.main.require("tests/util/assert-error.js");
+const assert = require("assert");
 
 const ASTP = AccessStrategyType.prototype;
 
 describe("AccessStrategyType", function(){
 
 	it("when the declaration is just an AST instance, returns it unchanged", function(){
-		var AST = new AccessStrategyType({checker_function: ()=>true});
+		const AST = new AccessStrategyType({checker_function: ()=>true});
 		assert.strictEqual(new AccessStrategyType(AST), AST);
 	});
 
@@ -73,8 +73,8 @@ describe("AccessStrategyType", function(){
 
 	describe(".prototype.__check", function(){
 		it("should resolve if given an instance of SuperContext", function(done){
-			var sc = new SuperContext();
-			var result = ASTP.__check({}, sc);
+			const sc = new SuperContext();
+			const result = ASTP.__check({}, sc);
 			assert_no_error(result, done);
 		});
 
@@ -87,27 +87,27 @@ describe("AccessStrategyType", function(){
 		});
 
 		it("should accept 'false' as a return value in checker_function", function(done){
-			var declaration = {checker_function: () => false};
-			var result = ASTP.__check(declaration, new Context(), {});
+			const declaration = {checker_function: () => false};
+			const result = ASTP.__check(declaration, new Context(), {});
 			assert_error_type(result, "permission", done);
 		});
 
 		it("should accept 'true' as a return value in checker_function", function(done){
-			var declaration = {checker_function: () => true};
-			var result = ASTP.__check(declaration, new Context(), {});
+			const declaration = {checker_function: () => true};
+			const result = ASTP.__check(declaration, new Context(), {});
 			assert_no_error(result, done);
 		});
 
 		it("should throw an error raised inside checker_function", function(done){
-			var declaration = {checker_function: function(){
+			const declaration = {checker_function: function(){
 				throw new Error("Eat my shorts");
 			}};
-			var result = ASTP.__check(declaration, new Context(), {});
+			const result = ASTP.__check(declaration, new Context(), {});
 			assert_error(result, done);
 		});
 
 		it("should pass item as argument if the strategy is item_sensitive", function(done){
-			var item = {};
+			const item = {};
 			ASTP.__check(
 				{
 					item_sensitive: true,
@@ -125,24 +125,24 @@ describe("AccessStrategyType", function(){
 
 	describe("the bridges between the pure methods", function(){
 		it("properly connects the __check method", function(done){
-			var smth = {}
-			var declaration = {
+			const smth = {}
+			const declaration = {
 				checker_function: () => true
 			};
 
-			var strategy_type = new AccessStrategyType(declaration);
-			var result = strategy_type.check(new Context(), {}, {});
+			const strategy_type = new AccessStrategyType(declaration);
+			const result = strategy_type.check(new Context(), {}, {});
 			assert_no_error(result, done);
 		});
 
 		it("properly connects the __is_item_sensitive method", function(done){
-			var smth = {}
-			var declaration = {
+			const smth = {}
+			const declaration = {
 				item_sensitive: () => true
 			};
 
-			var strategy_type = new AccessStrategyType(declaration);
-			var result = strategy_type.is_item_sensitive({});
+			const strategy_type = new AccessStrategyType(declaration);
+			const result = strategy_type.is_item_sensitive({});
 			assert_no_error(result, done);
 		});
 	});
