@@ -6,9 +6,6 @@ const rejectCorrectly = require.main.require("tests/util/reject-correctly.js");
 
 const assert = require("assert");
 
-var assert_no_error = require("../util/assert-no-error.js");
-var assert_error_type = require("../util/assert-error-type.js");
-
 describe("FieldType.File", function(){
 	it("returns undefined", function(){
 		assert.strictEqual(field_type_file.is_proper_value({}, {}, new Context(), {}, undefined), undefined);
