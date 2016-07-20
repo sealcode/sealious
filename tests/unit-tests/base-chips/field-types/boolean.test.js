@@ -8,27 +8,27 @@ const assert = require("assert");
 
 
 describe("FieldType.Boolean", function(){
-	it("return the name of the field type", function() {
+	it("returns the name of the field type", function() {
 		assert.strictEqual(field_type_boolean.name, "boolean");
-	})
+	});
 	it("returns the description of the field type", function(){
 		assert.strictEqual(typeof field_type_boolean.get_description(), "string");
 	});
 	it("checks if is_proper_value works correctly (given boolean)", function(done){
         const {accept, reject} = acceptCorrectly(done);
-		const result = field_type_boolean.is_proper_value(accept, reject, new Context(), {}, true);
+		field_type_boolean.is_proper_value(accept, reject, new Context(), {}, true);
 	});
 	it("checks if is_proper_value works correctly (given 1)", function(done){
         const {accept, reject} = acceptCorrectly(done);
-        const result = field_type_boolean.is_proper_value(accept, reject, new Context(), {}, 1);
+        field_type_boolean.is_proper_value(accept, reject, new Context(), {}, 1);
 	});
 	it("checks if is_proper_value works correctly (given \"true\")", function(done){
         const {accept, reject} = acceptCorrectly(done);
-        const result = field_type_boolean.is_proper_value(accept, reject, new Context(), {}, "true");
+        field_type_boolean.is_proper_value(accept, reject, new Context(), {}, "true");
 	});
 	it("checks if is_proper_value works correctly (given 2)", function(done){
         const {accept, reject} = rejectCorrectly(done);
-        const result = field_type_boolean.is_proper_value(accept, reject, new Context(), {}, 2);
+        field_type_boolean.is_proper_value(accept, reject, new Context(), {}, 2);
 	});
 	it("encodes the value correctly (given boolean)", function(){
 		assert.strictEqual(field_type_boolean.encode(new Context(), {}, true), true);
