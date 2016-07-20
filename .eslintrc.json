@@ -3,6 +3,14 @@
         "es6": true,
         "node": true
     },
+    "globals" : {
+       "describe"   : false,
+       "it"         : false,
+       "before"     : false,
+       "beforeEach" : false,
+       "after"      : false,
+       "afterEach"  : false
+    },
     "extends": "eslint:recommended",
     "rules": {
         "indent": [
@@ -11,7 +19,7 @@
         ],
         "quotes": [
             "error",
-            "backtick"
+            "double"
         ],
         "semi": [
             "error",
@@ -27,6 +35,10 @@
         "no-console": 2,
         "no-var": 2,
         "prefer-const": 2,
-        "prefer-template": 2
+        "prefer-template": 2,
+        "eqeqeq": [
+            "error",
+            "smart"
+        ]
     }
 }

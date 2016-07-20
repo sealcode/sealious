@@ -4,7 +4,7 @@ function assert_no_error (promise, done) {
 	}).catch(function(error){
 		console.error(error.data);
 		done(error);
-	})
+	});
 }
 
 module.exports = assert_no_error;
