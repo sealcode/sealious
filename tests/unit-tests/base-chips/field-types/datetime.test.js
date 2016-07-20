@@ -1,40 +1,25 @@
+const Context = require.main.require("lib/context.js");
+const field_type_datetime = require.main.require("lib/base-chips/field-types/datetime.js");
+const acceptCorrectly = require.main.require("tests/util/accept-correctly.js");
+const rejectCorrectly = require.main.require("tests/util/reject-correctly.js");
 
-var assert_no_error = require("../util/assert-no-error.js");
-
-module.exports = {
-	test_init: function(){},
-
-	test_start: function(){
-		var field_type_datetime = Sealious.ChipManager.get_chip("field_type", "datetime");
-		describe("FieldType.Datetime", function(){
-			it("should return the description of the field type", function(done){
-				if (typeof field_type_datetime.declaration.get_description() === "string")
-					done();
-				else
-					done(new Error("But it didn't"));
-			});
-			it("should check if is_proper_value works correctly(given timestamp)", function(done){
-				var result = field_type_datetime.is_proper_value(new Sealious.Context(), {}, 1);
-				assert_no_error(result, done);
-			});
-			it("should check if is_proper_value works correctly(given string)", function(done){
-				field_type_datetime.is_proper_value(new Sealious.Context(), {}, "test")
-				.then(function(){
-					done(new Error("It worked correctly"));
-				})
-				.catch(function(error){
-					if (error.type === "validation")
-						done()
-					else
-						done(new Error(error));
-				})
-			});
-			it("should check if encode works properly (given \"1\")", function(done){
-				if (field_type_datetime.declaration.encode(new Sealious.Context(), {}, "1") === 1)
-					done();
-				else
-					done(new Error("It didn't parse the value correctly"))
-			});
-		});
-	}
-};
+const assert = require("assert");
+describe("FieldType.Datetime", function(){
+    it("returns the name of the field type", function() {
+        assert.strictEqual(field_type_datetime.name, "datetime");
+    });
+    it("returns the description of the field type", function(){
+        assert.strictEqual(typeof field_type_datetime.get_description(), "string");
+    });
+    it("checks if is_proper_value works correctly(given timestamp)", function(done){
+        const {accept, reject} = acceptCorrectly(done);
+        field_type_datetime.is_proper_value(accept, reject, new Context(), {}, 1);
+    });
+    it("checks if is_proper_value works correctly(given string)", function(done){
+        const {accept, reject} = rejectCorrectly(done);
+        field_type_datetime.is_proper_value(accept, reject, new Context(), {}, "test")
+    });
+    it("checks if encode works properly (given \"1\")", function(){
+        assert.strictEqual(field_type_datetime.encode(new Context(), {}, "1"), 1)
+    });
+});
