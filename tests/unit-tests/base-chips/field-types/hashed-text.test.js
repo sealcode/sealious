@@ -6,8 +6,6 @@ const rejectCorrectly = require.main.require("tests/util/reject-correctly.js");
 const assert = require("assert");
 const crypto = require('crypto');
 
-var assert_no_error = require("../util/assert-no-error.js");
-
 describe("FieldType.HashedText", function(){
 	it("returns the name of the field type", function() {
 		assert.strictEqual(field_type_hashed_text.name, "hashed-text");
