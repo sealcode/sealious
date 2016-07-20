@@ -12,7 +12,7 @@ describe("FieldType.Context", function(){
     it("returns the name of the field type", function() {
         assert.strictEqual(field_type_context.name, "context");
     });
-    it("accepts an instance of Sealious.Context", function(done) {
+    it("accepts an instance of Sealious.Context", function() {
         // const {accept, reject} = acceptCorrectly(done);
         // field_type_context.is_proper_value(accept, reject, new Context(), {}, Sealious.Context);
 

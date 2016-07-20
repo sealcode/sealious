@@ -1,6 +1,6 @@
 function acceptCorrectly(done) {
     return {
-        accept: () => done(),
+        accept: done,
         reject: (msg) => done(new Error(msg))
     };
 }
