@@ -15,7 +15,7 @@ describe("Sealious.Response", function(){
 	});
 	it("returns a Response object from an error", function() {
 		const error = new Sealious.Errors.BadContext("This is an error", "test_data");
-		const response = Response.fromError(error);
+		const response = Response.to_object(error);
 		assert.strictEqual(response.data, "test_data");
 		assert.strictEqual(response.type, "permission");
 		assert.strictEqual(response.status_message, "This is an error");
