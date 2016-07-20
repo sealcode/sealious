@@ -4,6 +4,7 @@ const acceptCorrectly = require.main.require("tests/util/accept-correctly.js");
 const rejectCorrectly = require.main.require("tests/util/reject-correctly.js");
 
 const assert = require("assert");
+
 describe("FieldType.Datetime", function(){
     it("returns the name of the field type", function() {
         assert.strictEqual(field_type_datetime.name, "datetime");
