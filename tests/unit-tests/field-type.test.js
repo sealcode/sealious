@@ -12,15 +12,15 @@ module.exports = {
 				reject("Rejected by the father");
 			},
 			encode: function(){
-				return "from_father"
+				return "from_father";
 			},
 			decode: function(){
-				return "from_father"
+				return "from_father";
 			},
 			get_description: function(){
-				return "from_father"
+				return "from_father";
 			}
-		})
+		});
 
 		new Sealious.ChipTypes.FieldType({
 			name: "accepting_son",
@@ -35,14 +35,14 @@ module.exports = {
 				return "from_son";
 			},
 			get_description: function(){
-				return "from_son"
+				return "from_son";
 			}
-		})
+		});
 
 		new Sealious.ChipTypes.FieldType({
 			name: "hesitant_daughter",
 			extends: "rejecting_father"
-		})
+		});
 	},
 
 	test_start: function(){
@@ -57,7 +57,7 @@ module.exports = {
 					it("should use default .is_proper_value", function(done){
 						var result = test_field_type.is_proper_value("any_value");
 						assert_no_error(result, done);
-					})
+					});
 
 					it("should use default .is_proper_declaration", function(done){
 						var return_value = test_field_type.is_proper_declaration({});
@@ -77,7 +77,7 @@ module.exports = {
 							} else {
 								done(new Error("But it returned something else"));
 							}
-						}).catch(done)
+						}).catch(done);
 					});
 
 					it("should use default .decode", function(done){
@@ -89,7 +89,7 @@ module.exports = {
 							} else {
 								done(new Error("But it returned something else"));
 							}
-						}).catch(done)
+						}).catch(done);
 					});
 
 					it("should use default .get_description", function(done){
@@ -101,8 +101,8 @@ module.exports = {
 								done(new Error("But it didn't"));
 							}
 						});
-					})
-				})
+					});
+				});
 
 
 				describe("when overwritten", function(){
@@ -126,7 +126,7 @@ module.exports = {
 							} else {
 								done(new Error("But it didn't"));
 							}
-						})
+						});
 					});
 
 					it("should use the custom .decode method", function(done){
@@ -137,7 +137,7 @@ module.exports = {
 							} else {
 								done(new Error("But it didn't"));
 							}
-						})
+						});
 					});
 
 					it("should use the custom .get_description method", function(done){
@@ -150,8 +150,8 @@ module.exports = {
 							}
 						});
 					});
-				})
-			})
+				});
+			});
 
 
 
@@ -170,7 +170,7 @@ module.exports = {
 						} else {
 							done(new Error("But it didn't - it returned '" + error + "' but should have returned \"Rejected by the father\""));
 						}
-					})
+					});
 				});
 
 				it("should use parent's is_proper_value when not having its own", function(done){
@@ -205,7 +205,7 @@ module.exports = {
 						} else {
 							done(new Error("But it didn't"));
 						}
-					})
+					});
 				});
 
 				it("should use child's .decode method when a child has it's own decode method", function(done){
@@ -227,7 +227,7 @@ module.exports = {
 						} else {
 							done(new Error("But it didn't"));
 						}
-					})
+					});
 				});
 
 				it("should use child's .get_description method when a child has it's own .get_description method", function(done){
@@ -249,7 +249,7 @@ module.exports = {
 						} else {
 							done(new Error("But it didn't"));
 						}
-					})
+					});
 				});
 
 
@@ -258,5 +258,5 @@ module.exports = {
 
 		});
 	}
-}
+};
 

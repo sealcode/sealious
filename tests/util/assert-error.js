@@ -3,7 +3,7 @@ function assert_no_error (promise, done) {
 		done(new Error("It didn't reject!"));
 	}).catch(function(error){
 		done();
-	})
+	});
 }
 
 module.exports = assert_no_error;
