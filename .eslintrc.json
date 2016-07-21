@@ -25,13 +25,6 @@
             "error",
             "always"
         ],
-        "require-jsdoc": ["warn", {
-            "require": {
-                "FunctionDeclaration": true,
-                "MethodDefinition": false,
-                "ClassDeclaration": false
-            }
-        }],
         "no-console": 2,
         "no-var": 2,
         "prefer-const": 2,
@@ -39,6 +32,14 @@
         "eqeqeq": [
             "error",
             "smart"
-        ]
+        ],
+        "no-trailing-spaces": "error",
+        "no-whitespace-before-property": "error",
+        "space-before-blocks": ["error", "never"],
+        "space-in-parens": ["error", "never"],
+        "spaced-comment": ["error", "always"],
+        "no-lonely-if": "error",
+        "no-else-return": "error"
+
     }
 }
