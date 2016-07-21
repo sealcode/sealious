@@ -40,14 +40,33 @@ describe("FieldType.HashedText", function(){
 	it("rejects given password ('password')", function(done) {
 		const {accept, reject} = rejectCorrectly(done);
 		field_type_hashed_text.is_proper_value(accept, reject, new Context(), {capitals: 2, digits: 3}, "password");
-	})
+	});
+	it("accept the password", function(done) {
+		const {accept, reject} = acceptCorrectly(done);
+		field_type_hashed_text.is_proper_value(accept, reject, new Context(), "not on object", "password");
+	});
 	it("resolves with a hash (algorithm: 'md5', salt: '')", function(done){
 		field_type_hashed_text.encode(new Context(), {}, "test")
 		.then(function(result){
 			crypto.pbkdf2("test", "", 4096, 64, "md5", function(err, key){
 				if (err) done(new Error(err));
 
-				key.toString('hex') === result ? done() : done(new Error("Wrong hash"))
+				assert.strictEqual(key.toString('hex'), result);
+				done();
+			});
+		})
+		.catch(function(error){
+			done(new Error(error))
+		});
+	});
+	it("encodes the password with custom params", function(done) {
+		field_type_hashed_text.encode(new Context(), {salt: "", algorithm: "md5"}, "test")
+		.then(function(result) {
+			crypto.pbkdf2("test", "", 4096, 64, "md5", function(err, key){
+				if (err) done(new Error(err));
+
+				assert.strictEqual(key.toString('hex'), result);
+				done();
 			});
 		})
 		.catch(function(error){
