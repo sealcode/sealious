@@ -28,18 +28,19 @@
         "no-console": 2,
         "no-var": 2,
         "prefer-const": 2,
-        "prefer-template": 2,
+        "prefer-template": 1,
         "eqeqeq": [
             "error",
             "smart"
         ],
+        "no-unused-vars": "warn",
         "no-trailing-spaces": "error",
         "no-whitespace-before-property": "error",
         "space-before-blocks": ["error", "never"],
         "space-in-parens": ["error", "never"],
         "spaced-comment": ["error", "always"],
         "no-lonely-if": "error",
-        "no-else-return": "error"
-
+        "no-else-return": "warn",
+        "no-case-declarations": "warn"
     }
 }
