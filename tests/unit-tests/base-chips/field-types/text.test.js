@@ -10,6 +10,15 @@ describe("FieldType.Text", function(){
 	it("returns the name of the field type", function() {
 		assert.strictEqual(field_type_text.name, "text");
 	});
+	it("enables full text search", function() {
+		assert.strictEqual(field_type_text.full_text_search_enabled({include_in_search: true}), true);
+	});
+	it("enables full text search with max length of 200", function() {
+		assert.strictEqual(field_type_text.full_text_search_enabled({max_length: 201}), true);
+	});
+	it("disables full text search", function() {
+		assert.strictEqual(field_type_text.full_text_search_enabled({}), false);
+	});
 	it("returns the description of the field type", function(){
 		assert.strictEqual(typeof field_type_text.get_description(new Context(), {max_length: 10}), "string");
 	});
