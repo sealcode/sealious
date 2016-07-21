@@ -52,6 +52,12 @@ describe("FieldType.HashedText", function(){
 		})
 		.catch(function(error){
 			done(new Error(error))
-		})
-	})
-})
+		});
+	});
+	it("decodes the password - returns null", function() {
+		assert.strictEqual(field_type_hashed_text.decode(new Context(), {hide_hash: true}), null);
+	});
+	it("decodes the password - returns the value in the database", function() {
+		assert.strictEqual(field_type_hashed_text.decode(new Context(), false, "value_in_db"), "value_in_db");
+	});
+});
