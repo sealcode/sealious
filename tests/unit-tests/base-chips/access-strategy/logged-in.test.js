@@ -1,11 +1,7 @@
-const Context = require.main.require("lib/context.js");
 const assert = require("assert");
-const assert_no_error = require.main.require("tests/util/assert-no-error.js");
-const assert_error = require.main.require("tests/util/assert-error.js");
-
 const logged_in = require.main.require("lib/base-chips/access-strategy-types/logged_in.js");
 
-describe("AccessStrategy.Logged-In", function() {
+describe("AccessStrategy.Logged_In", function() {
     it("returns the name of the access strategy", function() {
         assert.strictEqual(logged_in.name, "logged_in");
     });
