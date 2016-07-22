@@ -34,27 +34,33 @@ describe("FieldType.Text", function(){
 		const {accept, reject} = rejectCorrectly(done);
 		field_type_text.is_proper_value(accept, reject, new Context(), {max_length: 5}, "asdfghjkl");
 	});
-	it("checks if encode works properly (sanitizes html)", function(done){
-		field_type_text.encode(new Context(), {strip_html: true}, "outside<script>alert(\"a\")</script>")
-		.then(function(result){
-			assert.strictEqual(result, "outside");
+	it("checks if encode works properly (sanitizes html)", function(done) {
+		field_type_text.encode(new Context(), {}, "outside<script>alert(\"a\")</script>")
+		.then(function(result) {
+			assert.strictEqual(result.safe, "outside&lt;script&gt;alert(&quot;a&quot;)&lt;/script&gt;");
 			done();
-		}).catch(function(error){
+		})
+		.catch(function(error) {
 			done(new Error(error));
 		})
 	});
-	it("resolved with null when value_in_code is null", function(done){
+	it("resolved with null when value_in_code is null", function(done) {
 		field_type_text.encode(new Context(), {}, null)
-		.then(function(result){
+		.then(function(result) {
 			assert.strictEqual(result, null);
 			done();
 		})
-		.catch(function(error){
+		.catch(function(error) {
 			done(new Error(error));
 		})
 	})
-	it("checks if encode works properly", function(done){
-		const result = field_type_text.encode(new Context(), {}, {});
-		assert_no_error(result, done);
+	it("checks if encode works properly", function(done) {
+		field_type_text.encode(new Context(), {}, {})
+		.then(function(result) {
+			done();
+		})
+		.catch(function(error) {
+			done(new Error(error));
+		})
 	});
 });
