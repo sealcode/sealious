@@ -1,8 +1,12 @@
 language: node_js
 sudo: false
 node_js:
-- '4.0.0'
-script: npm install && npm test
+- '5.0.0'
+script: npm test
+install: 
+- npm install
+- npm link .
+- npm link sealious
 after_success:
 - npm run coveralls
 after_deploy:

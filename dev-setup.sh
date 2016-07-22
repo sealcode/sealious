@@ -32,11 +32,7 @@ nvm_ls_current() {
   elif nvm_tree_contains_path "$NVM_DIR" "$NVM_LS_CURRENT_NODE_PATH"; then
     local VERSION
     VERSION="$(node --version 2>/dev/null)"
-    if [ "$VERSION" = "v0.6.21-pre" ]; then
-      echo "v0.6.21"
-    else
-      echo "$VERSION"
-    fi
+    echo "$VERSION"
   else
     echo 'system'
   fi
