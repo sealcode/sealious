@@ -1,9 +1,9 @@
-const Context = require.main.require("lib/context.js");
 const assert = require("assert");
+const Context = require.main.require("lib/context.js");
+const owner = require.main.require("lib/base-chips/access-strategy-types/owner.js");
 const assert_no_error = require.main.require("tests/util/assert-no-error.js");
 const assert_error = require.main.require("tests/util/assert-error.js");
 
-const owner = require.main.require("lib/base-chips/access-strategy-types/owner.js");
 
 describe("AccessStrategy.owner", function(){
 	it("checks if the user is the owner and returns true", function(done){
