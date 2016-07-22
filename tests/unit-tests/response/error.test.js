@@ -2,6 +2,13 @@ const Errors = require.main.require("lib/response/error.js");
 const assert = require("assert");
 
 describe("Sealious.Errors", function(){
+	it("transforms an Error to an object", function() {
+		const error = new Errors.Error("Example error");
+		const error_to_object = error.to_object();
+		assert.strictEqual(error_to_object.message, "Example error");
+		assert.strictEqual(error_to_object.type, "error");
+		assert.deepEqual(error_to_object.data, {});
+	});
 	it("throws a Sealious.Errors.Error", function(){
 		const erronous = function() {
 			throw new Errors.Error("This is just an error", {type: "test_error"});
