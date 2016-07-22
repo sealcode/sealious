@@ -16,7 +16,6 @@ describe("AccessStrategy.owner", function(){
 		const result = owner.checker_function(context, {}, item);
 		assert_no_error(result, done);
 	});
-
 	it("throws if the owner id doesn't match the owner in the created_context", function(done){
 		const context = new Context(undefined, "ip", "user_id");
 		const item = {
@@ -27,4 +26,7 @@ describe("AccessStrategy.owner", function(){
 		const result = owner.checker_function(context, {}, item);
 		assert_error(result, done);
 	});
-})
+	it("checks item_sensitive attribute", function() {
+		assert.strictEqual(owner.item_sensitive, true);
+	});
+});
