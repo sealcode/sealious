@@ -1,0 +1,23 @@
+const Response = require.main.require("lib/response/response.js");
+const Sealious = require("sealious");
+
+const Context = require.main.require("lib/context.js");
+
+const assert = require("assert");
+
+describe("Sealious.Response", function(){
+	it("returns a Response object", function(){
+		const response = new Response({test: 1}, false, "my_type", "my_status_message");
+		assert.deepEqual(response.data, {test: 1});
+		assert.strictEqual(response.status, "success");
+		assert.strictEqual(response.type, "my_type");
+		assert.strictEqual(response.status_message, "my_status_message");
+	});
+	it("returns a Response object from an error", function() {
+		const error = new Sealious.Errors.BadContext("This is an error", "test_data");
+		const response = Response.fromError(error);
+		assert.strictEqual(response.data, "test_data");
+		assert.strictEqual(response.type, "permission");
+		assert.strictEqual(response.status_message, "This is an error");
+	});
+});

@@ -1,4 +1,5 @@
 {
+	"disallowTrailingWhitespace": true,
 	"validateIndentation": "\t",
 	"requireSpaceAfterBinaryOperators": true,
 	"requireSpaceBeforeBinaryOperators": true,
