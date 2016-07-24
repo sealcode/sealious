@@ -28,11 +28,40 @@ describe("FieldType.Text", function(){
 	});
 	it("checks if is_proper_value works correctly", function(done){
 		const {accept, reject} = acceptCorrectly(done);
-		field_type_text.is_proper_value(accept, reject, new Context(), {max_length: 5}, "123");
+		field_type_text.is_proper_value(accept, reject, new Context(), {max_length: 5}, "12345");
 	});
 	it("checks if is_proper_value works correctly", function(done){
 		const {accept, reject} = rejectCorrectly(done);
 		field_type_text.is_proper_value(accept, reject, new Context(), {max_length: 5}, "asdfghjkl");
+	});
+	it("checks if is_proper_value accepts text with required min characters", function(done){
+		const {accept, reject} = acceptCorrectly(done);
+		field_type_text.is_proper_value(accept, reject, new Context(), {min_length: 4}, "aaaa");
+	});
+	it("checks if is_proper_value rejects text with fewer characters than needed", function(done) {
+		const {accept, reject} = rejectCorrectly(done);
+		field_type_text.is_proper_value(accept, reject, new Context(), {min_length: 4}, "aa");
+	});
+	it("checks if is_proper_value accepts text with required min and max characters", function(done) {
+		const {accept, reject} = acceptCorrectly(done);
+		field_type_text.is_proper_value(accept, reject, new Context(), {min_length: 2, max_length: 3}, "aaa");
+	});
+	it("checks if is_proper_value reject text that doesn't meet the requirements", function(done) {
+		const {accept, reject} = rejectCorrectly(done);
+		field_type_text.is_proper_value(accept, reject, new Context(), {min_length: 2, max_length: 3}, "aaaaaa");
+	});
+	it("checks if encode work properly (value_in_code is a string)", function(done) {
+		field_type_text.encode(new Context, {}, "<a>string</a>")
+			.then(function(result) {
+				console.log(result);
+				assert.strictEqual(result.original, "<a>string</a>");
+				assert.strictEqual(result.safe, "&lt;a&gt;string&lt;/a&gt;");
+				assert.strictEqual(result.valueOf(), "<a>string</a>");
+				done();
+			})
+			.catch(function(err) {
+				done(new Error(err));
+			});
 	});
 	it("checks if encode works properly (sanitizes html)", function(done) {
 		field_type_text.encode(new Context(), {}, "outside<script>alert(\"a\")</script>")
