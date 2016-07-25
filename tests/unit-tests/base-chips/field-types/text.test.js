@@ -53,7 +53,6 @@ describe("FieldType.Text", function(){
 	it("checks if encode work properly (value_in_code is a string)", function(done) {
 		field_type_text.encode(new Context, {}, "<a>string</a>")
 			.then(function(result) {
-				console.log(result);
 				assert.strictEqual(result.original, "<a>string</a>");
 				assert.strictEqual(result.safe, "&lt;a&gt;string&lt;/a&gt;");
 				assert.strictEqual(result.valueOf(), "<a>string</a>");
