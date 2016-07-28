@@ -33,21 +33,21 @@ module.exports = {
 					it("should not allow creating a resource when the access strategy forbids it", function(done){
 						var result = rt_user1_only_subject.perform_action(new Sealious.Context(0, null, 2), "create", {});
 						assert_error_type(result, "permission", done);
-					})
+					});
 
 					it("should allow creating a resource when the access strategy does not forbid it", function(done){
 						var rt_user1_only_subject = new ResourceTypeCollectionSubject(rt_user1_only);
 
 						var result = rt_user1_only_subject.perform_action(new Sealious.Context(0, null, 1), "create", {});
 						assert_no_error(result, done);
-					})
+					});
 
-				})
+				});
 
 				describe("should check if provided values are valid, so it", function(){
 					var rt_with_picky_field = new Sealious.ResourceType({
 						fields: [{
-							name: 'value',
+							name: "value",
 							type: new Sealious.FieldType({
 								is_proper_value: function(accept, reject, context, params, value){
 									if (value === "correct"){
@@ -58,21 +58,21 @@ module.exports = {
 								}
 							})
 						}]
-					})
+					});
 
 					var rt_with_picky_field_subject = new ResourceTypeCollectionSubject(rt_with_picky_field);
 
 					it("should throw an error if they aren't", function(done){
 						var result = rt_with_picky_field_subject.perform_action(new Sealious.Context(), "create", {value: "incorrect"});
 						assert_error_type(result, "validation", done);
-					})
+					});
 
 					it("should not throw an error if they are", function(done){
 						var result = rt_with_picky_field_subject.perform_action(new Sealious.Context(), "create", {value: "correct"});
-						assert_no_error(result, done)
-					})
+						assert_no_error(result, done);
+					});
 
-				})
+				});
 
 				it("should store the resource body", function(done){
 					var simple_rt_subject = new ResourceTypeCollectionSubject(new Sealious.ResourceType({
@@ -80,7 +80,7 @@ module.exports = {
 							{name: "value1", type: "text"},
 							{name: "value2", type: "int"}
 						]
-					}))
+					}));
 
 					var text = "text";
 					var int = 3;
@@ -92,8 +92,8 @@ module.exports = {
 						} else {
 							done(new Error("The saved values don't match"));
 						}
-					})
-				})
+					});
+				});
 
 				it("should encode fields before sending them to datastore", function(done){
 					var rt_with_fancy_field = new Sealious.ResourceType({
@@ -105,7 +105,7 @@ module.exports = {
 								}
 							})
 						}]
-					})
+					});
 
 					rt_with_fancy_field_subject = new ResourceTypeCollectionSubject(rt_with_fancy_field);
 
@@ -117,7 +117,7 @@ module.exports = {
 							done(new Error("But apparently it did not."));
 						}
 					});
-				})
+				});
 
 				it("should create metadata for every newly created resource", function(done){
 
@@ -138,11 +138,11 @@ module.exports = {
 						} else {
 							done();
 						}
-					})
-				})
+					});
+				});
 
 
-			})
+			});
 
 			describe("._preprocess_resource_filter", function(){
 
@@ -154,19 +154,19 @@ module.exports = {
 							{name: "b", "type": "text"},
 							{name: "c", "type": "text"}
 						]
-					})
+					});
 
 					var filter = {
 						"a": "d",
 						"b": "e",
 						"c": "f"
-					}
+					};
 
 					var expected_result = {
 						"a": {$eq: "d"},
 						"b": {$eq: "e"},
 						"c": {$eq: "f"}
-					}
+					};
 
 					var subject = new ResourceTypeCollectionSubject(rt);
 					subject._preprocess_resource_filter(new Sealious.Context(), filter)
@@ -176,7 +176,7 @@ module.exports = {
 						} else {
 							done(new Error("But it returned something else!"));
 						}
-					})
+					});
 				});
 
 				it("should skip values that do not correspond to the field names of the resource type and properly encode the others", function(done){
@@ -188,16 +188,16 @@ module.exports = {
 								}
 							})}
 						]
-					})
+					});
 
 					var filter = {
 						"value": "foo",
 						"non_existing": "bar"
-					}
+					};
 
 					var expected_result = {
 						"value": {$eq: "foo_encoded"}
-					}
+					};
 
 					var subject = new ResourceTypeCollectionSubject(rt);
 					subject._preprocess_resource_filter(new Sealious.Context(), filter)
@@ -207,10 +207,10 @@ module.exports = {
 						} else {
 							done(new Error("But it returned something else!"));
 						}
-					})
-				})
+					});
+				});
 
-			})
+			});
 
 			describe(".list_resources", function(){
 				it("should throw a proper error when trying to list instances of resource type with a shallow access_strategy that disallows the context", function(done){
@@ -223,7 +223,7 @@ module.exports = {
 								}
 							}
 						})
-					})
+					});
 
 					var subject = new ResourceTypeCollectionSubject(rt);
 
@@ -231,7 +231,7 @@ module.exports = {
 
 					var result = subject.perform_action(context, "show");
 					assert_error_type(result, "permission", done);
-				})
+				});
 
 				it("should only show resources that are allowed by the resource-type's deep item-sensitive access strategy", function(done){
 
@@ -249,12 +249,12 @@ module.exports = {
 									if (item.body.who_can_access.toString() === context.user_id.toString()){
 										return Promise.resolve();
 									} else {
-										return Promise.reject(`Only user #${item.body.who_can_access} can access this item.`)
+										return Promise.reject(`Only user #${item.body.who_can_access} can access this item.`);
 									}
 								}
 							})
 						}
-					})
+					});
 
 
 					var subject = new ResourceTypeCollectionSubject(rt);
@@ -286,7 +286,7 @@ module.exports = {
 							}
 						}).catch(done);
 					}).catch(done);
-				})
+				});
 
 				it("should only return resources of a given resource-type", function(done){
 					var resource_type_name1 = UUIDGenerator(10);
@@ -331,10 +331,10 @@ module.exports = {
 							} else {
 								done(new Error("Mismatch between expected visible resource amount and the actual amount"));
 							}
-						})
-					}).catch(done)
+						});
+					}).catch(done);
 
-				})
+				});
 
 				it("should throw an error when non-permission error is caught during filtering", function(done){
 					var rt = new Sealious.ResourceType({
@@ -348,7 +348,7 @@ module.exports = {
 								}
 							})
 						}
-					})
+					});
 
 					var subject = new ResourceTypeCollectionSubject(rt);
 
@@ -363,16 +363,16 @@ module.exports = {
 							} else {
 								done(new Error("But id did in fact return a validation error"));
 							}
-						})
-					})
+						});
+					});
 
-				})
+				});
 
 				it("should filter the results according to the 'filter' parameter", function(done){
 					var rt = new Sealious.ResourceType({
 						name: UUIDGenerator(10),
 						fields: [{name: "value", type: "text"}]
-					})
+					});
 
 					var accessible_amount = Math.ceil(Math.random() * 5);
 					var total_amount = accessible_amount + Math.ceil(Math.random() * 5);
@@ -394,18 +394,18 @@ module.exports = {
 
 					Promise.all(promises)
 					.then(function(){
-						return subject.perform_action(new Sealious.Context(), "show", {filter: {value: "1"}})
+						return subject.perform_action(new Sealious.Context(), "show", {filter: {value: "1"}});
 					}).then(function(filtered_resources){
 						if (filtered_resources.length === accessible_amount){
 							done();
 						} else {
 							done(new Error("But it seems it did not."));
 						}
-					})
+					});
 
 
-				})
-			})
+				});
+			});
 
 			describe(".perform_action", function(){
 				it("should throw an error when asked for non-existing action", function(done){
@@ -425,8 +425,8 @@ module.exports = {
 							done(new Error("But it threw a different type of error"));
 						}
 					}
-				})
-			})
+				});
+			});
 
 			describe(".get_child_subject", function(){
 				it("should return a SingleResource subject tied to a specific resource type and id", function(done){
@@ -447,11 +447,11 @@ module.exports = {
 						} else {
 							done();
 						}
-					})
+					});
 
-				})
-			})
-		})
+				});
+			});
+		});
 
 	}
-}
+};
