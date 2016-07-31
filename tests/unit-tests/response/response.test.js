@@ -1,7 +1,8 @@
-const Response = require.main.require("lib/response/response.js");
+const locreq = require("locreq")(__dirname);
+const Response = locreq("lib/response/response.js");
 const Sealious = require("sealious");
 
-const Context = require.main.require("lib/context.js");
+const Context = locreq("lib/context.js");
 
 const assert = require("assert");
 
