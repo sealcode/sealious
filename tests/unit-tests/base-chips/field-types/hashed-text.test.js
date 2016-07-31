@@ -1,7 +1,8 @@
-const Context = require.main.require("lib/context.js");
-const field_type_hashed_text = require.main.require("lib/base-chips/field-types/hashed-text.js");
-const acceptCorrectly = require.main.require("tests/util/accept-correctly.js");
-const rejectCorrectly = require.main.require("tests/util/reject-correctly.js");
+const locreq = require("locreq")(__dirname);
+const Context = locreq("lib/context.js");
+const field_type_hashed_text = locreq("lib/base-chips/field-types/hashed-text.js");
+const acceptCorrectly = locreq("tests/util/accept-correctly.js");
+const rejectCorrectly = locreq("tests/util/reject-correctly.js");
 
 const assert = require("assert");
 const crypto = require('crypto');

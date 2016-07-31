@@ -1,5 +1,6 @@
+const locreq = require("locreq")(__dirname);
 const assert = require("assert");
-const logged_in = require.main.require("lib/base-chips/access-strategy-types/logged_in.js");
+const logged_in = locreq("lib/base-chips/access-strategy-types/logged_in.js");
 
 describe("AccessStrategy.Logged_In", function() {
     it("returns the name of the access strategy", function() {
