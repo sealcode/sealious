@@ -7,18 +7,20 @@ const rejectCorrectly = locreq("tests/util/reject-correctly.js");
 const assert = require("assert");
 
 describe("FieldType.Int", function(){
-	it("returns the name of the field type", function() {
+	it("returns the name of the field type", function(){
 		assert.strictEqual(field_type_int.name, "int");
 	});
 	it("should return the description of the field type", function(){
-		assert.strictEqual(typeof field_type_int.get_description(), "string")
+		assert.strictEqual(typeof field_type_int.get_description(), "string");
 	});
 	it("should check if is_proper_value works correctly", function(done){
-		const {accept, reject} = acceptCorrectly(done);
+		const accept = acceptCorrectly(done).accept;
+		const reject = acceptCorrectly(done).reject;
 		field_type_int.is_proper_value(accept, reject, new Context(), {}, 2);
 	});
 	it("should return error because new_value is not an integer", function(done){
-		const {accept, reject} = rejectCorrectly(done);
+		const accept = rejectCorrectly(done).accept;
+		const reject = rejectCorrectly(done).reject;
 		field_type_int.is_proper_value(accept, reject, new Context(), {}, "janusz");
 	});
 	it("should check if encode works properly (given \"2\")", function(){

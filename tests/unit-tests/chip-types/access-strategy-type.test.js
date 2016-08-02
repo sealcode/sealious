@@ -71,7 +71,7 @@ describe("AccessStrategyType", function(){
 				done();
 			});
 		});
-	})
+	});
 
 	describe(".prototype.__check", function(){
 		it("should resolve if given an instance of SuperContext", function(done){

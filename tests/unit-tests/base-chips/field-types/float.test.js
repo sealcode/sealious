@@ -14,11 +14,13 @@ describe("FieldType.Float", function(){
 		assert.strictEqual(typeof field_type_float.get_description(), "string");
 	});
 	it("checks if is_proper_value works correctly", function(done){
-		const {accept, reject} = acceptCorrectly(done);
+		const accept = acceptCorrectly(done).accept;
+		const reject = acceptCorrectly(done).reject;
 		field_type_float.is_proper_value(accept, reject, new Context(), {}, 2.5);
 	});
 	it("returns error because new_value is not an integer", function(done){
-		const {accept, reject} = rejectCorrectly(done);
+		const accept = rejectCorrectly(done).accept;
+		const reject = rejectCorrectly(done).reject;
 		field_type_float.is_proper_value(accept, reject, new Context(), {}, "janusz");
 	});
 	it("checks if encode works properly (given \"2\")", function(){
