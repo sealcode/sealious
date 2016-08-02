@@ -1,4 +1,6 @@
-const ChipManager = require.main.require("lib/chip-types/chip-manager.js");
+"use strict";
+const locreq = require("locreq")(__dirname);
+const ChipManager = locreq("lib/chip-types/chip-manager.js");
 const assert = require("assert");
 
 describe("ChipManager", function(){

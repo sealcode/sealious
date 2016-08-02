@@ -1,8 +1,12 @@
 language: node_js
 sudo: false
 node_js:
-- '5.0.0'
+- '4.4.7'
 script: npm test
+cache:
+  bundler: true
+  directories:
+  - node_modules
 install: 
 - npm install
 - npm link .

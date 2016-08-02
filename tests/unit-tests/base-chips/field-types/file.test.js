@@ -1,34 +1,40 @@
-const Context = require.main.require("lib/context.js");
+"use strict";
+const locreq = require("locreq")(__dirname);
+const Context = locreq("lib/context.js");
 const Sealious = require("sealious");
-const field_type_file = require.main.require("lib/base-chips/field-types/file.js");
-const acceptCorrectly = require.main.require("tests/util/accept-correctly.js");
-const rejectCorrectly = require.main.require("tests/util/reject-correctly.js");
+const field_type_file = locreq("lib/base-chips/field-types/file.js");
+const acceptCorrectly = locreq("tests/util/accept-correctly.js");
+const rejectCorrectly = locreq("tests/util/reject-correctly.js");
 
 const assert = require("assert");
 
 describe("FieldType.File", function(){
 	it("returns undefined", function(){
 		assert.strictEqual(field_type_file.is_proper_value({}, {}, new Context(), {}, undefined), undefined);
-	});;
+	});
 	it("accepts given value (which is an instance of Sealious.File)", function(done){
-		const {accept, reject} = acceptCorrectly(done);
+		const accept = acceptCorrectly(done).accept;
+		const reject = acceptCorrectly(done).reject;
 		field_type_file.is_proper_value(accept, reject, new Context(), {}, new Sealious.File());
-	});;
+	});
 	it("accepts given value (which is an object with filename and data attributes)", function(done){
 		const value = {
 			filename: "test_filename",
 			data: new Buffer(1)
 		};
-		const {accept, reject} = acceptCorrectly(done);
+		const accept = acceptCorrectly(done).accept;
+		const reject = acceptCorrectly(done).reject;
 		field_type_file.is_proper_value(accept, reject, new Context(), {}, value);
 	});
 	it("rejects given value (which is an empty object)", function(done){
-		const {accept, reject} = rejectCorrectly(done);
+		const accept = rejectCorrectly(done).accept;
+		const reject = rejectCorrectly(done).reject;
 		field_type_file.is_proper_value(accept, reject, new Context(), {}, {});
 	});
 	it("rejects given value (which is an array)", function(done){
-		const {accept, reject} = rejectCorrectly(done);
-		field_type_file.is_proper_value(accept, reject, new Context(), {}, [])
+		const accept = rejectCorrectly(done).accept;
+		const reject = rejectCorrectly(done).reject;
+		field_type_file.is_proper_value(accept, reject, new Context(), {}, []);
 	});
 	it("checks if encode works correctly (value_in_code is false)", function(){
 		assert.strictEqual(field_type_file.encode(new Context(), {}, false), null);

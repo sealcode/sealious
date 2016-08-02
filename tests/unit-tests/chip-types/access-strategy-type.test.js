@@ -1,9 +1,12 @@
-const AccessStrategyType = require.main.require("lib/chip-types/access-strategy-type.js");
-const SuperContext = require.main.require("lib/super-context.js");
-const Context = require.main.require("lib/context.js");
-const assert_no_error = require.main.require("tests/util/assert-no-error.js");
-const assert_error_type = require.main.require("tests/util/assert-error-type.js");
-const assert_error = require.main.require("tests/util/assert-error.js");
+"use strict";
+const locreq = require("locreq")(__dirname);
+
+const AccessStrategyType = locreq("lib/chip-types/access-strategy-type.js");
+const SuperContext = locreq("lib/super-context.js");
+const Context = locreq("lib/context.js");
+const assert_no_error = locreq("tests/util/assert-no-error.js");
+const assert_error_type = locreq("tests/util/assert-error-type.js");
+const assert_error = locreq("tests/util/assert-error.js");
 const assert = require("assert");
 
 const ASTP = AccessStrategyType.prototype;
@@ -69,7 +72,7 @@ describe("AccessStrategyType", function(){
 				done();
 			});
 		});
-	})
+	});
 
 	describe(".prototype.__check", function(){
 		it("should resolve if given an instance of SuperContext", function(done){

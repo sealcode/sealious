@@ -1,3 +1,4 @@
+"use strict";
 var Promise = require("bluebird");
 var UUIDGenerator = require("uid");
 
@@ -17,7 +18,7 @@ module.exports = {
 				var rt = new Sealious.ResourceType({
 					name: rt_name,
 					fields: [{name: "value", type: "text"}]
-				})
+				});
 
 
 				it("should find an existing resource", function(done){
@@ -32,15 +33,15 @@ module.exports = {
 							} else {
 								done(new Error("Retrieved id or field value were incorrect"));
 							}
-						})
-					})
-				})
+						});
+					});
+				});
 
 				it("should throw a 'not_found' error if the provided resource id does not exist", function(done){
 					var subject = new SingleResourceSubject(rt, "made-up-id");
 					var promise = subject.perform_action(new Sealious.Context(), "show");
 					assert_error_type(promise, "not_found", done);
-				})
+				});
 
 				it("should throw an error when asked to show a resource when access strategy rejects the context", function(done){
 					var rt = new Sealious.ResourceType({
@@ -55,7 +56,7 @@ module.exports = {
 								}
 							}
 						})
-					})
+					});
 
 					var create_action = new Sealious.Action(["resources", rt.name], "create");
 					create_action.run(new Sealious.Context(0, null, 1), {value: UUIDGenerator(10)})
@@ -63,8 +64,8 @@ module.exports = {
 						var subject = new SingleResourceSubject(rt, created_resource.id);
 						var promise = subject.perform_action(new Sealious.Context(0, null, 2), "show");
 						assert_error_type(promise, "permission", done);
-					})
-				})
+					});
+				});
 
 				it("should throw an error when an item-sensitive access strategy rejects the 'show' method", function(done){
 					var rt = new Sealious.ResourceType({
@@ -82,7 +83,7 @@ module.exports = {
 								}
 							})
 						}
-					})
+					});
 
 					var create_action = new Sealious.Action(["resources", rt.name], "create");
 					create_action.run(new Sealious.Context(), {value: "disallow"})
@@ -90,8 +91,8 @@ module.exports = {
 						var subject = new SingleResourceSubject(rt, created_resource.id);
 						var promise = subject.perform_action(new Sealious.Context(), "show");
 						assert_error_type(promise, "permission", done);
-					})
-				})
+					});
+				});
 
 				it("should not throw an error when an item-sensitive access strategy allows the 'show' method", function(done){
 					var rt = new Sealious.ResourceType({
@@ -109,7 +110,7 @@ module.exports = {
 								}
 							})
 						}
-					})
+					});
 
 					var create_action = new Sealious.Action(["resources", rt.name], "create");
 					create_action.run(new Sealious.Context(), {value: "allow"})
@@ -117,9 +118,9 @@ module.exports = {
 						var subject = new SingleResourceSubject(rt, created_resource.id);
 						var result = subject.perform_action(new Sealious.Context(), "show");
 						assert_no_error(result, done);
-					})
-				})
-			})
-		})
+					});
+				});
+			});
+		});
 	}
-}
+};

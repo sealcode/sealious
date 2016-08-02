@@ -1,7 +1,8 @@
+"use strict";
 function acceptCorrectly(done) {
-    return {
-        accept: done,
-        reject: (msg) => done(new Error(msg))
+    										return {
+        										accept: done,
+        										reject: (msg) => done(new Error(msg))
     };
 }
 

@@ -1,8 +1,10 @@
+"use strict";
+const locreq = require("locreq")(__dirname);
 const assert = require("assert");
-const Context = require.main.require("lib/context.js");
-const owner = require.main.require("lib/base-chips/access-strategy-types/owner.js");
-const assert_no_error = require.main.require("tests/util/assert-no-error.js");
-const assert_error = require.main.require("tests/util/assert-error.js");
+const Context = locreq("lib/context.js");
+const owner = locreq("lib/base-chips/access-strategy-types/owner.js");
+const assert_no_error = locreq("tests/util/assert-no-error.js");
+const assert_error = locreq("tests/util/assert-error.js");
 
 
 describe("AccessStrategy.owner", function(){
