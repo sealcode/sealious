@@ -1,4 +1,5 @@
-const Responses = require.main.require("lib/response/responses.js");
+const locreq = require("locreq")(__dirname);
+const Responses = locreq("lib/response/responses.js");
 const assert = require("assert");
 
 describe("Sealious.Responses", function() {

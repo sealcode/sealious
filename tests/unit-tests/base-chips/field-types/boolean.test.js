@@ -1,8 +1,9 @@
-const field_type_boolean = require.main.require("lib/base-chips/field-types/boolean.js");
-const Context = require.main.require("lib/context.js");
+const locreq = require("locreq")(__dirname);
+const field_type_boolean = locreq("lib/base-chips/field-types/boolean.js");
+const Context = locreq("lib/context.js");
 
-const acceptCorrectly = require.main.require("tests/util/accept-correctly.js");
-const rejectCorrectly = require.main.require("tests/util/reject-correctly.js");
+const acceptCorrectly = locreq("tests/util/accept-correctly.js");
+const rejectCorrectly = locreq("tests/util/reject-correctly.js");
 
 const assert = require("assert");
 

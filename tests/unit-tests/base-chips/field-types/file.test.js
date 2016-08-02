@@ -1,8 +1,9 @@
-const Context = require.main.require("lib/context.js");
+const locreq = require("locreq")(__dirname);
+const Context = locreq("lib/context.js");
 const Sealious = require("sealious");
-const field_type_file = require.main.require("lib/base-chips/field-types/file.js");
-const acceptCorrectly = require.main.require("tests/util/accept-correctly.js");
-const rejectCorrectly = require.main.require("tests/util/reject-correctly.js");
+const field_type_file = locreq("lib/base-chips/field-types/file.js");
+const acceptCorrectly = locreq("tests/util/accept-correctly.js");
+const rejectCorrectly = locreq("tests/util/reject-correctly.js");
 
 const assert = require("assert");
 
