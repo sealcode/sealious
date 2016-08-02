@@ -1,4 +1,5 @@
-const ConfigManager = require.main.require("lib/config/config-manager.js");
+const locreq = require("locreq")(__dirname);
+const ConfigManager = locreq("lib/config/config-manager.js");
 const assert = require("assert");
 
 describe("ConfigManager", function(){

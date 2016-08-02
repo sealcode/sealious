@@ -1,9 +1,10 @@
-const field_type_color = require.main.require("lib/base-chips/field-types/color.js");
-const Context = require.main.require("lib/context.js");
+const locreq = require("locreq")(__dirname);
+const field_type_color = locreq("lib/base-chips/field-types/color.js");
+const Context = locreq("lib/context.js");
 const assert = require("assert");
 
-const acceptCorrectly = require.main.require("tests/util/accept-correctly.js");
-const rejectCorrectly = require.main.require("tests/util/reject-correctly.js");
+const acceptCorrectly = locreq("tests/util/accept-correctly.js");
+const rejectCorrectly = locreq("tests/util/reject-correctly.js");
 
 describe("FieldType.Color", function(){
 	it("returns the name of the field type", function(){

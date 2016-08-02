@@ -1,5 +1,6 @@
+const locreq = require("locreq")(__dirname);
 const assert = require("assert");
-const FieldTypeDescription = require.main.require("lib/data-structures/field-type-description.js");
+const FieldTypeDescription = locreq("lib/data-structures/field-type-description.js");
 
 describe("Sealious.FieldTypeDescription", function() {
     it("returns a FieldTypeDescription object", function() {

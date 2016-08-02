@@ -1,5 +1,6 @@
+const locreq = require("locreq")(__dirname);
 const assert = require("assert");
-const public = require.main.require("lib/base-chips/access-strategy-types/public.js");
+const public = locreq("lib/base-chips/access-strategy-types/public.js");
 
 describe("AccessStrategy.Public", function() {
     it("returns the name of the access strategy", function() {

@@ -1,5 +1,7 @@
+const locreq = require("locreq")(__dirname);
+
 const assert = require("assert");
-const VirtualFile = require.main.require("lib/data-structures/virtual-file.js");
+const VirtualFile = locreq("lib/data-structures/virtual-file.js");
 
 describe("Sealious.VirtualFile", function() {
     it("returns a VirtualFile object", function() {

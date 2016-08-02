@@ -7,7 +7,7 @@
   "scripts": {
     "prepublish": "require-self",
     "test": "mocha --recursive tests",
-    "coverage-test": "NODE_PATH=. istanbul cover --include-all-sources _mocha -- -R spec --recursive tests && (xdg-open ./coverage/lcov-report/index.html || exit 0)",
+    "coverage-test": "istanbul cover --include-all-sources _mocha -- -R spec --recursive tests && (xdg-open ./coverage/lcov-report/index.html || exit 0)",
     "coveralls": "npm run coverage-test && cat coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js",
     "eslint": "eslint lib && echo \"There are no errors.\" || (echo \"Errors in code were found. Run \"npm run eslint-fix\" or repair the problems yourself.\" && exit 1)",
     "eslint-fix": "eslint --fix lib \"There are no errors.\" || (echo \"Errors in code were found. Run \"npm run eslint-fix\" or repair the problems yourself.\" && exit 1)"
@@ -33,6 +33,7 @@
     "escape-html": "^1.0.3",
     "expand-hash": "^0.2.2",
     "fs-extra": "^0.30.0",
+    "locreq": "^1.0.0",
     "merge": "^1.2.0",
     "node-uuid": "^1.4.7",
     "request-promise": "^4.0.2",
@@ -54,6 +55,6 @@
     "require-self": "^0.1.0"
   },
   "pre-commit": [
-      "eslint"
-    ]
+    "eslint"
+  ]
 }

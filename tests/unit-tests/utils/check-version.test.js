@@ -1,4 +1,5 @@
-const check_for_updates = require.main.require("lib/utils/check-for-updates.js");
+const locreq = require("locreq")(__dirname);
+const check_for_updates = locreq("lib/utils/check-for-updates.js");
 const request = require("request-promise");
 const assert = require("assert");
 

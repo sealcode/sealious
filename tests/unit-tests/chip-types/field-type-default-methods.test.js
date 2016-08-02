@@ -1,5 +1,6 @@
+const locreq = require("locreq")(__dirname);
 const assert = require("assert");
-const FieldTypeDefaultMethods = require.main.require("lib/chip-types/field-type-default-methods.js");
+const FieldTypeDefaultMethods = locreq("lib/chip-types/field-type-default-methods.js");
 
 describe("Sealious.FieldTypeDefaultMethods", function() {
     it("resolves the .is_proper_value()", function(done) {

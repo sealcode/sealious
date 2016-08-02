@@ -1,5 +1,6 @@
-const File = require.main.require("lib/data-structures/file.js");
-const Context = require.main.require("lib/context.js");
+const locreq = require("locreq")(__dirname);
+const File = locreq("lib/data-structures/file.js");
+const Context = locreq("lib/context.js");
 
 const assert = require("assert");
 

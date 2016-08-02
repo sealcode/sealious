@@ -1,8 +1,9 @@
+const locreq = require("locreq")(__dirname);
 const assert = require("assert");
 const Promise = require("bluebird");
 
-const Single = require.main.require("lib/chip-types/field-structures/single.js");
-const HashedText = require.main.require("lib/base-chips/field-types/hashed-text.js");
+const Single = locreq("lib/chip-types/field-structures/single.js");
+const HashedText = locreq("lib/base-chips/field-types/hashed-text.js");
 HashedText.params = {};
 
 describe("Sealious.FieldStructures.Single", function() {

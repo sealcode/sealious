@@ -1,4 +1,5 @@
-const Errors = require.main.require("lib/response/error.js");
+const locreq = require("locreq")(__dirname);
+const Errors = locreq("lib/response/error.js");
 const assert = require("assert");
 
 describe("Sealious.Errors", function(){
