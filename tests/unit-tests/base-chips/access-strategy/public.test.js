@@ -1,14 +1,14 @@
 "use strict";
 const locreq = require("locreq")(__dirname);
 const assert = require("assert");
-const public = locreq("lib/base-chips/access-strategy-types/public.js");
+const public_as = locreq("lib/base-chips/access-strategy-types/public.js");
 
 describe("AccessStrategy.Public", function() {
     it("returns the name of the access strategy", function() {
-        assert.strictEqual(public.name, "public");
+        assert.strictEqual(public_as.name, "public");
     });
     it("accepts everyone", function(done) {
-        public.checker_function()
+        public_as.checker_function()
             .then(function() {
                 done();
             })
@@ -17,6 +17,6 @@ describe("AccessStrategy.Public", function() {
             });
     });
     it("checks item_sensitive attribute", function() {
-        assert.strictEqual(public.item_sensitive, false);
+        assert.strictEqual(public_as.item_sensitive, false);
     });
 });
