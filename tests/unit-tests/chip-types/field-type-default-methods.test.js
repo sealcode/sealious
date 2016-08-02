@@ -1,3 +1,4 @@
+"use strict";
 const locreq = require("locreq")(__dirname);
 const assert = require("assert");
 const FieldTypeDefaultMethods = locreq("lib/chip-types/field-type-default-methods.js");

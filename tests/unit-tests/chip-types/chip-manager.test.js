@@ -1,3 +1,4 @@
+"use strict";
 const locreq = require("locreq")(__dirname);
 const ChipManager = locreq("lib/chip-types/chip-manager.js");
 const assert = require("assert");

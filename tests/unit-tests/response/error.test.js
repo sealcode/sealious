@@ -1,3 +1,4 @@
+"use strict";
 const locreq = require("locreq")(__dirname);
 const Errors = locreq("lib/response/error.js");
 const assert = require("assert");

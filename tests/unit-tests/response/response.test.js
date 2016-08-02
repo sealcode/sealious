@@ -1,3 +1,4 @@
+"use strict";
 const locreq = require("locreq")(__dirname);
 const Response = locreq("lib/response/response.js");
 const Sealious = require("sealious");

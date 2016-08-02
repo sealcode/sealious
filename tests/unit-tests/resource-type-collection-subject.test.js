@@ -1,3 +1,4 @@
+"use strict";
 
 var UUIDGenerator = require("uid");
 var equal = require("deep-equal");

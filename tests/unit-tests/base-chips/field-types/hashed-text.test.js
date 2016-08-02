@@ -1,3 +1,4 @@
+"use strict";
 const locreq = require("locreq")(__dirname);
 const Context = locreq("lib/context.js");
 const field_type_hashed_text = locreq("lib/base-chips/field-types/hashed-text.js");

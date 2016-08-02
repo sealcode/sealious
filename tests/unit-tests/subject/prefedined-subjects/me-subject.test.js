@@ -1,3 +1,4 @@
+"use strict";
 // const locreq = require("locreq")(__dirname);
 // const MeSubject = locreq("lib/subject/predefined-subjects/me-subject.js");
 // const assert = require("assert");

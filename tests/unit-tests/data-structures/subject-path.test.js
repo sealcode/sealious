@@ -1,3 +1,4 @@
+"use strict";
 const locreq = require("locreq")(__dirname);
 const SubjectPath = locreq("lib/data-structures/subject-path.js");
 const assert = require("assert");

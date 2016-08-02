@@ -1,3 +1,4 @@
+"use strict";
 function acceptCorrectly(done) {
     										return {
         										accept: done,

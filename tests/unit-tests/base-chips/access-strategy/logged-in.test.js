@@ -1,3 +1,4 @@
+"use strict";
 const locreq = require("locreq")(__dirname);
 const assert = require("assert");
 const logged_in = locreq("lib/base-chips/access-strategy-types/logged_in.js");

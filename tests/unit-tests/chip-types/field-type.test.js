@@ -1,3 +1,4 @@
+"use strict";
 const locreq = require("locreq")(__dirname);
 const FieldType = locreq("lib/chip-types/field-type.js");
 const ChipManager = locreq("lib/chip-types/chip-manager.js");

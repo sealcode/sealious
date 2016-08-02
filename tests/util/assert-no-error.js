@@ -1,3 +1,4 @@
+"use strict";
 function assert_no_error (promise, done) {
 	promise.then(function(){
 		done();
