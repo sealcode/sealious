@@ -20,8 +20,12 @@ describe("Sealious.Context", function() {
     });
     it("checks if session_id is non-writable", function() {
         const context = new Context(1, "ip", "user_id", "session_id");
-        context.session_id = 2;
-        assert.strictEqual(context.session_id, "session_id");
+		assert.throws(
+			function(){
+				context.session_id = 2;
+			},
+			TypeError
+		);
     });
     it("checks if _cached_user_data and loading_user_data are not enumerable", function() {
         const context = new Context();
