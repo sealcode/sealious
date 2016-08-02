@@ -33,7 +33,7 @@
     "escape-html": "^1.0.3",
     "expand-hash": "^0.2.2",
     "fs-extra": "^0.30.0",
-    "locreq": "^1.0.0",
+    "locreq": "^1.0.3",
     "merge": "^1.2.0",
     "node-uuid": "^1.4.7",
     "request-promise": "^4.0.2",
