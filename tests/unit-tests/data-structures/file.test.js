@@ -1,3 +1,4 @@
+"use strict";
 const locreq = require("locreq")(__dirname);
 const File = locreq("lib/data-structures/file.js");
 const Context = locreq("lib/context.js");

@@ -1,3 +1,4 @@
+"use strict";
 function rejectCorrectly(done) {
     										return {
         										accept: () => done(new Error("It accepted!")),

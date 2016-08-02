@@ -1,3 +1,4 @@
+"use strict";
 const locreq = require("locreq")(__dirname);
 
 const AccessStrategyType = locreq("lib/chip-types/access-strategy-type.js");

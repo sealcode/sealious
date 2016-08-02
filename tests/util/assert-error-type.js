@@ -1,3 +1,4 @@
+"use strict";
 function assert_error_type (promise, error_type, done) {
 	promise.then(function(){
 		done(new Error("But it didn't throw any error at all!"));

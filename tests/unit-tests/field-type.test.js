@@ -1,3 +1,4 @@
+"use strict";
 var assert_no_error = require("../util/assert-no-error.js");
 
 module.exports = {

@@ -1,3 +1,4 @@
+"use strict";
 // const locreq = require("locreq")(__dirname);
 // const UUIDGenerator = require("uid");
 // const equal = require("deep-equal");

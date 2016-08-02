@@ -1,3 +1,4 @@
+"use strict";
 const Context = require.main.require("lib/context.js");
 const assert = require("assert");
 

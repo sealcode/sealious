@@ -1,3 +1,4 @@
+"use strict";
 const locreq = require("locreq")(__dirname);
 const assert = require("assert");
 const FieldTypeDescription = locreq("lib/data-structures/field-type-description.js");

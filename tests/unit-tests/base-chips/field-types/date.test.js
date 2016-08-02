@@ -1,3 +1,4 @@
+"use strict";
 const locreq = require("locreq")(__dirname);
 const Context = locreq("lib/context.js");
 const field_type_date = locreq("lib/base-chips/field-types/date.js");
