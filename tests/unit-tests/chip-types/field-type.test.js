@@ -1,6 +1,8 @@
-const FieldType = require.main.require("lib/chip-types/field-type.js");
-const ChipManager = require.main.require("lib/chip-types/chip-manager.js");
-const Context = require.main.require("lib/context.js");
+"use strict";
+const locreq = require("locreq")(__dirname);
+const FieldType = locreq("lib/chip-types/field-type.js");
+const ChipManager = locreq("lib/chip-types/chip-manager.js");
+const Context = locreq("lib/context.js");
 const assert_no_error = require("../../util/assert-no-error.js");
 const assert = require("assert");
 

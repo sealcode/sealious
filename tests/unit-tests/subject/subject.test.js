@@ -1,4 +1,6 @@
-const Subject = require.main.require("lib/subject/subject.js");
+"use strict";
+const locreq = require("locreq")(__dirname)
+const Subject = locreq("lib/subject/subject.js");
 const assert = require("assert");
 
 describe("Sealious.Subject", function(){

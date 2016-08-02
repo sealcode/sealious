@@ -1,16 +1,18 @@
+"use strict";
+// const locreq = require("locreq")(__dirname);
 // const UUIDGenerator = require("uid");
 // const equal = require("deep-equal");
 // const Promise = require("bluebird");
 //
-// const assert_no_error = require.main.require("tests/util/assert-no-error.js");
-// const assert_error_type = require.main.require("tests/util/assert-error-type.js");
+// const assert_no_error = locreq("tests/util/assert-no-error.js");
+// const assert_error_type = locreq("tests/util/assert-error-type.js");
 //
-// const Context = require.main.require("lib/context.js");
-// const FieldType = require.main.require("lib/chip-types/field-type.js");
-// const ResourceType = require.main.require("lib/chip-types/resource-type.js");
-// const AccessStrategyType = require.main.require("lib/chip-types/access-strategy-type.js");
-// const ResourceTypeCollectionSubject = require.main.require("lib/subject/subject-types/resource-type-collection-subject.js");
-// const SingleResource = require.main.require("lib/subject/subject-types/single-resource-subject.js");
+// const Context = locreq("lib/context.js");
+// const FieldType = locreq("lib/chip-types/field-type.js");
+// const ResourceType = locreq("lib/chip-types/resource-type.js");
+// const AccessStrategyType = locreq("lib/chip-types/access-strategy-type.js");
+// const ResourceTypeCollectionSubject = locreq("lib/subject/subject-types/resource-type-collection-subject.js");
+// const SingleResource = locreq("lib/subject/subject-types/single-resource-subject.js");
 //
 // describe("Subject type: resource-type-collection", function(){
 // 	describe(".create_resource", function(){
