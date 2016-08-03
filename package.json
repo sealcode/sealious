@@ -25,7 +25,6 @@
     "url": "https://github.com/Sealious/Sealious/issues"
   },
   "dependencies": {
-    "Set": "~0.4.1",
     "bluebird": "^3.3.3",
     "bluebird-events": "^2.0.0",
     "clone": "^1.0.2",
