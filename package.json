@@ -5,7 +5,6 @@
   "description": "A declarative framework for fast & easy app development.",
   "main": "./lib/main.js",
   "scripts": {
-    "prepublish": "require-self",
     "test": "mocha --recursive tests",
     "coverage-test": "istanbul cover --include-all-sources _mocha -- -R spec --recursive tests && (xdg-open ./coverage/lcov-report/index.html || exit 0)",
     "coveralls": "npm run coverage-test && cat coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js",
@@ -37,6 +36,7 @@
     "node-uuid": "^1.4.7",
     "request-promise": "^4.0.2",
     "resolve": "^1.1.7",
+    "sealious-datastore-tingo": "^0.1.5",
     "uid": "0.0.2",
     "winston": "^1.0.0"
   },
