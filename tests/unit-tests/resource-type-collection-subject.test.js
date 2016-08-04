@@ -1,6 +1,6 @@
 "use strict";
 
-var UUIDGenerator = require("uid");
+var UUIDGenerator = require("shortid");
 var equal = require("deep-equal");
 var Promise = require("bluebird");
 
