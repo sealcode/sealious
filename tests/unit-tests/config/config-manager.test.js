@@ -5,22 +5,35 @@ const assert = require("assert");
 
 describe("ConfigManager", function(){
 
-	it("sets config with arguments.length === 1", function(){
-		assert.doesNotThrow(function() {
-			ConfigManager.set_config("some_key");
-		});
+	it("sets a new config and then gets it", function(){
+		ConfigManager.set_config(
+			"test.config", {
+				"test_key_object": {
+					"my_key": "my_value"
+				}
+			}
+		);
+		const config = ConfigManager.get_config("test.config");
+		assert.deepEqual(config, { test_key_object: { my_key: "my_value" }});
 	});
 
-	it("sets config with arguments.length === 2 and uses modify_config private function", function(){
-		assert.doesNotThrow(function() {
-			ConfigManager.set_config("this.key", "config");
-		});
-	});
-
-	it("sets default config with arguments.length === 1", function(){
-		assert.doesNotThrow(function() {
-			ConfigManager.set_default_config("some_key");
-		});
+	it("sets a default config, modifies it and then gets it", function(){
+		ConfigManager.set_default_config(
+			"test.config", {
+				"test_key_object": {
+					"my_key": "my_value"
+				}
+			}
+		);
+		ConfigManager.set_config(
+			"test.config", {
+				"test_key_object2": {
+					"my_key2": "my_value2"
+				}
+			}
+		);
+		const config = ConfigManager.get_config("test.config");
+		assert.deepEqual(config, { test_key_object: { my_key: "my_value" }, test_key_object2: { my_key2: "my_value2" } });
 	});
 
 	it("gets configuration", function(){
@@ -38,4 +51,4 @@ describe("ConfigManager", function(){
 		const dispatcher_config = ConfigManager.get_chip_config("some_non_existent_longid");
 		assert.strictEqual(dispatcher_config, undefined);
 	});
-})
+});
