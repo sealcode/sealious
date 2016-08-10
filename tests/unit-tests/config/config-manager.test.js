@@ -36,6 +36,26 @@ describe("ConfigManager", function(){
 		assert.deepEqual(config, { test_key_object: { my_key: "my_value" }, test_key_object2: { my_key2: "my_value2" } });
 	});
 
+	it("sets such a config that Object.assign will not parse it correctly", function(){
+		ConfigManager.set_default_config(
+			"test.config2", {
+				foo: {
+					bar: "baz",
+					bat: "bax"
+				}
+			}
+		);
+		ConfigManager.set_config(
+			"test.config2", {
+				foo: {
+					bam: "bak"
+				}
+			}
+		);
+		const config = ConfigManager.get_config("test.config2");
+		assert.deepEqual(config, { foo: { bar: "baz", bat: "bax", bam: "bak" } });
+	});
+
 	it("gets configuration", function(){
 		const config = ConfigManager.get_configuration("this.key");
 		assert.strictEqual(config instanceof Object, true);
