@@ -1,6 +1,6 @@
 "use strict";
 var Promise = require("bluebird");
-var UUIDGenerator = require("uid");
+var UUIDGenerator = require("shortid");
 
 var assert_error_type = require("../util/assert-error-type.js");
 var assert_no_error = require("../util/assert-no-error.js");
