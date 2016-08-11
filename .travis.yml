@@ -19,6 +19,7 @@ install:
 - cd sealious-integration-tests
 - npm install
 - npm link sealious
+- cd ../sealious
 after_success:
 - npm run coveralls
 after_deploy:
