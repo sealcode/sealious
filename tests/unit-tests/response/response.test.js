@@ -1,7 +1,7 @@
 "use strict";
 const locreq = require("locreq")(__dirname);
 const Response = locreq("lib/response/response.js");
-const Sealious = require("sealious");
+const Errors = locreq("lib/response/error.js");
 
 const Context = locreq("lib/context.js");
 
@@ -16,7 +16,7 @@ describe("Sealious.Response", function(){
 		assert.strictEqual(response.status_message, "my_status_message");
 	});
 	it("returns a Response object from an error", function() {
-		const error = new Sealious.Errors.BadContext("This is an error", "test_data");
+		const error = new Errors.BadContext("This is an error", "test_data");
 		const response = Response.fromError(error);
 		assert.strictEqual(response.data, "test_data");
 		assert.strictEqual(response.type, "permission");
