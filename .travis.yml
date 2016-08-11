@@ -6,6 +6,7 @@ script:
 - npm test
 - cd ../integration-tests
 - node .
+- cd ../sealious
 cache:
   bundler: true
   directories:
