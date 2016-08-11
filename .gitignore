@@ -13,3 +13,5 @@ db
 db/*
 lib-cov/*
 coverage.html
+\#*
+.\#*
