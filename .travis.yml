@@ -16,7 +16,7 @@ install:
 - npm link sealious
 - cd ../
 - git clone https://github.com/sealcode/sealious-integration-tests.git
-- cd sealious-integration-test
+- cd sealious-integration-tests
 - npm install
 - npm link sealious
 after_success:
