@@ -57,8 +57,14 @@ describe("ConfigManager", function(){
 	});
 
 	it("gets configuration", function(){
-		const config = ConfigManager.get_configuration("this.key");
-		assert.strictEqual(config instanceof Object, true);
+		ConfigManager.set_default_config(
+			"test_config", {
+				test_field: "test_value",
+				is_test: true,
+			});
+		const config = ConfigManager.get_config().test_config;
+		assert.strictEqual(config.test_field, "test_value");
+		assert.strictEqual(config.is_test, true);
 	});
 
 	it("gets dispatcher config", function(){
