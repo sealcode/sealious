@@ -2,13 +2,29 @@
 const locreq = require("locreq")(__dirname);
 const Context = locreq("lib/context.js");
 const field_type_hashed_text = locreq("lib/base-chips/field-types/hashed-text.js");
-const acceptCorrectly = locreq("tests/util/accept-correctly.js");
-const rejectCorrectly = locreq("tests/util/reject-correctly.js");
+
+const test_is_proper_value = locreq("tests/util/test-is-proper-value.js");
 
 const assert = require("assert");
 const crypto = require("crypto");
 
 describe("FieldType.HashedText", function(){
+
+	test_is_proper_value({
+        field_type: field_type_hashed_text,
+        should_accept: [
+            ["a 'secure' password with default params", "pas1sw24rd1", {}],
+			["a proper password when 3 digits are required", "pass1sw2rd1", {digits: 3}],
+			["a proper password when 3 capitals are required", "PASword", {capitals: 3}],
+			["a proper password when 3 capitals and and 3 digits are required", "PASSword123", {capitals: 3, digits: 3}],
+        ],
+        should_reject: [
+            ["a password with insufficient amount of digits", "password", {digits: 3}],
+            ["a password with insufficient amount of capitals", "password", {capitals: 3}],
+			["a password with enough capitals, but not enough digits", "PASSword", {capitals: 3, digits: 3}] 
+        ]
+    });
+
 	it("returns the name of the field type", function(){
 		assert.strictEqual(field_type_hashed_text.name, "hashed-text");
 	});
@@ -22,36 +38,6 @@ describe("FieldType.HashedText", function(){
 		const desc = field_type_hashed_text.get_description(new Context, {digits: 4, capitals: 2});
 		assert.notStrictEqual(desc.indexOf("required digits: 4"), -1);
 		assert.notStrictEqual(desc.indexOf("required capitals: 2"), -1);
-	});
-	it("accepts given password ('pas1sw24rd1')", function(done){
-		const accept = acceptCorrectly(done).accept;
-		const reject = acceptCorrectly(done).reject;
-		field_type_hashed_text.is_proper_value(accept, reject, new Context(), {}, "pas1sw24rd1");
-	});
-	it("accepts given password ('pas1sw24rd1')", function(done){
-		const accept = acceptCorrectly(done).accept;
-		const reject = acceptCorrectly(done).reject;
-		field_type_hashed_text.is_proper_value(accept, reject, new Context(), {digits: 3}, "pas1sw24rd1");
-	});
-	it("accepts given password ('PAs1sW24rD1')", function(done){
-		const accept = acceptCorrectly(done).accept;
-		const reject = acceptCorrectly(done).reject;
-		field_type_hashed_text.is_proper_value(accept, reject, new Context(), {capitals: 3}, "PAs1sW24rD1");
-	});
-	it("accepts given password ('PaSw0rd23')", function(done){
-		const accept = acceptCorrectly(done).accept;
-		const reject = acceptCorrectly(done).reject;
-		field_type_hashed_text.is_proper_value(accept, reject, new Context(), {capitals: 2, digits: 3}, "PaSw0rd23");
-	});
-	it("rejects given password ('password')", function(done){
-		const accept = rejectCorrectly(done).accept;
-		const reject = rejectCorrectly(done).reject;
-		field_type_hashed_text.is_proper_value(accept, reject, new Context(), {capitals: 2, digits: 3}, "password");
-	});
-	it("accept the password", function(done){
-		const accept = acceptCorrectly(done).accept;
-		const reject = acceptCorrectly(done).reject;
-		field_type_hashed_text.is_proper_value(accept, reject, new Context(), "not on object", "password");
 	});
 	it("resolves with a hash (algorithm: 'md5', salt: '')", function(done){
 		field_type_hashed_text.encode(new Context(), {}, "test")
