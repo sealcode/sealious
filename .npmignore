@@ -1,0 +1,4 @@
+tests/
+docs/
+dev-setup.sh
+.eslintrc.json
