@@ -1,3 +1,4 @@
 tests/
 docs/
-coverage/
+dev-setup.sh
+.eslintrc.json
