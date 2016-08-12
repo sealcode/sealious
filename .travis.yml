@@ -3,9 +3,9 @@ sudo: false
 node_js:
 - '4.4.7'
 script: 
-- npm test
+- npm test \# unit tests
 - cd ../integration-tests
-- node .
+- node . \# integration tests
 - cd ../sealious
 cache:
   bundler: true
