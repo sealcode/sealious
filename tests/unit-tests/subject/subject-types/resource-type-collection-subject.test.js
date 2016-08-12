@@ -1,6 +1,6 @@
 "use strict";
 // const locreq = require("locreq")(__dirname);
-// const UUIDGenerator = require("uid");
+// const UUIDGenerator = require("shortid");
 // const equal = require("deep-equal");
 // const Promise = require("bluebird");
 //
