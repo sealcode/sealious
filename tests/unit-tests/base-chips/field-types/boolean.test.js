@@ -28,7 +28,7 @@ describe("FieldType.Boolean", function(){
 	});
 
 
-	it("returns the name of the field type", function() {
+	it("returns the name of the field type", function(){
 		assert.strictEqual(field_type_boolean.name, "boolean");
 	});
 	it("returns the description of the field type", function(){
