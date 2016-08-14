@@ -9,7 +9,7 @@ const test_is_proper_value = locreq("tests/util/test-is-proper-value.js");
 const assert = require("assert");
 
 describe("FieldType.Text", function(){
-	
+
 	test_is_proper_value({
         field_type: field_type_text,
         should_accept: [
@@ -21,6 +21,7 @@ describe("FieldType.Text", function(){
         should_reject: [
             ["a text that's too long", "hamster, a dentist", {max_length: 5}],
 			["a string of text shorter than min_length", "h", {min_length: 2}],
+			["a string of text shorter than max, but too short", "ab", {min_length: 3, max_length: 5}],
         ]
     });
 
