@@ -6,29 +6,31 @@ const Context = locreq("lib/context.js");
 
 
 module.exports = function(options){
-	let field_type = options.field_type;
-	let should_accept = options.should_accept;
-	let should_reject = options.should_reject;
+	const field_type = options.field_type;
+	const should_accept = options.should_accept;
+	const should_reject = options.should_reject;
 	describe(".is_proper_value", function(){
 		for(let i in should_accept){
-			let _case = should_accept[i];
+			const _case = should_accept[i];
 			it(`accepts ${_case[0]}: ${_case[1]}`, function(done){
-				let result = field_type.is_proper_value(
-					new Context(), 
-					_case[2] || {}, 
-					_case[1]
+				const result = field_type.is_proper_value(
+					new Context(),
+					_case[2] || {}, // params
+					_case[1], // new_value
+					_case[3] // old_value
 				);
 				assert_no_error(result, done);
 			});
 		}
-		
+
 		for(let i in should_reject){
-			let _case = should_reject[i];
+			const _case = should_reject[i];
 			it(`rejects ${_case[0]}: ${_case[1]}`, function(done){
-				let result = field_type.is_proper_value(
+				const result = field_type.is_proper_value(
 					new Context(),
-					_case[2] || {},
-					_case[1]
+					_case[2] || {}, // params
+					_case[1], // new_value
+					_case[3] // old_value
 				);
 				assert_error(result, done);
 			});
