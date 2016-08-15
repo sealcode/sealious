@@ -15,7 +15,7 @@ module.exports = {
 
 				var field_value = UUIDGenerator(10);
 
-				var rt = new Sealious.ResourceType({
+				var rt = new Sealious.Collection({
 					name: rt_name,
 					fields: [{name: "value", type: "text"}]
 				});
@@ -44,7 +44,7 @@ module.exports = {
 				});
 
 				it("should throw an error when asked to show a resource when access strategy rejects the context", function(done){
-					var rt = new Sealious.ResourceType({
+					var rt = new Sealious.Collection({
 						name: UUIDGenerator(10),
 						fields: [{name: "value", type: "text"}],
 						access_strategy: new Sealious.AccessStrategyType({
@@ -68,7 +68,7 @@ module.exports = {
 				});
 
 				it("should throw an error when an item-sensitive access strategy rejects the 'show' method", function(done){
-					var rt = new Sealious.ResourceType({
+					var rt = new Sealious.Collection({
 						name: UUIDGenerator(10),
 						fields: [{name: "value", type: "text"}],
 						access_strategy: {
@@ -95,7 +95,7 @@ module.exports = {
 				});
 
 				it("should not throw an error when an item-sensitive access strategy allows the 'show' method", function(done){
-					var rt = new Sealious.ResourceType({
+					var rt = new Sealious.Collection({
 						name: UUIDGenerator(10),
 						fields: [{name: "value", type: "text"}],
 						access_strategy: {
