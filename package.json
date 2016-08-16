@@ -6,8 +6,9 @@
   "main": "./lib/main.js",
   "scripts": {
     "test": "mocha --recursive tests",
-    "coverage-test": "istanbul cover --include-all-sources _mocha -- -R spec --recursive tests && (xdg-open ./coverage/lcov-report/index.html || exit 0)",
-    "coveralls": "npm run coverage-test && cat coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js",
+    "cover": "istanbul cover --include-all-sources _mocha -- -R spec --recursive tests",
+    "show-coverage": "npm run cover && (xdg-open ./coverage/lcov-report/index.html || exit 0)",
+    "coveralls": "npm run cover && cat coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js",
     "eslint": "eslint lib && echo \"There are no errors.\" || (echo \"Errors in code were found. Run \"npm run eslint-fix\" or repair the problems yourself.\" && exit 1)",
     "eslint-fix": "eslint --fix lib \"There are no errors.\" || (echo \"Errors in code were found. Run \"npm run eslint-fix\" or repair the problems yourself.\" && exit 1)"
   },
