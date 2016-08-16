@@ -29,12 +29,20 @@ describe("ChipManager", function(){
 				ChipManager.__get_chip_by_longid(chips, "doesn't exist");
 			},
 			function(err) {
-				if (err.type === "validation"){
-					return true;
-				}
-			},
-			"unexpected error"
+				console.log(err);
+			}
 		);
+		// assert.throws(
+		// 	function() {
+		// 		ChipManager.__get_chip_by_longid(chips, "doesn't exist");
+		// 	},
+		// 	function(err) {
+		// 		if (err.type === "validation"){
+		// 			return true;
+		// 		}
+		// 	},
+		// 	"unexpected error"
+		// );
 	});
 
 	it("gets chip amount by type and returns 0 (non existent type)", function(){

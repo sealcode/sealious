@@ -27,6 +27,7 @@
   "dependencies": {
     "bluebird": "^3.3.3",
     "bluebird-events": "^2.0.0",
+    "boom": "^3.2.2",
     "clone": "^1.0.2",
     "color": "latest",
     "escape-html": "^1.0.3",
