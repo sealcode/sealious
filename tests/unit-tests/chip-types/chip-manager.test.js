@@ -6,21 +6,21 @@ const assert = require("assert");
 describe("ChipManager", function(){
 
 	const chips = {
-		resource_type: {
+		collection: {
 			test: {},
 			test2: {}
 		}
 	};
 
 	it("gets all resource types", function(){
-		const names = ChipManager.__get_all_resource_types(chips);
+		const names = ChipManager.__get_all_collections(chips);
 		assert.notStrictEqual(names.indexOf("test"), -1);
 		assert.notStrictEqual(names.indexOf("test2"), -1);
 	});
 
 	it("gets chip by longid (longid exists)", function(){
-		const chip = ChipManager.__get_chip_by_longid(chips, "resource_type.test");
-		assert.strictEqual(chip, chips.resource_type.test);
+		const chip = ChipManager.__get_chip_by_longid(chips, "collection.test");
+		assert.strictEqual(chip, chips.collection.test);
 	});
 
 	it("throws an error when get_chip_by_longid has non existent longid", function(){
@@ -43,8 +43,8 @@ describe("ChipManager", function(){
 	});
 
 	it("gets chips by type (type exists)", function(){
-		const received_chips = ChipManager.__get_chips_by_type(chips, "resource_type");
-		assert.strictEqual(received_chips.test, chips.resource_type.test);
+		const received_chips = ChipManager.__get_chips_by_type(chips, "collection");
+		assert.strictEqual(received_chips.test, chips.collection.test);
 	});
 
 	it("gets chips by type (type doesn't exist)", function(){
