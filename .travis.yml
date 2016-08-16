@@ -18,7 +18,8 @@ install:
 - cd ../
 - git clone https://github.com/sealcode/sealious-integration-tests.git integration-tests
 - cd integration-tests
-- npm install
+- git checkout alpha
+- npm install .
 - npm link sealious
 - cd ../sealious
 after_success:
