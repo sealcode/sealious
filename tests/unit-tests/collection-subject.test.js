@@ -1,4 +1,5 @@
 "use strict";
+var locreq = require("locreq")(__dirname);
 
 var UUIDGenerator = require("shortid");
 var equal = require("deep-equal");
@@ -7,7 +8,7 @@ var Promise = require("bluebird");
 var assert_no_error = require("../util/assert-no-error.js");
 var assert_error_type = require("../util/assert-error-type.js");
 
-var ResourceTypeCollectionSubject = require("../../lib/subject/subject-types/resource-type-collection-subject.js");
+var CollectionSubject = locreq("lib/subject/subject-types/collection-subject.js");
 var SingleResource = require("../../lib/subject/subject-types/single-resource-subject.js");
 
 module.exports = {
@@ -16,7 +17,7 @@ module.exports = {
 
 			describe(".create_resource", function(){
 				describe("should check access privilages, so it", function(){
-					var rt_user1_only = new Sealious.ResourceType({
+					var rt_user1_only = new Sealious.Collection({
 						name: "impossible_to_manipulate",
 						fields: [],
 						access_strategy: new Sealious.AccessStrategyType({
@@ -30,14 +31,14 @@ module.exports = {
 						})
 					});
 
-					var rt_user1_only_subject = new ResourceTypeCollectionSubject(rt_user1_only);
+					var rt_user1_only_subject = new CollectionSubject(rt_user1_only);
 					it("should not allow creating a resource when the access strategy forbids it", function(done){
 						var result = rt_user1_only_subject.perform_action(new Sealious.Context(0, null, 2), "create", {});
 						assert_error_type(result, "permission", done);
 					});
 
 					it("should allow creating a resource when the access strategy does not forbid it", function(done){
-						var rt_user1_only_subject = new ResourceTypeCollectionSubject(rt_user1_only);
+						var rt_user1_only_subject = new CollectionSubject(rt_user1_only);
 
 						var result = rt_user1_only_subject.perform_action(new Sealious.Context(0, null, 1), "create", {});
 						assert_no_error(result, done);
@@ -46,7 +47,7 @@ module.exports = {
 				});
 
 				describe("should check if provided values are valid, so it", function(){
-					var rt_with_picky_field = new Sealious.ResourceType({
+					var rt_with_picky_field = new Sealious.Collection({
 						fields: [{
 							name: "value",
 							type: new Sealious.FieldType({
@@ -61,7 +62,7 @@ module.exports = {
 						}]
 					});
 
-					var rt_with_picky_field_subject = new ResourceTypeCollectionSubject(rt_with_picky_field);
+					var rt_with_picky_field_subject = new CollectionSubject(rt_with_picky_field);
 
 					it("should throw an error if they aren't", function(done){
 						var result = rt_with_picky_field_subject.perform_action(new Sealious.Context(), "create", {value: "incorrect"});
@@ -76,7 +77,7 @@ module.exports = {
 				});
 
 				it("should store the resource body", function(done){
-					var simple_rt_subject = new ResourceTypeCollectionSubject(new Sealious.ResourceType({
+					var simple_rt_subject = new CollectionSubject(new Sealious.Collection({
 						fields: [
 							{name: "value1", type: "text"},
 							{name: "value2", type: "int"}
@@ -97,7 +98,7 @@ module.exports = {
 				});
 
 				it("should encode fields before sending them to datastore", function(done){
-					var rt_with_fancy_field = new Sealious.ResourceType({
+					var rt_with_fancy_field = new Sealious.Collection({
 						fields: [{
 							name: "value",
 							type: new Sealious.FieldType({
@@ -108,7 +109,7 @@ module.exports = {
 						}]
 					});
 
-					rt_with_fancy_field_subject = new ResourceTypeCollectionSubject(rt_with_fancy_field);
+					rt_with_fancy_field_subject = new CollectionSubject(rt_with_fancy_field);
 
 					rt_with_fancy_field_subject.perform_action(new Sealious.Context(), "create", {value: "i_am"})
 					.then(function(resource_representation){
@@ -125,7 +126,7 @@ module.exports = {
 					var context = new Sealious.Context();
 					var resource_type_name = "should create metadata for every newly created resource";
 
-					var simple_rt_subject = new ResourceTypeCollectionSubject(new Sealious.ResourceType({name: resource_type_name}))
+					var simple_rt_subject = new CollectionSubject(new Sealious.Collection({name: resource_type_name}))
 					.perform_action(context, "create", {})
 					.then(function(created_resource){
 						if (created_resource.id === undefined || created_resource.id === null){
@@ -149,7 +150,7 @@ module.exports = {
 
 				it("should turn all filter values into {$eq: ...} query statements", function(done){
 
-					var rt = new Sealious.ResourceType({
+					var rt = new Sealious.Collection({
 						fields: [
 							{name: "a", "type": "text"},
 							{name: "b", "type": "text"},
@@ -169,7 +170,7 @@ module.exports = {
 						"c": {$eq: "f"}
 					};
 
-					var subject = new ResourceTypeCollectionSubject(rt);
+					var subject = new CollectionSubject(rt);
 					subject._preprocess_resource_filter(new Sealious.Context(), filter)
 					.then(function(result){
 						if (equal(result, expected_result, {strict: true})){
@@ -181,7 +182,7 @@ module.exports = {
 				});
 
 				it("should skip values that do not correspond to the field names of the resource type and properly encode the others", function(done){
-					var rt = new Sealious.ResourceType({
+					var rt = new Sealious.Collection({
 						fields: [
 							{name: "value", type: new Sealious.FieldType({
 								encode: function(context, params, value){
@@ -200,7 +201,7 @@ module.exports = {
 						"value": {$eq: "foo_encoded"}
 					};
 
-					var subject = new ResourceTypeCollectionSubject(rt);
+					var subject = new CollectionSubject(rt);
 					subject._preprocess_resource_filter(new Sealious.Context(), filter)
 					.then(function(result){
 						if (equal(result, expected_result, {strict: true})){
@@ -215,7 +216,7 @@ module.exports = {
 
 			describe(".list_resources", function(){
 				it("should throw a proper error when trying to list instances of resource type with a shallow access_strategy that disallows the context", function(done){
-					var rt = new Sealious.ResourceType({
+					var rt = new Sealious.Collection({
 						fields: [{name: "value", type: "text"}],
 						access_strategy: new Sealious.AccessStrategyType({
 							checker_function: function(context){
@@ -226,7 +227,7 @@ module.exports = {
 						})
 					});
 
-					var subject = new ResourceTypeCollectionSubject(rt);
+					var subject = new CollectionSubject(rt);
 
 					var context = new Sealious.Context(0, null, 1);
 
@@ -238,7 +239,7 @@ module.exports = {
 
 					var resource_type_name = UUIDGenerator(10);
 
-					var rt = new Sealious.ResourceType({
+					var rt = new Sealious.Collection({
 						name: resource_type_name,
 						fields: [{name: "who_can_access", type: "text"}],
 						access_strategy: {
@@ -258,7 +259,7 @@ module.exports = {
 					});
 
 
-					var subject = new ResourceTypeCollectionSubject(rt);
+					var subject = new CollectionSubject(rt);
 
 					var accessible_amount = 4;
 					var total_amount = 10;
@@ -292,21 +293,21 @@ module.exports = {
 				it("should only return resources of a given resource-type", function(done){
 					var resource_type_name1 = UUIDGenerator(10);
 
-					var rt1 = new Sealious.ResourceType({
+					var rt1 = new Sealious.Collection({
 						name: resource_type_name1,
 						fields: [{name: "value", type: "text"}]
 					});
 
-					var subject1 = new ResourceTypeCollectionSubject(rt1);
+					var subject1 = new CollectionSubject(rt1);
 
 					var resource_type_name2 = UUIDGenerator(10);
 
-					var rt2 = new Sealious.ResourceType({
+					var rt2 = new Sealious.Collection({
 						name: resource_type_name2,
 						fields: [{name: "value", type: "text"}]
 					});
 
-					var subject2 = new ResourceTypeCollectionSubject(rt2);
+					var subject2 = new CollectionSubject(rt2);
 
 					var accessible_amount = 4;
 					var total_amount = 10;
@@ -338,7 +339,7 @@ module.exports = {
 				});
 
 				it("should throw an error when non-permission error is caught during filtering", function(done){
-					var rt = new Sealious.ResourceType({
+					var rt = new Sealious.Collection({
 						name: UUIDGenerator(10),
 						access_strategy: {
 							default: "public",
@@ -351,7 +352,7 @@ module.exports = {
 						}
 					});
 
-					var subject = new ResourceTypeCollectionSubject(rt);
+					var subject = new CollectionSubject(rt);
 
 					subject.perform_action(new Sealious.Context(), "create", {})
 					.then(function(){
@@ -370,7 +371,7 @@ module.exports = {
 				});
 
 				it("should filter the results according to the 'filter' parameter", function(done){
-					var rt = new Sealious.ResourceType({
+					var rt = new Sealious.Collection({
 						name: UUIDGenerator(10),
 						fields: [{name: "value", type: "text"}]
 					});
@@ -381,7 +382,7 @@ module.exports = {
 					var promises = [];
 					var p;
 
-					var subject = new ResourceTypeCollectionSubject(rt);
+					var subject = new CollectionSubject(rt);
 
 					for (var i = 1; i <= accessible_amount; i++){
 						p = subject.perform_action(new Sealious.Context(), "create", {value: "1"});
@@ -410,11 +411,11 @@ module.exports = {
 
 			describe(".perform_action", function(){
 				it("should throw an error when asked for non-existing action", function(done){
-					var rt = new Sealious.ResourceType({
+					var rt = new Sealious.Collection({
 						name: UUIDGenerator(10)
 					});
 
-					var subject = new ResourceTypeCollectionSubject(rt);
+					var subject = new CollectionSubject(rt);
 
 					try {
 						subject.perform_action(new Sealious.Context(), "i_dont_exist");
@@ -431,9 +432,9 @@ module.exports = {
 
 			describe(".get_child_subject", function(){
 				it("should return a SingleResource subject tied to a specific resource type and id", function(done){
-					var rt = new Sealious.ResourceType({});
+					var rt = new Sealious.Collection({});
 
-					var subject = new ResourceTypeCollectionSubject(rt);
+					var subject = new CollectionSubject(rt);
 
 					var resource_id = "resource_id";
 
