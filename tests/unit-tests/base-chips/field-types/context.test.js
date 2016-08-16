@@ -3,23 +3,25 @@ const locreq = require("locreq")(__dirname);
 const field_type_context = locreq("lib/base-chips/field-types/context.js");
 const Context = locreq("lib/context.js");
 
-const acceptCorrectly = locreq("tests/util/accept-correctly.js");
-const rejectCorrectly = locreq("tests/util/reject-correctly.js");
-
 const assert = require("assert");
 
+const test_is_proper_value = locreq("tests/util/test-is-proper-value.js");
+
 describe("FieldType.Context", function(){
+
+    test_is_proper_value({
+        field_type: field_type_context,
+        should_accept: [
+            ["a Context instance", new Context()],
+        ],
+        should_reject: [
+            ["a random string of text", "asofihas9efbaw837 asd"],
+            ["an object that is not a Context instance", {user_id: null}]
+        ]
+    });
+
     it("returns the name of the field type", function(){
         assert.strictEqual(field_type_context.name, "context");
     });
-    it("accepts an instance of Sealious.Context", function(done){
-        const accept = acceptCorrectly(done).accept;
-        const reject = acceptCorrectly(done).reject;
-        field_type_context.is_proper_value(accept, reject, new Context(), {}, new Context());
-    });
-    it("rejects a non-instance of Sealious.Context", function(done){
-        const accept = rejectCorrectly(done).accept;
-        const reject = rejectCorrectly(done).reject;
-        field_type_context.is_proper_value(accept, reject, new Context(), {}, {});
-    });
+
 });
