@@ -2,7 +2,7 @@ language: node_js
 sudo: false
 node_js:
 - '4.4.7'
-script: 
+script:
 - npm test
 - cd ../integration-tests
 - npm run integration-tests
@@ -11,13 +11,14 @@ cache:
   bundler: true
   directories:
   - node_modules
-install: 
+install:
 - npm install
 - npm link .
 - npm link sealious
 - cd ../
 - git clone https://github.com/sealcode/sealious-integration-tests.git integration-tests
 - cd integration-tests
+- git checkout alpha
 - npm install .
 - npm link sealious
 - cd ../sealious
