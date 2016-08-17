@@ -25,17 +25,24 @@ describe("FieldType.Text", function(){
         ]
     });
 
+	describe(".has_index", function(){
+
+		it("returns false if 'params.full_text_search' is not set", function(){
+			assert.strictEqual(field_type_text.has_index({}), false);
+		});
+
+		it("returns false if 'params.full_text_search' is set to 'false'", function(){
+			assert.strictEqual(field_type_text.has_index({full_text_search: false}), false);
+		});
+
+		it("returns 'text' if 'params.full_text_search' is set to 'false'", function(){
+			assert.strictEqual(field_type_text.has_index({full_text_search: true}), "text");
+		});
+
+	});
+
 	it("returns the name of the field type", function(){
 		assert.strictEqual(field_type_text.name, "text");
-	});
-	it("enables full text search", function(){
-		assert.strictEqual(field_type_text.full_text_search_enabled({include_in_search: true}), true);
-	});
-	it("enables full text search with max length of 200", function(){
-		assert.strictEqual(field_type_text.full_text_search_enabled({max_length: 201}), true);
-	});
-	it("disables full text search", function(){
-		assert.strictEqual(field_type_text.full_text_search_enabled({}), false);
 	});
 	it("returns the description of the field type", function(){
 		assert.strictEqual(typeof field_type_text.get_description(new Context(), {max_length: 10}), "string");
