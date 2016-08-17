@@ -1,5 +1,7 @@
 language: node_js
 sudo: false
+services:
+- mongodb
 node_js:
 - '4.4.7'
 script:
