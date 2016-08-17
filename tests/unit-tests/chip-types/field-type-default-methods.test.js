@@ -10,33 +10,17 @@ describe("Sealious.FieldTypeDefaultMethods", function() {
             done();
         }).catch(done);
     });
-    it("resolves the .format() with decoded value \"test\"", function(done) {
-        FieldTypeDefaultMethods.format(null, null, "test")
-        .then(function(decoded_value) {
-            assert.strictEqual(decoded_value, "test");
-            done();
-        }).catch(done);
+    it("resolves the .format() with decoded value \"test\"", function() {
+        assert.strictEqual(FieldTypeDefaultMethods.format(null, null, "test"), "test");
     });
-    it("resolves the .format() with decoded value null", function(done) {
-        FieldTypeDefaultMethods.format(null, null, null)
-        .then(function(decoded_value) {
-            assert.strictEqual(decoded_value, null);
-            done();
-        }).catch(done);
+    it("resolves the .format() with decoded value null", function() {
+        assert.strictEqual(FieldTypeDefaultMethods.format(null, null, null), null);
     });
-    it("resolves the .encode() with value \"test\"", function(done) {
-        FieldTypeDefaultMethods.encode(null, null, "test")
-        .then(function(encoded_value) {
-            assert.strictEqual(encoded_value, "test");
-            done();
-        }).catch(done);
+    it("resolves the .encode() with value \"test\"", function() {
+        assert.strictEqual(FieldTypeDefaultMethods.encode(null, null, "test"), "test");
     });
-    it("resolves the .encode() with value null", function(done) {
-        FieldTypeDefaultMethods.encode(null, null, null)
-        .then(function(encoded_value) {
-            assert.strictEqual(encoded_value, null);
-            done();
-        }).catch(done);
+    it("resolves the .encode() with value null", function() {
+        assert.strictEqual(FieldTypeDefaultMethods.encode(null, null, null), null);
     });
     it("returns the .decode() with value \"test\"", function() {
         assert.strictEqual(FieldTypeDefaultMethods.decode(null, null, "test"), "test");
