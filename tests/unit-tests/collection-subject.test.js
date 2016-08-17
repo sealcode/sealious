@@ -124,14 +124,14 @@ module.exports = {
 				it("should create metadata for every newly created resource", function(done){
 
 					var context = new Sealious.Context();
-					var resource_type_name = "should create metadata for every newly created resource";
+					var collection_name = "should create metadata for every newly created resource";
 
-					var simple_rt_subject = new CollectionSubject(new Sealious.Collection({name: resource_type_name}))
+					var simple_rt_subject = new CollectionSubject(new Sealious.Collection({name: collection_name}))
 					.perform_action(context, "create", {})
 					.then(function(created_resource){
 						if (created_resource.id === undefined || created_resource.id === null){
 							done(new Error("It didn't create the 'sealious_id' attribute"));
-						} else if (created_resource.type_name !== resource_type_name){
+						} else if (created_resource.type_name !== collection_name){
 							done(new Error("It didn't properly set the 'type' attribute in db document"));
 						} else if (created_resource.created_context.timestamp !== context.timestamp){
 							done(new Error("It didn't properly set the 'created_context' attribute"));
@@ -237,10 +237,10 @@ module.exports = {
 
 				it("should only show resources that are allowed by the resource-type's deep item-sensitive access strategy", function(done){
 
-					var resource_type_name = UUIDGenerator(10);
+					var collection_name = UUIDGenerator(10);
 
 					var rt = new Sealious.Collection({
-						name: resource_type_name,
+						name: collection_name,
 						fields: [{name: "who_can_access", type: "text"}],
 						access_strategy: {
 							create: "public",
@@ -291,19 +291,19 @@ module.exports = {
 				});
 
 				it("should only return resources of a given resource-type", function(done){
-					var resource_type_name1 = UUIDGenerator(10);
+					var collection_name1 = UUIDGenerator(10);
 
 					var rt1 = new Sealious.Collection({
-						name: resource_type_name1,
+						name: collection_name1,
 						fields: [{name: "value", type: "text"}]
 					});
 
 					var subject1 = new CollectionSubject(rt1);
 
-					var resource_type_name2 = UUIDGenerator(10);
+					var collection_name2 = UUIDGenerator(10);
 
 					var rt2 = new Sealious.Collection({
-						name: resource_type_name2,
+						name: collection_name2,
 						fields: [{name: "value", type: "text"}]
 					});
 
@@ -442,7 +442,7 @@ module.exports = {
 					.then(function(child_subject){
 						if (!(child_subject instanceof SingleResource)){
 							done(new Error("the child context was of wrong type"));
-						} else if (child_subject.resource_type !== rt){
+						} else if (child_subject.collection !== rt){
 							done(new Error("the child context was tied to a different resource type"));
 						} else if (child_subject.resource_id !== resource_id){
 							done(new Error("the child context was tied to a different resource_id"));
