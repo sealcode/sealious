@@ -1,5 +1,13 @@
 language: node_js
 sudo: false
+services:
+- mongodb
+addons:
+  apt:
+    sources:
+    - mongodb-3.2-precise
+    packages:
+    - mongodb-org-server
 node_js:
 - '4.4.7'
 script:
