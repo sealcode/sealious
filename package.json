@@ -37,7 +37,7 @@
     "node-uuid": "^1.4.7",
     "request-promise": "^4.0.2",
     "resolve": "^1.1.7",
-    "sealious-datastore-tingo": "^0.1.5",
+    "sealious-datastore-tingo": "github:sealcode/sealious-datastore-tingo#alpha",
     "shortid": "^2.2.6",
     "winston": "^1.0.0"
   },
