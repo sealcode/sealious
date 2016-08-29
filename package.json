@@ -34,6 +34,7 @@
     "fs-extra": "^0.30.0",
     "locreq": "^1.0.3",
     "merge": "^1.2.0",
+    "mime-types": "^2.1.11",
     "node-uuid": "^1.4.7",
     "request-promise": "^4.0.2",
     "resolve": "^1.1.7",
