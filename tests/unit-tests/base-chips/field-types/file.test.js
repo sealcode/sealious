@@ -19,11 +19,14 @@ describe("FieldType.File", function(){
 				filename: "test_filename",
 				data: new Buffer(1)
 			}],
+			["a proper URL to a downloadable file", "http://example.com"],
         ],
         should_reject: [
             ["a random string of text", "asofihas9efbaw837 asd"],
             ["an empty objec", {}],
 			["an object with 'filename', but without 'data'", {filename: "picture.jpg"}],
+			["a malformed http url", "htpp://example.com"],
+			["a properly formed, but non-existing http url", "http://www.da3bba42e1f6d77a63bd665d0a82ff32.org"],
         ]
     });
 
