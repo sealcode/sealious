@@ -54,6 +54,11 @@ describe("FieldType.html", function(){
 			assert.equal(result, "a");
 		});
 
+		it("should return the original version when asked for 'original' format", function(){
+			const result = field_type_html.format(new Context(), {original: "a", safe: "b"}, 'original');
+			assert.equal(result, "a");
+		});
+
 	});
 
 });
