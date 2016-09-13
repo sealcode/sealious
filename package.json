@@ -32,6 +32,7 @@
     "escape-html": "^1.0.3",
     "expand-hash": "^0.2.2",
     "fs-extra": "^0.30.0",
+    "js-yaml": "^3.6.1",
     "locreq": "^1.0.3",
     "merge": "^1.2.0",
     "mime-types": "^2.1.11",
