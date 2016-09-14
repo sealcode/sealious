@@ -1,8 +1,7 @@
-core:
-    logger_config:
-        logger_level: "info"
-        logger_color: true
-        logger_file: null
-        logger_dirname: "."
-        logger_to_json: false
-        logger_rotation: ".yyyy-MM-Tdd"
+logger_config:
+    logger_level: "info"
+    logger_color: true
+    logger_file: null
+    logger_dirname: "."
+    logger_to_json: false
+    logger_rotation: ".yyyy-MM-Tdd"
