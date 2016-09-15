@@ -1,3 +1,5 @@
+core:
+    datastore: tingo
 logger_config:
     logger_level: "info"
     logger_color: true
