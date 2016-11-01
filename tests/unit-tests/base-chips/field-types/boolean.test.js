@@ -1,6 +1,6 @@
 "use strict";
 const locreq = require("locreq")(__dirname);
-const field_type_boolean = locreq("lib/base-chips/field-types/boolean.js");
+const field_type_boolean = locreq("lib/app/base-chips/field-types/boolean.js");
 const Context = locreq("lib/context.js");
 
 const test_is_proper_value = locreq("tests/util/test-is-proper-value.js");
