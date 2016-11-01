@@ -13,9 +13,15 @@ module.exports = function(options){
 		for(let i in should_accept){
 			const _case = should_accept[i];
 			it(`accepts ${_case[0]}: ${_case[1]}`, function(done){
+				let params;
+				if(!_case[2] && _case.length>=3){
+					params = _case[2];
+				}else{
+					params = _case[2] || {};
+				}
 				const result = field_type.is_proper_value(
 					new Context(),
-					_case[2] || {}, // params
+					params,
 					_case[1], // new_value
 					_case[3] // old_value
 				);

@@ -1,10 +1,19 @@
 "use strict";
 const locreq = require("locreq")(__dirname);
 const Context = locreq("lib/context.js");
-const field_type_single_reference = locreq("lib/base-chips/field-types/single_reference.js");
-const assert = require("assert");
+const Promise = require("bluebird");
 
-describe("FieldType.Username", function(){
+const field_type_single_reference_fn = locreq("lib/app/base-chips/field-types/single_reference.js");
+const app = {};
+const field_type_single_reference = field_type_single_reference_fn(app);
+
+const assert = require("assert");
+const assert_error_type = locreq("tests/util/assert-error-type.js");
+const Errors = locreq("lib/response/error.js");
+const Collection = locreq("lib/chip-types/collection.js");
+
+describe("FieldType.single_reference", function(){
+
 	describe(".encode", function(){
 		it("should return the value unchanged if it is a string", function(){
 			let result = field_type_single_reference.encode(
@@ -31,7 +40,7 @@ describe("FieldType.Username", function(){
 				new Context(),
 				undefined,
 				"randomid"
-			)
+			);
 			assert.equal(result, "randomid");
 		});
 	});

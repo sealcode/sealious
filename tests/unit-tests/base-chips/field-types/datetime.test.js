@@ -1,7 +1,7 @@
 "use strict";
 const locreq = require("locreq")(__dirname);
 const Context = locreq("lib/context.js");
-const field_type_datetime = locreq("lib/base-chips/field-types/datetime.js");
+const field_type_datetime = locreq("lib/app/base-chips/field-types/datetime.js");
 
 const test_is_proper_value = locreq("tests/util/test-is-proper-value.js");
 
