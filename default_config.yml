@@ -1,0 +1,9 @@
+core:
+    datastore: tingodb
+logger:
+    level: "info"
+    color: true
+    file: null
+    dirname: "."
+    to_json: false
+    rotation: ".yyyy-MM-Tdd"

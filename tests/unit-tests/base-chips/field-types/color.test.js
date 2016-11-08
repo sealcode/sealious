@@ -1,6 +1,6 @@
 "use strict";
 const locreq = require("locreq")(__dirname);
-const field_type_color = locreq("lib/base-chips/field-types/color.js");
+const field_type_color = locreq("lib/app/base-chips/field-types/color.js");
 const Context = locreq("lib/context.js");
 const assert = require("assert");
 
