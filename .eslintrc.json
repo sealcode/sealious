@@ -33,7 +33,7 @@
 			"error",
 			"only-multiline"
 		],
-        "no-unused-vars": "warn",
+        "no-unused-vars": "off",
         "no-trailing-spaces": "error",
         "no-whitespace-before-property": "error",
         "space-before-blocks": ["error", "never"],

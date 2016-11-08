@@ -2,7 +2,7 @@
 const locreq = require("locreq")(__dirname);
 const assert = require("assert");
 const Context = locreq("lib/context.js");
-const owner = locreq("lib/base-chips/access-strategy-types/owner.js");
+const owner = locreq("lib/app/base-chips/access-strategy-types/owner.js");
 const assert_no_error = locreq("tests/util/assert-no-error.js");
 const assert_error = locreq("tests/util/assert-error.js");
 
