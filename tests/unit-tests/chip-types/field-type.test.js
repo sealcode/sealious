@@ -2,11 +2,12 @@ const assert = require("assert");
 const locreq = require("locreq")(__dirname);
 
 const FieldType = locreq("lib/chip-types/field-type.js");
+const app = {};
 
 describe("Sealious.FieldType", function(){
     it("loads a predefined chip", function(done){
-        const int = locreq("lib/base-chips/field-types/int.js");
-        const field_type = new FieldType(int);
+        const int = locreq("lib/app/base-chips/field-types/int.js");
+        const field_type = new FieldType(app, int);
         assert.strictEqual(field_type.name, "int");
         field_type.get_description()
             .then(function(description){
