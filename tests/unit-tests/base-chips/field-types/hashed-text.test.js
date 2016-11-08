@@ -1,7 +1,7 @@
 "use strict";
 const locreq = require("locreq")(__dirname);
 const Context = locreq("lib/context.js");
-const field_type_hashed_text = locreq("lib/base-chips/field-types/hashed-text.js");
+const field_type_hashed_text = locreq("lib/app/base-chips/field-types/hashed-text.js");
 
 const test_is_proper_value = locreq("tests/util/test-is-proper-value.js");
 
@@ -13,7 +13,7 @@ describe("FieldType.HashedText", function(){
 	test_is_proper_value({
         field_type: field_type_hashed_text,
         should_accept: [
-            ["any password, if no params are given", "password"],
+            ["any password, if no params are given", "password", undefined],
 			["a proper password when 3 digits are required", "pass1sw2rd1", {digits: 3}],
 			["a proper password when 3 capitals are required", "PASword", {capitals: 3}],
 			["a proper password when 3 capitals and and 3 digits are required", "PASSword123", {capitals: 3, digits: 3}],

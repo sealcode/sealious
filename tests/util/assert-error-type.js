@@ -3,6 +3,7 @@ function assert_error_type (promise, error_type, done) {
 	promise.then(function(){
 		done(new Error("But it didn't throw any error at all!"));
 	}).catch(function(error){
+		console.log(error);
 		if (error.type === error_type){
 			done();
 		} else {
