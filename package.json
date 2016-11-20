@@ -27,7 +27,6 @@
   "dependencies": {
     "bluebird": "^3.3.3",
     "bluebird-events": "^2.0.0",
-    "cartesian-product": "^2.1.2",
     "clone": "^1.0.2",
     "color": "latest",
     "escape-html": "^1.0.3",
