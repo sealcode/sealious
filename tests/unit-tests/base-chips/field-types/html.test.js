@@ -45,17 +45,17 @@ describe("FieldType.html", function(){
 
 	describe(".format", function(){
 		it("should return the safe version by default", function(){
-			const result = field_type_html.format(new Context(), {original: "a", safe: "b"});
+			const result = field_type_html.format(new Context(), {}, {original: "a", safe: "b"});
 			assert.equal(result, "b");
 		});
 
 		it("should return the original version when asked for 'unsafe' format", function(){
-			const result = field_type_html.format(new Context(), {original: "a", safe: "b"}, 'unsafe');
+			const result = field_type_html.format(new Context(), {}, {original: "a", safe: "b"}, 'unsafe');
 			assert.equal(result, "a");
 		});
 
 		it("should return the original version when asked for 'original' format", function(){
-			const result = field_type_html.format(new Context(), {original: "a", safe: "b"}, 'original');
+			const result = field_type_html.format(new Context(), {}, {original: "a", safe: "b"}, 'original');
 			assert.equal(result, "a");
 		});
 
