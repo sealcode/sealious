@@ -36,6 +36,8 @@
     "merge": "^1.2.0",
     "mime-types": "^2.1.11",
     "node-uuid": "^1.4.7",
+    "pattern-emitter-promise": "^1.0.3",
+    "request": "^2.79.0",
     "request-promise": "^4.0.2",
     "resolve": "^1.1.7",
     "sanitize-html": "^1.13.0",
