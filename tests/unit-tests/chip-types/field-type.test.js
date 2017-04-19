@@ -70,9 +70,12 @@ describe("FieldType", function(){
 					done();
 				}).catch(done);
 			});
-			it("should use default .decode", function(){
-				const decoded = test_field_type.decode(new Context(), {}, "dogfood")
-				assert.strictEqual(decoded, "dogfood");
+			it("should use default .decode", function(done){
+				test_field_type.decode(new Context(), {}, "dogfood")
+				.then(function(decoded) {
+					assert.strictEqual(decoded, "dogfood");
+					done();
+				}).catch(done);
 			});
 			it("should use default .get_description", function(){
 				const description = test_field_type.get_description()
