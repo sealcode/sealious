@@ -29,6 +29,7 @@
     "bluebird-events": "^2.0.0",
     "clone": "^1.0.2",
     "color": "latest",
+    "cosmiconfig": "^3.0.1",
     "escape-html": "^1.0.3",
     "expand-hash": "^0.2.2",
     "gm": "^1.23.0",
