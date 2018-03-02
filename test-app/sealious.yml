@@ -1,0 +1,12 @@
+core:
+  datastore: mongo
+datastore_mongo:
+  host: db
+  db_name: sealious
+image_formats:
+  medium: 
+    size: [300, 180]
+  small:
+    size: [100, 100]
+www-server:
+  port: 8083

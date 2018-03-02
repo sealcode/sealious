@@ -15,3 +15,4 @@ lib-cov/*
 coverage.html
 \#*
 .\#*
+.npm

@@ -1,0 +1,65 @@
+html {
+    font-size: 1.5em;
+    color: #222;
+}
+
+body {
+    padding: 1rem;
+    padding-bottom: 2rem;
+}
+
+* {
+    box-sizing: border-box;
+    line-height: 1rem;
+    font-size: 0.66666rem;
+    margin: 0;
+}
+
+p,
+ul,
+li {
+    max-width: 32rem;
+}
+
+ul,
+ol {
+    padding-left: 2rem;
+}
+
+p+p {
+    margin-top: 1rem;
+}
+
+img {
+    vertical-align: bottom;
+}
+
+h1,
+h2,
+h3 {
+    margin-top: 1rem;
+    line-height: 2rem;
+    color: #333;
+}
+
+h1 {
+    font-size: 1.75rem;
+}
+
+h2 {
+    font-size: 1.25rem;
+}
+
+input {
+    height: 1.5rem;
+    margin: .25rem;
+    font-size: calc(2rem / 3);
+    padding: 0;
+    border: 1px solid #666;
+    border-radius: 2px;
+    padding: 0 calc(1rem / 3);
+}
+
+input[type="submit"] {
+    cursor: pointer;
+}
