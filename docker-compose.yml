@@ -1,0 +1,21 @@
+version: '3.2'
+services:
+  db:
+    image: mongo:3.4-jessie
+    volumes:
+      - ./db:/data/db
+      - ./configdb:/data/configdb
+    ports:
+      - "127.0.0.1:20722:27017"
+  test:
+    image: sealious-test:latest
+    build:
+      context: .
+      dockerfile: test.dockerfile
+    volumes:
+      - ./:/opt/sealious/
+    ports:
+      - "127.0.0.1:8083:8083"
+    user: ${UID:-1000}:${GID:-1000}
+    links: 
+      - db
