@@ -1,10 +1,10 @@
 const axios = require("axios");
 
-module.exports = ({ collection, resource, user }) => {
+module.exports = ({ collection, port, resource, user }) => {
 	const session = user ? TEST_CONFIG.USERS[user].SESSION : {};
 	return axios
 		.post(
-			TEST_CONFIG.API_URL + "/collections/" + collection,
+			`http://localhost:${port}/api/v1/collections/${collection}`,
 			resource,
 			session
 		)
