@@ -12,7 +12,7 @@ RUN apk --update add imagemagick
 RUN apk --update add git
 
 VOLUME $HOME
-WORKDIR $HOME/test-app
+WORKDIR $HOME
 
 USER $UID:$GID
 
