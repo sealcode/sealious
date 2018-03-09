@@ -5,6 +5,7 @@ before(() => {
 		upload_path: "/tmp",
 		datastore_mongo: { host: "db", password: "sealious-test" },
 		app: { version: "0.0.0-test" },
+		logger: { level: "emerg" },
 	});
 	global.Sealious = Sealious;
 	return TestApp.start().catch(error => {
