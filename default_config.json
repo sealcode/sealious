@@ -1,6 +1,6 @@
 {
   "core": {
-    "datastore": "tingodb"
+    "environment": "dev"
   },
   "logger": {
     "level": "info",
