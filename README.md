@@ -66,6 +66,7 @@ The default config is:
 * `name` (string) - the name of your app
 * `logo` (string) - path to an image with the logo of your app
 * `version` (string) - the version of your app 
+* `colors.primary` (string) - the primary color of your brand
 
 You can also include your own fields/values, so they can be easily shared across different modules on both back-end and front-end. 
 
@@ -106,3 +107,24 @@ app.setDefault("my-module.port", 8080);
 ```
 
 
+## Sending emails
+
+This synopsis is self-explanatory:
+
+```js
+const message = await TestApp.EmailTemplates.Simple(TestApp, {
+	to: "test@example.com",
+	subject: "Congratulations!",
+	text: "Enlarge your 'seal' with herbal supplements",
+});
+await message.send(TestApp);
+```
+
+To send emails via smtp, set the following config: 
+
+```js
+email: {
+	from_name: "Sealious app",
+	from_address: "sealious@example.com",
+},
+```

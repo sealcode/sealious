@@ -19,3 +19,8 @@ services:
     user: ${UID:-1000}:${GID:-1000}
     links: 
       - db
+      - mailcatcher
+  mailcatcher:
+    image: schickling/mailcatcher:latest
+    ports:
+      - "127.0.0.1:1080:1080"
