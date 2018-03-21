@@ -15,7 +15,7 @@ services:
     volumes:
       - ./:/opt/sealious/
     ports:
-      - "127.0.0.1:8083:8083"
+      - "127.0.0.1:8080:8080"
     user: ${UID:-1000}:${GID:-1000}
     links: 
       - db

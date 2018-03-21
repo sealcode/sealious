@@ -67,6 +67,7 @@ The default config is:
 * `logo` (string) - path to an image with the logo of your app
 * `version` (string) - the version of your app 
 * `colors.primary` (string) - the primary color of your brand
+* `default_language` (string) - the default language for your app. Email templates use this
 
 You can also include your own fields/values, so they can be easily shared across different modules on both back-end and front-end. 
 
