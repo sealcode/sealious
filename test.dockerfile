@@ -16,7 +16,7 @@ WORKDIR $HOME
 
 USER $UID:$GID
 
-EXPOSE 8083
+EXPOSE 8080
 
 ENTRYPOINT ["/sbin/tini", "--"]
 CMD ["/usr/local/bin/node", "."]

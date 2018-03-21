@@ -1,7 +1,7 @@
 const Sealious = require("./lib/main.js");
 const locreq = require("locreq")(__dirname);
 
-before(() => {
+before(async () => {
 	global.TestApp = new Sealious.App(
 		{
 			upload_path: "/tmp",
@@ -18,7 +18,7 @@ before(() => {
 			},
 			core: { environment: "production" },
 			app: { version: "0.0.0-test" },
-			logger: { level: "info" },
+			logger: { level: "emerg" },
 			tests: {
 				//non-standard, just for testing
 				smtp_api_url: "http://mailcatcher:1080",
@@ -27,7 +27,9 @@ before(() => {
 		{
 			name: "testing app",
 			logo: locreq.resolve("lib/assets/logo.png"),
+			default_language: "pl",
 			version: "0.0.0-test",
+			base_url: "http://localhost:8080",
 			colors: {
 				primary: "#4d394b",
 			},
