@@ -68,6 +68,7 @@ The default config is:
 * `version` (string) - the version of your app 
 * `colors.primary` (string) - the primary color of your brand
 * `default_language` (string) - the default language for your app. Email templates use this
+* `admin_email` (string) - the email address of the admin. It might be publicly revealed within the app. Used to create the initial admin account. Whenever the app starts and there's no user with that email, a registration intent is created, causing an email to be sent to this address.
 
 You can also include your own fields/values, so they can be easily shared across different modules on both back-end and front-end. 
 
