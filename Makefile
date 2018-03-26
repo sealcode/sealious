@@ -5,7 +5,7 @@ db:
 
 start: db build test-nginx
 
-test: db 
+test: 
 	./npm.sh run test
 
 watch: 
