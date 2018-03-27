@@ -30,6 +30,7 @@
 		"cosmiconfig": "^3.0.1",
 		"dot-prop": "^4.2.0",
 		"escape-html": "^1.0.3",
+		"events": "^2.0.0",
 		"expand-hash": "^0.2.2",
 		"express": "^4.14.0",
 		"gm": "^1.23.0",
