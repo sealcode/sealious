@@ -1,14 +1,14 @@
 .PHONY: db test test-nginx start test watch build install
 
-db: 
+db:
 	docker-compose up -d db
 
 start: db build test-nginx
 
-test: 
+test:
 	./npm.sh run test
 
-watch: 
+watch:
 	./npm.sh run watch
 
 build:

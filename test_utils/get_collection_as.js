@@ -1,8 +1,11 @@
 const axios = require("axios");
 
-module.exports = ({ collection, user }) => {
+module.exports = ({ collection, port, user }) => {
 	const session = user ? TEST_CONFIG.USERS[user].SESSION : {};
 	return axios
-		.get(TEST_CONFIG.API_URL + "/collections/" + collection, session)
+		.get(
+			`http://localhost:${port}/api/v1/collections/${collection}`,
+			session
+		)
 		.then(({ data }) => data);
 };
