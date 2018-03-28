@@ -1,7 +1,12 @@
 const locreq = require("locreq")(__dirname);
 const axios = require("axios");
 
-module.exports = async function with_test_app(fn) {
+module.exports = {
+	with_stopped_app: with_test_app.bind(global, "auto_start" && false),
+	with_running_app: with_test_app.bind(global, "auto_start" && true),
+};
+
+async function with_test_app(auto_start, fn) {
 	let app = null;
 	const port = 8888;
 	const base_url = `http://localhost:${port}`;
@@ -41,15 +46,26 @@ module.exports = async function with_test_app(fn) {
 		}
 	);
 
-	app.on("stop", async () =>
-		Promise.all(
-			app.ChipManager.get_all_collections().map(collection_name =>
-				app.Datastore.remove(collection_name, {}, "just_one" && false)
-			)
-		)
-	);
+	let clear_database_on_stop = true;
 
-	await app.start();
+	app.on("stop", async () => {
+		if (clear_database_on_stop) {
+			await Promise.all(
+				app.ChipManager.get_all_collections().map(collection_name =>
+					app.Datastore.remove(collection_name, {}, "just_one" && false)
+				)
+			);
+			await app.Datastore.remove(
+				app.Metadata.db_collection_name,
+				{},
+				"just_one" && false
+			);
+		}
+	});
+
+	if (auto_start) {
+		await app.start();
+	}
 
 	try {
 		await axios.delete(`${smtp_api_url}/messages`);
@@ -64,11 +80,19 @@ module.exports = async function with_test_app(fn) {
 				get_message_by_id: async id =>
 					(await axios.get(`${smtp_api_url}/messages/${id}.html`)).data,
 			},
+			dont_clear_database_on_stop: () => (clear_database_on_stop = false),
+			rest_api: {
+				get: async url => (await axios.get(`${base_url}${url}`)).data,
+				delete: async url => (await axios.delete(`${base_url}${url}`)).data,
+				patch: async (url, data) =>
+					(await axios.patch(`${base_url}${url}`, data)).data,
+			},
 		});
-
-		return await app.stop();
 	} catch (e) {
-		await app.stop();
 		throw e;
+	} finally {
+		if (app.status !== "stopped") {
+			await app.stop();
+		}
 	}
-};
+}
