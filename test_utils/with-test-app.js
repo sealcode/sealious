@@ -1,5 +1,6 @@
 const locreq = require("locreq")(__dirname);
 const axios = require("axios");
+const tough = require("tough-cookie");
 
 module.exports = {
 	with_stopped_app: with_test_app.bind(global, "auto_start" && false),
@@ -46,6 +47,10 @@ async function with_test_app(auto_start, fn) {
 		}
 	);
 
+	app.on(/.*/, function() {
+		app.Logger.debug(arguments);
+	});
+
 	let clear_database_on_stop = true;
 
 	app.on("stop", async () => {
@@ -82,10 +87,28 @@ async function with_test_app(auto_start, fn) {
 			},
 			dont_clear_database_on_stop: () => (clear_database_on_stop = false),
 			rest_api: {
-				get: async url => (await axios.get(`${base_url}${url}`)).data,
-				delete: async url => (await axios.delete(`${base_url}${url}`)).data,
-				patch: async (url, data) =>
-					(await axios.patch(`${base_url}${url}`, data)).data,
+				get: async (url, options) =>
+					(await axios.get(`${base_url}${url}`, options)).data,
+				delete: async (url, options) =>
+					(await axios.delete(`${base_url}${url}`, options)).data,
+				patch: async (url, data, options) =>
+					(await axios.patch(`${base_url}${url}`, data, options)).data,
+				login: async ({ username, password }) => {
+					const cookie_jar = new tough.CookieJar();
+					const options = {
+						jar: cookie_jar,
+						withCredentials: true,
+					};
+					await axios.post(
+						`${base_url}/api/v1/sessions`,
+						{
+							username,
+							password,
+						},
+						options
+					);
+					return options;
+				},
 			},
 		});
 	} catch (e) {

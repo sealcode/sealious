@@ -18,7 +18,6 @@ function Collection({ collection, query_store }, component) {
 				`/api/v1/collections/${collection}`,
 				query_store.getQuery()
 			).then(resources => {
-				console.log(resources);
 				this.setState({ resources, loading: false });
 			});
 		}
