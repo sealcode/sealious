@@ -3,7 +3,15 @@ const CachedHttp = require("./cached-http.js");
 const KeyValueStore = require("./stores/key-value-store.js");
 const ConnectWithKeyValueStore = require("./stores/connect-with-key-value-store.jsx");
 
-function Collection({ collection, query_store }, component) {
+function Collection(
+	{
+		collection,
+		query_store,
+		get_forced_filter = () => {},
+		get_forced_format = () => {},
+	},
+	component
+) {
 	return class Component extends React.Component {
 		constructor() {
 			super();
@@ -14,10 +22,14 @@ function Collection({ collection, query_store }, component) {
 		}
 		componentDidMount() {
 			this.setState({ loading: true });
-			CachedHttp.get(
-				`/api/v1/collections/${collection}`,
-				query_store.getQuery()
-			).then(resources => {
+			CachedHttp.get(`/api/v1/collections/${collection}`, {
+				filter: Object.assign(
+					{},
+					query_store.getQuery().filter,
+					get_forced_filter(this.props)
+				),
+				format: get_forced_format(this.props),
+			}).then(resources => {
 				this.setState({ resources, loading: false });
 			});
 		}
@@ -27,6 +39,7 @@ function Collection({ collection, query_store }, component) {
 				query_store,
 				resources: this.state.resources,
 				loading: this.state.loading,
+				metadata: this.props.metadata,
 			});
 		}
 	};

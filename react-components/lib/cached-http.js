@@ -3,6 +3,7 @@ const CancelToken = axios.CancelToken;
 const url = require("url");
 const merge = require("merge");
 const Promise = require("bluebird");
+const qs = require("qs");
 Promise.config({ cancellation: true });
 
 function CachedError() {}
@@ -37,13 +38,10 @@ const CachedHttp = (function() {
 				const promise = new Promise((resolve, reject, onCancel) => {
 					const source = CancelToken.source();
 					const qp = axios
-						.get(
-							pathname,
-							Object.assign({}, merged_query, {
-								cancelToken: source.token,
-								options,
-							})
-						)
+						.get(`${pathname}?${qs.stringify(merged_query)}`, {
+							cancelToken: source.token,
+							options,
+						})
 						.then(response => {
 							const data = response.data;
 							cache[hash] = response.data;
@@ -51,9 +49,7 @@ const CachedHttp = (function() {
 							resolve(data);
 						})
 						.catch(error => {
-							const cached_err = Object.create(
-								CachedError.prototype
-							);
+							const cached_err = Object.create(CachedError.prototype);
 							Object.assign(cached_err, error);
 							delete pending[hash];
 							cache[hash] = cached_err;
