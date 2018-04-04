@@ -130,3 +130,53 @@ email: {
 	from_address: "sealious@example.com",
 },
 ```
+
+## Filtering resources
+
+When reading a list of resources in a collection, you can use *filtering* to limit the list to resources that match certain criteria.
+
+Let's say you have a Users collection with an additional "age" field. Now, to get all the users with age set to `42`, you can call:
+
+```
+app.run_action(context, ["collections", "users"], "show", {
+	filter: { age: 42 },
+});
+```
+
+or, via http:
+
+```
+GET /api/v1/collections/users?filter[age]=42
+```
+
+Some field-types support advanced filters. `int`, for example, lets you define a range of numbers like so:
+
+```
+app.run_action(context, ["collections", "users"], "show", {
+	filter: { age: { ">": 50 } },
+});
+```
+
+Or, via HTTP: 
+
+```
+GET /api/v1/collections/users?filter[age][>]=50
+```
+
+The above requests would return only those users with age set to above 50.
+
+You can specify multiple filtering parameters:
+
+```
+app.run_action(context, ["collections", "users"], "show", {
+	filter: { age: { ">": 50 }, country: "Poland" },
+});
+```
+
+```
+GET /api/v1/collections/users?filter[age][>]=50&filter[country]=Poland
+```
+
+### Implementation
+
+Each field can implement its own filtering logic, by the means of the `filter_to_query` method. It's goal is to transform user input (like `{">": 52}`) into a Mongo `$match` operator (like `{$gt: 52}`). It should be an `async` function.
