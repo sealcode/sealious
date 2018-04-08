@@ -93,6 +93,8 @@ async function with_test_app(auto_start, fn) {
 					(await axios.delete(`${base_url}${url}`, options)).data,
 				patch: async (url, data, options) =>
 					(await axios.patch(`${base_url}${url}`, data, options)).data,
+				post: async (url, data, options) =>
+					(await axios.post(`${base_url}${url}`, data, options)).data,
 				login: async ({ username, password }) => {
 					const cookie_jar = new tough.CookieJar();
 					const options = {
