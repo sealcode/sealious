@@ -21,6 +21,20 @@ function Collection(
 			};
 		}
 		componentDidMount() {
+			this.refreshComponent();
+		}
+		componentDidUpdate(prevProps, prevState) {
+			const serialized_last_filter = JSON.stringify(
+				get_forced_filter(prevProps)
+			);
+			const serialized_current_filter = JSON.stringify(
+				get_forced_filter(this.props)
+			);
+			if (serialized_last_filter !== serialized_current_filter) {
+				this.refreshComponent();
+			}
+		}
+		refreshComponent() {
 			this.setState({ loading: true });
 			CachedHttp.get(`/api/v1/collections/${collection}`, {
 				filter: Object.assign(
