@@ -49,7 +49,9 @@ const CachedHttp = (function() {
 							resolve(data);
 						})
 						.catch(error => {
-							const cached_err = Object.create(CachedError.prototype);
+							const cached_err = Object.create(
+								CachedError.prototype
+							);
 							Object.assign(cached_err, error);
 							delete pending[hash];
 							cache[hash] = cached_err;

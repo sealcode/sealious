@@ -57,7 +57,11 @@ async function with_test_app(auto_start, fn) {
 		if (clear_database_on_stop) {
 			await Promise.all(
 				app.ChipManager.get_all_collections().map(collection_name =>
-					app.Datastore.remove(collection_name, {}, "just_one" && false)
+					app.Datastore.remove(
+						collection_name,
+						{},
+						"just_one" && false
+					)
 				)
 			);
 			await app.Datastore.remove(
@@ -83,7 +87,8 @@ async function with_test_app(auto_start, fn) {
 				get_messages: async () =>
 					(await axios.get(`${smtp_api_url}/messages`)).data,
 				get_message_by_id: async id =>
-					(await axios.get(`${smtp_api_url}/messages/${id}.html`)).data,
+					(await axios.get(`${smtp_api_url}/messages/${id}.html`))
+						.data,
 			},
 			dont_clear_database_on_stop: () => (clear_database_on_stop = false),
 			rest_api: {
@@ -92,7 +97,8 @@ async function with_test_app(auto_start, fn) {
 				delete: async (url, options) =>
 					(await axios.delete(`${base_url}${url}`, options)).data,
 				patch: async (url, data, options) =>
-					(await axios.patch(`${base_url}${url}`, data, options)).data,
+					(await axios.patch(`${base_url}${url}`, data, options))
+						.data,
 				post: async (url, data, options) =>
 					(await axios.post(`${base_url}${url}`, data, options)).data,
 				login: async ({ username, password }) => {
