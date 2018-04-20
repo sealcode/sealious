@@ -34,7 +34,8 @@ function Collection(
 				this.refreshComponent();
 			}
 		}
-		refreshComponent() {
+		refreshComponent(force = false) {
+			if (force) CachedHttp.flush();
 			this.setState({ loading: true });
 			CachedHttp.get(`/api/v1/collections/${collection}`, {
 				filter: Object.assign(
@@ -54,6 +55,7 @@ function Collection(
 				resources: this.state.resources,
 				loading: this.state.loading,
 				metadata: this.props.metadata,
+				refresh: this.refreshComponent.bind(this),
 			});
 		}
 	};
