@@ -69,8 +69,8 @@ function ResourceSelectPure(props_arg) {
 	}
 
 	return (
-		<label className={props.labelClassName}>
-			{props.label}
+		<React.Fragment>
+			<label className={props.labelClassName}>{props.label}</label>
 			<select
 				onChange={handleChange}
 				value={props.value}
@@ -79,7 +79,7 @@ function ResourceSelectPure(props_arg) {
 			>
 				{options}
 			</select>
-		</label>
+		</React.Fragment>
 	);
 }
 
