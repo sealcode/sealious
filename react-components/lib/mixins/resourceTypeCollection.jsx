@@ -5,7 +5,7 @@ import deep_equal from "deep-equal";
 import clone from "clone";
 import Promise from "bluebird";
 
-const Loading = require("./../loading.js");
+const Loading = require("../loading.jsx");
 const CachedHttp = require("../cached-http.js");
 
 export default function resourceTypeCollection(ComponentClass) {
