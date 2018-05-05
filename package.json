@@ -11,7 +11,9 @@
 		"type": "git",
 		"url": "https://github.com/sealcode/sealious"
 	},
-	"keywords": ["sealious"],
+	"keywords": [
+		"sealious"
+	],
 	"author": "The Sealious team (http://github.com/Sealious)",
 	"license": "BSD-2-Clause",
 	"bugs": {
@@ -64,5 +66,8 @@
 		"mocha": "*",
 		"mocha-istanbul": "^0.2.0",
 		"tough-cookie": "^2.3.4"
+	},
+	"peerDependencies": {
+		"react": "^16.3.2"
 	}
 }
