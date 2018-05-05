@@ -9,25 +9,18 @@ const Loading = require("../loading.jsx");
 const CachedHttp = require("../cached-http.js");
 
 export default function resourceTypeCollection(ComponentClass) {
-	return React.createClass({
-		getInitialState: function() {
-			return {
+	class resourceTypeWrapper extends React.Component {
+		constructor(props) {
+			super(props);
+			this.state = {
 				loading: false,
 				resources: [],
 			};
-		},
-		getDefaultProps: function() {
-			return {
-				pagination: undefined, // could be: {page: 1, items: 12}
-				filter: {},
-				format: {},
-				search: "",
-				url: "/api/v1/collections/users",
-				loadingComponent: () => React.createElement(Loading),
-				customSort: list => list,
-			};
-		},
-		generateQuery: function(props) {
+			this.generateQuery = this.generateQuery.bind(this);
+			this.fetch = this.fetch.bind(this);
+			this.refresh = this.refresh.bind(this);
+		}
+		generateQuery(props) {
 			let query = {};
 			if (props.filter) {
 				query.filter = props.filter;
@@ -47,11 +40,11 @@ export default function resourceTypeCollection(ComponentClass) {
 				}
 			});
 			return query;
-		},
-		reloadNeeded: function(query) {
+		}
+		reloadNeeded(query) {
 			return !deep_equal(query, this.state.last_query);
-		},
-		fetch: function(query) {
+		}
+		fetch(query) {
 			this.setState({
 				loading: true,
 			});
@@ -64,28 +57,28 @@ export default function resourceTypeCollection(ComponentClass) {
 					last_query: clone(query),
 				});
 			});
-		},
-		refresh: function(force) {
+		}
+		refresh(force) {
 			let query = this.generateQuery(this.props);
 			this.fetch(query);
-		},
-		componentDidMount: function() {
+		}
+		componentDidMount() {
 			this.refresh();
-		},
-		componentWillReceiveProps: function(next_props) {
+		}
+		componentWillReceiveProps(next_props) {
 			if (!this.props.will_not_update)
 				setTimeout(() => {
 					this.refresh();
 				}, 0);
-		},
-		delete: function(resource) {
+		}
+		delete(resource) {
 			rest
 				.delete(this.props.url + "/" + resource.id, {}, { cache: true })
 				.then(() => {
 					this.refresh(true);
 				});
-		},
-		render: function() {
+		}
+		render() {
 			if (this.state.loading) {
 				return React.createElement(this.props.loadingComponent);
 			}
@@ -98,6 +91,18 @@ export default function resourceTypeCollection(ComponentClass) {
 			const child_props = merge(true, this.props, customProps);
 
 			return React.createElement(ComponentClass, child_props);
-		},
-	});
+		}
+	}
+
+	resourceTypeWrapper.defaultProps = {
+		pagination: undefined, // could be: {page: 1, items: 12}
+		filter: {},
+		format: {},
+		search: "",
+		url: "/api/v1/collections/users",
+		loadingComponent: () => React.createElement(Loading),
+		customSort: list => list,
+	};
+
+	return resourceTypeWrapper;
 }
