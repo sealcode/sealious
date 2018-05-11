@@ -25,7 +25,7 @@ module.exports = function(store, store_prop_name, component) {
 		render() {
 			return React.createElement(
 				component,
-				merge(true, this.props, {
+				Object.assign({}, this.props, {
 					[store_prop_name]: this.state[store_prop_name],
 				})
 			);

@@ -1,7 +1,5 @@
 const React = require("react");
 const CachedHttp = require("./cached-http.js");
-const KeyValueStore = require("./stores/key-value-store.js");
-const ConnectWithKeyValueStore = require("./stores/connect-with-key-value-store.jsx");
 
 function Collection(
 	{
@@ -22,6 +20,7 @@ function Collection(
 		}
 		componentDidMount() {
 			this.refreshComponent();
+			query_store.on("change", () => this.refreshComponent());
 		}
 		componentDidUpdate(prevProps, prevState) {
 			const serialized_last_filter = JSON.stringify(
