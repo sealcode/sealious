@@ -5,4 +5,6 @@ module.exports = {
 	QueryStores: require("./lib/query-stores/query-store.js"),
 	Loading: require("./lib/loading.jsx"),
 	CachedHttp: require("./lib/cached-http.js"),
+	KeyValueStore: require("./lib/stores/key-value-store.js"),
+	ConnectWithKeyValueStore: require("./lib/stores/connect-with-key-value-store.jsx"),
 };
