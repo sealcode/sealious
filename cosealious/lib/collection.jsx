@@ -34,9 +34,18 @@ function Collection(
 				this.refreshComponent();
 			}
 		}
-		refreshComponent(force = false) {
+		refreshComponent(options) {
+			const default_options = {
+				force: false,
+				show_loading: true,
+			};
+			const { force, show_loading } = Object.assign(
+				{},
+				default_options,
+				options
+			);
 			if (force) CachedHttp.flush();
-			this.setState({ loading: true });
+			if (show_loading) this.setState({ loading: true });
 			CachedHttp.get(`/api/v1/collections/${collection}`, {
 				filter: Object.assign(
 					{},
