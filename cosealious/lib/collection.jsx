@@ -7,6 +7,7 @@ function Collection(
 		query_store,
 		get_forced_filter = () => {},
 		get_forced_format = () => {},
+		get_forced_sort = () => {},
 	},
 	component
 ) {
@@ -52,6 +53,7 @@ function Collection(
 					get_forced_filter(this.props)
 				),
 				format: get_forced_format(this.props),
+				sort: get_forced_sort(this.props),
 			}).then(resources => {
 				this.setState({ resources, loading: false });
 			});
