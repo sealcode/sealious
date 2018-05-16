@@ -1,5 +1,5 @@
-import React from "react";
 import resourceTypeCollection from "./mixins/resourceTypeCollection.jsx";
+import React from "react";
 import merge from "merge";
 
 const default_props = {
@@ -32,7 +32,7 @@ function getOptionName(resource, props) {
 	return getAttr("display", resource, props);
 }
 
-function ResourceSelectPure(props_arg) {
+function ResourceDropdownPure(props_arg) {
 	const props = merge(true, default_props, props_arg);
 
 	function handleChange(e) {
@@ -83,4 +83,4 @@ function ResourceSelectPure(props_arg) {
 	);
 }
 
-export default ResourceSelectPure;
+module.exports = resourceTypeCollection(ResourceDropdownPure);

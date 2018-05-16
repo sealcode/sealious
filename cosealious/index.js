@@ -1,5 +1,6 @@
 module.exports = {
-	ResourceSelect: require("./lib/ResourceSelect.jsx"),
+	ResourceSelect: require("./lib/ResourceDropdown.jsx"),
+	ResourceDropdown: require("./lib/ResourceDropdown.jsx"),
 	Collection: require("./lib/collection.jsx"),
 	Resource: require("./lib/resource.jsx"),
 	QueryStores: require("./lib/query-stores/query-store.js"),
