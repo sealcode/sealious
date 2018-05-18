@@ -65,6 +65,7 @@
 		"istanbul": "^0.4.1",
 		"mocha": "*",
 		"mocha-istanbul": "^0.2.0",
+		"sinon": "^5.0.7",
 		"tough-cookie": "^2.3.4"
 	},
 	"peerDependencies": {
