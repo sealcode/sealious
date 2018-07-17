@@ -20,7 +20,10 @@ module.exports = function(store, store_prop_name, component) {
 		}
 		componentWillUnmount() {
 			const self = this;
-			store.off("change", self.state.listener);
+			(store.off || store.removeListener).bind(store)(
+				"change",
+				self.state.listener
+			);
 		}
 		render() {
 			return React.createElement(
