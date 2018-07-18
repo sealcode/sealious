@@ -17,11 +17,12 @@ module.exports = {
 						localField: "body.number",
 						foreignField: "sealious_id",
 					});
-					return query.match({
+					query.match({
 						[`${id}._id`]: {
 							$exists: strategy === "complex-allow-pipeline",
 						},
 					});
+					return query;
 				},
 				checker_function: function() {
 					return Promise.resolve();
