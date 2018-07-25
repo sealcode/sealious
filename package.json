@@ -11,7 +11,9 @@
 		"type": "git",
 		"url": "https://github.com/sealcode/sealious"
 	},
-	"keywords": ["sealious"],
+	"keywords": [
+		"sealious"
+	],
 	"author": "The Sealious team (http://github.com/Sealious)",
 	"license": "BSD-2-Clause",
 	"bugs": {
@@ -43,7 +45,6 @@
 		"node-uuid": "^1.4.7",
 		"nodemailer": "^4.6.3",
 		"object-hash": "^1.3.0",
-		"pattern-emitter-promise": "^1.0.3",
 		"pretty-ms": "^3.2.0",
 		"qs": "^6.5.1",
 		"request": "^2.79.0",
