@@ -8,4 +8,7 @@ module.exports = {
 	CachedHttp: require("./lib/cached-http.js"),
 	KeyValueStore: require("./lib/stores/key-value-store.js"),
 	ConnectWithKeyValueStore: require("./lib/stores/connect-with-key-value-store.jsx"),
+	APIs: {
+		SingleResourceAPI: require("./lib/api/single-resource-api.js"),
+	},
 };

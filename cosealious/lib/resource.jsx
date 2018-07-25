@@ -1,5 +1,5 @@
 const React = require("react");
-const CachedHttp = require("./cached-http.js");
+const SingleResourceAPI = require("./api/single-resource-api.js");
 
 module.exports = (
 	{
@@ -7,25 +7,43 @@ module.exports = (
 		get_forced_filter = () => {},
 		get_forced_format = () => {},
 		get_id = props => props.id,
+		resource_api_class = SingleResourceAPI,
 	},
 	component
 ) =>
 	class Resource extends React.Component {
-		constructor() {
-			super();
+		constructor(props) {
+			super(props);
 			this.state = {
-				loading: true,
-				resource: null,
+				resourceAPI: null,
+				resourceData: null,
 			};
 		}
 		componentDidMount() {
-			CachedHttp.get(
-				`/api/v1/collections/${collection}/${get_id(this.props)}`,
+			const resourceAPI = new resource_api_class(
+				collection,
+				get_id(this.props),
 				{
 					filter: Object.assign({}, get_forced_filter(this.props)),
 					format: get_forced_format(this.props),
 				}
-			).then(resource => this.setState({ loading: false, resource }));
+			);
+			this.setState({ resourceAPI });
+			resourceAPI.on("change", newData => {
+				this.setState({ resourceData: newData });
+			});
+			resourceAPI.load();
+		}
+		componentWillUnmount() {
+			if (this.state.resourceAPI !== null) {
+				this.state.resourceAPI.removeAllListeners();
+			}
+		}
+		isLoading() {
+			return (
+				this.state.resourceAPI === null ||
+				this.state.resourceAPI.loading
+			);
 		}
 		render() {
 			if (!get_id(this.props)) {
@@ -36,8 +54,9 @@ module.exports = (
 			return React.createElement(
 				component,
 				Object.assign({}, this.props, {
-					resource: this.state.resource,
-					loading: this.state.loading,
+					loading: this.isLoading(),
+					resourceAPI: this.state.resourceAPI,
+					resourceData: this.state.resourceData,
 				})
 			);
 		}
