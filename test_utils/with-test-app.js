@@ -47,13 +47,19 @@ async function with_test_app(auto_start, fn) {
 		}
 	);
 
-	app.on(/.*/, function() {
-		app.Logger.debug(arguments);
-	});
+	const possible_actions = ["create", "show", "edit", "delete"];
+
+	app.addHook({ when: "after", action: possible_actions }, () =>
+		app.Logger.debug(arguments)
+	);
+
+	app.addHook({ when: "before", action: possible_actions }, () =>
+		app.Logger.debug(arguments)
+	);
 
 	let clear_database_on_stop = true;
 
-	app.on("stop", async () => {
+	app.addHook({ when: "before", action: "stop" }, async () => {
 		if (clear_database_on_stop) {
 			await Promise.all(
 				app.ChipManager.get_all_collections().map(collection_name =>
