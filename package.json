@@ -5,15 +5,13 @@
 	"description": "A declarative framework for fast & easy app development.",
 	"main": "./lib/main.js",
 	"scripts": {
-		"test": "mocha setup-test.js \"./lib/**/*.test.js\""
+		"test": "mocha setup-test.js \"./lib/**/*.test.js\"",
+		"build": "babel cosealious-src --out-dir cosealious"
 	},
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/sealcode/sealious"
 	},
-	"keywords": [
-		"sealious"
-	],
 	"author": "The Sealious team (http://github.com/Sealious)",
 	"license": "BSD-2-Clause",
 	"bugs": {
@@ -21,6 +19,7 @@
 	},
 	"dependencies": {
 		"axios": "^0.18.0",
+		"babel-cli": "^6.26.0",
 		"bluebird": "^3.4.6",
 		"bluebird-events": "^2.0.0",
 		"body-parser": "^1.15.2",
@@ -59,12 +58,11 @@
 	},
 	"devDependencies": {
 		"@3846masa/axios-cookiejar-support": "^0.1.4",
-		"coveralls": "^2.11.4",
+		"babel-preset-env": "^1.7.0",
+		"babel-preset-react": "^6.24.1",
 		"deep-equal": "^1.0.1",
 		"eslint": "^3.1.1",
-		"istanbul": "^0.4.1",
 		"mocha": "*",
-		"mocha-istanbul": "^0.2.0",
 		"sinon": "^5.0.7",
 		"tough-cookie": "^2.3.4"
 	},
