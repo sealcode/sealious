@@ -5,8 +5,8 @@ import deep_equal from "deep-equal";
 import clone from "clone";
 import Promise from "bluebird";
 
-const Loading = require("../loading.jsx");
-const CachedHttp = require("../cached-http.js");
+const Loading = require("../loading");
+const CachedHttp = require("../cached-http");
 
 export default function resourceTypeCollection(ComponentClass) {
 	class resourceTypeWrapper extends React.Component {
@@ -72,11 +72,13 @@ export default function resourceTypeCollection(ComponentClass) {
 				}, 0);
 		}
 		delete(resource) {
-			rest
-				.delete(this.props.url + "/" + resource.id, {}, { cache: true })
-				.then(() => {
-					this.refresh(true);
-				});
+			rest.delete(
+				this.props.url + "/" + resource.id,
+				{},
+				{ cache: true }
+			).then(() => {
+				this.refresh(true);
+			});
 		}
 		render() {
 			if (this.state.loading) {

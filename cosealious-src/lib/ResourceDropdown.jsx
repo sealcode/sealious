@@ -1,4 +1,4 @@
-import resourceTypeCollection from "./mixins/resourceTypeCollection.jsx";
+import resourceTypeCollection from "./mixins/resourceTypeCollection";
 import React from "react";
 import merge from "merge";
 
