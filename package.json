@@ -6,7 +6,8 @@
 	"main": "./lib/main.js",
 	"scripts": {
 		"test": "mocha setup-test.js \"./lib/**/*.test.js\"",
-		"build": "rm -rf cosealious/* && babel cosealious-src --out-dir cosealious"
+		"build": "rm -rf cosealious/* && babel cosealious-src --out-dir cosealious",
+		"install": "npm run build"
 	},
 	"repository": {
 		"type": "git",
