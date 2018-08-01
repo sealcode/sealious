@@ -17,6 +17,7 @@ function Collection(
 			this.state = {
 				loading: true,
 				resources: [],
+				response: { attachments: {}, items: [] },
 			};
 		}
 		componentDidMount() {
@@ -58,16 +59,19 @@ function Collection(
 					query_store.getQuery().sort,
 					get_forced_sort(this.props)
 				),
-			}).then(resources => {
-				this.setState({ resources, loading: false });
+			}).then(response => {
+				this.setState({
+					response,
+					resources: response.items,
+					loading: false,
+				});
 			});
 		}
 		render() {
 			return React.createElement(component, {
 				collection,
 				query_store,
-				resources: this.state.resources,
-				loading: this.state.loading,
+				...this.state,
 				metadata: this.props.metadata,
 				refresh: this.refreshComponent.bind(this),
 			});

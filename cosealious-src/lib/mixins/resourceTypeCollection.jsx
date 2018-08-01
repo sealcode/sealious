@@ -15,6 +15,7 @@ export default function resourceTypeCollection(ComponentClass) {
 			this.state = {
 				loading: false,
 				resources: [],
+				response: { attachments: {}, items: [] },
 			};
 			this.generateQuery = this.generateQuery.bind(this);
 			this.fetch = this.fetch.bind(this);
@@ -53,7 +54,8 @@ export default function resourceTypeCollection(ComponentClass) {
 			}).then(response => {
 				this.setState({
 					loading: false,
-					resources: this.props.customSort(response),
+					resources: this.props.customSort(response.items),
+					response,
 					last_query: clone(query),
 				});
 			});
@@ -85,8 +87,7 @@ export default function resourceTypeCollection(ComponentClass) {
 				return React.createElement(this.props.loadingComponent);
 			}
 			const customProps = {
-				resources: this.state.resources,
-				loading: this.state.loading,
+				...this.state,
 				delete: this.delete,
 			};
 

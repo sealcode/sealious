@@ -50,7 +50,7 @@ const CachedHttp = (function() {
 					})
 					.then(response => {
 						const data = response.data;
-						cache[hash] = response.data;
+						cache[hash] = data;
 						delete pending[hash];
 						resolve(data);
 					})
