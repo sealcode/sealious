@@ -59,6 +59,7 @@
 	},
 	"devDependencies": {
 		"@3846masa/axios-cookiejar-support": "^0.1.4",
+		"babel-plugin-transform-object-rest-spread": "^6.26.0",
 		"babel-preset-env": "^1.7.0",
 		"babel-preset-react": "^6.24.1",
 		"deep-equal": "^1.0.1",
