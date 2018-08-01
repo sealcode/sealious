@@ -53,7 +53,11 @@ function Collection(
 					get_forced_filter(this.props)
 				),
 				format: get_forced_format(this.props),
-				sort: get_forced_sort(this.props),
+				sort: Object.assign(
+					{},
+					query_store.getQuery().sort,
+					get_forced_sort(this.props)
+				),
 			}).then(resources => {
 				this.setState({ resources, loading: false });
 			});

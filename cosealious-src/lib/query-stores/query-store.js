@@ -11,6 +11,10 @@ class QueryStore extends EventEmitter {
 		this.store.set("filter", filter);
 		this.store.set("pagination.page", 1);
 	}
+	setSort(sort) {
+		this.store.set("sort", sort);
+		this.store.set("pagination.page", 1);
+	}
 	getQuery() {
 		return this.store.getStore();
 	}
