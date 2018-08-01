@@ -63,12 +63,12 @@ The default config is:
 
 `manifest` is public, and can be safely `require`d by a front-end script. It contains information on branding and version of your app. It must include the following fields:
 
-* `name` (string) - the name of your app
-* `logo` (string) - path to an image with the logo of your app
-* `version` (string) - the version of your app
-* `colors.primary` (string) - the primary color of your brand
-* `default_language` (string) - the default language for your app. Email templates use this
-* `admin_email` (string) - the email address of the admin. It might be publicly revealed within the app. Used to create the initial admin account. Whenever the app starts and there's no user with that email, a registration intent is created, causing an email to be sent to this address.
+- `name` (string) - the name of your app
+- `logo` (string) - path to an image with the logo of your app
+- `version` (string) - the version of your app
+- `colors.primary` (string) - the primary color of your brand
+- `default_language` (string) - the default language for your app. Email templates use this
+- `admin_email` (string) - the email address of the admin. It might be publicly revealed within the app. Used to create the initial admin account. Whenever the app starts and there's no user with that email, a registration intent is created, causing an email to be sent to this address.
 
 You can also include your own fields/values, so they can be easily shared across different modules on both back-end and front-end.
 
@@ -289,11 +289,11 @@ The only node left in candidates is `L5`, so algorithm picks it up. We traversed
 
 Whenever possible we try to use `Query` class instead of raw MongoDB queries. The following classes extend `Query` class (their names are rather self-explanatory):
 
-* `Query.And`
-* `Query.Or`
-* `Query.Not`
-* `Query.DenyAll`
-* `Query.AllowAll`
+- `Query.And`
+- `Query.Or`
+- `Query.Not`
+- `Query.DenyAll`
+- `Query.AllowAll`
 
 Every class which belongs to `Query` group has to expose the functions below. The usage examples can be find in `lib/datastore/query.test.js`.
 
