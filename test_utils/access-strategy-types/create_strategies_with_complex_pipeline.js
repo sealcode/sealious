@@ -1,4 +1,4 @@
-const Query = require("../../lib/datastore/query.js");
+const Promise = require("bluebird");
 
 module.exports = {
 	allow_deny: function(App) {
@@ -11,7 +11,7 @@ module.exports = {
 			App.createChip(Sealious.AccessStrategyType, {
 				name: strategy,
 				getRestrictingQuery: async function() {
-					const query = new Query();
+					const query = new App.Query();
 					const id = query.lookup({
 						from: "numbers",
 						localField: "body.number",
