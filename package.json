@@ -55,9 +55,7 @@
 		"squares": "^0.2.1",
 		"turndown": "^4.0.1",
 		"uuid": "^3.0.0",
-		"winston": "^1.0.0"
-	},
-	"devDependencies": {
+		"winston": "^1.0.0",
 		"@3846masa/axios-cookiejar-support": "^0.1.4",
 		"babel-plugin-transform-object-rest-spread": "^6.26.0",
 		"babel-preset-env": "^1.7.0",
