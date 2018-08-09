@@ -5,6 +5,7 @@ class QueryStore extends EventEmitter {
 		super();
 	}
 	init() {
+		this.store.set("sort", {});
 		this.store.on("change", () => this.emit("change"));
 	}
 	setFilter(filter) {
