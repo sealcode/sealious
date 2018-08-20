@@ -23,5 +23,10 @@
 		"port": 27017,
 		"db_name": "sealious"
 	},
-	"roles": ["admin"]
+	"roles": ["admin"],
+	"password_hash": {
+		"iterations": 26000,
+		"key_length": 512,
+		"salt_length": 21
+	}
 }
