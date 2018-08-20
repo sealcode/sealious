@@ -33,6 +33,9 @@ async function with_test_app(auto_start, fn) {
 			"www-server": {
 				port,
 			},
+			password_hash: {
+				iterations: 1,
+			},
 		},
 		{
 			name: "testing app",
