@@ -3,11 +3,21 @@ const axios = require("axios");
 const tough = require("tough-cookie");
 
 module.exports = {
-	with_stopped_app: with_test_app.bind(global, "auto_start" && false),
-	with_running_app: with_test_app.bind(global, "auto_start" && true),
+	with_stopped_app: with_test_app.bind(global, "auto_start" && false, "dev"),
+	with_running_app: with_test_app.bind(global, "auto_start" && true, "dev"),
+	with_running_app_prod: with_test_app.bind(
+		global,
+		"auto_start" && true,
+		"production"
+	),
+	with_stopped_app_prod: with_test_app.bind(
+		global,
+		"auto_start" && false,
+		"production"
+	),
 };
 
-async function with_test_app(auto_start, fn) {
+async function with_test_app(auto_start, env, fn) {
 	let app = null;
 	const port = 8888;
 	const base_url = `http://localhost:${port}`;
@@ -27,7 +37,7 @@ async function with_test_app(auto_start, fn) {
 				from_name: "Sealious test app",
 				from_address: "sealious@example.com",
 			},
-			core: { environment: "production" },
+			core: { environment: env },
 			app: { version: "0.0.0-test" },
 			logger: { level: "emerg" },
 			"www-server": {
