@@ -1,10 +1,11 @@
 const React = require("react");
 const CachedHttp = require("./cached-http.js");
+const QueryStore = require("./query-stores/query-store");
 
 function Collection(
 	{
 		collection,
-		query_store,
+		query_store_class = QueryStore.Stateful,
 		get_forced_filter = () => {},
 		get_forced_format = () => {},
 		get_forced_sort = () => {},
@@ -14,6 +15,7 @@ function Collection(
 	return class Component extends React.Component {
 		constructor() {
 			super();
+			this.query_store = new query_store_class();
 			this.state = {
 				loading: true,
 				resources: [],
@@ -22,7 +24,7 @@ function Collection(
 		}
 		componentDidMount() {
 			this.refreshComponent();
-			query_store.on("change", () => this.refreshComponent());
+			this.query_store.on("change", () => this.refreshComponent());
 		}
 		componentDidUpdate(prevProps, prevState) {
 			const serialized_last_filter = JSON.stringify(
@@ -50,13 +52,13 @@ function Collection(
 			CachedHttp.get(`/api/v1/collections/${collection}`, {
 				filter: Object.assign(
 					{},
-					query_store.getQuery().filter,
+					this.query_store.getQuery().filter,
 					get_forced_filter(this.props)
 				),
 				format: get_forced_format(this.props),
 				sort: Object.assign(
 					{},
-					query_store.getQuery().sort,
+					this.query_store.getQuery().sort,
 					get_forced_sort(this.props)
 				),
 			}).then(response => {
@@ -70,7 +72,7 @@ function Collection(
 		render() {
 			return React.createElement(component, {
 				collection,
-				query_store,
+				query_store: this.query_store,
 				...this.state,
 				metadata: this.props.metadata,
 				refresh: this.refreshComponent.bind(this),
