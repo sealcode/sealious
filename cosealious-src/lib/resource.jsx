@@ -14,13 +14,7 @@ module.exports = (
 	class Resource extends React.Component {
 		constructor(props) {
 			super(props);
-			this.state = {
-				resourceAPI: null,
-				resourceData: null,
-			};
-		}
-		componentDidMount() {
-			const resourceAPI = new resource_api_class(
+			this.resourceAPI = new resource_api_class(
 				collection,
 				get_id(this.props),
 				{
@@ -28,22 +22,16 @@ module.exports = (
 					format: get_forced_format(this.props),
 				}
 			);
-			this.setState({ resourceAPI });
-			resourceAPI.on("change", newData => {
-				this.setState({ resourceData: newData });
-			});
-			resourceAPI.load();
+			this.state = {
+				resourceData: null,
+			};
+			this.resourceAPI.on("change", newData =>
+				this.setState({ resourceData: newData })
+			);
+			this.resourceAPI.load();
 		}
 		componentWillUnmount() {
-			if (this.state.resourceAPI !== null) {
-				this.state.resourceAPI.removeAllListeners();
-			}
-		}
-		isLoading() {
-			return (
-				this.state.resourceAPI === null ||
-				this.state.resourceAPI.loading
-			);
+			this.resourceAPI.removeAllListeners();
 		}
 		render() {
 			if (!get_id(this.props)) {
@@ -54,8 +42,8 @@ module.exports = (
 			return React.createElement(
 				component,
 				Object.assign({}, this.props, {
-					loading: this.isLoading(),
-					resourceAPI: this.state.resourceAPI,
+					loading: this.resourceAPI.loading,
+					resourceAPI: this.resourceAPI,
 					resourceData: this.state.resourceData,
 				})
 			);

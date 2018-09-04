@@ -1,3 +1,5 @@
+require("babel-regenerator-runtime");
+
 module.exports = {
 	ResourceSelect: require("./lib/ResourceDropdown"),
 	ResourceDropdown: require("./lib/ResourceDropdown"),
