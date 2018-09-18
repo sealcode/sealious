@@ -14,7 +14,7 @@ module.exports = {
 					const query = new App.Query();
 					const id = query.lookup({
 						from: "numbers",
-						localField: "body.number",
+						localField: "number",
 						foreignField: "sealious_id",
 					});
 					query.match({

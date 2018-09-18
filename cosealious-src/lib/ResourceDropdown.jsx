@@ -18,7 +18,7 @@ const default_props = {
 function getAttr(name, resource, props) {
 	const propname = name + "Attr";
 	if (typeof props[propname] === "string") {
-		return resource[props[propname]] || resource.body[props[propname]];
+		return resource[props[propname]];
 	} else if (typeof props[propname] === "function") {
 		return props[propname](resource);
 	}
