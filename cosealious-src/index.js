@@ -13,4 +13,5 @@ module.exports = {
 	APIs: {
 		SingleResourceAPI: require("./lib/api/single-resource-api.js"),
 	},
+	form: require("./lib/mixins/form"),
 };

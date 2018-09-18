@@ -71,18 +71,18 @@ const Sealious = require("sealious");
 const path = require("path");
 
 const config = {
-	datastore_mongo: {
-		port: 27018,
-	},
-	upload_path: path.resolve("./uploaded_files"),
+    datastore_mongo: {
+        port: 27018,
+    },
+    upload_path: path.resolve("./uploaded_files"),
 };
 const manifest = {
-	name: "What Seal Do?",
-	logo: path.resolve(__dirname, "./img/logo.jpg"),
-	version: "1.0",
-	default_language: "pl",
-	base_url: "http://localhost:8080",
-	admin_email: "mr.seal.api.admin@sealcode.org",
+    name: "What Seal Do?",
+    logo: path.resolve(__dirname, "./img/logo.jpg"),
+    version: "1.0",
+    default_language: "pl",
+    base_url: "http://localhost:8080",
+    admin_email: "mr.seal.api.admin@sealcode.org",
 };
 
 const app = new Sealious.App(config, manifest);
@@ -100,12 +100,12 @@ Czas dodać kolekcję! Zrobimy to wykorzystując metodę
 
 ```js
 const tasks = app.createChip(Sealious.Collection, {
-	name: "tasks",
-	fields: [
-		{ name: "title", type: "text", required: true },
-		{ name: "done", type: "boolean", required: true },
-	],
-	access_strategy: { default: "owner", create: "logged_in" },
+    name: "tasks",
+    fields: [
+        { name: "title", type: "text", required: true },
+        { name: "done", type: "boolean", required: true },
+    ],
+    access_strategy: { default: "owner", create: "logged_in" },
 });
 ```
 
@@ -150,10 +150,10 @@ zalogowanemu użytkownikowi ustawiając klucz `create` na
 ```js
 ...
 access_strategy: {
-	edit: "owner",
-	show: "owner",
-	delete: "owner",
-	create: "logged_in",
+    edit: "owner",
+    show: "owner",
+    delete: "owner",
+    create: "logged_in",
 }
 ```
 
@@ -176,7 +176,7 @@ komunikat z linkiem:
 ```
 ...
 15:28:19.570 (1.3s) - warning: Creating an admin account for mr.seal.api.admin@sealcode.org
-15:28:19.616 (1.3s) - info:  
+15:28:19.616 (1.3s) - info:
  - message: "Would send an email here"
  - to: "mr.seal.api.admin@sealcode.org"
  - subject: {}
@@ -231,7 +231,7 @@ jak przy rejestracji konta administratora:
 
 ```
 ...
-15:30:34.101 (2m 15.8s) - info:  
+15:30:34.101 (2m 15.8s) - info:
  - message: "Would send an email here"
  - to: "seal_user_1@sealcode.org"
  - subject: {}
@@ -323,26 +323,27 @@ set-cookie: sealious-anon=e558cd91-4591-4db7-ba39-ea340e0b1547; Max-Age=86400; E
 vary: accept-encoding
 
 {
-    "body": {
-        "done": false,
-        "title": "Przetestować API"
-    },
-    "calculated_fields": {},
-    "collection_name": "tasks",
-    "created_context": {
-        "anonymous_user_id": "1n4eYyW_o",
-        "ip": "127.0.0.1",
-        "timestamp": 1532958162953,
-        "total": 1,
-        "user_id": "kYxtJ2-pe"
-    },
+
+    "done": false,
+    "title": "Przetestować API"
     "id": "fhNxgSoJp",
-    "last_modified_context": {
-        "anonymous_user_id": "1n4eYyW_o",
-        "ip": "127.0.0.1",
-        "timestamp": 1532958162953,
-        "total": 1,
-        "user_id": "kYxtJ2-pe"
+    "calculated_fields": {},
+    "_metadata": {
+        "collection_name": "tasks",
+        "created_context": {
+            "anonymous_user_id": "1n4eYyW_o",
+            "ip": "127.0.0.1",
+            "timestamp": 1532958162953,
+            "total": 1,
+            "user_id": "kYxtJ2-pe"
+        },
+        "last_modified_context": {
+            "anonymous_user_id": "1n4eYyW_o",
+            "ip": "127.0.0.1",
+            "timestamp": 1532958162953,
+            "total": 1,
+            "user_id": "kYxtJ2-pe"
+        }
     }
 }
 ```
