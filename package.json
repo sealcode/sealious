@@ -55,13 +55,13 @@
 		"winston": "^1.0.0",
 		"@3846masa/axios-cookiejar-support": "^0.1.4",
 		"deep-equal": "^1.0.1",
-		"tough-cookie": "^2.3.4"
+		"tough-cookie": "^2.3.4",
+		"babel-regenerator-runtime": "^6.5.0"
 	},
 	"peerDependencies": {
 		"react": "^16.3.2"
 	},
 	"devDependencies": {
-		"babel-regenerator-runtime": "^6.5.0",
 		"mocha": "*",
 		"sinon": "^5.0.7",
 		"eslint": "^3.1.1",
