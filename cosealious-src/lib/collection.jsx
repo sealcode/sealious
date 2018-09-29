@@ -2,14 +2,14 @@ const React = require("react");
 const CachedHttp = require("./cached-http.js");
 const QueryStore = require("./query-stores/query-store");
 
+const default_forced_query = props => ({
+	filter: {},
+	format: {},
+	sort: {},
+});
+
 function Collection(
-	{
-		collection,
-		query_store_class = QueryStore.Stateful,
-		get_forced_filter = () => {},
-		get_forced_format = () => {},
-		get_forced_sort = () => {},
-	},
+	{ collection, query_store, get_forced_query = default_forced_query },
 	component
 ) {
 	return class Component extends React.Component {
@@ -28,10 +28,10 @@ function Collection(
 		}
 		componentDidUpdate(prevProps, prevState) {
 			const serialized_last_filter = JSON.stringify(
-				get_forced_filter(prevProps)
+				get_forced_query(prevProps).filter
 			);
 			const serialized_current_filter = JSON.stringify(
-				get_forced_filter(this.props)
+				get_forced_query(this.props).filter
 			);
 			if (serialized_last_filter !== serialized_current_filter) {
 				this.refreshComponent();
@@ -42,25 +42,22 @@ function Collection(
 				force: false,
 				show_loading: true,
 			};
-			const { force, show_loading } = Object.assign(
-				{},
-				default_options,
-				options
-			);
+			const { force, show_loading } = {
+				...default_options,
+				...options,
+			};
 			if (force) CachedHttp.flush();
 			if (show_loading) this.setState({ loading: true });
 			CachedHttp.get(`/api/v1/collections/${collection}`, {
-				filter: Object.assign(
-					{},
-					this.query_store.getQuery().filter,
-					get_forced_filter(this.props)
-				),
-				format: get_forced_format(this.props),
-				sort: Object.assign(
-					{},
-					this.query_store.getQuery().sort,
-					get_forced_sort(this.props)
-				),
+				filter: {
+					...query_store.getQuery().filter,
+					...get_forced_query(this.props).filter,
+				},
+				format: get_forced_query(this.props).format,
+				sort: {
+					...query_store.getQuery().sort,
+					...get_forced_query(this.props).sort,
+				},
 			}).then(response => {
 				this.setState({
 					response,

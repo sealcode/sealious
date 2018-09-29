@@ -1,11 +1,16 @@
 const React = require("react");
 const SingleResourceAPI = require("./api/single-resource-api.js");
 
+const default_forced_query = props => ({
+	filter: {},
+	format: {},
+	sort: {},
+});
+
 module.exports = (
 	{
 		collection,
-		get_forced_filter = () => {},
-		get_forced_format = () => {},
+		get_forced_query = default_forced_query,
 		get_id = props => props.id,
 		resource_api_class = SingleResourceAPI,
 	},
@@ -18,8 +23,10 @@ module.exports = (
 				collection,
 				get_id(this.props),
 				{
-					filter: Object.assign({}, get_forced_filter(this.props)),
-					format: get_forced_format(this.props),
+					filter: {
+						...get_forced_query(this.props).filter,
+					},
+					format: get_forced_query(this.props).format,
 				}
 			);
 			this.state = {
@@ -39,13 +46,11 @@ module.exports = (
 					"Please provide the resource id as an 'id' prop or provide the 'get_id' prop"
 				);
 			}
-			return React.createElement(
-				component,
-				Object.assign({}, this.props, {
-					loading: this.resourceAPI.loading,
-					resourceAPI: this.resourceAPI,
-					resourceData: this.state.resourceData,
-				})
-			);
+			return React.createElement(component, {
+				...this.props,
+				loading: this.isLoading(),
+				resourceAPI: this.state.resourceAPI,
+				resourceData: this.state.resourceData,
+			});
 		}
 	};
