@@ -1,7 +1,7 @@
 version: '3.2'
 services:
   db:
-    image: mongo:3.4-jessie
+    image: mongo:4.0-xenial
     volumes:
       - ./db:/data/db
       - ./configdb:/data/configdb
