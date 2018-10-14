@@ -48,8 +48,8 @@ module.exports = (
 			}
 			return React.createElement(component, {
 				...this.props,
-				loading: this.isLoading(),
-				resourceAPI: this.state.resourceAPI,
+				loading: this.resourceAPI.loading,
+				resourceAPI: this.resourceAPI,
 				resourceData: this.state.resourceData,
 			});
 		}

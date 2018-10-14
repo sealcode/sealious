@@ -1,6 +1,5 @@
 const React = require("react");
 const CachedHttp = require("./cached-http.js");
-const QueryStore = require("./query-stores/query-store");
 
 const default_forced_query = props => ({
 	filter: {},
@@ -15,7 +14,7 @@ function Collection(
 	return class Component extends React.Component {
 		constructor() {
 			super();
-			this.query_store = new query_store_class();
+			this.query_store = query_store;
 			this.state = {
 				loading: true,
 				resources: [],
