@@ -1,4 +1,4 @@
-require("babel-regenerator-runtime");
+require("@babel/polyfill");
 
 module.exports = {
 	ResourceSelect: require("./lib/ResourceDropdown"),
