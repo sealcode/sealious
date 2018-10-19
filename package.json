@@ -20,8 +20,8 @@
 	},
 	"dependencies": {
 		"@3846masa/axios-cookiejar-support": "^0.1.4",
+		"@babel/polyfill": "^7.0.0",
 		"axios": "^0.18.0",
-		"babel-regenerator-runtime": "^6.5.0",
 		"bluebird": "^3.4.6",
 		"bluebird-events": "^2.0.0",
 		"boom": "^4.2.0",
@@ -56,12 +56,13 @@
 		"react": "^16.3.2"
 	},
 	"devDependencies": {
-		"mocha": "*",
-		"sinon": "^5.0.7",
+		"@babel/cli": "^7.0.0",
+		"@babel/core": "^7.0.0",
+		"@babel/plugin-proposal-object-rest-spread": "^7.0.0",
+		"@babel/preset-env": "^7.0.0",
+		"@babel/preset-react": "^7.0.0",
 		"eslint": "^3.1.1",
-		"babel-plugin-transform-object-rest-spread": "^6.26.0",
-		"babel-preset-env": "^1.7.0",
-		"babel-preset-react": "^6.24.1",
-		"babel-cli": "^6.26.0"
+		"mocha": "*",
+		"sinon": "^5.0.7"
 	}
 }
