@@ -15,4 +15,4 @@ build:
 	./npm.sh run build
 
 install:
-	./npm.sh install
+	./npm.sh ci
