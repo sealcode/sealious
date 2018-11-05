@@ -1,5 +1,6 @@
 const React = require("react");
 const CachedHttp = require("./cached-http.js");
+const QueryStore = require("./query-stores/query-store");
 
 const default_forced_query = props => ({
 	filter: {},
@@ -8,13 +9,13 @@ const default_forced_query = props => ({
 });
 
 function Collection(
-	{ collection, query_store, get_forced_query = default_forced_query },
+	{ collection, query_store_class = QueryStore.Stateful, get_forced_query = default_forced_query },
 	component
 ) {
 	return class Component extends React.Component {
 		constructor() {
 			super();
-			this.query_store = query_store;
+			this.query_store = new query_store_class();
 			this.state = {
 				loading: true,
 				resources: [],
@@ -49,12 +50,12 @@ function Collection(
 			if (show_loading) this.setState({ loading: true });
 			CachedHttp.get(`/api/v1/collections/${collection}`, {
 				filter: {
-					...query_store.getQuery().filter,
+					...this.query_store.getQuery().filter,
 					...get_forced_query(this.props).filter,
 				},
 				format: get_forced_query(this.props).format,
 				sort: {
-					...query_store.getQuery().sort,
+					...this.query_store.getQuery().sort,
 					...get_forced_query(this.props).sort,
 				},
 			}).then(response => {
