@@ -1,6 +1,6 @@
-import resourceTypeCollection from "./mixins/resourceTypeCollection";
 import React from "react";
 import merge from "merge";
+import Collection from "./collection";
 
 const default_props = {
 	displayAttr: "id",
@@ -24,63 +24,55 @@ function getAttr(name, resource, props) {
 	}
 }
 
-function getOptionValue(resource, props) {
-	return getAttr("value", resource, props);
-}
+function ResourceDropdownPure(config) {
+	const { collection, get_forced_query, query_store_class } = config;
 
-function getOptionName(resource, props) {
-	return getAttr("display", resource, props);
-}
+	return Collection({ collection, get_forced_query, query_store_class }, _props => {
 
-function ResourceDropdownPure(props_arg) {
-	const props = merge(true, default_props, props_arg);
+		const props = merge(true, default_props, _props, config);
 
-	function handleChange(e) {
-		props.onValueChange(e.target.value);
-	}
+		const options = props.resources.map(resource => {
+			const value = getAttr("value", resource, props);
+			const name = getAttr("display", resource, props);
+			const key = resource.id;
+			if (props.displayAttrIsSafe) {
+				return (
+					<option
+						value={value}
+						key={key}
+						dangerouslySetInnerHTML={{ __html: name }}
+					/>
+				);
+			} else {
+				return (
+					<option value={value} key={key}>
+						{name}
+					</option>
+				);
+			}
+		});
 
-	const options = props.resources.map(resource => {
-		const value = getOptionValue(resource, props);
-		const name = getOptionName(resource, props);
-		const key = resource.id;
-		if (props.displayAttrIsSafe) {
-			return (
-				<option
-					value={value}
-					key={key}
-					dangerouslySetInnerHTML={{ __html: name }}
-				/>
-			);
-		} else {
-			return (
-				<option value={value} key={key}>
-					{name}
+		if (props.allowNoValue) {
+			options.unshift(
+				<option value="" key="empty">
+					{props.noValueOptionName}
 				</option>
 			);
 		}
-	});
-
-	if (props.allowNoValue) {
-		options.unshift(
-			<option value="" key="empty">
-				{props.noValueOptionName}
-			</option>
+		return (
+			<React.Fragment>
+				<label className={props.labelClassName}>{props.label}</label>
+				<select
+					onChange={e => props.onValueChange(e.target.value)}
+					value={props.value}
+					disabled={props.disabled}
+					className={props.className}
+				>
+					{options}
+				</select>
+			</React.Fragment>
 		);
-	}
-
-	return (
-		<React.Fragment>
-			<label className={props.labelClassName}>{props.label}</label>
-			<select
-				onChange={handleChange}
-				value={props.value}
-				disabled={props.disabled}
-				className={props.className}
-			>
-				{options}
-			</select>
-		</React.Fragment>
-	);
+	});
 }
 
-module.exports = resourceTypeCollection(ResourceDropdownPure);
+module.exports = ResourceDropdownPure;
