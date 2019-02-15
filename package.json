@@ -6,7 +6,7 @@
 	"main": "./lib/main.js",
 	"scripts": {
 		"test": "mocha --timeout=10000 setup-test.js \"./lib/**/*.test.js\"",
-		"build": "rm -rf cosealious/* && babel cosealious-src --out-dir cosealious",
+		"build": "rm -rf cosealious/* && ./node_modules/.bin/babel cosealious-src --out-dir cosealious",
 		"prepare": "npm run build",
 		"install": "npm run build"
 	},
