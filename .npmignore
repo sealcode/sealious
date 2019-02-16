@@ -18,3 +18,4 @@ test.dockerfile
 test_stress
 test_utils
 uploaded_files
+.npm
