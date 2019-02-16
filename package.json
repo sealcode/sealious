@@ -12,7 +12,7 @@
 	},
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/sealcode/sealious"
+		"url": "https://hub.sealcode.org/source/sealious/"
 	},
 	"author": "The Sealious team (http://github.com/Sealious)",
 	"license": "BSD-2-Clause",
