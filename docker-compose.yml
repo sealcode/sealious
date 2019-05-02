@@ -2,9 +2,6 @@ version: '3.2'
 services:
   db:
     image: mongo:4.0-xenial
-    volumes:
-      - ./db:/data/db
-      - ./configdb:/data/configdb
     ports:
       - "127.0.0.1:20722:27017"
   test:
