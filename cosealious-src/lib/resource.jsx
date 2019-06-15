@@ -23,12 +23,14 @@ module.exports = (
 				collection,
 				get_id(this.props),
 				{
+					attachments: get_forced_query(this.props).attachments,
 					filter: {
 						...get_forced_query(this.props).filter,
 					},
 					format: get_forced_query(this.props).format,
 				}
 			);
+
 			this.state = {
 				resourceData: null,
 			};

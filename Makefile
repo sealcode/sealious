@@ -5,6 +5,9 @@ db:
 
 start: db build test-nginx
 
+stress-test:
+	./npm.sh run stress-test
+
 test:
 	./npm.sh run test
 

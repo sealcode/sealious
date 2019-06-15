@@ -1,30 +1,39 @@
 const axios = require("axios");
 const CachedHttp = require("../cached-http.js");
 const EventEmitter = require("events");
+const SingleItemResponse = require("../../common_lib/response/single-item-response.js");
 
 module.exports = class SingleResourceAPI extends EventEmitter {
 	constructor(collection_name, id, options) {
 		super();
 		this.id = id;
 		this.collection_name = collection_name;
-		this.data = null;
+		this.response = null;
 		this.loading = true;
 		this.filter = (options && options.filter) || {};
 		this.format = (options && options.format) || {};
+		this.attachments = (options && options.attachments) || {};
 	}
 	setLoading(loading) {
 		this.loading = loading;
-		this.emit("change", this.data);
+		this.emit("change", this.response);
 	}
-	async load() {
+	load() {
 		this.loading = true;
-		const response = await CachedHttp.get(
+		return this._load();
+	}
+	async _load() {
+		const http_response = await CachedHttp.get(
 			`/api/v1/collections/${this.collection_name}/${this.id}`,
-			{ filter: this.filter, format: this.format }
+			{
+				filter: this.filter,
+				format: this.format,
+				attachments: this.attachments,
+			}
 		);
-		this.loading = false;
-		this.data = response;
-		this.emit("change", this.data);
+
+		this.response = new SingleItemResponse(http_response);
+		this.setLoading(false);
 	}
 	async patch(body) {
 		this.loading = true;
@@ -33,12 +42,6 @@ module.exports = class SingleResourceAPI extends EventEmitter {
 			body
 		);
 		CachedHttp.flush();
-		const response = await CachedHttp.get(
-			`/api/v1/collections/${this.collection_name}/${this.id}`,
-			{ filter: this.filter, format: this.format }
-		);
-		this.loading = false;
-		this.data = response;
-		this.emit("change", this.data);
+		return this._load();
 	}
 };

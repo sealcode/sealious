@@ -1,11 +1,13 @@
 const React = require("react");
 const CachedHttp = require("./cached-http.js");
+const CollectionResponse = require("../common_lib/response/collection-response.js");
 const QueryStore = require("./query-stores/query-store");
 
 const default_forced_query = props => ({
 	filter: {},
 	format: {},
 	sort: {},
+	attachments: {},
 });
 
 function Collection(
@@ -19,7 +21,7 @@ function Collection(
 			this.state = {
 				loading: true,
 				resources: [],
-				response: { attachments: {}, items: [] },
+				response: null,
 			};
 		}
 		componentDidMount() {
@@ -48,7 +50,9 @@ function Collection(
 			};
 			if (force) CachedHttp.flush();
 			if (show_loading) this.setState({ loading: true });
-			CachedHttp.get(`/api/v1/collections/${collection}`, {
+
+			return CachedHttp.get(`/api/v1/collections/${collection}`, {
+				attachments: get_forced_query(this.props).attachments,
 				filter: {
 					...this.query_store.getQuery().filter,
 					...get_forced_query(this.props).filter,
@@ -58,7 +62,8 @@ function Collection(
 					...this.query_store.getQuery().sort,
 					...get_forced_query(this.props).sort,
 				},
-			}).then(response => {
+			}).then(http_response => {
+				const response = new CollectionResponse(http_response);
 				this.setState({
 					response,
 					resources: response.items,

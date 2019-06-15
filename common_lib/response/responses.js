@@ -17,4 +17,7 @@ SealiousResponses.ResourceCreated = function(resource_representation) {
 	}
 };
 
+SealiousResponses.CollectionResponse = require("./collection-response.js");
+SealiousResponses.SingleItemResponse = require("./single-item-response.js");
+
 module.exports = SealiousResponses;

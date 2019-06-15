@@ -7,6 +7,7 @@ import Promise from "bluebird";
 
 const Loading = require("../loading");
 const CachedHttp = require("../cached-http");
+const CollectionResponse = require("../../common_lib/response/collection-response.js");
 
 export default function resourceTypeCollection(ComponentClass) {
 	class resourceTypeWrapper extends React.Component {
@@ -15,7 +16,7 @@ export default function resourceTypeCollection(ComponentClass) {
 			this.state = {
 				loading: false,
 				resources: [],
-				response: { attachments: {}, items: [] },
+				response: { items: [] },
 			};
 			this.generateQuery = this.generateQuery.bind(this);
 			this.fetch = this.fetch.bind(this);
@@ -34,7 +35,13 @@ export default function resourceTypeCollection(ComponentClass) {
 					}
 				}
 			}
-			const to_add = ["sort", "format", "search", "pagination"];
+			const to_add = [
+				"sort",
+				"format",
+				"search",
+				"pagination",
+				"attachments",
+			];
 			to_add.forEach(function(key) {
 				if (props[key]) {
 					query[key] = props[key];
@@ -51,10 +58,15 @@ export default function resourceTypeCollection(ComponentClass) {
 			});
 			return CachedHttp.get(this.props.url, query, {
 				cache: true,
-			}).then(response => {
+			}).then(http_response => {
+				const response = new CollectionResponse({
+					attachments: http_response.attachments,
+					fieldsWithAttachments: http_response.fieldsWithAttachments,
+					items: this.props.customSort(http_response.items),
+				});
 				this.setState({
 					loading: false,
-					resources: this.props.customSort(response.items),
+					resources: response.items,
 					response,
 					last_query: clone(query),
 				});
@@ -101,6 +113,7 @@ export default function resourceTypeCollection(ComponentClass) {
 		pagination: undefined, // could be: {page: 1, items: 12}
 		filter: {},
 		format: {},
+		attachments: {},
 		search: "",
 		url: "/api/v1/collections/users",
 		loadingComponent: () => React.createElement(Loading),
