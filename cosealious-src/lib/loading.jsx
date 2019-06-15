@@ -3,7 +3,6 @@ var React = require("react");
 var Loading = function(props) {
 	var delay = 65;
 	var boxes_amnt = Math.floor(Math.random() * 4) + 4;
-	//var boxes_amnt = 6;
 	var boxes = [];
 	for (var i = 0; i < boxes_amnt; i++) {
 		boxes.push(
@@ -25,9 +24,5 @@ var Loading = function(props) {
 		</div>
 	);
 };
-
-/*
-
-*/
 
 module.exports = Loading;

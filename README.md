@@ -32,30 +32,30 @@ The default config is:
 
 ```json
 {
-  "core": {
-    "environment": "dev"
-  },
-  "logger": {
-    "level": "info",
-    "color": true,
-    "file": null,
-    "dirname": ".",
-    "to_json": false,
-    "rotation": ".yyyy-MM-Tdd"
-  },
-  "www-server": {
-    "port": 8080,
-    "api-base": "/api/v1",
-    "session-cookie-name": "sealious-session",
-    "anonymous-cookie-name": "sealious-anon",
-    "max-payload-bytes": 10485760
-  },
-  "datastore_mongo": {
-    "embedded": false,
-    "host": "localhost",
-    "port": 27017,
-    "db_name": "sealious"
-  }
+    "core": {
+        "environment": "dev"
+    },
+    "logger": {
+        "level": "info",
+        "color": true,
+        "file": null,
+        "dirname": ".",
+        "to_json": false,
+        "rotation": ".yyyy-MM-Tdd"
+    },
+    "www-server": {
+        "port": 8080,
+        "api-base": "/api/v1",
+        "session-cookie-name": "sealious-session",
+        "anonymous-cookie-name": "sealious-anon",
+        "max-payload-bytes": 10485760
+    },
+    "datastore_mongo": {
+        "embedded": false,
+        "host": "localhost",
+        "port": 27017,
+        "db_name": "sealious"
+    }
 }
 ```
 
@@ -63,12 +63,12 @@ The default config is:
 
 `manifest` is public, and can be safely `require`d by a front-end script. It contains information on branding and version of your app. It must include the following fields:
 
-- `name` (string) - the name of your app
-- `logo` (string) - path to an image with the logo of your app
-- `version` (string) - the version of your app
-- `colors.primary` (string) - the primary color of your brand
-- `default_language` (string) - the default language for your app. Email templates use this
-- `admin_email` (string) - the email address of the admin. It might be publicly revealed within the app. Used to create the initial admin account. Whenever the app starts and there's no user with that email, a registration intent is created, causing an email to be sent to this address.
+-   `name` (string) - the name of your app
+-   `logo` (string) - path to an image with the logo of your app
+-   `version` (string) - the version of your app
+-   `colors.primary` (string) - the primary color of your brand
+-   `default_language` (string) - the default language for your app. Email templates use this
+-   `admin_email` (string) - the email address of the admin. It might be publicly revealed within the app. Used to create the initial admin account. Whenever the app starts and there's no user with that email, a registration intent is created, causing an email to be sent to this address.
 
 You can also include your own fields/values, so they can be easily shared across different modules on both back-end and front-end.
 
@@ -114,9 +114,9 @@ This synopsis is self-explanatory:
 
 ```js
 const message = await TestApp.EmailTemplates.Simple(TestApp, {
-  to: "test@example.com",
-  subject: "Congratulations!",
-  text: "Enlarge your 'seal' with herbal supplements",
+    to: "test@example.com",
+    subject: "Congratulations!",
+    text: "Enlarge your 'seal' with herbal supplements",
 });
 await message.send(TestApp);
 ```
@@ -289,11 +289,11 @@ The only node left in candidates is `L5`, so algorithm picks it up. We traversed
 
 Whenever possible we try to use `Query` class instead of raw MongoDB queries. The following classes extend `Query` class (their names are rather self-explanatory):
 
-- `Query.And`
-- `Query.Or`
-- `Query.Not`
-- `Query.DenyAll`
-- `Query.AllowAll`
+-   `Query.And`
+-   `Query.Or`
+-   `Query.Not`
+-   `Query.DenyAll`
+-   `Query.AllowAll`
 
 Every class which belongs to `Query` group has to expose the functions below. The usage examples can be find in `lib/datastore/query.test.js`.
 
@@ -332,3 +332,108 @@ Classes that implement operators requiring multiple subqueries expose also the f
 ### `addQuery(query)`
 
 Adds argument as the another parameter of the operator connected with base query (`and`, `or`, etc.)
+
+## Attachements
+
+### Overview
+
+Attachments were introduced to reduce the size of the API response. For instance, instead of assigning referenced documents to appropriate field, we leave an id there and we create an id-to-document map placed in other branch of the API response. Assuming that collection `seals` references collection `water_areas`, let's exemplify this:
+
+Before implementing attachments:
+
+```
+[
+  {
+    "_id": "seals_id1",
+    "name": "Hoover",
+    "water_area": {
+      "_id": "water_areas_id1",
+      "name": "Arabic Sea",
+      "average_temp": "24"
+    },
+  },
+  {
+    "_id": "seals_id2",
+    "name": "Nelly",
+    "water_area": {
+      "_id": "water_areas_id2",
+      "name": "Baltic Sea",
+      "average_temp": "12"
+    }
+  },
+  {
+    "_id": "seals_id3",
+    "name": "Maksiu",
+    "water_area": {
+      "_id": "water_areas_id2",
+      "name": "Baltic Sea",
+      "average_temp": "12"
+    }
+  }
+]
+```
+
+After implementing attachments collections are queried using the following scheme:
+
+`GET /api/v1/collections/seals?attachments[water_area]=true`
+
+```
+{
+  "attachments": {
+    "water_areas_id1": {
+      "_id": "water_areas_id1",
+      "name": "Arabic Sea",
+      "average_temp": "24"
+    },
+    "water_areas_id2": {
+      "_id": "water_areas_id2",
+      "name": "Baltic Sea",
+      "average_temp": "12"
+    }
+  },
+  "items": [
+    {
+      "_id": "seals_id1",
+      "name": "Hoover",
+      "water_area": "water_areas_id1"
+    },
+    {
+      "_id": "seals_id2",
+      "name": "Nelly",
+      "water_area": "water_areas_id2"
+    },
+    {
+      "_id": "seals_id3",
+      "name": "Maksiu",
+      "water_area": "water_areas_id2"
+    }
+  ],
+  "fieldsWithAttachments": {
+    "water_area": {}
+  }
+}
+```
+
+Imagine a collection of 10 000 seals from only 3 water areas. Solution based on attachments outweighs the old model for such cases, it is also easier to optimize query performance for that.
+
+### Building response containing attachments
+
+We wrap every field corresponding to an attachment in abstraction. The wrapper is actually a factory method which returns an appropriate class which replaces the current field value. The class has a dual nature - it pretends being a raw value, but it also exposes, like a plain object, props provided by attachment. If some nested attachments are queried, the wrapper will be called recursively. This feature works in both backend and frontend. So, having the above data we would reference to `average_temp` as the following (the example concerns quering collection - it's very similar for `SingleItemResponse`):
+
+```
+const axios = require("axios");
+const CollectionResponse = require("sealious/common_lib/response/collection-response.js");
+
+const http_response = await axios.get(
+  `/api/v1/collections/seals`,
+  {
+    filter: {},
+    format: {},
+    attachments: {water_area: true},
+  }
+);
+
+const response = new CollectionResponse(http_response);
+console.log(response.items[0].area_type.average_temp);
+# outputs 12
+```

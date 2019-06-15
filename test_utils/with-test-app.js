@@ -113,6 +113,13 @@ async function with_test_app(auto_start, env, fn) {
 			rest_api: {
 				get: async (url, options) =>
 					(await axios.get(`${base_url}${url}`, options)).data,
+				getSealiousResponse: async (url, options) => {
+					const resp = (await axios.get(`${base_url}${url}`, options))
+						.data;
+					return resp.items
+						? new app.Sealious.Responses.CollectionResponse(resp)
+						: new app.Sealious.Responses.SingleItemResponse(resp);
+				},
 				delete: async (url, options) =>
 					(await axios.delete(`${base_url}${url}`, options)).data,
 				patch: async (url, data, options) =>

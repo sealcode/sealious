@@ -5,8 +5,9 @@
 	"description": "A declarative framework for fast & easy app development.",
 	"main": "./lib/main.js",
 	"scripts": {
-		"test": "mocha --timeout=10000 setup-test.js \"./lib/**/*.test.js\"",
-		"build": "rm -rf cosealious/* && babel cosealious-src --out-dir cosealious",
+		"test": "mocha --timeout=10000 setup-test.js \"./common_lib/**/*.test.js\" \"./lib/**/*.test.js\"",
+		"stress-test": "mocha --timeout=20000 setup-test.js \"./stress_test/**/*.test.js\"",
+		"build": "rm -rf cosealious/* && babel cosealious-src --out-dir cosealious && babel common_lib --out-dir cosealious/common_lib",
 		"prepare": "npm run build"
 	},
 	"repository": {
@@ -37,6 +38,7 @@
 		"hapi": "^17.5.2",
 		"inert": "^5.1.0",
 		"locreq": "^1.1.0",
+		"lodash.get": "^4.4.2",
 		"merge": "^1.2.0",
 		"mime-types": "^2.1.11",
 		"mjml": "^4.2.0",
@@ -63,6 +65,7 @@
 		"@babel/preset-react": "^7.0.0",
 		"eslint": "^3.1.1",
 		"mocha": "*",
+		"prettier": "^1.18.2",
 		"sinon": "^5.0.7"
 	}
 }

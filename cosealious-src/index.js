@@ -9,7 +9,10 @@ module.exports = {
 	Loading: require("./lib/loading"),
 	CachedHttp: require("./lib/cached-http.js"),
 	KeyValueStore: require("./lib/stores/key-value-store.js"),
+	Form: require("./lib/mixins/form"),
 	ConnectWithKeyValueStore: require("./lib/stores/connect-with-key-value-store"),
+	CollectionResponse: require("./common_lib/response/collection-response.js"),
+	SingleItemResponse: require("./common_lib/response/single-item-response.js"),
 	APIs: {
 		SingleResourceAPI: require("./lib/api/single-resource-api.js"),
 	},

@@ -50,8 +50,8 @@ function form(fields, onSubmit, component, default_values, clear_on_submit) {
 				}
 				const current_body = self.state.body;
 				current_body[field_name] = new_value;
-				self.setState({
-					body: current_body,
+				return new Promise(function(resolve, reject) {
+					self.setState({ body: current_body }, resolve);
 				});
 			};
 		}
