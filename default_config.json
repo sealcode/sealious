@@ -28,5 +28,6 @@
 		"iterations": 26000,
 		"key_length": 512,
 		"salt_length": 21
-	}
+	},
+	"image_formats": {}
 }
