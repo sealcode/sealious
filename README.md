@@ -4,6 +4,9 @@
 
 Sealious is a declarative node.js framework
 
+
+**For an easy-to-follow introduction (so far only in Polish), see the [Getting Started Guide](https://github.com/sealcode/sealious/blob/alpha/getting_started/getting_started.md)**.
+
 ## The App class
 
 This is the class that holds all the logic and configuration of your, well, app ;)
