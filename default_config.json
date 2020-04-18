@@ -29,5 +29,6 @@
 		"key_length": 512,
 		"salt_length": 21
 	},
-	"image_formats": {}
+	"image_formats": {},
+	"accout_creation_success_path": false
 }

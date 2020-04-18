@@ -19,3 +19,4 @@ coverage.html
 .config
 .ash_history
 cosealious
+node_modules*
