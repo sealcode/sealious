@@ -1,7 +1,5 @@
 const assert = require("assert");
-const locreq = require("locreq")(__dirname);
-const { with_running_app } = locreq("test_utils/with-test-app.js");
-const { assert_throws_async } = locreq("test_utils");
+const { with_running_app } = require("../../test_utils/with-test-app.js");
 
 describe("request multiple ids", () => {
 	it("returns proper length and empty status for empty response", async () =>

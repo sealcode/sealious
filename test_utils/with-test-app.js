@@ -75,7 +75,7 @@ async function with_test_app(auto_start, env, fn) {
 	app.addHook({ when: "before", action: "stop" }, async () => {
 		if (clear_database_on_stop) {
 			await Promise.all(
-				app.ChipManager.get_all_collections().map(collection_name =>
+				app.ChipManager.get_all_collections().map((collection_name) =>
 					app.Datastore.remove(
 						collection_name,
 						{},
@@ -105,7 +105,7 @@ async function with_test_app(auto_start, env, fn) {
 			mail_api: {
 				get_messages: async () =>
 					(await axios.get(`${smtp_api_url}/messages`)).data,
-				get_message_by_id: async id =>
+				get_message_by_id: async (id) =>
 					(await axios.get(`${smtp_api_url}/messages/${id}.html`))
 						.data,
 			},
