@@ -1,4 +1,4 @@
-FROM node:10-alpine
+FROM node:13-alpine
 LABEL maintainer="Jakub Pieńkowski <jakski@sealcode.org>"
 
 ENV UID=node \

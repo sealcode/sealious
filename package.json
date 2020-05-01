@@ -6,9 +6,7 @@
 	"main": "./lib/main.js",
 	"scripts": {
 		"test": "mocha --timeout=10000 setup-test.js \"./common_lib/**/*.test.js\" \"./lib/**/*.test.js\"",
-		"stress-test": "mocha --timeout=20000 setup-test.js \"./stress_test/**/*.test.js\"",
-		"build": "rm -rf cosealious/* && babel cosealious-src --out-dir cosealious && babel common_lib --out-dir cosealious/common_lib",
-		"prepare": "npm run build"
+		"stress-test": "mocha --timeout=20000 setup-test.js \"./stress_test/**/*.test.js\""
 	},
 	"repository": {
 		"type": "git",
@@ -54,9 +52,6 @@
 		"shortid": "^2.2.6",
 		"tough-cookie": "^2.3.4",
 		"winston": "^1.0.0"
-	},
-	"peerDependencies": {
-		"react": "^16.3.2"
 	},
 	"devDependencies": {
 		"@babel/cli": "^7.0.0",
