@@ -1,6 +1,4 @@
-module.exports = {
-	create_resource_as: require("./create_resource_as"),
-	get_collection_as: require("./get_collection_as"),
-	promise_timeout: require("./promise_timeout.js"),
-	assert_throws_async: require("./assert_throws_async.js"),
-};
+export { create_resource_as } from "./create_resource_as";
+export { get_collection_as } from "./get_collection_as";
+export { promise_timeout } from "./promise_timeout.js";
+export { default as assert_throws_async } from "./assert_throws_async.js";

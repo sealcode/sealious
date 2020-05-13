@@ -1,0 +1,17 @@
+{
+	"compilerOptions": {
+		"module": "commonjs",
+		"noImplicitAny": true,
+		"noImplicitThis": true,
+		"strictNullChecks": true,
+		"target": "es6",
+		"declaration": true,
+		"esModuleInterop": true,
+		"lib": ["es2017"],
+		"outDir": "lib",
+		"checkJs": true,
+		"allowJs": true,
+		"declarationDir": "@types"
+	},
+	"include": ["src/**/*"]
+}

@@ -21,3 +21,5 @@ coverage.html
 cosealious
 node_modules*
 .cache
+lib
+@types

@@ -1,4 +1,4 @@
-const Sealious = require("./lib/main.js");
+const Sealious = require("./lib/src/main.js");
 
 const axios = require("axios");
 const axiosCookieJarSupport = require("@3846masa/axios-cookiejar-support");

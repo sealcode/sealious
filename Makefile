@@ -9,7 +9,6 @@ stress-test:
 	./npm.sh run stress-test
 
 test:
-	./npm.sh ci	
 	./npm.sh run test
 
 watch:
