@@ -75,6 +75,8 @@ module.exports = {
 		if (month < 10) {
 			month_str = "0" + month_str;
 		}
-		return `${d.getFullYear()}-${month_str}-${d.getDate()}`;
+		return `${d.getFullYear()}-${month_str}-${
+			d.getDate() < 10 ? "0" : ""
+		}${d.getDate()}`;
 	},
 };
