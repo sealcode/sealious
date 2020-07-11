@@ -1,0 +1,10 @@
+{
+	"linters": {
+		"prettier": {
+			"type": "prettier",
+			"bin": "./node_modules/.bin/prettier",
+			"include": ["(\\.ts$)", "(\\.css$)"]
+		}
+
+	}
+}

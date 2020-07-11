@@ -1,6 +1,5 @@
-const locreq = require("locreq")(__dirname);
 const populate = require("./populate.js");
-const { with_running_app } = locreq("test_utils/with-test-app.js");
+const { with_running_app } = require("../../test_utils/with-test-app.js");
 
 describe("Reference field stress test", () => {
 	it("returns requested items when using run_action", async () =>

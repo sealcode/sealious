@@ -3,15 +3,9 @@
 npm-debug.log
 sealious.sublime-workspace
 node_modules
-./node_modules/
 ./node_modules
-./node_modules/*
-node_modules/*
-coverage/*
-coverage.html
 db
 db/*
-lib-cov/*
 coverage.html
 \#*
 .\#*
@@ -20,3 +14,9 @@ coverage.html
 .ash_history
 cosealious
 node_modules*
+.cache
+lib
+@types
+.xunit
+coverage
+.nyc_output
