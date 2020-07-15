@@ -1,4 +1,4 @@
-import AccessStrategy from "../../chip-types/access-strategy";
+import Policy from "../../chip-types/policy";
 import { App, Context, FieldTypes, Query } from "../../main";
 import Collection from "../../chip-types/collection";
 import { ActionName } from "../../action";
@@ -7,7 +7,7 @@ import QueryStage from "../../datastore/query-stage";
 import DenyAll from "../../datastore/deny-all";
 import { AllowAll } from "../../datastore/allow-all";
 
-export default class gSameAsForResourceInField extends AccessStrategy {
+export default class gSameAsForResourceInField extends Policy {
 	static type_name = "same-as-for-resource-in-field";
 	current_collection: string;
 	field: string;
@@ -35,12 +35,12 @@ export default class gSameAsForResourceInField extends AccessStrategy {
 		] as FieldTypes.SingleReference).get_target_collection();
 	}
 
-	getReferencedAccessStrategy(app: App): AccessStrategy {
-		return this.getReferencedCollection(app).getAccessStrategy("show");
+	getReferencedPolicy(app: App): Policy {
+		return this.getReferencedCollection(app).getPolicy("show");
 	}
 
 	async _getRestrictingQuery(context: Context) {
-		const referenced_restricting_query = await this.getReferencedAccessStrategy(
+		const referenced_restricting_query = await this.getReferencedPolicy(
 			context.app
 		).getRestrictingQuery(context);
 
@@ -84,7 +84,7 @@ export default class gSameAsForResourceInField extends AccessStrategy {
 			"show"
 		);
 
-		return this.getReferencedAccessStrategy(context.app).check(
+		return this.getReferencedPolicy(context.app).check(
 			context,
 			sealious_response_in_field
 		);

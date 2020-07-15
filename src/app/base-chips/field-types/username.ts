@@ -2,17 +2,12 @@ import Context from "../../../context";
 import { Field } from "../../../main";
 
 import me_synonyms from "../../../misc/me-synonyms";
-import SuperContext from "../../../super-context";
 import TextStorage from "./text-storage";
 
 export default class Username extends TextStorage {
 	getTypeName = () => "username";
 
-	async isProperValue(
-		context: Context,
-		new_value: string,
-		old_value: string
-	) {
+	async isProperValue(_: Context, new_value: string, old_value: string) {
 		if (old_value === new_value) {
 			return Field.valid();
 		}
@@ -22,7 +17,7 @@ export default class Username extends TextStorage {
 			);
 		}
 		const response = await this.app.runAction(
-			new SuperContext(context),
+			new this.app.SuperContext(),
 			["collections", "users"],
 			"show",
 			{ filter: { username: new_value } }

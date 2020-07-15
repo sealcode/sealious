@@ -38,6 +38,11 @@ export abstract class FileStorage<Output = any, Format = any> extends Field<
 	}
 }
 
+/** Takes a {@File} instance as input, stores it in the FS and then decodes to a URL.
+ *
+ * **Params**:
+ * - `get_default_file` - ()=>Promise<{@link File}> - if no file is provided, then this file will be used in it's stead
+ */
 export default class FileField extends FileStorage<FileOutput, FileFormat> {
 	getTypeName = () => "file";
 	async decode(

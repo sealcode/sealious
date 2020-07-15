@@ -7,10 +7,24 @@ export type TextParams = Partial<{
 	max_length: number;
 }>;
 
+/** A simple text field. Can support full text search and have a configurable min/max length.
+ *
+ * **All html-like chars are escaped, so none of them are interpreted as HTML**.
+ *
+ * Params:
+ * - `full_text_search` - `Boolean` - whether or not the DB should create a full text search for this field
+ * - `min_length` - `Number` - the text should have at least this many characters
+ * - `max_length` - `Number` - the text shuld have at most this many characters
+ */
 export default class Text extends TextStorage {
+	/** The type name
+	 * @ignore */
 	getTypeName = () => "text";
+	/** @ignore */
 	params: TextParams;
 
+	/** Depends on the provided params
+	 * @internal */
 	hasIndex() {
 		if (this.params.full_text_search) {
 			return { original: "text" as "text" };
@@ -19,6 +33,8 @@ export default class Text extends TextStorage {
 		}
 	}
 
+	/** Checks if the input conforms with the constraints specified in the params
+	 * @internal  */
 	async isProperValue(_: any, input: string) {
 		if (typeof input !== "string") {
 			return Field.invalid(
@@ -38,6 +54,7 @@ export default class Text extends TextStorage {
 		return Field.valid();
 	}
 
+	/** Sets the params @ignore */
 	setParams(params: TextParams) {
 		this.params = params;
 	}

@@ -3,7 +3,7 @@ import { withStoppedApp } from "../../test_utils/with-test-app";
 import {
 	Collection,
 	FieldTypes,
-	AccessStrategies,
+	Policies,
 	FieldDefinitionHelper as field,
 } from "../../main";
 
@@ -18,11 +18,9 @@ describe("user-referenced-in-field", () => {
 						target_collection: () => app.collections.users,
 					}),
 				],
-				access_strategy: {
-					create: AccessStrategies.Public,
-					default: new AccessStrategies.UserReferencedInField(
-						"owner"
-					),
+				policy: {
+					create: Policies.Public,
+					default: new Policies.UserReferencedInField("owner"),
 				},
 			});
 			await app.start();

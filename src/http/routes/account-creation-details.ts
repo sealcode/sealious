@@ -71,7 +71,7 @@ let render_form = async (
 				</label>
 				<br />
 				<label for="pwd">
-					${app.i18n("password").capitalize()}
+					${app.i18n("password")}
 					<input id="pwd" name="password" type="password" size="32" />
 					<button
 						id="reveal"

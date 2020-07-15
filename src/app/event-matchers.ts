@@ -35,7 +35,7 @@ export class EventMatcher {
 	}
 }
 
-export class Collection extends EventMatcher {
+export class CollectionMatcher extends EventMatcher {
 	collection_name: string;
 	constructor({
 		when,

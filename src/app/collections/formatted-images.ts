@@ -2,7 +2,7 @@ import App from "../app";
 import {
 	Collection,
 	FieldTypes,
-	AccessStrategies,
+	Policies,
 	FieldDefinitionHelper as field,
 } from "../../main";
 
@@ -14,8 +14,8 @@ export default (app: App) => {
 			field("formatted_photo_file", FieldTypes.FileID, {}, true),
 			field("format", FieldTypes.Text, {}, true),
 		],
-		access_strategy: {
-			default: AccessStrategies.Super,
+		policy: {
+			default: Policies.Super,
 		},
 	});
 };

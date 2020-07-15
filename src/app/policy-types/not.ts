@@ -1,16 +1,14 @@
-import AccessStrategy, {
-	AccessStrategyDefinition,
-} from "../../chip-types/access-strategy";
+import Policy, { PolicyDefinition } from "../../chip-types/policy";
 import * as Query from "../../datastore/query";
 import { Context } from "../../main";
 import SealiousResponse from "../../../common_lib/response/sealious-response";
 
-export default class Not extends AccessStrategy {
+export default class Not extends Policy {
 	static type_name = "not";
-	strategy_to_negate: AccessStrategy;
-	constructor(strategy: AccessStrategyDefinition) {
+	strategy_to_negate: Policy;
+	constructor(strategy: PolicyDefinition) {
 		super(strategy);
-		this.strategy_to_negate = AccessStrategy.fromDefinition(strategy);
+		this.strategy_to_negate = Policy.fromDefinition(strategy);
 	}
 
 	async _getRestrictingQuery(context: Context) {
@@ -35,8 +33,8 @@ export default class Not extends AccessStrategy {
 			return null;
 		}
 		if (result.allowed) {
-			return AccessStrategy.deny(`it's not true that "${result.reason}"`);
+			return Policy.deny(`it's not true that "${result.reason}"`);
 		}
-		return AccessStrategy.allow(`it's not true that "${result.reason}"`);
+		return Policy.allow(`it's not true that "${result.reason}"`);
 	}
 }

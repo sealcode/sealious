@@ -1,7 +1,7 @@
 import {
 	Field,
 	Context,
-	AccessStrategy,
+	Policy,
 	HybridField,
 	App,
 	ExtractStorage,
@@ -13,20 +13,20 @@ import {
 } from "../../../chip-types/field";
 
 type Params<T extends Field> = {
-	target_access_strategies: { [key in "show" | "edit"]: AccessStrategy };
+	target_policies: { [key in "show" | "edit"]: Policy };
 	value_when_not_allowed: ExtractOutput<T>;
 };
 
 export default class ControlAccess<T extends Field> extends HybridField<T> {
 	getTypeName = () => "control-access";
-	edit_strategy: AccessStrategy;
-	show_strategy: AccessStrategy;
+	edit_strategy: Policy;
+	show_strategy: Policy;
 	value_when_not_allowed: ExtractOutput<T>;
 	app: App;
 	setParams(params: Params<T> & HybridFieldParams<T>) {
 		super.setParams(params);
-		this.edit_strategy = params.target_access_strategies.edit;
-		this.show_strategy = params.target_access_strategies.show;
+		this.edit_strategy = params.target_policies.edit;
+		this.show_strategy = params.target_policies.show;
 		this.value_when_not_allowed = params.value_when_not_allowed;
 	}
 

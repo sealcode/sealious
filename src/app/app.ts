@@ -10,7 +10,13 @@ import Datastore from "../datastore/datastore";
 import Metadata from "./metadata";
 import { SubjectPathEquiv } from "../data-structures/subject-path";
 import { PartialConfig } from "./config";
-import { Collection, Hookable, SuperContext, Context } from "../main";
+import {
+	Collection,
+	Hookable,
+	SuperContext,
+	Context,
+	i18nFactory,
+} from "../main";
 import { ManifestData } from "./manifest";
 
 import Collections from "./collections/collections";
@@ -20,45 +26,75 @@ const default_config = locreq("default_config.json");
 
 export type AppEvents = "starting" | "started" | "stopping" | "stopped";
 
+/** The heart of your, well app. It all starts with  `new App(...)` */
 class App extends Hookable {
-	launch_time: number;
+	/** The current status of the app */
 	status: "stopped" | "running" | "starting" | "stopping";
-	Sealious: typeof Sealious;
+
+	/** The manifest assigned to this app. Stores things like the app name, domain, logo*/
 	manifest: Sealious.Manifest;
-	i18n: any;
+
+	/** The function that's used to generate translated versions of phrases */
+	i18n: (phrase_id: string, params?: any) => string;
+
+	/** ConfigManager instance. It serves the config based on default values and the config object provided to the app constructor */
 	ConfigManager: Sealious.ConfigManager;
+
+	/** The {@link Logger} instance assigned to this application */
 	Logger: Logger;
+
+	/** Mailer configured according to the app's config */
 	Email: Mailer;
+
+	/** The server that runs the REST API routing and allows to add custom routes etc */
 	HTTPServer: Sealious.HttpServer;
+
+	/** The root subject of the app. It's where all subjects are derived from */
 	RootSubject: Sealious.Subject;
-	Action: (
-		subject_path: Sealious.SubjectPath,
-		action_name: ActionName
-	) => Sealious.Action;
+
+	/** Performs an action within an app. The action is specified by the subject path, parametrized with params and ran under the given context */
 	runAction: (
 		context: Sealious.Context,
 		path: SubjectPathEquiv,
 		action: ActionName,
 		params?: any
 	) => Promise<any>;
+
+	/** The mongoDB client connected to the database specified in the app config */
 	Datastore: Datastore;
+
+	/** The Metadata manager assigned to this app. Used to store certain state information that's not meant to be shown to the user
+	 * @internal
+	 */
 	Metadata: Metadata;
+
+	/** The emittery instance used to signal app state changes, like "started" or "stopped". It's not advised to use it directly, but rather to use the {@App.on} method
+	 * @internal
+	 */
 	private e: Emittery;
+
+	/** The collections defined within the given app. */
 	collections: { [name: string]: Collection } = {};
+
+	/** A shorthand-way to create a new SuperContext: `new app.SuperContext()`. */
 	public SuperContext: new () => SuperContext;
+
+	/** A shorthand-way to create a new context: `new app.Context()`. */
 	public Context: new () => Context;
+
+	/** The app constructor.
+	 * @param custom_config Specify the details, such as database address and the port to listen on. This is private information and won't be shown to user. See {@link Config}
+	 * @param manifest Specify additional information, such as the URL, logo or the main color of the app. This is public information.
+	 */
 	constructor(custom_config: PartialConfig, manifest: ManifestData) {
 		super();
 		this.e = new Emittery();
 
-		this.launch_time = Date.now();
-
 		this.status = "stopped";
-		this.Sealious = Sealious;
 		this.manifest = new Sealious.Manifest(manifest);
 		this.manifest.validate();
 
-		this.i18n = Sealious.i18nFactory(this.manifest.default_language);
+		this.i18n = i18nFactory(this.manifest.default_language);
 
 		this.ConfigManager = new Sealious.ConfigManager();
 
@@ -73,7 +109,6 @@ class App extends Hookable {
 		this.HTTPServer = new Sealious.HttpServer(this);
 
 		this.RootSubject = new Sealious.RootSubject(this);
-		this.Action = Sealious.Action.curry(this.RootSubject);
 		this.runAction = runActionCurry(this);
 
 		this.Datastore = new Datastore(this);
@@ -90,18 +125,23 @@ class App extends Hookable {
 		}
 
 		const app = this;
+		/** Shorthand way to create a {@link SuperContext} */
 		this.SuperContext = class extends SuperContext {
+			/** This constructor does not take any parameters as the {@link App} instance is automatically filled in */
 			constructor() {
 				super(app);
 			}
 		};
+		/** Shorthand way to create a {@link Context} */
 		this.Context = class extends Context {
+			/** This constructor does not take any parameters as the {@link App} instance is automatically filled in */
 			constructor() {
 				super(app);
 			}
 		};
 	}
 
+	/** Initializes all the collection fields, prepares all the hooks, connects to the database and starts the app, serving the REST API */
 	async start() {
 		this.status = "starting";
 		assert(
@@ -124,6 +164,7 @@ class App extends Hookable {
 		return this;
 	}
 
+	/** Stops the HTTP server, disconnects from the DB */
 	async stop() {
 		this.status = "stopping";
 		await this.e.emit("stopping");
@@ -133,16 +174,23 @@ class App extends Hookable {
 		await this.e.emit("stopped");
 	}
 
+	/** Removes all data inside the app. USE WITH CAUTION
+	 * @internal
+	 */
 	async removeAllData() {
 		Object.keys(this.collections).map((collection_name) =>
 			this.Datastore.remove(collection_name, {}, "just_one" && false)
 		);
 	}
 
+	/** Allows to listen for basic app status change events */
 	async on(event_name: AppEvents, callback: () => void) {
 		this.e.on(event_name, callback);
 	}
 
+	/** registers a collection within the app
+	 * @internal
+	 */
 	registerCollection(collection: Collection) {
 		this.collections[collection.name] = collection;
 	}

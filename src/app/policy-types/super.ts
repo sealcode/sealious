@@ -1,9 +1,9 @@
-import AccessStrategy from "../../chip-types/access-strategy";
+import Policy from "../../chip-types/policy";
 import Context from "../../context";
 import DenyAll from "../../datastore/deny-all";
 import { AllowAll } from "../../datastore/allow-all";
 
-export default class Super extends AccessStrategy {
+export default class Super extends Policy {
 	static type_name = "super";
 	async _getRestrictingQuery(context: Context) {
 		if (context.is_super) {
@@ -13,13 +13,9 @@ export default class Super extends AccessStrategy {
 	}
 	async checkerFunction(context: Context) {
 		if (context.is_super) {
-			return AccessStrategy.allow(
-				"this method was ran with a supercontext"
-			);
+			return Policy.allow("this method was ran with a supercontext");
 		} else {
-			return AccessStrategy.allow(
-				"this method was not ran with a supercontext"
-			);
+			return Policy.allow("this method was not ran with a supercontext");
 		}
 	}
 	isItemSensitive = async () => false;

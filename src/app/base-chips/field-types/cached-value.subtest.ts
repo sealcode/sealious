@@ -10,6 +10,7 @@ import {
 	Collection,
 	FieldTypes,
 	FieldDefinitionHelper as field,
+	EventMatchers,
 } from "../../../main";
 import Bluebird from "bluebird";
 
@@ -109,7 +110,6 @@ describe("cached-value", () => {
 			"/api/v1/collections/accounts",
 			account
 		);
-		console.log("@@@@@ CREATING A NEW ACTION FOR THE NEWLY CREATED USER");
 		await rest_api.post("/api/v1/collections/actions", {
 			name: "create",
 			account: id,
@@ -160,7 +160,6 @@ describe("cached-value", () => {
 			await app.start();
 			const account_ids = [];
 			for (const username of ["user_1", "user_2"]) {
-				console.log("@@@@@@ ADDING ACCOUNT");
 				account_ids.push(await add_account(rest_api, { username }));
 			}
 			await assert_status_equals(rest_api, account_ids[0], "created");
@@ -276,7 +275,7 @@ describe("cached-value", () => {
 								},
 								refresh_on: [
 									{
-										event_matcher: new app.Sealious.EventMatchers.Collection(
+										event_matcher: new EventMatchers.CollectionMatcher(
 											{
 												when: "after",
 												collection_name:
@@ -308,7 +307,7 @@ describe("cached-value", () => {
 function make_refresh_on(app: App) {
 	return [
 		{
-			event_matcher: new app.Sealious.EventMatchers.Collection({
+			event_matcher: new EventMatchers.CollectionMatcher({
 				when: "after",
 				collection_name: "actions",
 				action: "create",
@@ -316,7 +315,7 @@ function make_refresh_on(app: App) {
 			resource_id_getter: (_: any, resource: Item) => resource.account,
 		},
 		{
-			event_matcher: new app.Sealious.EventMatchers.Resource({
+			event_matcher: new EventMatchers.Resource({
 				when: "after",
 				collection_name: "actions",
 				action: "edit",
@@ -334,6 +333,5 @@ async function assert_status_equals(
 	const response = (await rest_api.getSealiousResponse(
 		`/api/v1/collections/accounts/${account_id}`
 	)) as SingleItemResponse;
-	console.log(response);
 	assert.equal(response.status, expected_status);
 }

@@ -71,6 +71,7 @@ export class EventDescription {
 	}
 }
 
+/** @internal */
 export class Hookable {
 	hooks: Hook[] = [];
 	addHook(
@@ -85,6 +86,7 @@ export class Hookable {
 		});
 		this.hooks.push(hook);
 	}
+	/** @internal */
 	async emitHook(_event_description: EventDescriptionProps, data = {}) {
 		const emitted_event = new EventDescription(_event_description);
 		const matching_hooks = this.hooks.filter((hook) =>

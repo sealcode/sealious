@@ -1,6 +1,5 @@
 import App from "./app/app";
 
-import SuperContext from "./super-context";
 import Item from "../common_lib/response/item";
 
 export default class Context {
@@ -65,5 +64,22 @@ export default class Context {
 			anon_session_is_new: this.anon_session_is_new,
 			anonymous_user_id: this.anonymous_user_id,
 		};
+	}
+}
+
+export class SuperContext extends Context {
+	is_super = true;
+	constructor(arg0: Context | App) {
+		super(
+			arg0 instanceof Context ? arg0.app : arg0,
+			(arg0 as Context)?.timestamp,
+			(arg0 as Context)?.ip,
+			(arg0 as Context)?.user_id,
+			(arg0 as Context)?.session_id,
+			(arg0 as Context)?.anonymous_session_id,
+			(arg0 as Context)?.anon_session_is_new,
+			(arg0 as Context)?.anonymous_user_id
+		);
+		this.original_context = arg0 instanceof App ? null : arg0;
 	}
 }

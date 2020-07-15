@@ -43,6 +43,12 @@ type ValidationResult = {
 	reason?: string;
 };
 
+/** A function that helps to define a field for a collection. Performs type-checking to ensure that the parameters match the expected format.
+ *
+ *  **This is the recommended way to define a field**
+ *
+ *  @category Defining a field in a collection
+ */
 export function FieldDefinitionHelper<T extends FieldClass>(
 	name: string,
 	type: T,
@@ -52,18 +58,49 @@ export function FieldDefinitionHelper<T extends FieldClass>(
 	return { name, type, params, required };
 }
 
+/** The field class itself. Stores information on the field name, and methods that decide waht values are valid and how they are stored. The {@link Field} class describes a type of field in general (like "Text" and "Number"), and a {@link Field} instance describes one particular field in a collection (like "name" and "age").
+ *
+ *  Extend this class to create fields with custom behavior.
+ *
+ *  **The recommended way to create a field for a collection is {@link FieldDefinitionHelper}, as it performs  type checking of the field params.**
+ *
+ * Some of the most useful field types include:
+ * * {@link Boolean}
+ * * {@link DateField | Date}
+ * * {@link Datetime}
+ * * {@link Email}
+ * * {@link Enum}
+ * * {@link FileField | Field}
+ * * {@link Float}
+ * * {@link Html}
+ * * {@link Image}
+ * * {@link Int}
+ * * {@link SingleReference}
+ * * {@link Text}
+ */
 export default abstract class Field<
 	InputType = any,
 	OutputType = InputType,
 	FormatParams = any
 > {
+	/** the name of the field */
 	name: string;
+	/** the app that the field exists in
+	 *  @internal
+	 */
 	app: App;
+	/** The display hints specified for this field */
 	display_hints: any;
+	/** Whether or not the field handles large data
+	 * @todo: see if there's any viability in storing this
+	 */
 	handles_large_data: boolean = false;
+	/** The collection this field is attached to */
 	collection: Collection;
+	/** Whether or not this field should always have a value. Creating a resource with a value missing for a required field will throw an error */
 	required: boolean;
 
+	/** Creates a new instance of a field */
 	constructor(
 		app: App,
 		collection: Collection,
@@ -78,6 +115,7 @@ export default abstract class Field<
 		this.required = required;
 	}
 
+	/** Create a new instance of {@link Field} based on the definition. **It's recommended to use {@link FieldDefinitionHelper} instead */
 	static fromDefinition<T extends FieldClass>(
 		app: App,
 		collection: Collection,
@@ -101,8 +139,10 @@ export default abstract class Field<
 		return ret;
 	}
 
+	/** This method is used to set and process the params upon the field's creation when the app starts up. The type of argument of this method determines type checking that's performed by @{link FieldDefinitionHelper}. */
 	setParams(_: any): void {}
 
+	/** Return a summary of this field */
 	getSpecification() {
 		return {
 			name: this.name,
@@ -111,6 +151,7 @@ export default abstract class Field<
 		};
 	}
 
+	/** Whether or not this field should have a dedicated index in the database */
 	hasIndex():
 		| boolean
 		| "text"
@@ -118,6 +159,7 @@ export default abstract class Field<
 		return false;
 	}
 
+	/** Creates parts of a Mongo Pipieline that will be used to filter the items when listing items of a collection */
 	async getAggregationStages(
 		context: Context,
 		query_params: { filter?: { [field_name: string]: any } }
@@ -161,6 +203,7 @@ export default abstract class Field<
 		return ret;
 	}
 
+	/** Value path is where inside a single record should the DB look for the field's value when filtering resources. Some fields use complex objects for storage and overwrite this method, and thanks to that they don't have to reimplement {@link Field.getAggregationStages} */
 	async getValuePath(): Promise<string> {
 		return this.name;
 	}
@@ -173,9 +216,7 @@ export default abstract class Field<
 		old_value: InputType
 	): Promise<ValidationResult>;
 
-	format: never;
-	filter_to_query: never;
-
+	/** Decides how to store the given value in the database, based on the context and previous value of the field */
 	async encode(
 		_: Context,
 		value: InputType | null,
@@ -184,6 +225,7 @@ export default abstract class Field<
 		return value as any;
 	}
 
+	/** Reverse to the {@link Field.encode} function. Takes what's inside the database and returns the value in a given format */
 	async decode(
 		_: Context,
 		storage_value: Depromisify<ReturnType<this["encode"]>>,
@@ -193,33 +235,43 @@ export default abstract class Field<
 		return (storage_value as unknown) as OutputType;
 	}
 
+	/** Generates a mongo query based on the filter value */
 	async filterToQuery(context: Context, filter: any): Promise<any> {
 		return this.encode(context, filter);
 	}
+
+	/** Whether or not the db should create a fulltext index on this field */
 	async fullTextSearchEnabled(): Promise<boolean> {
 		return false;
 	}
 
+	/** Whether or not a field has a default value - that is, a value given to the field if no value is provided */
 	hasDefaultValue = () => true;
 
+	/** The default value that will be assigned to the field if no value is given */
 	getDefaultValue(): Depromisify<ReturnType<this["decode"]>> | null {
 		return null;
 	}
 
+	/** Whether or not any of the methods of the field depend on the previous value of the field */
 	isOldValueSensitive(_: ActionName) {
 		return false;
 	}
 
+	/** Used to signal a positive decision from within {@link Field.isProperValue}. */
 	static valid(): ValidationResult {
 		return { valid: true };
 	}
 
+	/** Used to signal a negative decition from within {@link Field.isProperValue}. */
 	static invalid(reason: string): ValidationResult {
 		return { valid: false, reason };
 	}
 
+	/** Runs when the app is being started. Hooks can be set up within this function */
 	async init(_: App): Promise<void> {}
 
+	/** If the field supports attachments, it should return a properly configured {@link AttachmentLoader}. Not necessary for most basic fields. */
 	getAttachmentLoader(
 		context: Context,
 		omit_it: Boolean,

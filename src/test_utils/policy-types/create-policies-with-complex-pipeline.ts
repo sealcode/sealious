@@ -1,15 +1,12 @@
-import { AccessStrategy, Query, AccessStrategyClass } from "../../main";
+import { Policy, Query, PolicyClass } from "../../main";
 
 export default {
-	allowDeny: function (): AccessStrategyClass[] {
-		const access_strategies = [
-			"complex-deny-pipeline",
-			"complex-allow-pipeline",
-		];
-		const ret: AccessStrategyClass[] = [];
-		for (const strategy_name of access_strategies) {
+	allowDeny: function (): PolicyClass[] {
+		const policies = ["complex-deny-pipeline", "complex-allow-pipeline"];
+		const ret: PolicyClass[] = [];
+		for (const strategy_name of policies) {
 			ret.push(
-				class extends AccessStrategy {
+				class extends Policy {
 					async _getRestrictingQuery() {
 						const query = new Query();
 						const id = query.lookup({
@@ -26,7 +23,7 @@ export default {
 						return query;
 					}
 					async checkerFunction() {
-						return AccessStrategy.allow(
+						return Policy.allow(
 							"I don't care about individual items, my goal is to test the filtering pipelines"
 						);
 					}

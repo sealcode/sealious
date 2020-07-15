@@ -207,8 +207,8 @@ export default class CollectionSubject extends Subject {
 		collection: Collection,
 		result: AssignAttachmentsResult
 	) {
-		const access_strategy = collection.getAccessStrategy("show");
-		const is_item_sensitive = await access_strategy.isItemSensitive();
+		const policy = collection.getPolicy("show");
+		const is_item_sensitive = await policy.isItemSensitive();
 		if (!is_item_sensitive) {
 			return;
 		}
@@ -217,7 +217,7 @@ export default class CollectionSubject extends Subject {
 		}
 		result.items = await Bluebird.filter(result.items, async (item) => {
 			try {
-				await access_strategy.check(
+				await policy.check(
 					context,
 					new SingleItemResponse({
 						item,

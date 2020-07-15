@@ -2,24 +2,23 @@ import {
 	App,
 	Collection,
 	FieldTypes,
-	AccessStrategies,
+	Policies,
 	FieldDefinitionHelper as field,
+	EventMatchers,
 } from "../../main";
 import RegistrationIntentTemplate from "../../email/templates/registration-intent";
 
 export default (app: App) => {
 	app.addHook(
-		new app.Sealious.EventMatchers.Collection({
+		new EventMatchers.CollectionMatcher({
 			when: "after",
 			collection_name: "registration-intents",
 			action: "create",
 		}),
-		async (emitted_event, intent) => {
+		async (_, intent) => {
 			const token = (
 				await app.runAction(
-					new app.Sealious.SuperContext(
-						emitted_event.metadata.context
-					),
+					new app.SuperContext(),
 					["collections", "registration-intents", intent.id],
 					"show"
 				)
@@ -46,20 +45,17 @@ export default (app: App) => {
 			),
 			field("token", FieldTypes.SecretToken),
 			field("role", FieldTypes.SettableBy, {
-				access_strategy: new AccessStrategies.UsersWhoCan([
-					"create",
-					"user-roles",
-				]),
+				policy: new Policies.UsersWhoCan(["create", "user-roles"]),
 				base_field_type: FieldTypes.Enum,
 				base_field_params: {
 					values: () => app.ConfigManager.get("roles"),
 				},
 			}),
 		],
-		access_strategy: {
-			default: AccessStrategies.Super,
-			create: AccessStrategies.Public,
-			edit: AccessStrategies.Noone,
+		policy: {
+			default: Policies.Super,
+			create: Policies.Public,
+			edit: Policies.Noone,
 		},
 	});
 };

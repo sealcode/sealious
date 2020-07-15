@@ -1,31 +1,31 @@
 import {
-	AccessStrategies,
+	Policies,
 	App,
-	AccessStrategy,
+	Policy,
 	SpecialFilter,
 	Context,
 	Queries,
 	SingleItemResponse,
 } from "../../main";
-import { AccessStrategyDefinition } from "../../chip-types/access-strategy";
+import { PolicyDefinition } from "../../chip-types/policy";
 
-export default class If extends AccessStrategy {
+export default class If extends Policy {
 	static type_name = "if";
 	collection_name: string;
 	filter_name: string;
-	strategy_when: { [key in "true" | "false"]: AccessStrategy };
+	strategy_when: { [key in "true" | "false"]: Policy };
 	constructor([
 		collection_name,
 		special_filter_name,
 		when_true,
-		when_false = AccessStrategies.Noone,
-	]: [string, string, AccessStrategyDefinition, AccessStrategyDefinition?]) {
+		when_false = Policies.Noone,
+	]: [string, string, PolicyDefinition, PolicyDefinition?]) {
 		super([collection_name, special_filter_name, when_true, when_false]);
 		this.filter_name = special_filter_name;
 		this.collection_name = collection_name;
 		this.strategy_when = {
-			true: AccessStrategy.fromDefinition(when_true),
-			false: AccessStrategy.fromDefinition(when_false),
+			true: Policy.fromDefinition(when_true),
+			false: Policy.fromDefinition(when_false),
 		};
 	}
 
@@ -65,13 +65,9 @@ export default class If extends AccessStrategy {
 			query.toPipeline()
 		);
 		if (!results.length) {
-			return AccessStrategy.deny(
-				this.getFilter(context.app).getNopassReason()
-			);
+			return Policy.deny(this.getFilter(context.app).getNopassReason());
 		}
-		return AccessStrategy.allow(
-			`the item passes the "${this.filter_name}" filter`
-		);
+		return Policy.allow(`the item passes the "${this.filter_name}" filter`);
 	}
 	isItemSensitive = async () => true;
 }

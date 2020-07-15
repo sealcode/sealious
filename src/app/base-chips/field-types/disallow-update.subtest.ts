@@ -4,7 +4,7 @@ import {
 	Context,
 	Collection,
 	FieldTypes,
-	AccessStrategies,
+	Policies,
 	FieldDefinitionHelper as field,
 } from "../../../main";
 
@@ -49,8 +49,8 @@ describe("disallow-update", () => {
 					true
 				),
 			],
-			access_strategy: {
-				default: AccessStrategies.Public,
+			policy: {
+				default: Policies.Public,
 			},
 		});
 	}

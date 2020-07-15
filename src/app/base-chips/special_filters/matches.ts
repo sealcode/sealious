@@ -1,8 +1,6 @@
 import App from "../../app";
-import { Collection, SpecialFilter } from "../../../main";
+import { Collection, SpecialFilter, Query } from "../../../main";
 import QueryStage from "../../../datastore/query-stage";
-
-const Query = require("../../../datastore/query.js").default;
 
 export default class Matches extends SpecialFilter {
 	filter: {};

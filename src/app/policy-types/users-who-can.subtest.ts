@@ -5,7 +5,7 @@ import axios from "axios";
 import {
 	Collection,
 	FieldTypes,
-	AccessStrategies,
+	Policies,
 	FieldDefinitionHelper as field,
 } from "../../main";
 
@@ -15,16 +15,13 @@ describe("users-who-can", () => {
 			Collection.fromDefinition(app, {
 				name: "bricks",
 				fields: [field("number", FieldTypes.Int)],
-				access_strategy: { create: AccessStrategies.Noone },
+				policy: { create: Policies.Noone },
 			});
 			Collection.fromDefinition(app, {
 				name: "houses",
 				fields: [field("address", FieldTypes.Text)],
-				access_strategy: {
-					create: new AccessStrategies.UsersWhoCan([
-						"create",
-						"bricks",
-					]),
+				policy: {
+					create: new Policies.UsersWhoCan(["create", "bricks"]),
 				},
 			});
 			await assertThrowsAsync(
@@ -49,16 +46,13 @@ describe("users-who-can", () => {
 			Collection.fromDefinition(app, {
 				name: "bricks",
 				fields: [field("number", FieldTypes.Int)],
-				access_strategy: { create: AccessStrategies.Public },
+				policy: { create: Policies.Public },
 			});
 			Collection.fromDefinition(app, {
 				name: "houses",
 				fields: [field("address", FieldTypes.Text)],
-				access_strategy: {
-					create: new AccessStrategies.UsersWhoCan([
-						"create",
-						"bricks",
-					]),
+				policy: {
+					create: new Policies.UsersWhoCan(["create", "bricks"]),
 				},
 			});
 			await axios.post(`${base_url}/api/v1/collections/houses`, {

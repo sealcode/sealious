@@ -2,7 +2,7 @@ import {
 	App,
 	Collection,
 	FieldTypes,
-	AccessStrategies,
+	Policies,
 	FieldDefinitionHelper as field,
 } from "../../main";
 
@@ -15,8 +15,8 @@ export default (app: App) => {
 				target_collection: () => app.collections.users,
 			}),
 		],
-		access_strategy: {
-			default: AccessStrategies.Super,
+		policy: {
+			default: Policies.Super,
 		},
 	});
 };

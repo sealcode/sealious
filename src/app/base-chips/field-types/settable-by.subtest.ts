@@ -8,7 +8,7 @@ import {
 	Collection,
 	FieldTypes,
 	FieldDefinitionHelper as field,
-	AccessStrategies,
+	Policies,
 } from "../../../main";
 
 describe("settable-by", async () => {
@@ -19,7 +19,7 @@ describe("settable-by", async () => {
 				field("any", FieldTypes.SettableBy, {
 					base_field_type: FieldTypes.Int,
 					base_field_params: {},
-					access_strategy: AccessStrategies.Noone,
+					policy: Policies.Noone,
 				}),
 			],
 		});
@@ -28,7 +28,7 @@ describe("settable-by", async () => {
 			name: "allowed-collection",
 			fields: [
 				field("any", FieldTypes.SettableBy, {
-					access_strategy: AccessStrategies.Public,
+					policy: Policies.Public,
 					base_field_type: FieldTypes.Int,
 					base_field_params: {},
 				}),

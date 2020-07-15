@@ -2,7 +2,7 @@ import {
 	App,
 	Collection,
 	FieldTypes,
-	AccessStrategies,
+	Policies,
 	FieldDefinitionHelper as field,
 } from "../../main";
 
@@ -13,8 +13,8 @@ export default (app: App) => {
 			field("anonymous-session-id", FieldTypes.SessionID, {}, true),
 			field("anonymous-user-id", FieldTypes.ShortID, {}, true),
 		],
-		access_strategy: {
-			default: AccessStrategies.Super,
+		policy: {
+			default: Policies.Super,
 		},
 	});
 };

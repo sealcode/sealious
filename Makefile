@@ -16,3 +16,7 @@ watch:
 
 install:
 	./npm.sh ci
+
+docs:
+	npm install
+	npm run docs

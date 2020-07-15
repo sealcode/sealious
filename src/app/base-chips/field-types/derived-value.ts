@@ -5,6 +5,7 @@ import {
 	App,
 	Context,
 	HybridFieldParams,
+	EventMatchers,
 } from "../../../main";
 import Bluebird from "bluebird";
 
@@ -90,7 +91,7 @@ export default class DerivedValue<T extends Field> extends HybridField<T> {
 
 	async init(app: App) {
 		app.addHook(
-			new app.Sealious.EventMatchers.Collection({
+			new EventMatchers.CollectionMatcher({
 				when: "before",
 				collection_name: this.collection.name,
 				action: "create",
@@ -114,7 +115,7 @@ export default class DerivedValue<T extends Field> extends HybridField<T> {
 		);
 
 		app.addHook(
-			new app.Sealious.EventMatchers.Resource({
+			new EventMatchers.Resource({
 				when: "before",
 				collection_name: this.collection.name,
 				action: "edit",

@@ -1,5 +1,5 @@
 import * as assert from "assert";
-import { Field, Context, App } from "../../../main";
+import { Field, Context, App, EventMatchers } from "../../../main";
 import { QueryStage } from "../../../datastore/query";
 import ReferenceToCollection from "../../../subject/attachments/reference-to-collection";
 import { CollectionResponse } from "../../../../common_lib/response/responses";
@@ -67,7 +67,7 @@ export default class ReverseSingleReference extends Field<never, string[]> {
 		});
 
 		app.addHook(
-			new app.Sealious.EventMatchers.Collection({
+			new EventMatchers.CollectionMatcher({
 				when: "after",
 				collection_name: this.getReferencingCollection().name,
 				action: "create",
@@ -80,7 +80,7 @@ export default class ReverseSingleReference extends Field<never, string[]> {
 		);
 
 		app.addHook(
-			new app.Sealious.EventMatchers.Resource({
+			new EventMatchers.Resource({
 				when: "after",
 				collection_name: this.getReferencingCollection().name,
 				action: "delete",
@@ -101,7 +101,7 @@ export default class ReverseSingleReference extends Field<never, string[]> {
 		);
 
 		app.addHook(
-			new app.Sealious.EventMatchers.Resource({
+			new EventMatchers.Resource({
 				when: "after",
 				collection_name: this.getReferencingCollection().name,
 				action: "edit",

@@ -3,7 +3,7 @@ import Bluebird from "bluebird";
 import * as Errors from "../response/errors";
 import Field from "./field";
 import CalculatedField from "./calculated-field";
-import AccessStrategy, { AccessStrategyDefinition } from "./access-strategy";
+import Policy, { PolicyDefinition } from "./policy";
 
 import SingleItemResponse from "../../common_lib/response/single-item-response";
 import App from "../app/app";
@@ -16,15 +16,15 @@ import { FieldDefinition } from "./field";
 import Item from "../../common_lib/response/item";
 import Query, { QueryStage } from "../datastore/query";
 import SpecialFilter from "./special-filter";
-import Public from "../app/access-strategy-types/public";
+import Public from "../app/policy-types/public";
 import { ErrorLikeObject } from "../response/errors";
 
 export type CollectionDefinition = {
 	name: string;
 	fields: FieldDefinition<any>[];
-	access_strategy?: Partial<
+	policy?: Partial<
 		{
-			[action in ActionName | "default"]: AccessStrategyDefinition;
+			[action in ActionName | "default"]: PolicyDefinition;
 		}
 	>;
 	display_hints?: {};
@@ -36,27 +36,45 @@ export type CollectionDefinition = {
 	};
 };
 
+/** Creates a collection. All collections are automatically served via
+ * the REST API, with permissions set by the Policies */
 export default class Collection {
+	/** The name of the collection. This is used as the part of it's URL in the REST API */
 	name: string;
-	fields: {
+	/** Stores all the fields in the given collection. Does not store values of those fields.
+	 *
+	 *  This is a read-only property. If you want to change fields in an existing collection, use {@link Collection.addField}
+	 */
+	readonly fields: {
 		[field_name: string]: Field;
 	};
+	/** Used while creating a REST API documentation for your app */
 	human_readable_name: string | null;
+	/** @todo find out what that is */
 	summary: string | null;
+	/** An arbitrary value that can be use by front-ends to e.g. format forms for given collection in a specific way */
 	display_hints: any;
-	access_strategy: { [action in ActionName | "default"]?: AccessStrategy };
+	/** stores {@link Policy | Policies} for some of the possible {@link ActionName | ActionNames}. If no policy is specified for a given action, the policy under the `default` key is used. */
+	policy: { [action in ActionName | "default"]?: Policy };
+	/** stores the special filtes attached to this collection */
 	named_filters: { [name: string]: SpecialFilter };
+	/** stores the calculated fields of the collection */
 	calculated_fields: {
 		[field_name: string]: CalculatedField<any>;
 	} = {};
 
+	/** Create a new app. This is not the most elegant way to create a collection, it's better to use {@link Collection.fromDefinition}
+	 * @param app the app
+	 * @param definition the collection definition
+	 * @category Creating a collection
+	 */
 	constructor(public app: App, public definition: CollectionDefinition) {
 		this.name = definition.name;
 		this.fields = {};
 		this.human_readable_name = definition.human_readable_name || null;
 		this.summary = definition.summary || null;
 		this.display_hints = definition.display_hints || {};
-		this.access_strategy = {
+		this.policy = {
 			default: Public,
 		};
 		this.named_filters = definition.named_filters || {};
@@ -81,19 +99,56 @@ export default class Collection {
 			}
 		}
 
-		this.setAccessStrategy(
-			this.definition.access_strategy || {
+		this.setPolicy(
+			this.definition.policy || {
 				default: Public,
 			}
 		);
 	}
 
+	/** Initialize all the fields
+	 * @internal
+	 */
 	async init() {
 		for (const field of Object.values(this.fields)) {
 			await field.init(this.app);
 		}
 	}
 
+	/** Use a "definition object" to describe the shape and behavior of the collection.
+	 *
+	 * Example:
+	 *
+	 * ```
+	 * import {
+	 *   App,
+	 *   Collection,
+	 *   FieldTypes,
+	 *   FieldDefinitionHelper as field,
+	 *   Policies,
+	 * } from "sealious";
+	 *
+	 *const app = new App();
+	 *
+	 *Collection.fromDefinition(
+	 *  app,
+	 *  {
+	 *  name: "seals",
+	 *  fields: [
+	 *    field("name", FieldTypes.Text),
+	 *    field("age", FieldTypes.Int, { min: 0 }),
+	 *  ],
+	 *  policy: {
+	 *    show: Policies.Public,
+	 *    delete: Policies.Noone,
+	 *  },
+	 *});
+	 * ```
+	 *
+	 * @param app  the collection read from definition will be attached to this app
+	 * @param definition the definition of the appliaction, containing the fields and policies
+	 * @category Creating a collection
+	 */
 	static fromDefinition(
 		app: App,
 		definition: CollectionDefinition
@@ -103,6 +158,9 @@ export default class Collection {
 		return ret;
 	}
 
+	/** Adds a field to collection. It's usually not necessary, because you can add all the necessary fields while creating the collection.
+	 * @param field_definition the field definition
+	 */
 	addField(field_definition: FieldDefinition<any>) {
 		const field = Field.fromDefinition(this.app, this, field_definition);
 		const field_name = field.name;
@@ -115,21 +173,39 @@ export default class Collection {
 		}
 	}
 
+	/** Add all fields from the given array
+	 * @param field_definitions array of field definitions
+	 * @internal
+	 */
 	addFields(field_definitions: FieldDefinition<any>[]) {
 		for (const definition of field_definitions) {
 			this.addField(definition);
 		}
 	}
 
+	/** Add a calculated field to the collection
+	 * @param calc_field_name  the name of the field
+	 * @param calc_field  the field object
+	 * @internal
+	 */
 	addCalculatedField(
 		calc_field_name: string,
 		calc_field: CalculatedField<any>
 	) {
 		this.calculated_fields[calc_field_name] = calc_field;
 	}
+
+	/** Add special filters to the collection
+	 *  @param named_filters  the filters to add
+	 */
 	addSpecialFilters(named_filters: { [name: string]: SpecialFilter }) {
 		this.named_filters = named_filters;
 	}
+
+	/** Check if the user didn't provide values for a field that does not exist in this collection
+	 * @param values - the values provided by the user
+	 * @internal
+	 */
 	getUnknownFieldErrors(values: values) {
 		const validation_errors: values = {};
 		for (const field_name in values) {
@@ -141,6 +217,12 @@ export default class Collection {
 		}
 		return validation_errors;
 	}
+	/** Check if the user didn't miss any of the required fields
+	 * @param values values meant to replace the current ones in a given document
+	 * @param assume_delete_value_on_missing_key if set to true, values not provided in `values` are considered to be empty and meant to be deleted if they had a value previously (PUT vs PATCH)
+	 * @param old_values the values that the given resource currently has.
+	 * @internal
+	 */
 	async getMissingFieldValuesErrors(
 		values: values,
 		assume_delete_value_on_missing_key: boolean,
@@ -165,6 +247,13 @@ export default class Collection {
 
 		return errors;
 	}
+
+	/** Check if any of the values provided by the user contain invalid values
+	 * @param context the context
+	 * @param values the new values provided by the user, meant to replace the old ones
+	 * @param old_values the current values of fields in this document, to be replaced
+	 * @internal
+	 */
 	async getInvalidFieldValuesErrors(
 		context: Context,
 		values: values,
@@ -193,6 +282,14 @@ export default class Collection {
 		await Promise.all(promises);
 		return errors;
 	}
+
+	/** Perform various checks on values provided by the user
+	 * @param context the context
+	 * @param assume_delete_value_on_missing_key if set to true, values not provided in `values` are considered to be empty and meant to be deleted if they had a value previously (PUT vs PATCH)
+	 * @param new_values the new values, provided by the user, meant to replace the old ones
+	 * @param old_values the current values, meant to soon be replaced
+	 * @internal
+	 */
 	async validateFieldValues(
 		context: Context,
 		assume_delete_value_on_missing_key: boolean,
@@ -222,6 +319,12 @@ export default class Collection {
 		}
 	}
 
+	/** Convert all given field values into a form ready to be stored in the database
+	 * @param context the context
+	 * @param body all field values provided by the user. Might contain errors, non-existing fields, missing fields
+	 * @param old_body current values, meant to be replaced
+	 * @internal
+	 */
 	async encodeFieldValues(context: Context, body: values, old_body?: values) {
 		const promises: values = {};
 		for (let field_name in this.fields) {
@@ -249,6 +352,10 @@ export default class Collection {
 		return Bluebird.props(promises);
 	}
 
+	/** Return the specification of the collection to be returned when generating the docs for the REST API
+	 * @param summary the human-readable description of the collection
+	 * @internal;
+	 */
 	getSpecification(summary: any) {
 		// with_validators:boolean - whether to include validator functions in field descriptions. Warning! If set to true, the output is not serializable in JSON.
 		const fields_spec: {
@@ -281,39 +388,49 @@ export default class Collection {
 		return specification;
 	}
 
-	setAccessStrategy(
+	/** Set a policy for given actions
+	 * @param strategy_definition - an object that maps a given {@link ActionName} to a {@link Policy}. Not all action names have to be mapped to a policy. `default` policy can be provided and it will be used when performing an action with an unspecified policy.
+	 */
+	setPolicy(
 		strategy_definition: Partial<
 			{
-				[action in ActionName | "default"]: AccessStrategyDefinition;
+				[action in ActionName | "default"]: PolicyDefinition;
 			}
 		>
 	) {
 		if (
-			strategy_definition instanceof AccessStrategy ||
+			strategy_definition instanceof Policy ||
 			strategy_definition instanceof Array
 		) {
-			this.access_strategy = {
-				default: AccessStrategy.fromDefinition(
-					strategy_definition as AccessStrategyDefinition
+			this.policy = {
+				default: Policy.fromDefinition(
+					strategy_definition as PolicyDefinition
 				),
 			};
 		} else if (typeof strategy_definition === "object") {
 			for (const action_name in strategy_definition) {
-				const access_strategy = (strategy_definition as {
-					[action in ActionName]: AccessStrategyDefinition;
+				const policy = (strategy_definition as {
+					[action in ActionName]: PolicyDefinition;
 				})[action_name as ActionName];
-				this.access_strategy[
-					action_name as ActionName
-				] = AccessStrategy.fromDefinition(access_strategy);
+				this.policy[action_name as ActionName] = Policy.fromDefinition(
+					policy
+				);
 			}
 		}
 	}
-	getAccessStrategy(action_name: ActionName): AccessStrategy {
-		const ret =
-			this.access_strategy[action_name] ||
-			this.access_strategy["default"];
-		return ret as AccessStrategy;
+
+	/** Get {@link Policy} for a given {@link ActionName}
+	 * @param action_name the action name
+	 */
+	getPolicy(action_name: ActionName): Policy {
+		const ret = this.policy[action_name] || this.policy["default"];
+		return ret as Policy;
 	}
+
+	/** Whether or not any of the fields have a field that handles Large Data
+	 * @internal
+	 * @todo probably safe to deprecate
+	 */
 	hasLargeDataFields() {
 		for (const i in this.fields) {
 			const field = this.fields[i];
@@ -323,6 +440,11 @@ export default class Collection {
 		}
 		return false;
 	}
+
+	/** Whether or not any of the fields' behavior depends on the current values of themselves or other fields
+	 * @param action_name the action for which to check
+	 * @internal
+	 */
 	isOldValueSensitive(action_name: ActionName) {
 		for (const field_name in this.fields) {
 			if (this.fields[field_name].isOldValueSensitive(action_name)) {
@@ -331,8 +453,18 @@ export default class Collection {
 		}
 		return false;
 	}
-	decodeValues(context: Context, values: values, format: any) {
+
+	/** Takes values from database and decodes them into something more friendly. Can also be used to change the output format of the data
+	 * @param context the context
+	 * @param values the values from DB
+	 * @param format a format for a subset of all the fields, that will be passed down to each of the fields
+	 * @internal
+	 */
+	decodeValues(context: Context, values: values, format: any = {}) {
 		const decoded_values: values = {};
+		if (!format) {
+			format = {};
+		}
 		for (const field_name in this.fields) {
 			const value = values[field_name];
 			const field = this.fields[field_name];
@@ -352,10 +484,15 @@ export default class Collection {
 		}
 		return Bluebird.props(decoded_values);
 	}
-	async _getBody(context: Context, db_document: {}, format: any) {
-		return this.decodeValues(context, db_document, format || {});
-	}
-	_getCalculatedFields(
+
+	/** Returns the values for all the calculated fields
+	 * @param context the context
+	 * @param item the item with decoded values
+	 * @param raw_db_entry the raw db entry of the item
+	 * @param calculate a map that tells whether or not to calculate values for a given calculated field
+	 * @internal
+	 */
+	private _getCalculatedFields(
 		context: Context,
 		item: Item,
 		raw_db_entry: values,
@@ -377,6 +514,12 @@ export default class Collection {
 		return Bluebird.props(ret);
 	}
 
+	/** Takes a db entry of an item and formats it so it can be presented to the user
+	 * @param context the context
+	 * @param db_document the raw db entry
+	 * @param format the formats for some/all/none of the fields
+	 * @param calculate whether or not to compute some/all of the fields
+	 */
 	async getResourceRepresentation(
 		context: Context,
 		db_document: any,
@@ -384,7 +527,7 @@ export default class Collection {
 		calculate?: boolean | values<boolean>
 	): Promise<Item> {
 		if (calculate === undefined) calculate = true;
-		const representation = await this._getBody(
+		const representation = await this.decodeValues(
 			context,
 			db_document,
 			format
@@ -404,12 +547,17 @@ export default class Collection {
 		return representation as Item;
 	}
 
+	/** Throws if a given {@link ActionName} is not allowed to be performed on a given Item under given context
+	 * @param context the context
+	 * @param action_name the action name
+	 * @param item the item (pass `undefined` if checking actions like `create` as then there's no item to check on)
+	 */
 	async checkIfActionIsAllowed(
 		context: Context,
 		action_name: ActionName,
 		item?: Item
 	) {
-		const access_strategy = this.getAccessStrategy(action_name);
+		const policy = this.getPolicy(action_name);
 
 		const sealious_response = item
 			? new SingleItemResponse({
@@ -419,15 +567,22 @@ export default class Collection {
 			  })
 			: undefined;
 
-		const decision = await access_strategy.check(
-			context,
-			sealious_response
-		);
+		const decision = await policy.check(context, sealious_response);
 		if (decision !== null && !decision.allowed) {
 			throw new Errors.InvalidCredentials(decision.reason);
 		}
 	}
 
+	/** Gets the aggregation stages that filter the resources based on Policies, filters,  search params and named filters. Returns a mongo pipeline. This is done in order to avoid having to manually check each item returned from the database
+	 * @param context the context
+	 * @param action_name the {@link ActionName}
+	 * @param query_params query params - e.g. parsed from a REST GET request
+	 * @param query_params.search the search string
+	 * @param query_params.filter the filter object that can contain filter values for any of the fields in the collection
+	 * @param ids - deprecated
+	 * @param named_filters names of any named filters that should be applied to the query
+	 * @todo check if removing the `ids` arg breaks anything
+	 */
 	async getAggregationStages(
 		context: Context,
 		action_name: ActionName,
@@ -436,7 +591,7 @@ export default class Collection {
 		named_filters: string[] = []
 	): Promise<QueryStage[]> {
 		const fields = this.fields;
-		const access_strategy = this.getAccessStrategy(action_name);
+		const policy = this.getPolicy(action_name);
 		const ret: QueryStage[] = [];
 
 		if (query_params.search) {
@@ -452,7 +607,7 @@ export default class Collection {
 		}
 
 		ret.push(
-			...(await access_strategy
+			...(await policy
 				.getRestrictingQuery(context)
 				.then((query) => query.toPipeline()))
 		);
@@ -488,6 +643,9 @@ export default class Collection {
 		return ret;
 	}
 
+	/** Return a named filter from the collection
+	 * @param filter_name the name of the filter
+	 */
 	getNamedFilter(filter_name: string) {
 		return this.named_filters[filter_name];
 	}

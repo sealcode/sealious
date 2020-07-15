@@ -1,11 +1,10 @@
 import Context from "../../context";
-import AccessStrategy from "../../chip-types/access-strategy";
-import App from "../app";
-import SuperContext from "../../super-context";
+import Policy from "../../chip-types/policy";
+import { SuperContext } from "../../context";
 import Item from "../../../common_lib/response/item";
 import { QueryTypes } from "../../main";
 
-export default class Roles extends AccessStrategy {
+export default class Roles extends Policy {
 	static type_name = "roles";
 	allowed_roles: string[];
 	constructor(allowed_roles: string[]) {
@@ -46,17 +45,17 @@ export default class Roles extends AccessStrategy {
 
 	async checkerFunction(context: Context) {
 		if (context.user_id === null) {
-			return AccessStrategy.deny("you are not logged in");
+			return Policy.deny("you are not logged in");
 		}
 		const matching_roles_count = await this.countMatchingRoles(context);
 
 		return matching_roles_count > 0
-			? AccessStrategy.allow(
+			? Policy.allow(
 					`you have one of the roles: ${this.allowed_roles.join(
 						", "
 					)}`
 			  )
-			: AccessStrategy.deny(
+			: Policy.deny(
 					`you dont have any of the roles: ${this.allowed_roles.join(
 						", "
 					)}.`

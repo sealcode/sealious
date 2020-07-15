@@ -5,7 +5,7 @@ import {
 	App,
 	Collection,
 	FieldTypes,
-	AccessStrategies,
+	Policies,
 	FieldDefinitionHelper as field,
 } from "../../../main";
 import { CollectionResponse } from "../../../../common_lib/response/responses";
@@ -24,9 +24,9 @@ describe("control-access", () => {
 					"private",
 					FieldTypes.ControlAccess,
 					{
-						target_access_strategies: {
-							show: new AccessStrategies.Roles(["admin"]),
-							edit: new AccessStrategies.Roles(["admin"]),
+						target_policies: {
+							show: new Policies.Roles(["admin"]),
+							edit: new Policies.Roles(["admin"]),
 						},
 						value_when_not_allowed: "Forbidden",
 						base_field_type: FieldTypes.Text,
@@ -37,9 +37,9 @@ describe("control-access", () => {
 					true
 				),
 			],
-			access_strategy: {
-				default: AccessStrategies.Public,
-				create: [AccessStrategies.Roles, ["admin"]],
+			policy: {
+				default: Policies.Public,
+				create: [Policies.Roles, ["admin"]],
 			},
 		});
 	}

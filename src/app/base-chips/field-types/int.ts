@@ -7,12 +7,26 @@ import humanComparatorToQuery, {
 
 export type IntStorageParams = { min?: number; max?: number };
 
+/** A field that stores it's value as an integer number. Can be configured to accept only values within specified range.
+ *
+ * **Params**:
+ * - `min` - `Number` - (optional) the minimum acceptable value
+ * - `max` - `Number` - (optional) the maximum acceptable value
+ *
+ * **Filters**:
+ * When filtering a list of resources, one can use wither a simple equality test, or a more complex range comparison. Consult the examples below:
+ * - `{ age: 2 }`
+ * - `{ age: {">": 2}}`
+ * - `{ age: {">": 2, "<" 10}}`
+ */
 export abstract class IntStorage<
 	Input extends number | string,
 	Output = any,
 	Format = any
 > extends Field<Input, Output, Format> {
+	/** the min allowed value */
 	min?: number;
+	/** tha max allowed value*/
 	max?: number;
 
 	async isProperValue(_: Context, new_value: number | string) {
@@ -83,6 +97,7 @@ export abstract class IntStorage<
 	};
 }
 
+/** An integer field. Consult {@link IntStorage} for information on customizing it's behavior.*/
 export default class Int extends IntStorage<number | string, number> {
 	getTypeName = () => "int";
 }

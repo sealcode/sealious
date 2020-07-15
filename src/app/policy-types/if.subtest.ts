@@ -4,7 +4,7 @@ import {
 	App,
 	Collection,
 	FieldTypes,
-	AccessStrategies,
+	Policies,
 	FieldDefinitionHelper as field,
 } from "../../main";
 import Matches from "../base-chips/special_filters/matches";
@@ -25,12 +25,12 @@ describe("when", () => {
 					number: { "<": 0 },
 				}),
 			},
-			access_strategy: {
-				default: new AccessStrategies.If([
+			policy: {
+				default: new Policies.If([
 					"numbers",
 					"negative",
-					AccessStrategies.LoggedIn,
-					AccessStrategies.Public,
+					Policies.LoggedIn,
+					Policies.Public,
 				]),
 			},
 		});

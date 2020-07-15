@@ -6,11 +6,6 @@ type Config = {
 	};
 	logger: {
 		level: "info" | "error" | "debug" | "emerg";
-		color: boolean;
-		file: null;
-		dirname: string;
-		to_json: boolean;
-		rotation: string;
 	};
 	"www-server": {
 		port: number;

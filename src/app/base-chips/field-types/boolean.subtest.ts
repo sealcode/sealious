@@ -1,7 +1,7 @@
 import assert from "assert";
 import { withRunningApp } from "../../../test_utils/with-test-app";
 import { assertThrowsAsync } from "../../../test_utils/assert-throws-async";
-import { App, Collection, FieldTypes, AccessStrategies } from "../../../main";
+import { App, Collection, FieldTypes, Policies } from "../../../main";
 
 const URL = "/api/v1/collections/boolseals";
 
@@ -16,8 +16,8 @@ describe("boolean", () => {
 					required: true,
 				},
 			],
-			access_strategy: {
-				default: AccessStrategies.Public,
+			policy: {
+				default: Policies.Public,
 			},
 		});
 	}

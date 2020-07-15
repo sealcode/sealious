@@ -6,13 +6,13 @@ import * as Sealious from "../../main";
 import {
 	Collection,
 	FieldTypes,
-	AccessStrategies,
+	Policies,
 	FieldDefinitionHelper as field,
 } from "../../main";
 import { assertThrowsAsync } from "../../test_utils/assert-throws-async";
 import { withRunningApp } from "../../test_utils/with-test-app";
 
-describe("NotAccessStrategy", () => {
+describe("NotPolicy", () => {
 	async function setup(app: Sealious.App) {
 		Collection.fromDefinition(app, {
 			name: "numbers",
@@ -32,11 +32,11 @@ describe("NotAccessStrategy", () => {
 			},
 			{
 				name: "collection-not(public)",
-				strategy: AccessStrategies.Public,
+				strategy: Policies.Public,
 			},
 			{
 				name: "collection-not(noone)",
-				strategy: AccessStrategies.Noone,
+				strategy: Policies.Noone,
 			},
 		];
 
@@ -51,9 +51,9 @@ describe("NotAccessStrategy", () => {
 						true
 					),
 				],
-				access_strategy: {
-					show: [AccessStrategies.Not, strategy],
-					create: AccessStrategies.Public,
+				policy: {
+					show: [Policies.Not, strategy],
+					create: Policies.Public,
 				},
 			});
 		}
@@ -78,7 +78,7 @@ describe("NotAccessStrategy", () => {
 	}
 
 	function create_less_than_strategy(number: number) {
-		return class extends Sealious.AccessStrategy {
+		return class extends Sealious.Policy {
 			async _getRestrictingQuery() {
 				const query = new Sealious.Query();
 				const id = query.lookup({
@@ -102,13 +102,11 @@ describe("NotAccessStrategy", () => {
 					number: { number: number };
 				}).number.number;
 				if (item_number >= number) {
-					return Sealious.AccessStrategy.deny(
+					return Sealious.Policy.deny(
 						`Given value is not lower than ${number}`
 					);
 				}
-				return Sealious.AccessStrategy.allow(
-					`Number is less than ${number}`
-				);
+				return Sealious.Policy.allow(`Number is less than ${number}`);
 			}
 			isItemSensitive = async () => true;
 		};

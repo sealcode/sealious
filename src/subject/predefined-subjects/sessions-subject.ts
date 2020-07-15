@@ -4,9 +4,9 @@ import Context from "../../context";
 import { NewSession } from "../../../common_lib/response/responses";
 import { CreateActionName } from "../../action";
 
-import CurrentSessionSubject from "../subject-types/current-session-subject.js";
+import CurrentSessionSubject from "../subject-types/current-session-subject";
 import * as Errors from "../../response/errors";
-import SecureHasher from "../../utils/secure-hasher.js";
+import SecureHasher from "../../utils/secure-hasher";
 
 async function validateAuthData(app: App, username: string, password: string) {
 	const [user] = await app.Datastore.find("users", {

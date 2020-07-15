@@ -12,10 +12,6 @@ export default (default_language: string) => {
 		} else {
 			translation = key;
 		}
-		return {
-			toString: () => translation,
-			capitalize: () =>
-				translation[0].toUpperCase() + translation.slice(1),
-		};
+		return translation;
 	};
 };

@@ -2,7 +2,7 @@ import {
 	App,
 	Collection,
 	FieldTypes,
-	AccessStrategies,
+	Policies,
 	ActionName,
 	FieldDefinitionHelper as field,
 } from "../../main";
@@ -11,10 +11,10 @@ export default (app: App) => {
 	app.on("started", async () => {
 		const roles = app.collections["user-roles"];
 		for (let action of ["create", "delete"] as ActionName[]) {
-			const access_strategy = roles.getAccessStrategy(action);
-			if (access_strategy === AccessStrategies.Public) {
+			const policy = roles.getPolicy(action);
+			if (policy === Policies.Public) {
 				app.Logger.warning(
-					`<user-roles> collection is using <public> access strategy for ${action} action. Anyone can change anyone elses role. This is the default behavior and you should overwrite it with <set_access_strategy>`
+					`<user-roles> collection is using <public> access strategy for ${action} action. Anyone can change anyone elses role. This is the default behavior and you should overwrite it with <set_policy>`
 				);
 			}
 		}
@@ -38,11 +38,11 @@ export default (app: App) => {
 				true
 			),
 		],
-		access_strategy: {
-			create: AccessStrategies.Public,
-			delete: AccessStrategies.Public,
-			show: [AccessStrategies.UserReferencedInField, "user"],
-			edit: AccessStrategies.Noone,
+		policy: {
+			create: Policies.Public,
+			delete: Policies.Public,
+			show: [Policies.UserReferencedInField, "user"],
+			edit: Policies.Noone,
 		},
 	});
 };

@@ -1,9 +1,6 @@
 import { NoActionSubject } from "../subject";
-import App from "../../app/app";
-import Context from "../../context";
-import * as Errors from "../../response/errors";
 
-const FileHash = require("../subject-types/single-file-subject.js");
+import FileHash from "../subject-types/single-file-subject";
 
 export default class UploadedFilesSubject extends NoActionSubject {
 	async getChildSubject(path_element: string) {

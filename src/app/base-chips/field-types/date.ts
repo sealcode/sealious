@@ -11,6 +11,10 @@ function dateStrToDayInt(date_str: string) {
 	return Date.parse(date_str) / DAY;
 }
 
+/** Stores a date - without hours/minutes, just the day.
+ *
+ * **Params**: None
+ */
 export default class DateField extends Field<string> {
 	getTypeName = () => "date";
 	async isProperValue(_: Context, value: string) {

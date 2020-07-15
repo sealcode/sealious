@@ -1,26 +1,23 @@
 import * as assert from "assert";
 
-import { withRunningApp } from "../../../test_utils/with-test-app";
+import { withRunningApp, MockRestApi } from "../../../test_utils/with-test-app";
 import {
 	App,
 	Collection,
 	FieldTypes,
-	AccessStrategies,
+	Policies,
 	FieldDefinitionHelper as field,
 } from "../../../main";
 import IsReferencedByResourcesMatching from "./IsReferencedByResourcesMatching";
 import { CollectionResponse } from "../../../../common_lib/response/responses";
 
 describe("IsReferencedByResourcesMatching", () => {
-	async function setup(
-		app: App,
-		rest_api: import("../../../test_utils/with-test-app.js").MockRestApi
-	) {
+	async function setup(app: App, rest_api: MockRestApi) {
 		const Users = app.collections.users;
 
-		Users.setAccessStrategy({
-			create: AccessStrategies.Public,
-			show: AccessStrategies.Public,
+		Users.setPolicy({
+			create: Policies.Public,
+			show: Policies.Public,
 		});
 
 		const UsersRoles = Collection.fromDefinition(app, {

@@ -4,16 +4,16 @@ import {
 	App,
 	Collection,
 	FieldTypes,
-	AccessStrategies,
+	Policies,
 	FieldDefinitionHelper as field,
 } from "../../main";
 
 import { withRunningApp } from "../../test_utils/with-test-app";
-import create_strategies from "../../test_utils/access-strategy-types/create-strategies-with-complex-pipeline";
+import create_policies from "../../test_utils/policy-types/create-policies-with-complex-pipeline";
 import And from "./and";
 import { assertThrowsAsync } from "../../test_utils/assert-throws-async";
 
-describe("AndAccessStrategy", () => {
+describe("AndPolicy", () => {
 	async function setup(app: App) {
 		const numbersCollection = Collection.fromDefinition(app, {
 			name: "numbers",
@@ -23,35 +23,32 @@ describe("AndAccessStrategy", () => {
 		const [
 			ComplexDenyPipeline,
 			ComplexAllowPipeline,
-		] = create_strategies.allowDeny();
+		] = create_policies.allowDeny();
 
 		const collections = [
 			{
 				name:
 					"collection-and(nested-and(allow, public), nested-or(allow, noone))",
-				strategies: [
-					new And([ComplexAllowPipeline, AccessStrategies.Public]),
-					new AccessStrategies.Or([
-						ComplexAllowPipeline,
-						AccessStrategies.Noone,
-					]),
+				policies: [
+					new And([ComplexAllowPipeline, Policies.Public]),
+					new Policies.Or([ComplexAllowPipeline, Policies.Noone]),
 				],
 			},
 			{
 				name: "collection-and(ComplexAllowPipeline, noone)",
-				strategies: [ComplexAllowPipeline, AccessStrategies.Noone],
+				policies: [ComplexAllowPipeline, Policies.Noone],
 			},
 			{
 				name: "collection-and(ComplexAllowPipeline, public)",
-				strategies: [ComplexAllowPipeline, AccessStrategies.Public],
+				policies: [ComplexAllowPipeline, Policies.Public],
 			},
 			{
 				name: "collection-and(complexDenyPipeline, public)",
-				strategies: [ComplexDenyPipeline, AccessStrategies.Public],
+				policies: [ComplexDenyPipeline, Policies.Public],
 			},
 		];
 
-		for (const { name, strategies } of collections) {
+		for (const { name, policies } of collections) {
 			Collection.fromDefinition(app, {
 				name: name,
 				fields: [
@@ -62,9 +59,9 @@ describe("AndAccessStrategy", () => {
 						true
 					),
 				],
-				access_strategy: {
-					show: new And(strategies),
-					create: AccessStrategies.Public,
+				policy: {
+					show: new And(policies),
+					create: Policies.Public,
 				},
 			});
 		}

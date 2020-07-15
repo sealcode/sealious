@@ -1,8 +1,8 @@
 import Bluebird from "bluebird";
-import AccessStrategy, {
-	ReducingAccessStrategy,
-	AccessStrategyDecision,
-} from "../../chip-types/access-strategy";
+import Policy, {
+	ReducingPolicy,
+	PolicyDecision,
+} from "../../chip-types/policy";
 
 import Context from "../../context";
 
@@ -10,10 +10,10 @@ import SealiousResponse from "../../../common_lib/response/sealious-response";
 import { AllowAll } from "../../datastore/allow-all";
 import { default as QueryOr } from "../../datastore/query-or";
 
-export default class Or extends ReducingAccessStrategy {
+export default class Or extends ReducingPolicy {
 	static type_name = "or";
 	async _getRestrictingQuery(context: Context) {
-		const queries = await Bluebird.map(this.access_strategies, (strategy) =>
+		const queries = await Bluebird.map(this.policies, (strategy) =>
 			strategy.getRestrictingQuery(context)
 		);
 		if (queries.some((query) => query instanceof AllowAll)) {
@@ -22,24 +22,18 @@ export default class Or extends ReducingAccessStrategy {
 		return new QueryOr(...queries);
 	}
 	async isItemSensitive() {
-		return Bluebird.map(this.access_strategies, (strategy) =>
+		return Bluebird.map(this.policies, (strategy) =>
 			strategy.isItemSensitive()
 		).reduce((a, b) => a || b, true);
 	}
 	async checkerFunction(context: Context, response: SealiousResponse) {
-		const results = await this.checkAllStrategies(context, response);
-		const positives: Exclude<
-			AccessStrategyDecision,
-			null
-		>[] = results.filter((result) => result?.allowed === true) as Exclude<
-			AccessStrategyDecision,
-			null
-		>[];
+		const results = await this.checkAllPolicies(context, response);
+		const positives: Exclude<PolicyDecision, null>[] = results.filter(
+			(result) => result?.allowed === true
+		) as Exclude<PolicyDecision, null>[];
 		if (positives.length === 0) {
-			return AccessStrategy.deny(
-				results.map((r) => `"${r?.reason}"`).join(", ")
-			);
+			return Policy.deny(results.map((r) => `"${r?.reason}"`).join(", "));
 		}
-		return AccessStrategy.allow(positives[0].reason);
+		return Policy.allow(positives[0].reason);
 	}
 }

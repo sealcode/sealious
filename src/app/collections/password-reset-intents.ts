@@ -3,21 +3,21 @@ import {
 	EventMatchers,
 	Collection,
 	FieldTypes,
-	AccessStrategies,
+	Policies,
 	FieldDefinitionHelper as field,
 } from "../../main";
 import PasswordResetTemplate from "../../email/templates/password-reset";
 
 export default (app: App) => {
 	app.addHook(
-		new EventMatchers.Collection({
+		new EventMatchers.CollectionMatcher({
 			when: "after",
 			collection_name: "password-reset-intents",
 			action: "create",
 		}),
-		async ({ metadata }, intent) => {
+		async (_, intent) => {
 			const { token } = await app.runAction(
-				new app.Sealious.SuperContext(metadata.context),
+				new app.SuperContext(),
 				["collections", "password-reset-intents", intent.id],
 				"show"
 			);
@@ -38,10 +38,10 @@ export default (app: App) => {
 			}),
 			field("token", FieldTypes.SecretToken),
 		],
-		access_strategy: {
-			default: AccessStrategies.Super,
-			create: AccessStrategies.Public,
-			edit: AccessStrategies.Noone,
+		policy: {
+			default: Policies.Super,
+			create: Policies.Public,
+			edit: Policies.Noone,
 		},
 	});
 };

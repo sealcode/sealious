@@ -1,4 +1,4 @@
-describe("access-strategy-types", () => {
+describe("policy-types", () => {
 	require("./and.subtest");
 	require("./not.subtest");
 	require("./or.subtest");

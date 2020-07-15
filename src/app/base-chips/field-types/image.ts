@@ -6,6 +6,11 @@ import FileField, { FileStorage, FileStorageFormat } from "./file";
 type ImageOutput = string | FileStorageFormat | null;
 type ImageFormat = "internal" | "original" | string;
 
+/** Like {@link FileField}, but meant for images. Has the capacity to format images and serve thumbnails and different sizes.
+ *
+ * **Params**:
+ * - `default_format` - string - one of the image formats defined in the app config. If not specified otherwise in the `format` parameter upon request, images will be served in the size corresponding to this format.
+ */
 export default class Image extends FileStorage<ImageOutput, ImageFormat> {
 	getTypeName = () => "image";
 	default_format: string;

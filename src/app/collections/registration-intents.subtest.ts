@@ -2,13 +2,13 @@ import axios from "axios";
 import assert from "assert";
 import { assertThrowsAsync } from "../../test_utils/assert-throws-async";
 import { withRunningApp, withStoppedApp } from "../../test_utils/with-test-app";
-import { AccessStrategies } from "../../main";
+import { Policies } from "../../main";
 
 describe("registration-intents", () => {
 	it("doesn't allow setting a role for registration intention when the user in context can't create user-roles", async () =>
 		withRunningApp(async ({ app, base_url }) => {
-			app.collections["user-roles"].setAccessStrategy({
-				create: AccessStrategies.Noone,
+			app.collections["user-roles"].setPolicy({
+				create: Policies.Noone,
 			});
 			await assertThrowsAsync(
 				() =>
@@ -32,8 +32,8 @@ describe("registration-intents", () => {
 		withStoppedApp(async ({ app, base_url }) => {
 			app.ConfigManager.set("roles", ["admin"]);
 			await app.start();
-			app.collections["user-roles"].setAccessStrategy({
-				create: AccessStrategies.Public,
+			app.collections["user-roles"].setPolicy({
+				create: Policies.Public,
 			});
 			const intent = (
 				await axios.post(

@@ -70,9 +70,7 @@ export default class CachedValue<T extends Field> extends HybridField<T> {
 				);
 
 				await app.runAction(
-					new app.Sealious.SuperContext(
-						emitted_event.metadata.context
-					),
+					new app.SuperContext(),
 					["collections", this.collection.name, cache_resource_id],
 					"edit",
 					{
@@ -89,7 +87,7 @@ export default class CachedValue<T extends Field> extends HybridField<T> {
 	checkForPossibleRecursiveEdits() {
 		const doesAnyMatches = this.refresh_on.some(({ event_matcher }) => {
 			if (
-				event_matcher instanceof EventMatchers.Collection ||
+				event_matcher instanceof EventMatchers.CollectionMatcher ||
 				event_matcher instanceof EventMatchers.Resource
 			) {
 				return event_matcher.collection_name === this.collection.name;

@@ -1,12 +1,6 @@
-import {
-	AccessStrategy,
-	Context,
-	ActionName,
-	QueryTypes,
-	App,
-} from "../../main";
+import { Policy, Context, ActionName, QueryTypes, App } from "../../main";
 
-export default class UsersWhoCan extends AccessStrategy {
+export default class UsersWhoCan extends Policy {
 	static type_name = "users-who-can";
 	action_name: ActionName;
 	target_collection_name: string;
@@ -16,32 +10,32 @@ export default class UsersWhoCan extends AccessStrategy {
 		this.target_collection_name = collection_name;
 	}
 
-	getAccessStrategy(app: App) {
+	getPolicy(app: App) {
 		//not doing this in the constructor because the collection may not be initialized when the constructor is ran
-		return app.collections[this.target_collection_name].getAccessStrategy(
+		return app.collections[this.target_collection_name].getPolicy(
 			this.action_name
 		);
 	}
 
 	async _getRestrictingQuery(context: Context) {
 		try {
-			await this.getAccessStrategy(context.app).check(context);
+			await this.getPolicy(context.app).check(context);
 			return new QueryTypes.AllowAll();
 		} catch (error) {
 			return new QueryTypes.DenyAll();
 		}
 	}
 	async checkerFunction(context: Context) {
-		const result = await this.getAccessStrategy(context.app).check(context);
+		const result = await this.getPolicy(context.app).check(context);
 		if (result === null) {
 			return null;
 		}
 		if (result.allowed) {
-			return AccessStrategy.allow(
+			return Policy.allow(
 				`you can run action '${this.action_name}' on collection '${this.target_collection_name}'`
 			);
 		} else {
-			return AccessStrategy.deny(
+			return Policy.deny(
 				`you can't ${this.action_name} ${this.target_collection_name} - because  ${result?.reason}`
 			);
 		}

@@ -10,7 +10,7 @@ describe("roles", () => {
 			Collection.fromDefinition(app, {
 				name: "secrets",
 				fields: [{ name: "content", type: FieldTypes.Text }],
-				access_strategy: { default: [Roles, ["admin"]] },
+				policy: { default: [Roles, ["admin"]] },
 			});
 
 			await app.start();

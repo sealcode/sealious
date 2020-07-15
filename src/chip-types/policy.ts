@@ -3,22 +3,19 @@ import Context from "../context";
 import Query from "../datastore/query";
 import { AllowAll } from "../datastore/allow-all";
 
-export type AccessStrategyDefinition =
-	| [AccessStrategyClass, any]
-	| AccessStrategy
-	| AccessStrategyClass;
+export type PolicyDefinition = [PolicyClass, any] | Policy | PolicyClass;
 
-export type AccessStrategyDecision = {
+export type PolicyDecision = {
 	allowed: boolean;
 	reason: string;
 } | null;
 
-export type AccessStrategyClass = {
-	new (params: any): AccessStrategy;
+export type PolicyClass = {
+	new (params: any): Policy;
 	type_name: string;
 };
 
-export default abstract class AccessStrategy {
+export default abstract class Policy {
 	static type_name: string;
 	constructor(public params: any = {}) {
 		this.params = params;
@@ -28,7 +25,7 @@ export default abstract class AccessStrategy {
 	abstract checkerFunction(
 		context: Context,
 		sealious_response?: SealiousResponse
-	): Promise<AccessStrategyDecision | null>;
+	): Promise<PolicyDecision | null>;
 
 	async isItemSensitive() {
 		return false;
@@ -46,9 +43,9 @@ export default abstract class AccessStrategy {
 	async check(
 		context: Context,
 		sealious_response?: SealiousResponse
-	): Promise<AccessStrategyDecision | null> {
+	): Promise<PolicyDecision | null> {
 		if (context.is_super) {
-			return AccessStrategy.allow("super-context is always allowed");
+			return Policy.allow("super-context is always allowed");
 		}
 
 		const is_item_sensitive = await this.isItemSensitive();
@@ -60,16 +57,14 @@ export default abstract class AccessStrategy {
 		return this.checkerFunction(context, sealious_response);
 	}
 
-	public static fromDefinition(
-		definition: AccessStrategyDefinition
-	): AccessStrategy {
-		let ret: AccessStrategy | null = null;
-		if (definition instanceof AccessStrategy) {
+	public static fromDefinition(definition: PolicyDefinition): Policy {
+		let ret: Policy | null = null;
+		if (definition instanceof Policy) {
 			ret = definition;
 		} else if (Array.isArray(definition)) {
 			ret = new definition[0](definition[1]);
 		} else if (typeof definition == "function") {
-			ret = new (definition as AccessStrategyClass)({});
+			ret = new (definition as PolicyClass)({});
 		}
 		if (!ret) {
 			throw new Error("could not read the definition");
@@ -86,22 +81,20 @@ export default abstract class AccessStrategy {
 	}
 }
 
-export abstract class ReducingAccessStrategy extends AccessStrategy {
-	access_strategies: AccessStrategy[];
-	constructor(params: AccessStrategyDefinition[]) {
+export abstract class ReducingPolicy extends Policy {
+	policies: Policy[];
+	constructor(params: PolicyDefinition[]) {
 		super(params);
-		this.access_strategies = params.map((definition) =>
-			AccessStrategy.fromDefinition(definition)
+		this.policies = params.map((definition) =>
+			Policy.fromDefinition(definition)
 		);
 	}
-	checkAllStrategies(
+	checkAllPolicies(
 		context: Context,
 		response?: SealiousResponse
-	): Promise<AccessStrategyDecision[]> {
+	): Promise<PolicyDecision[]> {
 		return Promise.all(
-			this.access_strategies.map((strategy) =>
-				strategy.check(context, response)
-			)
+			this.policies.map((strategy) => strategy.check(context, response))
 		);
 	}
 }

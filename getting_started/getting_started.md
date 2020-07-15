@@ -105,7 +105,7 @@ const tasks = app.createChip(Sealious.Collection, {
         { name: "title", type: "text", required: true },
         { name: "done", type: "boolean", required: true },
     ],
-    access_strategy: { default: "owner", create: "logged_in" },
+    policy: { default: "owner", create: "logged_in" },
 });
 ```
 
@@ -126,7 +126,7 @@ Pojedyncze pole może być opisane za pomocą obiektu z polami:
 -   **required** - czy pole jest wymagane, czy zawsze trzeba je zadeklarować dodając nowy zasób?
 -   **params** - dodatkowe parametry, wymagane przy niektórych typach pola.
 
-`access_strategy` odpowiada za kontrolę dostępu do zasobów naszego
+`policy` odpowiada za kontrolę dostępu do zasobów naszego
 API. Możemy tu zdefiniować pola odpowiadające konkretnym akcją:
 
 -   **_create_** - kto może dodać nowy zasób?
@@ -137,7 +137,7 @@ API. Możemy tu zdefiniować pola odpowiadające konkretnym akcją:
 Dla tych z powyższych akcji dla których nie określimy strategii dostępu zostanie użyta strategia przypisana do klucza **_default_**.
 
 W obecnej wersji Sealiousa nowa kolekcja jest domyślnie tworzona z
-`... access_strategy: {default: "public"}`, czyli każdy użytkownik,
+`... policy: {default: "public"}`, czyli każdy użytkownik,
 nawet ten niezalogowany, może zrobić właściwie wszystko.
 
 W naszej strategii dostępu ustawiamy klucz `default` na **`owner`**,
@@ -149,7 +149,7 @@ zalogowanemu użytkownikowi ustawiając klucz `create` na
 
 ```js
 ...
-access_strategy: {
+policy: {
     edit: "owner",
     show: "owner",
     delete: "owner",

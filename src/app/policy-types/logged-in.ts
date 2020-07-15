@@ -1,9 +1,9 @@
-import AccessStrategy from "../../chip-types/access-strategy";
+import Policy from "../../chip-types/policy";
 import { Context } from "../../main";
 import { AllowAll } from "../../datastore/allow-all";
 import DenyAll from "../../datastore/deny-all";
 
-class LoggedIn extends AccessStrategy {
+class LoggedIn extends Policy {
 	static type_name = "logged-in";
 	async _getRestrictingQuery(context: Context) {
 		if (context.user_id) {
@@ -14,9 +14,9 @@ class LoggedIn extends AccessStrategy {
 	}
 	async checkerFunction(context: Context) {
 		if (context.user_id) {
-			return AccessStrategy.allow("you are logged in");
+			return Policy.allow("you are logged in");
 		} else {
-			return AccessStrategy.deny("you are not logged in");
+			return Policy.deny("you are not logged in");
 		}
 	}
 }

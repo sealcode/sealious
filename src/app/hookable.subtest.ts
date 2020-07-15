@@ -1,6 +1,6 @@
 import assert from "assert";
 import { assertThrowsAsync } from "../test_utils/assert-throws-async";
-import { EventMatcher, Collection, Resource } from "./event-matchers";
+import { EventMatcher, CollectionMatcher, Resource } from "./event-matchers";
 import { EventDescription, Hookable } from "./hookable";
 import Context from "../context";
 import { App } from "../main";
@@ -155,7 +155,7 @@ describe("hookable", () => {
 
 	it("should work properly when given an instance of CollectionEventMatcher", async () => {
 		const App = new Hookable();
-		const _collection_event_matcher = new Collection({
+		const _collection_event_matcher = new CollectionMatcher({
 			when: "before",
 			collection_name: "shows",
 			action: ["create"],
@@ -231,7 +231,7 @@ describe("hookable", () => {
 		// collection_name must be a string
 		await assertThrowsAsync(
 			async () => {
-				new Collection({
+				new CollectionMatcher({
 					when: "before",
 					//@ts-ignore
 					collection_name: 222,

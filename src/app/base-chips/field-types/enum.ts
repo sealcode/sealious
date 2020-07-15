@@ -2,6 +2,11 @@ import { Field, Context } from "../../../main";
 
 type Props<S> = { values: S[] | (() => S[]) };
 
+/** Allows only a specified set of values.
+ *
+ * **Params**:
+ * - `allowed_values` - `Array<any>` - list of acceptable values
+ */
 export default class Enum<S> extends Field<S> {
 	getTypeName = () => "enum";
 	allowed_values: S[];

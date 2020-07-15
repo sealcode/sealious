@@ -2,6 +2,12 @@ import { Field, Context } from "../../../main";
 
 type InputType = boolean | "false" | "true" | "1" | "0" | 1 | 0;
 
+/** A field that can be either true or false. Built to handle a variety of inputs.
+ *
+ * **Params**: none
+ *
+ * **Accepted values**: accepts actual booleans, strings (`"true"`, `"false"`) and the numbers `1` and `0`
+ */
 export default class Boolean extends Field<{}, InputType> {
 	getTypeName = () => "boolean";
 	async isProperValue(_: Context, value: InputType) {

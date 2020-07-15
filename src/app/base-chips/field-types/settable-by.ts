@@ -3,19 +3,19 @@ import Field, {
 	HybridFieldParams,
 } from "../../../chip-types/field";
 import { Context } from "../../../main";
-import AccessStrategy from "../../../chip-types/access-strategy";
+import Policy from "../../../chip-types/policy";
 
 export default class SettableBy<T extends Field> extends HybridField<T> {
 	getTypeName = () => "settable-by";
-	access_strategy: AccessStrategy;
+	policy: Policy;
 
 	setParams(
 		params: HybridFieldParams<T> & {
-			access_strategy: AccessStrategy;
+			policy: Policy;
 		}
 	) {
 		super.setParams(params);
-		this.access_strategy = params.access_strategy;
+		this.policy = params.policy;
 	}
 
 	async isProperValue(
@@ -23,7 +23,7 @@ export default class SettableBy<T extends Field> extends HybridField<T> {
 		input: Parameters<T["encode"]>[1],
 		old_value: Parameters<T["encode"]>[2]
 	) {
-		const result = await this.access_strategy.check(context);
+		const result = await this.policy.check(context);
 		if (result && !result.allowed) {
 			return Field.invalid(result.reason);
 		}

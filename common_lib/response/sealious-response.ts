@@ -1,4 +1,4 @@
-import { make } from "../sealious_response_fields/reference-field.js";
+import { make } from "../sealious_response_fields/reference-field";
 import Item from "./item";
 
 export default class SealiousResponse {

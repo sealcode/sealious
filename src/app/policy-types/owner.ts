@@ -1,7 +1,7 @@
-import { AccessStrategy, Context, Response, Query } from "../../main";
+import { Policy, Context, Response, Query } from "../../main";
 import DenyAll from "../../datastore/deny-all";
 
-export default class Owner extends AccessStrategy {
+export default class Owner extends Policy {
 	static type_name = "owner";
 	async _getRestrictingQuery(context: Context) {
 		if (context.user_id) {
@@ -19,9 +19,9 @@ export default class Owner extends AccessStrategy {
 					_metadata: { created_context: { user_id: string } };
 				})._metadata.created_context.user_id
 		) {
-			return AccessStrategy.allow("you are who created this item");
+			return Policy.allow("you are who created this item");
 		} else {
-			return AccessStrategy.deny("you are not who created this item");
+			return Policy.deny("you are not who created this item");
 		}
 	}
 	isItemSensitive = async () => true;

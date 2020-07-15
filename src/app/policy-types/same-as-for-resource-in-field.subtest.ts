@@ -6,10 +6,10 @@ import {
 	Collection,
 	ActionName,
 	FieldTypes,
-	AccessStrategies,
+	Policies,
 	FieldDefinitionHelper as field,
 } from "../../main";
-import { AccessStrategyDefinition } from "../../chip-types/access-strategy";
+import { PolicyDefinition } from "../../chip-types/policy";
 import Matches from "../base-chips/special_filters/matches";
 
 describe("SameAsForResourceInField", () => {
@@ -18,8 +18,8 @@ describe("SameAsForResourceInField", () => {
 	async function setup(
 		app: App,
 		rest_api: MockRestApi,
-		access_strategy: {
-			[action_name in ActionName]?: AccessStrategyDefinition;
+		policy: {
+			[action_name in ActionName]?: PolicyDefinition;
 		}
 	) {
 		numbers.splice(0, numbers.length); // to clear the array;
@@ -35,7 +35,7 @@ describe("SameAsForResourceInField", () => {
 					}
 				),
 			},
-			access_strategy,
+			policy,
 		});
 
 		Collection.fromDefinition(app, {
@@ -46,14 +46,14 @@ describe("SameAsForResourceInField", () => {
 					target_collection: () => Numbers,
 				}),
 			],
-			access_strategy: {
-				create: new AccessStrategies.SameAsForResourceInField({
+			policy: {
+				create: new Policies.SameAsForResourceInField({
 					action_name: "create",
 					field: "number",
 					collection_name: "number-notes",
 				}),
 
-				show: new AccessStrategies.SameAsForResourceInField({
+				show: new Policies.SameAsForResourceInField({
 					action_name: "show",
 					field: "number",
 					collection_name: "number-notes",
@@ -114,8 +114,8 @@ describe("SameAsForResourceInField", () => {
 	it("returns everything for number-notes referring to own numbers", () =>
 		withRunningApp(async ({ app, rest_api }) => {
 			await setup(app, rest_api, {
-				create: AccessStrategies.Public,
-				show: AccessStrategies.Owner,
+				create: Policies.Public,
+				show: Policies.Owner,
 			});
 
 			const posted_notes = await post_number_notes(rest_api, "alice");
@@ -131,8 +131,8 @@ describe("SameAsForResourceInField", () => {
 	it("returns nothing for number-notes referring to other user's numbers", () =>
 		withRunningApp(async ({ app, rest_api }) => {
 			await setup(app, rest_api, {
-				create: AccessStrategies.Public,
-				show: AccessStrategies.Owner,
+				create: Policies.Public,
+				show: Policies.Owner,
 			});
 
 			await post_number_notes(rest_api, "alice");
@@ -148,14 +148,14 @@ describe("SameAsForResourceInField", () => {
 	it("returns item for number-notes referring to numbers with complex access strategy", () =>
 		withRunningApp(async ({ app, rest_api }) => {
 			await setup(app, rest_api, {
-				create: AccessStrategies.LoggedIn,
-				show: new AccessStrategies.Or([
-					AccessStrategies.Owner,
+				create: Policies.LoggedIn,
+				show: new Policies.Or([
+					Policies.Owner,
 
-					new AccessStrategies.If([
+					new Policies.If([
 						"numbers",
 						"greater_than_1",
-						AccessStrategies.Public,
+						Policies.Public,
 					]),
 				]),
 			});
@@ -173,9 +173,9 @@ describe("SameAsForResourceInField", () => {
 	it("doesn't allow to edit number-notes referring to other user's numbers", () =>
 		withRunningApp(async ({ app, rest_api }) => {
 			await setup(app, rest_api, {
-				create: AccessStrategies.LoggedIn,
-				edit: AccessStrategies.Owner,
-				show: AccessStrategies.Owner,
+				create: Policies.LoggedIn,
+				edit: Policies.Owner,
+				show: Policies.Owner,
 			});
 			const posted_notes = await post_number_notes(rest_api, "alice");
 

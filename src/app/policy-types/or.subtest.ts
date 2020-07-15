@@ -2,16 +2,16 @@ import assert from "assert";
 import Bluebird from "bluebird";
 
 import { withRunningApp } from "../../test_utils/with-test-app";
-import create_strategies from "../../test_utils/access-strategy-types/create-strategies-with-complex-pipeline";
+import create_policies from "../../test_utils/policy-types/create-policies-with-complex-pipeline";
 import * as Sealious from "../../main";
 import {
 	Collection,
 	FieldTypes,
-	AccessStrategies,
+	Policies,
 	FieldDefinitionHelper as field,
 } from "../../main";
 
-describe("OrAccessStrategy", () => {
+describe("OrPolicy", () => {
 	async function setup(app: Sealious.App) {
 		Collection.fromDefinition(app, {
 			name: "numbers",
@@ -21,39 +21,33 @@ describe("OrAccessStrategy", () => {
 		const [
 			ComplexDenyPipeline,
 			ComplexAllowPipeline,
-		] = create_strategies.allowDeny();
-		create_strategies.allowDeny();
+		] = create_policies.allowDeny();
+		create_policies.allowDeny();
 
 		const collections = [
 			{
 				name:
 					"collection-or(nested-or(allow, noone), nested-and(allow, public))",
-				strategies: [
-					new AccessStrategies.Or([
-						ComplexAllowPipeline,
-						AccessStrategies.Noone,
-					]),
-					new AccessStrategies.And([
-						ComplexAllowPipeline,
-						AccessStrategies.Public,
-					]),
+				policies: [
+					new Policies.Or([ComplexAllowPipeline, Policies.Noone]),
+					new Policies.And([ComplexAllowPipeline, Policies.Public]),
 				],
 			},
 			{
 				name: "collection-or(complex-allow-pipeline, public)",
-				strategies: [ComplexAllowPipeline, AccessStrategies.Public],
+				policies: [ComplexAllowPipeline, Policies.Public],
 			},
 			{
 				name: "collection-or(complex-deny-pipeline, noone)",
-				strategies: [ComplexDenyPipeline, AccessStrategies.Noone],
+				policies: [ComplexDenyPipeline, Policies.Noone],
 			},
 			{
 				name: "collection-or(complex-deny-pipeline, public)",
-				strategies: [ComplexDenyPipeline, AccessStrategies.Public],
+				policies: [ComplexDenyPipeline, Policies.Public],
 			},
 		];
 
-		for (const { name, strategies } of collections) {
+		for (const { name, policies } of collections) {
 			Collection.fromDefinition(app, {
 				name: name,
 				fields: [
@@ -64,9 +58,9 @@ describe("OrAccessStrategy", () => {
 						true
 					),
 				],
-				access_strategy: {
-					show: new AccessStrategies.Or(strategies),
-					create: AccessStrategies.Public,
+				policy: {
+					show: new Policies.Or(policies),
+					create: Policies.Public,
 				},
 			});
 		}

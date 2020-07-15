@@ -2,7 +2,7 @@ import {
 	Collection,
 	App,
 	FieldTypes,
-	AccessStrategies,
+	Policies,
 	FieldDefinitionHelper as field,
 } from "../../main";
 
@@ -47,8 +47,8 @@ export default (app: App) => {
 					app.collections["user-roles"].fields.user,
 			}),
 		],
-		access_strategy: {
-			show: AccessStrategies.Themselves,
+		policy: {
+			show: Policies.Themselves,
 		},
 	});
 };

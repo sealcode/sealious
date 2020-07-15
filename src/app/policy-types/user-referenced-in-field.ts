@@ -1,12 +1,12 @@
 import {
-	AccessStrategy,
+	Policy,
 	Query,
 	Context,
 	SingleItemResponse,
 	QueryTypes,
 } from "../../main";
 
-export default class UserReferencedInField extends AccessStrategy {
+export default class UserReferencedInField extends Policy {
 	static type_name = "user-referenced-in-field";
 	field_name: string;
 	constructor(field_name: string) {
@@ -20,13 +20,12 @@ export default class UserReferencedInField extends AccessStrategy {
 		});
 	}
 	async checkerFunction(context: Context, item: SingleItemResponse) {
-		if (!context.user_id)
-			return AccessStrategy.deny("you are not logged in");
+		if (!context.user_id) return Policy.deny("you are not logged in");
 		if (context.user_id !== item[this.field_name])
-			return AccessStrategy.deny(
+			return Policy.deny(
 				`you are not the user mentioned in field ${this.field_name}`
 			);
-		return AccessStrategy.allow(
+		return Policy.allow(
 			`you are the user mentioned in field ${this.field_name}`
 		);
 	}

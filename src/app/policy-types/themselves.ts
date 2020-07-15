@@ -1,7 +1,7 @@
 import SingleItemResponse from "../../../common_lib/response/single-item-response";
-import { Context, AccessStrategy, Query } from "../../main";
+import { Context, Policy, Query } from "../../main";
 
-export default class Themselves extends AccessStrategy {
+export default class Themselves extends Policy {
 	static type_name = "themselves";
 	isItemSensitive = async () => true;
 	async _getRestrictingQuery(context: Context) {
@@ -12,10 +12,8 @@ export default class Themselves extends AccessStrategy {
 	async checkerFunction(context: Context, item: SingleItemResponse) {
 		const user_id = item.id;
 		if (context.user_id !== user_id) {
-			return AccessStrategy.deny(
-				`you are not the user of id ${user_id}.`
-			);
+			return Policy.deny(`you are not the user of id ${user_id}.`);
 		}
-		return AccessStrategy.allow("you are the user in question");
+		return Policy.allow("you are the user in question");
 	}
 }

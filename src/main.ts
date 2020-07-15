@@ -9,19 +9,19 @@ export { default as SingleItemResponse } from "../common_lib/response/single-ite
 export { ActionName } from "./action";
 export { default as Action } from "./action";
 export { default as App } from "./app/app";
-export { AccessStrategyClass } from "./chip-types/access-strategy";
+export { PolicyClass } from "./chip-types/policy";
 export { default as Config } from "./app/config";
 export { default as ConfigManager } from "./app/config-manager";
 export { default as Logger } from "./app/logger";
 export { default as Manifest } from "./app/manifest";
 export { default as MetadataFactory } from "./app/metadata";
-export { default as AccessStrategy } from "./chip-types/access-strategy";
-export * as AccessStrategies from "./app/access-strategy-types/access-strategy-types";
+export { default as Policy } from "./chip-types/policy";
+export * as Policies from "./app/policy-types/policy-types";
 export {
 	CollectionDefinition,
 	default as Collection,
 } from "./chip-types/collection";
-export { default as Context } from "./context";
+export { default as Context, SuperContext } from "./context";
 export {
 	default as SubjectPath,
 	SubjectPathEquiv,
@@ -32,7 +32,6 @@ export { default as HttpServer } from "./http/http";
 export { default as i18nFactory } from "./i18n/i18n";
 export { default as RootSubject } from "./subject/predefined-subjects/root-subject";
 export { default as Subject } from "./subject/subject";
-export { default as SuperContext } from "./super-context";
 export { default as CalculatedField } from "./chip-types/calculated-field";
 export { default as Item } from "../common_lib/response/item";
 export * as EventMatchers from "./app/event-matchers";
