@@ -1,4 +1,4 @@
-.PHONY: db test test-nginx start test watch install
+.PHONY: db test test-nginx start test watch install docs
 
 db:
 	docker-compose up -d db
