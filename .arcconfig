@@ -1,7 +1,7 @@
 {
 	"phabricator.uri": "https://hub.sealcode.org/",
 	"arc.land.onto.default": "alpha",
-	"load": ["pinterest-linters", "arc-unit-mocha/src"],
+	"load": ["arcanist-linters", "arc-unit-mocha/src"],
 	"unit.engine": "MochaEngine",
 	"unit.mocha.include": ["setup-test.js", "./lib/**/*.test.js"],
 	"unit.mocha.dockerRoot": "/opt/sealious"
