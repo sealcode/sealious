@@ -38,7 +38,7 @@ if (args.cover) {
 }
 
 if (args.debug) {
-	command = ["node", "debug", ...command];
+	command = ["node", "inspect", ...command];
 }
 
 console.log("spawning mocha...");
