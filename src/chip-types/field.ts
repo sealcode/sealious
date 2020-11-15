@@ -77,6 +77,10 @@ export default abstract class Field {
 		this.collection = collection;
 	}
 
+	setRequired(required: boolean) {
+		this.required = required;
+	}
+
 	/** Sets the name @internal */
 	setName(name: string) {
 		this.name = name;

@@ -28,6 +28,7 @@ export class CollectionItem<T extends Collection = any> {
 	private attachments_loaded = false;
 	private save_mode: "update" | "insert" = "insert";
 	public original_body: CollectionItemBody;
+	public has_been_replaced: boolean = false;
 
 	constructor(
 		public collection: T,
@@ -66,11 +67,15 @@ export class CollectionItem<T extends Collection = any> {
 			.check(context, async () => this);
 	}
 
-	private async throwIfInvalid(context: Context) {
+	private async throwIfInvalid(
+		context: Context,
+		replace_mode: boolean //if true, meaning that if a field has no value, it should be deleted
+	) {
 		context.app.Logger.debug3("ITEM", "Saving item/about to validate");
 		const { valid, errors } = await this.body.validate(
 			context,
-			this.original_body
+			this.original_body,
+			replace_mode
 		);
 		await this.gatherDefaultValues(context);
 		context.app.Logger.debug3("ITEM", "Saving item/validation result", {
@@ -98,7 +103,7 @@ export class CollectionItem<T extends Collection = any> {
 				modified_at: Date.now(),
 			};
 			await this.collection.emit("before:create", [context, this]);
-			await this.throwIfInvalid(context);
+			await this.throwIfInvalid(context, true);
 			const encoded = await this.body.encode(context);
 			context.app.Logger.debug3("ITEM", "creating a new item", {
 				metadata: this._metadata,
@@ -116,7 +121,7 @@ export class CollectionItem<T extends Collection = any> {
 				metadata: this._metadata,
 			});
 			await this.collection.emit("before:edit", [context, this]);
-			await this.throwIfInvalid(context);
+			await this.throwIfInvalid(context, this.has_been_replaced);
 			const encoded = await this.body.encode(context);
 			await context.app.Datastore.update(
 				this.collection.name,
@@ -175,6 +180,7 @@ export class CollectionItem<T extends Collection = any> {
 	replace(values: Partial<ItemFields<T>>) {
 		this.body = CollectionItemBody.empty<T>(this.collection);
 		this.setMultiple(values);
+		this.has_been_replaced = true;
 	}
 
 	get<FieldName extends keyof ItemFields<T>>(

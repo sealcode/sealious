@@ -165,7 +165,8 @@ export default class CollectionItemBody<T extends Collection = any> {
 
 	async validate(
 		context: Context,
-		original_body: CollectionItemBody
+		original_body: CollectionItemBody,
+		replace_mode: boolean //if true, meaning that if a field has no value, it should be deleted
 	): Promise<{
 		valid: boolean;
 		errors: { [f in keyof ItemFields<T>]?: { message: string } };
@@ -173,7 +174,12 @@ export default class CollectionItemBody<T extends Collection = any> {
 		const promises = [];
 		const errors: { [f in keyof ItemFields<T>]?: { message: string } } = {};
 		let valid = true;
-		const fields_to_check = Object.keys(this.collection.fields);
+		const fields_to_check = new Set(this.changed_fields.values());
+		if (replace_mode) {
+			for (const field of this.collection.getRequiredFields()) {
+				fields_to_check.add(field.name);
+			}
+		}
 
 		for (const field_name of fields_to_check) {
 			if (!this.collection.fields[field_name as string]) {

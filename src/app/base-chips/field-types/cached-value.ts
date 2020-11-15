@@ -3,6 +3,8 @@ import HybridField from "../../../chip-types/field-hybrid";
 import ItemList from "../../../chip-types/item-list";
 import { EventDescription } from "../../delegate-listener";
 import { CollectionItem } from "../../../chip-types/collection-item";
+import { BadContext } from "../../../response/errors";
+import isEmpty from "../../../utils/is-empty";
 
 export type RefreshCondition = {
 	event: EventDescription;
@@ -183,8 +185,8 @@ export default class CachedValue<T extends Field> extends HybridField<T> {
 		new_value: Parameters<T["isProperValue"]>[1],
 		old_value: Parameters<T["isProperValue"]>[2]
 	) {
-		if (!context.is_super) {
-			return Promise.reject("This is a read-only field");
+		if (!isEmpty(new_value) && !context.is_super) {
+			throw new BadContext("This is a read-only field");
 		}
 		return this.virtual_field.isProperValue(context, new_value, old_value);
 	}

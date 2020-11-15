@@ -180,4 +180,8 @@ export default abstract class Collection extends Emittery {
 	on(event_name: CollectionEvent, cb: CollectionCallback) {
 		super.on(event_name, cb);
 	}
+
+	getRequiredFields(): Field[] {
+		return Object.values(this.fields).filter((field) => field.required);
+	}
 }
