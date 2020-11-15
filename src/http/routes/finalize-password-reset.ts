@@ -8,38 +8,29 @@ export default (app: App) => {
 		async (app, _, params) => {
 			assert(params.token, "Token missing");
 			assert(params.password, "Password missing");
-			const intent_response = await app.runAction(
-				new app.SuperContext(),
-				["collections", "password-reset-intents"],
-				"show",
-				{ filter: { token: params.token } }
-			);
+			const intent_response = await app.collections[
+				"password-reset-intents"
+			]
+				.suList()
+				.filter({ token: params.token })
+				.fetch();
+
 			if (intent_response.empty) {
 				throw new Error("Incorrect token");
 			}
 
-			const { email, id } = intent_response.items[0];
+			const intent = intent_response.items[0];
 
-			const user_response = await app.runAction(
-				new app.SuperContext(),
-				["collections", "users"],
-				"show",
-				{ filter: { email } }
-			);
+			const user_response = await app.collections.users
+				.suList()
+				.filter({ email: intent.get("email") })
+				.fetch();
 			if (user_response.empty) {
 				throw new Error("No user with this email address.");
 			}
-			await app.runAction(
-				new app.SuperContext(),
-				["collections", "users", user_response.items[0].id],
-				"edit",
-				{ password: params.password }
-			);
-			await app.runAction(
-				new app.SuperContext(),
-				["collections", "password-reset-intents", id],
-				"delete"
-			);
+			user_response.items[0].set("password", params.password);
+			await user_response.items[0].save(new app.SuperContext());
+			await intent.remove(new app.SuperContext());
 			return "Password reset successful";
 		}
 	);

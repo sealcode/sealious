@@ -8,7 +8,7 @@
 		"target": "ES2019",
 		"declaration": true,
 		"esModuleInterop": true,
-		"lib": ["es6"],
+		"lib": ["es6", "esnext"],
 		"outDir": "lib",
 		"checkJs": true,
 		"allowJs": true,

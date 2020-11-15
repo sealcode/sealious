@@ -1,47 +1,37 @@
-import {
-	App,
-	EventMatchers,
-	Collection,
-	FieldTypes,
-	Policies,
-	FieldDefinitionHelper as field,
-} from "../../main";
+import { Collection, FieldTypes, Policies, App, Context } from "../../main";
 import PasswordResetTemplate from "../../email/templates/password-reset";
+import { CollectionItem } from "../../chip-types/collection-item";
 
-export default (app: App) => {
-	app.addHook(
-		new EventMatchers.CollectionMatcher({
-			when: "after",
-			collection_name: "password-reset-intents",
-			action: "create",
+export default class PasswordResetIntents extends Collection {
+	name = "password-reset-intents";
+	fields = {
+		email: new FieldTypes.ValueExistingInCollection({
+			field: "email",
+			collection: "users",
+			include_forbidden: true,
 		}),
-		async (_, intent) => {
-			const { token } = await app.runAction(
-				new app.SuperContext(),
-				["collections", "password-reset-intents", intent.id],
-				"show"
-			);
-			const message = await PasswordResetTemplate(app, {
-				email_address: intent.email,
-				token,
-			});
-			await message.send(app);
-		}
-	);
-
-	return Collection.fromDefinition(app, {
-		name: "password-reset-intents",
-		fields: [
-			field("email", FieldTypes.ValueExistingInCollection, {
-				field: () => app.collections.users.fields.email,
-				include_forbidden: true,
-			}),
-			field("token", FieldTypes.SecretToken),
-		],
-		policy: {
-			default: Policies.Super,
-			create: Policies.Public,
-			edit: Policies.Noone,
-		},
-	});
-};
+		token: new FieldTypes.SecretToken(),
+	};
+	policies = {
+		create: new Policies.Public(),
+		edit: new Policies.Noone(),
+	};
+	defaultPolicy: Policies.Super;
+	async init(app: App, name: string) {
+		await super.init(app, name);
+		app.collections["password-reset-intents"].on(
+			"after:create",
+			async ([_, intent]: [
+				Context,
+				CollectionItem<PasswordResetIntents>,
+				any
+			]) => {
+				const message = await PasswordResetTemplate(app, {
+					email_address: intent.get("email"),
+					token: intent.get("token"),
+				});
+				await message.send(app);
+			}
+		);
+	}
+}

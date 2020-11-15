@@ -1,3 +1,5 @@
+import { LoggerLevel } from "./logger";
+
 export type Environment = "dev" | "production";
 
 type Config = {
@@ -5,13 +7,12 @@ type Config = {
 		environment: Environment;
 	};
 	logger: {
-		level: "info" | "error" | "debug" | "emerg";
+		level: LoggerLevel;
 	};
 	"www-server": {
 		port: number;
 		"api-base": string;
 		"session-cookie-name": string;
-		"anonymous-cookie-name": string;
 		"max-payload-bytes": number;
 	};
 	datastore_mongo: {

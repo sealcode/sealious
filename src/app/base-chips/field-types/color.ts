@@ -1,7 +1,8 @@
 import { Field } from "../../../main";
 import ColorParser from "color"; //putting it here not to slow down `new Sealious.app()`
 
-export default class Color extends Field<{}, string> {
+export default class Color extends Field {
+	typeName = "color";
 	async isProperValue(_: any, new_value: string) {
 		try {
 			if (typeof new_value === "string") {

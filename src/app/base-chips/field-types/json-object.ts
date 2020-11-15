@@ -2,8 +2,8 @@ import { Field, Context } from "../../../main";
 
 import flattenObjectToDotNotation from "../../../utils/flatten-object-dot-notation";
 
-export default class JsonObject extends Field<{}> {
-	getTypeName = () => "json-object";
+export default class JsonObject extends Field {
+	typeName = "json-object";
 
 	async isProperValue(_: Context, new_value: {}, __: {}) {
 		let stringified_value;
@@ -26,12 +26,8 @@ export default class JsonObject extends Field<{}> {
 
 	async getAggregationStages(
 		_: Context,
-		{ filter }: Parameters<Field["getAggregationStages"]>[1]
+		filter_value: { [value: string]: any }
 	) {
-		if (!filter) {
-			return [];
-		}
-
 		// the following will pick only filters relating to this particular field and turn them into dot notation.
 		// example when field "metadata" is of type json-object:
 		//   {name: "Hoover", metadata: {"age": 22}}
@@ -40,7 +36,7 @@ export default class JsonObject extends Field<{}> {
 		// note that "name" is missing
 		const flattened_filter = flattenObjectToDotNotation(
 			await this.getValuePath(),
-			filter[this.name] || {}
+			filter_value || {}
 		);
 		for (let prop_path of Object.keys(flattened_filter)) {
 			const filter_entry = flattened_filter[prop_path];

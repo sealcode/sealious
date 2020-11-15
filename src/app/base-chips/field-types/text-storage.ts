@@ -1,4 +1,4 @@
-import { Field } from "../../../main";
+import { Field, Context } from "../../../main";
 import { QueryStage } from "../../../datastore/query";
 import escape from "escape-html";
 
@@ -6,24 +6,23 @@ type TextStorageFormat = { original: string; safe: string };
 type TextFormatParam = keyof TextStorageFormat;
 
 export default abstract class TextStorage extends Field {
-	async encode(_: any, input: string) {
-		return {
+	async encode(context: Context, input: string) {
+		context.app.Logger.debug2("TEXT FIELD", "encode", {
+			name: this.name,
+			input,
+		});
+		const ret = {
 			original: input,
 			safe: escape(input),
 		};
+		context.app.Logger.debug3("TEXT FIELD", "encode/return", ret);
+		return ret;
 	}
 
 	async getAggregationStages(
-		_: any,
-		query_params: {
-			filter: {
-				[field_name: string]: string | { regex: string | RegExp };
-			};
-		}
+		_: Context,
+		filter_value: string | { regex: string | RegExp }
 	) {
-		let filter_value =
-			query_params.filter && query_params.filter[this.name];
-
 		if (!filter_value) {
 			return [];
 		}
@@ -56,20 +55,23 @@ export default abstract class TextStorage extends Field {
 	}
 
 	async decode(
-		_: any,
+		context: Context,
 		db_value: TextStorageFormat,
 		__: any,
 		format?: TextFormatParam
 	) {
+		context.app.Logger.debug2("TEXT FIELD", "decode", { db_value, format });
+		let ret;
 		if (db_value === null || db_value === undefined) {
-			return db_value;
+			ret = db_value;
+		} else if (!format) {
+			ret = (db_value as TextStorageFormat).safe;
+		} else {
+			ret =
+				(db_value as TextStorageFormat)[format] ||
+				(db_value as TextStorageFormat).safe;
 		}
-		if (!format) {
-			return (db_value as TextStorageFormat).safe;
-		}
-		return (
-			(db_value as TextStorageFormat)[format] ||
-			(db_value as TextStorageFormat).safe
-		);
+		context.app.Logger.debug3("TEXT FIELD", "decode/return", ret);
+		return ret;
 	}
 }

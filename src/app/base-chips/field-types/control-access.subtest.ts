@@ -1,140 +1,126 @@
 import assert from "assert";
 import { withRunningApp, MockRestApi } from "../../../test_utils/with-test-app";
 import { assertThrowsAsync } from "../../../test_utils/assert-throws-async";
-import {
-	App,
-	Collection,
-	FieldTypes,
-	Policies,
-	FieldDefinitionHelper as field,
-} from "../../../main";
-import { CollectionResponse } from "../../../../common_lib/response/responses";
+import { App, Collection, FieldTypes, Policies } from "../../../main";
+import { TestAppType } from "../../../test_utils/test-app";
 const SSH_KEYS_URL = "/api/v1/collections/ssh-keys";
+
+let sessions: { [username: string]: {}[] } = {};
 
 type Key = { [access in "_public" | "_private"]: string };
 
-describe("control-access", () => {
-	let sessions: { [username: string]: {}[] } = {};
-	async function createSshKeysCollections(app: App) {
-		Collection.fromDefinition(app, {
-			name: "ssh-keys",
-			fields: [
-				field("public", FieldTypes.Text, {}, true),
-				field(
-					"private",
-					FieldTypes.ControlAccess,
-					{
-						target_policies: {
-							show: new Policies.Roles(["admin"]),
-							edit: new Policies.Roles(["admin"]),
-						},
-						value_when_not_allowed: "Forbidden",
-						base_field_type: FieldTypes.Text,
-						base_field_params: {
-							min_length: 3,
-						},
-					},
-					true
-				),
-			],
-			policy: {
-				default: Policies.Public,
-				create: [Policies.Roles, ["admin"]],
-			},
-		});
-	}
+function extend(t: TestAppType) {
+	return class extends t {
+		collections = {
+			...t.BaseCollections,
+			"ssh-keys": new (class extends Collection {
+				fields = {
+					public: new FieldTypes.Text(),
+					private: new FieldTypes.ControlAccess(
+						new FieldTypes.Text({ min_length: 3 }),
+						{
+							target_policies: {
+								show: new Policies.Roles(["admin"]),
+								edit: new Policies.Roles(["admin"]),
+							},
+							value_when_not_allowed: "Forbidden",
+						}
+					),
+				};
+			})(),
+		};
+		policies = {
+			create: new Policies.Roles(["admin"]),
+		};
+	};
+}
 
-	async function setupUsers(App: App, rest_api: MockRestApi) {
-		const password = "it-really-doesnt-matter";
-		let admin_id;
-		for (let username of ["admin", "regular-user"]) {
-			const user = await App.runAction(
-				new App.SuperContext(),
-				["collections", "users"],
-				"create",
-				{
-					username,
-					password,
-					email: `${username}@example.com`,
-				}
-			);
-			sessions[username] = await rest_api.login({
+async function setupUsers(App: App, rest_api: MockRestApi) {
+	const password = "it-really-doesnt-matter";
+	let admin_id;
+	for (let username of ["admin", "regular-user"]) {
+		const user = await App.collections.users.create(
+			new App.SuperContext(),
+			{
 				username,
 				password,
-			});
-			if (username === "admin") admin_id = user.id;
-		}
-
-		await rest_api.post(
-			"/api/v1/collections/user-roles",
-			{
-				user: admin_id,
-				role: "admin",
-			},
-			sessions.admin
+				email: `${username}@example.com`,
+				roles: [],
+			}
 		);
+
+		sessions[username] = await rest_api.login({
+			username,
+			password,
+		});
+		if (username === "admin") admin_id = user.id;
 	}
 
-	async function fillKeysCollections(App: App) {
-		const keys: Key[] = [
-			{
-				_public: "a-public-key",
-				_private: "seeeeecret",
-			},
-			{
-				_public: "go-get-it",
-				_private: "you-cannot-see",
-			},
-		];
-		for (let { _public, _private } of keys) {
-			await App.runAction(
-				new App.SuperContext(),
-				["collections", "ssh-keys"],
-				"create",
-				{
-					public: _public,
-					private: _private,
-				}
-			);
-		}
-	}
+	await rest_api.post(
+		"/api/v1/collections/user-roles",
+		{
+			user: admin_id,
+			role: "admin",
+		},
+		sessions.admin
+	);
+}
 
-	async function setup(app: App, rest_api: MockRestApi) {
-		await createSshKeysCollections(app);
-		await fillKeysCollections(app);
-		await setupUsers(app, rest_api);
+async function fillKeysCollections(App: App) {
+	const keys: Key[] = [
+		{
+			_public: "a-public-key",
+			_private: "seeeeecret",
+		},
+		{
+			_public: "go-get-it",
+			_private: "you-cannot-see",
+		},
+	];
+	for (let { _public, _private } of keys) {
+		await App.collections["ssh-keys"].create(new App.SuperContext(), {
+			public: _public,
+			private: _private,
+		});
 	}
+}
 
+async function setup(app: App, rest_api: MockRestApi) {
+	await fillKeysCollections(app);
+	await setupUsers(app, rest_api);
+}
+
+describe("control-access", () => {
 	it("Hides a protected value from regular-user", async () =>
-		withRunningApp(async ({ app, rest_api }) => {
+		withRunningApp(extend, async ({ app, rest_api }) => {
 			await setup(app, rest_api);
 
-			const { items: ssh_keys } = (await rest_api.get(
+			const { items: ssh_keys } = await rest_api.get(
 				SSH_KEYS_URL,
 				sessions["regular-user"]
-			)) as CollectionResponse;
+			);
 
-			ssh_keys.forEach((key) => {
+			ssh_keys.forEach((key: any) => {
 				assert.deepEqual(key.private, "Forbidden");
 			});
 		}));
 
 	it("Uncovers a protected value for admin", async () =>
-		withRunningApp(async ({ app, rest_api }) => {
+		withRunningApp(extend, async ({ app, rest_api }) => {
 			await setup(app, rest_api);
 
-			const { items: ssh_keys } = (await rest_api.get(
+			const { items: ssh_keys } = await rest_api.get(
 				SSH_KEYS_URL,
 				sessions.admin
-			)) as CollectionResponse;
+			);
 
-			ssh_keys.forEach((key) => {
+			ssh_keys.forEach((key: any) => {
 				assert(key.private.length >= 3);
 			});
 		}));
 
 	it("Respects given field type constraints", async () =>
-		withRunningApp(async ({ app, rest_api }) => {
+		withRunningApp(extend, async ({ app, rest_api }) => {
 			await setup(app, rest_api);
 
 			await assertThrowsAsync(
@@ -156,7 +142,7 @@ describe("control-access", () => {
 		}));
 
 	it("Allows admin to update a protected field", async () =>
-		withRunningApp(async ({ app, rest_api }) => {
+		withRunningApp(extend, async ({ app, rest_api }) => {
 			await setup(app, rest_api);
 
 			const key = await rest_api.post(
@@ -168,7 +154,9 @@ describe("control-access", () => {
 				sessions.admin
 			);
 
-			const updated_key = await rest_api.patch(
+			const {
+				items: [updated_key],
+			} = await rest_api.patch(
 				`${SSH_KEYS_URL}/${key.id}`,
 				{
 					private: "654321",
@@ -176,11 +164,11 @@ describe("control-access", () => {
 				sessions.admin
 			);
 
-			assert.deepEqual(updated_key.item.private, "654321");
+			assert.deepEqual(updated_key.private, "654321");
 		}));
 
 	it("Doesn't allow regular-user to update a protected field", async () =>
-		withRunningApp(async ({ app, rest_api }) => {
+		withRunningApp(extend, async ({ app, rest_api }) => {
 			await setup(app, rest_api);
 
 			const key = await rest_api.post(

@@ -3,7 +3,7 @@ import { Field, Context } from "../../../main";
 const uuid = require("node-uuid").v4;
 
 export default class SecretToken extends Field {
-	getTypeName = () => "secret-token";
+	typeName = "secret-token";
 
 	isOldValueSensitive = () => true;
 

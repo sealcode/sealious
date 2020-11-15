@@ -1,18 +1,17 @@
 import assert from "assert";
-import { withStoppedApp, MockRestApi } from "../../../test_utils/with-test-app";
+import {
+	withStoppedApp,
+	MockRestApi,
+	withRunningApp,
+} from "../../../test_utils/with-test-app";
 import { assertThrowsAsync } from "../../../test_utils/assert-throws-async";
 import { getDateTime } from "../../../utils/get-datetime";
-import {
-	App,
-	Context,
-	Item,
-	SingleItemResponse,
-	Collection,
-	FieldTypes,
-	FieldDefinitionHelper as field,
-	EventMatchers,
-} from "../../../main";
+import { App, Context, Collection, FieldTypes, Field } from "../../../main";
 import Bluebird from "bluebird";
+import { TestAppType } from "../../../test_utils/test-app";
+import ItemList from "../../../chip-types/item-list";
+import { RefreshCondition } from "./cached-value";
+import { EventDescription } from "../../delegate-listener";
 
 const action_to_status: { [name: string]: string } = {
 	create: "created",
@@ -21,90 +20,85 @@ const action_to_status: { [name: string]: string } = {
 	close: "closed",
 };
 
-describe("cached-value", () => {
-	function createCollections(app: App, is_status_field_desired = true) {
-		Collection.fromDefinition(app, {
-			name: "accounts",
-			fields: [
-				field("username", FieldTypes.Username, {}, true),
-				field("number", FieldTypes.CachedValue, {
-					base_field_type: FieldTypes.Int,
-					base_field_params: {
-						min: 0,
-					},
-					get_value: async (_: Context, resource_id: string) => {
-						return app.runAction(
-							new app.SuperContext(),
-							["collections", "accounts", resource_id],
-							"show"
-						);
-					},
-					refresh_on: [],
-				}),
-				field("date_time", FieldTypes.CachedValue, {
-					base_field_type: FieldTypes.DateTime,
-					get_value: async () => new Date("2018-01-01").getTime(),
-					refresh_on: make_refresh_on(app),
-				}),
-			],
-		});
-		Collection.fromDefinition(app, {
-			name: "actions",
-			fields: [
-				field(
-					"name",
-					FieldTypes.Enum,
-					{
-						values: ["create", "open", "suspend", "close"],
-					},
-					true
-				),
-				field("account", FieldTypes.SingleReference, {
-					target_collection: () => app.collections.accounts,
-				}),
-			],
-		});
-		if (is_status_field_desired) {
-			create_status_field(app);
-		}
-	}
-
-	function create_status_field(app: App) {
-		const collection = app.collections.accounts;
-		collection.addField(
-			field("status", FieldTypes.CachedValue, {
-				base_field_type: FieldTypes.Enum,
-				base_field_params: {
-					values: Object.values(action_to_status),
+const extend = (
+	is_status_field_desired: boolean,
+	clear_database_on_stop: boolean = true
+) => (t: TestAppType) => {
+	const account_fields: { [field_name: string]: Field } = {
+		username: new FieldTypes.Username(),
+		number: new FieldTypes.CachedValue(
+			new FieldTypes.Int({
+				min: 0,
+			}),
+			{
+				get_value: async (context: Context, resource_id: string) => {
+					return 0;
 				},
-				get_value: async (_: Context, resource_id: string) => {
-					const [latest_action] = await app.Datastore.aggregate(
-						"actions",
-						[
-							{
-								$match: {
-									account: resource_id,
-								},
-							},
-							{
-								$group: {
-									_id: "$name",
-									timestamp: {
-										$max:
-											"$_metadata.last_modified_context.timestamp",
-									},
-								},
-							},
-						]
+				refresh_on: [],
+				initial_value: 0,
+			}
+		),
+		date_time: new FieldTypes.CachedValue(new FieldTypes.DateTime(), {
+			get_value: async () => new Date("2018-01-01").getTime(),
+			refresh_on: make_refresh_on(),
+			initial_value: 0,
+		}),
+	};
+	if (is_status_field_desired) {
+		account_fields.status = new FieldTypes.CachedValue(
+			new FieldTypes.Enum(Object.values(action_to_status)),
+			{
+				get_value: async (context: Context, resource_id: string) => {
+					context.app.Logger.debug3(
+						"STATUS FIELD",
+						`calculating value for ${resource_id}`
 					);
-
-					return action_to_status[latest_action._id];
+					const {
+						items,
+					} = await context.app.collections.actions
+						.list(new context.app.SuperContext())
+						.filter({ account: resource_id })
+						.sort({ "_metadata.modified_at": "desc" })
+						.paginate({ items: 1 })
+						.fetch();
+					context.app.Logger.debug3(
+						"STATUS FIELD",
+						"New cached value is",
+						action_to_status[items[0].get("name")]
+					);
+					return action_to_status[items[0].get("name")];
 				},
-				refresh_on: make_refresh_on(app),
-			})
+				refresh_on: make_refresh_on(),
+				initial_value: "created",
+			}
 		);
 	}
+	const accounts = new (class extends Collection {
+		name = "accounts";
+		fields = {
+			...account_fields,
+		};
+	})();
 
+	const actions = new (class extends Collection {
+		name = "actions";
+		fields = {
+			name: new FieldTypes.Enum(["create", "open", "suspend", "close"]),
+			account: new FieldTypes.SingleReference("accounts"),
+		};
+	})();
+
+	return class extends t {
+		collections = {
+			...App.BaseCollections,
+			actions,
+			accounts,
+		};
+		clear_database_on_stop = clear_database_on_stop;
+	};
+};
+
+describe("cached-value", () => {
 	async function add_account(rest_api: MockRestApi, account: {}) {
 		const { id } = await rest_api.post(
 			"/api/v1/collections/accounts",
@@ -119,20 +113,18 @@ describe("cached-value", () => {
 
 	async function add_a_few_accounts(app: App) {
 		return Bluebird.map([1, 2, 3, 4, 5], async (i) =>
-			app.runAction(
-				new app.SuperContext(),
-				["collections", "accounts"],
-				"create",
-				{ username: `user_${i}`, number: i }
-			)
+			app.collections.accounts.suCreate({
+				username: `user_${i}`,
+				number: i,
+			})
 		);
 	}
 
 	it("Correctly fills in cached-values if such field is added later", async () => {
 		const account_ids: string[] = [];
 		await withStoppedApp(
-			async ({ app, dontClearDatabaseOnStop, rest_api }) => {
-				createCollections(app, "create_status_field" && false);
+			extend(false, false),
+			async ({ app, rest_api }) => {
 				await app.start();
 				for (const username of ["user_1", "user_2"]) {
 					account_ids.push(await add_account(rest_api, { username }));
@@ -141,23 +133,17 @@ describe("cached-value", () => {
 					name: "suspend",
 					account: account_ids[1],
 				});
-
-				dontClearDatabaseOnStop();
 			}
 		);
 
-		await withStoppedApp(async ({ app, rest_api }) => {
-			createCollections(app);
-			await app.start();
+		await withRunningApp(extend(true), async ({ rest_api }) => {
 			await assert_status_equals(rest_api, account_ids[0], "created");
 			await assert_status_equals(rest_api, account_ids[1], "suspended");
 		});
 	});
 
 	it("Correctly updates cached-value on create", async () =>
-		withStoppedApp(async ({ app, rest_api }) => {
-			createCollections(app);
-			await app.start();
+		withRunningApp(extend(true), async ({ rest_api }) => {
 			const account_ids = [];
 			for (const username of ["user_1", "user_2"]) {
 				account_ids.push(await add_account(rest_api, { username }));
@@ -177,9 +163,7 @@ describe("cached-value", () => {
 		}));
 
 	it("Correctly updates cached-value on update", async () =>
-		withStoppedApp(async ({ app, rest_api }) => {
-			createCollections(app);
-			await app.start();
+		withRunningApp(extend(true), async ({ rest_api }) => {
 			const account_id = await add_account(rest_api, {
 				username: "user_1",
 			});
@@ -198,17 +182,13 @@ describe("cached-value", () => {
 		}));
 
 	it("Respects is_proper_value of base field type", async () =>
-		withStoppedApp(async ({ app }) => {
-			createCollections(app);
-			await app.start();
+		withRunningApp(extend(true), async ({ app }) => {
 			await assertThrowsAsync(
-				() =>
-					app.runAction(
-						new app.SuperContext(),
-						["collections", "accounts"],
-						"create",
-						{ username: "user_2", number: -1 }
-					),
+				async () =>
+					app.collections.accounts.suCreate({
+						username: "user_2",
+						number: -1,
+					}),
 				(error) => {
 					assert.equal(
 						error.data.number.message,
@@ -219,9 +199,7 @@ describe("cached-value", () => {
 		}));
 
 	it("Respects filters of base field type", async () =>
-		withStoppedApp(async ({ app, rest_api }) => {
-			createCollections(app);
-			await app.start();
+		withRunningApp(extend(true), async ({ app, rest_api }) => {
 			await add_a_few_accounts(app);
 
 			const { items: accounts } = await rest_api.get(
@@ -232,67 +210,69 @@ describe("cached-value", () => {
 		}));
 
 	it("Respects format of base field type", async () =>
-		withStoppedApp(async ({ app, rest_api }) => {
-			createCollections(app);
-			await app.start();
+		withRunningApp(extend(true), async ({ rest_api }) => {
 			const id = await add_account(rest_api, { username: "user_1" });
 
 			const expected_datetime = getDateTime(
 				new Date("2018-01-01"),
 				"yyyy-mm-dd hh:mm:ss"
 			);
-			const actual_datetime = ((await rest_api.getSealiousResponse(
+			const actual_datetime = ((await rest_api.get(
 				`/api/v1/collections/accounts/${id}?format[date_time]=human_readable`
-			)) as any).date_time;
+			)) as any).items[0].date_time;
 
 			assert.equal(actual_datetime, expected_datetime);
 		}));
 
 	it("Properly responds to recursive edits", async () =>
-		withStoppedApp(async ({ app }) => {
+		withStoppedApp(extend(true), async ({ app, app_class }) => {
 			await assertThrowsAsync(
 				async () => {
-					Collection.fromDefinition(app, {
-						name: "happy-numbers",
-						fields: [
-							field("number", FieldTypes.Int, {}, true),
-							field("double_number", FieldTypes.CachedValue, {
-								base_field_type: FieldTypes.Int,
-								get_value: async (
-									context: Context,
-									number_id: string
-								) => {
-									const sealious_response = await app.runAction(
-										context,
-										[
-											"collections",
-											"happy-numbers",
-											number_id,
-										],
-										"show"
-									);
-									return sealious_response.number * 2;
-								},
-								refresh_on: [
-									{
-										event_matcher: new EventMatchers.CollectionMatcher(
-											{
-												when: "after",
-												collection_name:
-													"happy-numbers",
-												action: "create",
-											}
-										),
-										resource_id_getter: async (
-											_: any,
-											resource: Item
-										) => resource.id,
+					const HappyNumbers = class HappyNumbers extends Collection {
+						fields = {
+							number: new FieldTypes.Int(),
+							double_number: new FieldTypes.CachedValue(
+								new FieldTypes.Int(),
+								{
+									get_value: async (
+										context: Context,
+										number_id: string
+									) => {
+										const response = await new ItemList(
+											app.collections["happy-numbers"],
+											context
+										)
+											.ids([number_id])
+											.fetch();
+										return (
+											response.items[0].get("number") * 2
+										);
 									},
-								],
-							}),
-						],
-					});
-					await app.start();
+									refresh_on: [
+										{
+											event: new EventDescription(
+												"happy-numbers",
+												"after:create"
+											),
+											resource_id_getter: async (
+												_: any,
+												item
+											) => [item.id],
+										},
+									],
+									initial_value: 0,
+								}
+							),
+						};
+					};
+
+					const new_app = new (class extends app_class {
+						collections = {
+							...super.collections,
+							"happy-numbers": new HappyNumbers(),
+						};
+					})();
+					await new_app.start();
 				},
 				(e) => {
 					assert.equal(
@@ -304,23 +284,19 @@ describe("cached-value", () => {
 		}));
 });
 
-function make_refresh_on(app: App) {
+function make_refresh_on(): RefreshCondition[] {
 	return [
 		{
-			event_matcher: new EventMatchers.CollectionMatcher({
-				when: "after",
-				collection_name: "actions",
-				action: "create",
-			}),
-			resource_id_getter: (_: any, resource: Item) => resource.account,
+			event: new EventDescription("actions", "after:create"),
+			resource_id_getter: async (_: any, item) => [
+				item.get("account") as string,
+			],
 		},
 		{
-			event_matcher: new EventMatchers.Resource({
-				when: "after",
-				collection_name: "actions",
-				action: "edit",
-			}),
-			resource_id_getter: (_: any, resource: Item) => resource.account,
+			event: new EventDescription("actions", "after:edit"),
+			resource_id_getter: async (_: any, resource) => [
+				resource.get("account") as string,
+			],
 		},
 	];
 }
@@ -330,8 +306,8 @@ async function assert_status_equals(
 	account_id: string,
 	expected_status: string
 ) {
-	const response = (await rest_api.getSealiousResponse(
+	const { items } = (await rest_api.get(
 		`/api/v1/collections/accounts/${account_id}`
-	)) as SingleItemResponse;
-	assert.equal(response.status, expected_status);
+	)) as any;
+	assert.equal(items[0].status, expected_status);
 }

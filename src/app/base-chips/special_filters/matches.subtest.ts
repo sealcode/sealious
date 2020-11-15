@@ -1,29 +1,34 @@
 import * as assert from "assert";
 
 import { withRunningApp, MockRestApi } from "../../../test_utils/with-test-app";
-import { App, Collection, Item, FieldTypes } from "../../../main";
+import { Collection, FieldTypes } from "../../../main";
 import Matches from "./matches";
+import { TestAppType } from "../../../test_utils/test-app";
+import { SerializedItemBody } from "../../../chip-types/collection-item";
+
+function extend(t: TestAppType) {
+	return class extends t {
+		collections = {
+			...t.BaseCollections,
+			numbers: new (class extends Collection {
+				fields = {
+					number: new FieldTypes.Int(),
+				};
+			})(),
+		};
+		named_filters = {
+			positive: new Matches("numbers", {
+				number: { ">": 0 },
+			}),
+			negative: new Matches("numbers", {
+				number: { "<": 0 },
+			}),
+		};
+	};
+}
 
 describe("Matches", () => {
-	async function setup(app: App, rest_api: MockRestApi) {
-		Collection.fromDefinition(app, {
-			name: "numbers",
-			fields: [
-				{
-					name: "number",
-					type: FieldTypes.Int,
-				},
-			],
-			named_filters: {
-				positive: new Matches(app, () => app.collections.numbers, {
-					number: { ">": 0 },
-				}),
-				negative: new Matches(app, () => app.collections.numbers, {
-					number: { "<": 0 },
-				}),
-			},
-		});
-
+	async function setup(rest_api: MockRestApi) {
 		const numbers = [-2, -1, 0, 1, 2];
 		for (let number of numbers) {
 			await rest_api.post("/api/v1/collections/numbers", { number });
@@ -31,42 +36,42 @@ describe("Matches", () => {
 	}
 
 	it("returns only positive numbers when using filter", () =>
-		withRunningApp(async ({ app, rest_api }) => {
-			await setup(app, rest_api);
-			const sealious_response = await app.runAction(
-				new app.SuperContext(),
-				["collections", "numbers", "@positive"],
-				"show"
-			);
+		withRunningApp(extend, async ({ app, rest_api }) => {
+			await setup(rest_api);
+			const sealious_response = await app.collections.numbers
+				.suList()
+				.filter(app.collections.numbers.getNamedFilter("positive"))
+				.fetch();
+
 			assert.deepEqual(
-				sealious_response.items.map(
-					(resource: Item) => resource.number
+				sealious_response.items.map((resource) =>
+					resource.get("number")
 				),
 				[1, 2]
 			);
 		}));
 
 	it("returns only positive numbers when using @positive filter", () =>
-		withRunningApp(async ({ app, rest_api }) => {
-			await setup(app, rest_api);
+		withRunningApp(extend, async ({ rest_api }) => {
+			await setup(rest_api);
 			const { items } = await rest_api.get(
 				"/api/v1/collections/numbers/@positive?sort[number]=asc"
 			);
 
 			assert.deepEqual(
-				items.map((resource: Item) => resource.number),
+				items.map((resource: SerializedItemBody) => resource.number),
 				[1, 2]
 			);
 		}));
 
 	it("returns empty array when using both @positive and @negative filters", () =>
-		withRunningApp(async ({ app, rest_api }) => {
-			await setup(app, rest_api);
+		withRunningApp(extend, async ({ rest_api }) => {
+			await setup(rest_api);
 			const { items } = await rest_api.get(
 				"/api/v1/collections/numbers/@positive/@negative"
 			);
 			assert.deepEqual(
-				items.map((resource: Item) => resource.number),
+				items.map((resource: SerializedItemBody) => resource.number),
 				[]
 			);
 		}));

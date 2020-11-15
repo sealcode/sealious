@@ -1,5 +1,6 @@
-import { Policy, Context, Response, Query } from "../../main";
+import { Policy, Context, Query } from "../../main";
 import DenyAll from "../../datastore/deny-all";
+import { CollectionItem } from "../../chip-types/collection-item";
 
 export default class Owner extends Policy {
 	static type_name = "owner";
@@ -11,7 +12,11 @@ export default class Owner extends Policy {
 		}
 		return new DenyAll();
 	}
-	async checkerFunction(context: Context, response: Response) {
+	async checkerFunction(
+		context: Context,
+		item_getter: () => Promise<CollectionItem>
+	) {
+		const response = await item_getter();
 		if (
 			context.user_id &&
 			context.user_id ===

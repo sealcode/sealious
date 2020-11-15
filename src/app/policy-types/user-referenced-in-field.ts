@@ -1,10 +1,5 @@
-import {
-	Policy,
-	Query,
-	Context,
-	SingleItemResponse,
-	QueryTypes,
-} from "../../main";
+import { Policy, Query, Context, QueryTypes } from "../../main";
+import { CollectionItem } from "../../chip-types/collection-item";
 
 export default class UserReferencedInField extends Policy {
 	static type_name = "user-referenced-in-field";
@@ -19,9 +14,13 @@ export default class UserReferencedInField extends Policy {
 			[this.field_name]: context.user_id,
 		});
 	}
-	async checkerFunction(context: Context, item: SingleItemResponse) {
+	async checkerFunction(
+		context: Context,
+		item_getter: () => Promise<CollectionItem>
+	) {
 		if (!context.user_id) return Policy.deny("you are not logged in");
-		if (context.user_id !== item[this.field_name])
+		const item = await item_getter();
+		if (context.user_id !== item.get(this.field_name))
 			return Policy.deny(
 				`you are not the user mentioned in field ${this.field_name}`
 			);

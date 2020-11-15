@@ -1,8 +1,9 @@
-import { CalculatedField, Context, App, Collection, Item } from "../../../main";
+import { CalculatedField, Context, App, Collection } from "../../../main";
+import { CollectionItem } from "../../../chip-types/collection-item";
 
 type Getter<ReturnType> = (
 	contect: Context,
-	item: Item,
+	item: CollectionItem,
 	db_document: any
 ) => Promise<ReturnType>;
 
@@ -13,7 +14,7 @@ export default class Custom<ReturnType> extends CalculatedField<ReturnType> {
 		super(app, collection);
 		this.getter = getter;
 	}
-	calculate(context: Context, item: Item, db_document: any) {
+	calculate(context: Context, item: CollectionItem, db_document: any) {
 		return this.getter(context, item, db_document);
 	}
 }

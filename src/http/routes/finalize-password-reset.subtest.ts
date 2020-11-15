@@ -5,22 +5,18 @@ import { withRunningAppProd } from "../../test_utils/with-test-app";
 import { App } from "../../main";
 
 describe("finalize password reset", () => {
-	async function create_a_user(app: App) {
-		await app.runAction(
-			new app.SuperContext(),
-			["collections", "users"],
-			"create",
-			{
-				username: "user",
-				email: "user@example.com",
-				password: "password",
-			}
-		);
+	async function createAUser(app: App) {
+		await app.collections.users.suCreate({
+			username: "user",
+			email: "user@example.com",
+			password: "password",
+			roles: [],
+		});
 	}
 
 	it("allows to change a password (entire flow)", async () =>
-		withRunningAppProd(async ({ app, mail_api, rest_api }) => {
-			await create_a_user(app);
+		withRunningAppProd(null, async ({ app, mail_api, rest_api }) => {
+			await createAUser(app);
 			const cookieJar = new tough.CookieJar();
 			const options = {
 				jar: cookieJar,

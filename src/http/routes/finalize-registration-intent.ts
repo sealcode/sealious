@@ -9,41 +9,28 @@ export default (app: App) => {
 			assert(params.token, "Token missing");
 			assert(params.username, "Username missing");
 			assert(params.password, "Password missing");
-			const response = await app.runAction(
-				new app.SuperContext(),
-				["collections", "registration-intents"],
-				"show",
-				{ filter: { token: params.token } }
-			);
-
-			if (response.empty) {
+			const intents = await app.collections["registration-intents"]
+				.suList()
+				.filter({ token: params.token })
+				.fetch();
+			if (intents.empty) {
 				throw new Error("Incorrect token");
 			}
 
-			const { email, role, id } = response.items[0];
-			const user = await app.runAction(
-				new app.SuperContext(),
-				["collections", "users"],
-				"create",
-				{
-					password: params.password,
-					username: params.username,
-					email,
-				}
-			);
-			if (role) {
-				await app.runAction(
-					new app.SuperContext(),
-					["collections", "user-roles"],
-					"create",
-					{ user: user.id, role }
-				);
+			const intent = intents.items[0];
+			const user = await app.collections.users.suCreate({
+				password: params.password,
+				username: params.username,
+				email: intent.get("email"),
+				roles: [],
+			});
+			if (intent.get("role")) {
+				await app.collections["user-roles"].suCreate({
+					user: user.id,
+					role: intent.get("role"),
+				});
 			}
-			await app.runAction(
-				new app.SuperContext(),
-				["collections", "registration-intents", id],
-				"delete"
-			);
+			await intent.remove(new app.SuperContext());
 			const target_path = app.ConfigManager.get(
 				"accout_creation_success_path"
 			);

@@ -1,37 +1,35 @@
 import assert from "assert";
 import { withRunningApp, MockRestApi } from "../test_utils/with-test-app";
 import { assertThrowsAsync } from "../test_utils/assert-throws-async";
-import {
-	App,
-	Item,
-	Collection,
-	FieldTypes,
-	FieldDefinitionHelper as field,
-} from "../main";
-import { CollectionResponse } from "../../common_lib/response/responses";
+import { App, Collection, FieldTypes } from "../main";
+import { TestAppType } from "../test_utils/test-app";
+import { SerializedItemBody } from "../chip-types/collection-item";
+
+function extend(t: TestAppType) {
+	return class extends t {
+		collections = {
+			...t.BaseCollections,
+			water_areas: new (class extends Collection {
+				fields = {
+					name: new FieldTypes.Text(),
+					temperature: new FieldTypes.Int(),
+				};
+			})(),
+
+			seals: new (class extends Collection {
+				fields = {
+					name: new FieldTypes.Text(),
+					favorite_number: new FieldTypes.Int(),
+					water_area: new FieldTypes.SingleReference("water_areas"),
+				};
+			})(),
+		};
+	};
+}
 
 describe("sorting", () => {
-	const items: { [name: string]: Item } = {};
+	const items: { [name: string]: SerializedItemBody } = {};
 	async function create_resources(app: App, rest_api: MockRestApi) {
-		Collection.fromDefinition(app, {
-			name: "water_areas",
-			fields: [
-				field("name", FieldTypes.Text, {}, true),
-				field("temperature", FieldTypes.Int, {}, true),
-			],
-		});
-
-		Collection.fromDefinition(app, {
-			name: "seals",
-			fields: [
-				field("name", FieldTypes.Text, {}, true),
-				field("favorite_number", FieldTypes.Int, {}, true),
-				field("water_area", FieldTypes.SingleReference, {
-					target_collection: () => app.collections.water_areas,
-				}),
-			],
-		});
-
 		items.baltic_sea = await rest_api.post(
 			"/api/v1/collections/water_areas",
 			{
@@ -66,30 +64,27 @@ describe("sorting", () => {
 			},
 		];
 
+		const promises = [];
 		for (let seal of seals) {
-			await app.runAction(
-				new app.SuperContext(),
-				["collections", "seals"],
-				"create",
-				seal
-			);
+			promises.push(app.collections.seals.suCreate(seal));
 		}
+		await Promise.all(promises);
 	}
 	it("properly sorts for correct sort key", async () =>
-		withRunningApp(async ({ app, rest_api }) => {
+		withRunningApp(extend, async ({ app, rest_api }) => {
 			await create_resources(app, rest_api);
-			const { items } = (await rest_api.get(
+			const { items } = await rest_api.get(
 				"/api/v1/collections/seals?sort[favorite_number]=desc"
-			)) as CollectionResponse;
+			);
 
 			assert.deepEqual(
-				items.map((item) => item.favorite_number),
+				items.map((item: any) => item.favorite_number),
 				[8, 3, 3]
 			);
 		}));
 
 	it("throws application error for incorrect sort key", async () =>
-		withRunningApp(async ({ app, rest_api }) => {
+		withRunningApp(extend, async ({ app, rest_api }) => {
 			await create_resources(app, rest_api);
 
 			await assertThrowsAsync(

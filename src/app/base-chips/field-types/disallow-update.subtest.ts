@@ -1,63 +1,48 @@
 import {
-	App,
 	Field,
 	Context,
 	Collection,
 	FieldTypes,
 	Policies,
-	FieldDefinitionHelper as field,
 } from "../../../main";
 
 import assert from "assert";
 import { withRunningApp } from "../../../test_utils/with-test-app";
 import { assertThrowsAsync } from "../../../test_utils/assert-throws-async";
+import { TestAppType } from "../../../test_utils/test-app";
 
 const url = "/api/v1/collections/constseals";
 
-describe("disallow-update", () => {
-	async function setup(app: App) {
-		class NullOrFive extends Field {
-			getTypeName = () => "null-or-five";
-			async isProperValue(_: Context, new_value: any, __: any) {
-				if (new_value === null || new_value === 5) {
-					return Field.valid();
-				}
-				return Field.invalid("Null or five, you got it?");
-			}
+class NullOrFive extends Field {
+	typeName = "null-or-five";
+	async isProperValue(_: Context, new_value: any, __: any) {
+		if (new_value === null || new_value === 5) {
+			return Field.valid();
 		}
-		Collection.fromDefinition(app, {
-			name: "constseals",
-			fields: [
-				field(
-					"age",
-					FieldTypes.DisallowUpdate,
-					{
-						base_field_type: FieldTypes.Int,
-						base_field_params: {
-							min: 0,
-						},
-					},
-					true
-				),
-				field(
-					"attribute",
-					FieldTypes.DisallowUpdate,
-					{
-						base_field_type: NullOrFive,
-						base_field_params: {},
-					},
-					true
-				),
-			],
-			policy: {
-				default: Policies.Public,
-			},
-		});
+		return Field.invalid("Null or five, you got it?");
 	}
+}
 
+function extend(t: TestAppType) {
+	return class extends t {
+		collections = {
+			...t.BaseCollections,
+			constseals: new (class extends Collection {
+				fields = {
+					age: new FieldTypes.DisallowUpdate(
+						new FieldTypes.Int({ min: 0 })
+					),
+					attribute: new FieldTypes.DisallowUpdate(new NullOrFive()),
+				};
+				defaultPolicy = new Policies.Public();
+			})(),
+		};
+	};
+}
+
+describe.only("disallow-update", () => {
 	it("Respects target field type", () =>
-		withRunningApp(async ({ app, rest_api }) => {
-			await setup(app);
+		withRunningApp(extend, async ({ rest_api }) => {
 			await assertThrowsAsync(
 				() => rest_api.post(url, { age: "abc", attribute: 5 }),
 				(error) => {
@@ -70,8 +55,7 @@ describe("disallow-update", () => {
 		}));
 
 	it("Respects target field params", () =>
-		withRunningApp(async ({ app, rest_api }) => {
-			await setup(app);
+		withRunningApp(extend, async ({ rest_api }) => {
 			await assertThrowsAsync(
 				() => rest_api.post(url, { age: -2 }),
 				(error) =>
@@ -83,14 +67,12 @@ describe("disallow-update", () => {
 		}));
 
 	it("Initially allows to insert a value", () =>
-		withRunningApp(async ({ app, rest_api }) => {
-			await setup(app);
+		withRunningApp(extend, async ({ rest_api }) => {
 			await rest_api.post(url, { age: 2, attribute: 5 });
 		}));
 
 	it("Rejects a new value if there's an old value", () =>
-		withRunningApp(async ({ app, rest_api }) => {
-			await setup(app);
+		withRunningApp(extend, async ({ rest_api }) => {
 			const { id } = await rest_api.post(url, {
 				age: 18,
 				attribute: null,
@@ -106,8 +88,7 @@ describe("disallow-update", () => {
 		}));
 
 	it("Rejects a new value if the old value is `null`", () =>
-		withRunningApp(async ({ app, rest_api }) => {
-			await setup(app);
+		withRunningApp(extend, async ({ rest_api }) => {
 			const { id } = await rest_api.post(url, {
 				age: 21,
 				attribute: null,

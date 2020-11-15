@@ -6,8 +6,7 @@ export default class LoggerMailer extends Mailer {
 		return true;
 	}
 	async sendEmail({ to, subject, text }: MessageData) {
-		this.app.Logger.info({
-			message: "Would send an email here",
+		this.app.Logger.info("✉ MAIL", "Would send an email here", {
 			to,
 			subject,
 			text,

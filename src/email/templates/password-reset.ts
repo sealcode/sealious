@@ -1,24 +1,21 @@
 import SimpleTemplate from "./simple";
 import { App } from "../../main";
 import { NotFound } from "../../response/errors";
-import { CollectionResponse } from "../../../common_lib/response/responses";
 
 export default async function PasswordResetTemplate(
 	app: App,
 	{ email_address, token }: { email_address: string; token: string }
 ) {
-	const matching_users = (await app.runAction(
-		new app.SuperContext(),
-		["collections", "users"],
-		"show",
-		{ filter: { email: email_address } }
-	)) as CollectionResponse;
+	const matching_users = await app.collections.users
+		.suList()
+		.filter({ email: email_address })
+		.fetch();
 
 	if (!matching_users.items.length) {
 		throw new NotFound("No user with that email");
 	}
 
-	const username = matching_users.items[0].username;
+	const username = matching_users.items[0].get("username");
 
 	return SimpleTemplate(app, {
 		subject: app.i18n("password_reset_email_subject", app.manifest.name),

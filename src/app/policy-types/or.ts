@@ -6,9 +6,9 @@ import Policy, {
 
 import Context from "../../context";
 
-import SealiousResponse from "../../../common_lib/response/sealious-response";
 import { AllowAll } from "../../datastore/allow-all";
 import { default as QueryOr } from "../../datastore/query-or";
+import { CollectionItem } from "../../chip-types/collection-item";
 
 export default class Or extends ReducingPolicy {
 	static type_name = "or";
@@ -26,8 +26,11 @@ export default class Or extends ReducingPolicy {
 			strategy.isItemSensitive()
 		).reduce((a, b) => a || b, true);
 	}
-	async checkerFunction(context: Context, response: SealiousResponse) {
-		const results = await this.checkAllPolicies(context, response);
+	async checkerFunction(
+		context: Context,
+		item_getter: () => Promise<CollectionItem>
+	) {
+		const results = await this.checkAllPolicies(context, item_getter);
 		const positives: Exclude<PolicyDecision, null>[] = results.filter(
 			(result) => result?.allowed === true
 		) as Exclude<PolicyDecision, null>[];

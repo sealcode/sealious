@@ -6,12 +6,14 @@ export type CreateActionName = "create";
 export type EditActionName = "edit";
 export type ReplaceActionName = "replace";
 export type DeleteActionName = "delete";
+export type ListActionName = "list";
 export type ActionName =
 	| ShowActionName
 	| CreateActionName
 	| EditActionName
 	| ReplaceActionName
-	| DeleteActionName;
+	| DeleteActionName
+	| ListActionName;
 
 export default class Action {
 	subject_path: SubjectPath;

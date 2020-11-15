@@ -43,8 +43,7 @@ export default class SealiousError extends Error {
 export class ValidationError extends SealiousError {
 	constructor(message: string, params: Partial<ErrorParams> = {}) {
 		super(message, {
-			data: {},
-			...params,
+			data: params,
 			is_user_fault: true,
 			type: "validation",
 			is_developer_fault: false,

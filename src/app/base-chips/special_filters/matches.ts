@@ -1,11 +1,10 @@
-import App from "../../app";
-import { Collection, SpecialFilter, Query } from "../../../main";
+import { SpecialFilter, Query } from "../../../main";
 import QueryStage from "../../../datastore/query-stage";
 
 export default class Matches extends SpecialFilter {
 	filter: {};
-	constructor(app: App, get_collection: () => Collection, params: {}) {
-		super(app, get_collection, params);
+	constructor(collection_name: string, params: {}) {
+		super(collection_name, params);
 		this.filter = params;
 	}
 

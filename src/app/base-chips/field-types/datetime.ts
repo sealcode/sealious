@@ -11,7 +11,7 @@ export default class Datetime extends IntStorage<
 	number | string,
 	number | string
 > {
-	getTypeName = () => "datetime";
+	typeName = "datetime";
 
 	async isProperValue(_: Context, value: number | string) {
 		const int_result = await super.isProperValue(_, value);
@@ -24,11 +24,15 @@ export default class Datetime extends IntStorage<
 	}
 
 	async decode(
-		_: Context,
+		context: Context,
 		db_value: number | null,
 		__: number,
 		format?: "human_readable"
 	) {
+		context.app.Logger.debug2("FIELD DATETIME", "decode", {
+			db_value,
+			format,
+		});
 		if (db_value === null || db_value === undefined) {
 			return db_value;
 		}

@@ -1,15 +1,17 @@
-import Collection from "./collection";
 import App from "../app/app";
 import Query, { QueryStage } from "../datastore/query";
 
 export default abstract class SpecialFilter {
 	params: any;
 	app: App;
-	get_collection: () => Collection;
+	collection_name: string;
 
-	constructor(app: App, get_collection: () => Collection, params: any) {
+	constructor(collection_name: string, params: any) {
 		this.params = params;
-		this.get_collection = get_collection;
+		this.collection_name = collection_name;
+	}
+
+	init(app: App) {
 		this.app = app;
 	}
 
@@ -17,14 +19,14 @@ export default abstract class SpecialFilter {
 	abstract getNopassReason(): string;
 
 	getCollection() {
-		return this.get_collection();
+		return this.app.collections[this.collection_name];
 	}
 
 	async checkSingleResource(app: App, resource_id: string) {
 		const documents = await app.Datastore.aggregate(
 			this.getCollection().name,
 			[
-				{ $match: { sealious_id: resource_id } },
+				{ $match: { id: resource_id } },
 				...(await this.getFilteringQuery()).toPipeline(),
 			] as QueryStage[]
 		);

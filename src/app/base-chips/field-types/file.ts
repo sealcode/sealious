@@ -6,11 +6,7 @@ type FileFormat = "internal" | "url";
 
 export type FileStorageFormat = FileDBEntry;
 
-export abstract class FileStorage<Output = any, Format = any> extends Field<
-	File,
-	Output,
-	Format
-> {
+export abstract class FileStorage extends Field {
 	handles_large_data = true;
 	get_default_file: (context: Context) => Promise<File>;
 	async isProperValue(_: Context, value: File) {
@@ -43,8 +39,8 @@ export abstract class FileStorage<Output = any, Format = any> extends Field<
  * **Params**:
  * - `get_default_file` - ()=>Promise<{@link File}> - if no file is provided, then this file will be used in it's stead
  */
-export default class FileField extends FileStorage<FileOutput, FileFormat> {
-	getTypeName = () => "file";
+export default class FileField extends FileStorage {
+	typeName = "file";
 	async decode(
 		_: Context,
 		db_value: FileStorageFormat,

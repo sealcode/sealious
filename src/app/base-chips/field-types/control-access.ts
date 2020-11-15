@@ -6,11 +6,7 @@ import {
 	App,
 	ExtractStorage,
 } from "../../../main";
-import {
-	ExtractParams,
-	ExtractOutput,
-	HybridFieldParams,
-} from "../../../chip-types/field";
+import { ExtractParams, ExtractOutput } from "../../../chip-types/field";
 
 type Params<T extends Field> = {
 	target_policies: { [key in "show" | "edit"]: Policy };
@@ -18,13 +14,14 @@ type Params<T extends Field> = {
 };
 
 export default class ControlAccess<T extends Field> extends HybridField<T> {
-	getTypeName = () => "control-access";
+	typeName = "control-access";
 	edit_strategy: Policy;
 	show_strategy: Policy;
 	value_when_not_allowed: ExtractOutput<T>;
 	app: App;
-	setParams(params: Params<T> & HybridFieldParams<T>) {
-		super.setParams(params);
+
+	constructor(base_field: T, params: Params<T>) {
+		super(base_field);
 		this.edit_strategy = params.target_policies.edit;
 		this.show_strategy = params.target_policies.show;
 		this.value_when_not_allowed = params.value_when_not_allowed;
@@ -52,11 +49,27 @@ export default class ControlAccess<T extends Field> extends HybridField<T> {
 		format_params: ExtractParams<T>
 	) {
 		if (!context.is_super) {
+			context.app.Logger.debug2(
+				"CONTROL ACCESS",
+				`Checking the access to field ${this.name}...`,
+				{ value_in_db }
+			);
 			const result = await this.show_strategy.check(context);
 			if (result && !result.allowed) {
+				context.app.Logger.debug2(
+					"CONTROL ACCESS",
+					`Access to field '${this.name}' not allowed!`,
+					result
+				);
 				value_in_db = await this.encode(
 					context,
 					this.value_when_not_allowed
+				);
+			} else if (result?.allowed) {
+				context.app.Logger.debug2(
+					"CONTROL ACCESS",
+					`Access to field '${this.name}' is allowed!`,
+					result
 				);
 			}
 		}

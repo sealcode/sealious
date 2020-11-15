@@ -1,7 +1,7 @@
 import App from "../app/app";
 import Context from "../context";
-import Item from "../../common_lib/response/item";
 import Collection from "./collection";
+import { CollectionItem } from "./collection-item";
 
 export default abstract class CalculatedField<ReturnType> {
 	app: App;
@@ -14,7 +14,7 @@ export default abstract class CalculatedField<ReturnType> {
 
 	abstract calculate(
 		context: Context,
-		item: Item,
+		item: CollectionItem<any>,
 		db_document: any
 	): Promise<ReturnType>;
 }

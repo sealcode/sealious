@@ -5,7 +5,6 @@ import CollectionsSubjectFn from "./collections-subject";
 import SessionsSubjectFn from "./sessions-subject";
 import UsersSubjectFn from "./users-subject";
 import UploadedFilesSubjectFn from "./uploaded-files";
-import SpecificationsSubjectFn from "./specifications";
 import FormattedImagesSubjectFn from "./formatted-images";
 import App from "../../app/app";
 
@@ -14,7 +13,6 @@ const child_subjects_generators = [
 	SessionsSubjectFn,
 	UsersSubjectFn,
 	UploadedFilesSubjectFn,
-	SpecificationsSubjectFn,
 	FormattedImagesSubjectFn,
 ];
 

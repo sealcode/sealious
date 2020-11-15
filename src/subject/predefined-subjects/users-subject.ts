@@ -17,19 +17,12 @@ export default class UsersSubject extends Subject {
 		params = params || {};
 		switch (action_name) {
 			case "create":
-				return this.app.runAction(
-					context,
-					["collections", "users"],
-					"create",
-					params
-				);
+				await this.app.collections.users.create(context, params);
 			case "show":
-				return this.app.runAction(
-					context,
-					["collections", "users"],
-					"show",
-					params
-				);
+				return this.app.collections.users
+					.list(context)
+					.setParams(params)
+					.fetch();
 			default:
 				throw new Errors.BadSubjectAction(
 					`Unknown/unsupported action for UsersSubject: '${action_name}'`
@@ -42,22 +35,18 @@ export default class UsersSubject extends Subject {
 			return new MeSubject(this.app);
 		}
 		const username = path_element;
-		const response = await this.app.runAction(
-			new this.app.SuperContext(),
-			["collections", "users"],
-			"show",
-			{
-				filter: { username: username },
-			}
-		);
+		const users = await this.app.collections.users
+			.suList()
+			.filter({ username: username })
+			.fetch();
 
-		if (response.empty) {
+		if (users.empty) {
 			throw new Errors.BadSubjectPath(`Unknown username: '${username}'`);
 		}
 		return this.app.RootSubject.getSubject([
 			"collections",
 			"users",
-			response.id,
+			users.items[0].id,
 		]);
 	}
 }

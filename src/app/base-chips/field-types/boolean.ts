@@ -8,8 +8,8 @@ type InputType = boolean | "false" | "true" | "1" | "0" | 1 | 0;
  *
  * **Accepted values**: accepts actual booleans, strings (`"true"`, `"false"`) and the numbers `1` and `0`
  */
-export default class Boolean extends Field<{}, InputType> {
-	getTypeName = () => "boolean";
+export default class Boolean extends Field {
+	typeName = "boolean";
 	async isProperValue(_: Context, value: InputType) {
 		if (typeof value === "boolean") {
 			return Field.valid();

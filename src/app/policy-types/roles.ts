@@ -1,8 +1,8 @@
 import Context from "../../context";
 import Policy from "../../chip-types/policy";
-import { SuperContext } from "../../context";
-import Item from "../../../common_lib/response/item";
 import { QueryTypes } from "../../main";
+import ItemList from "../../chip-types/item-list";
+import UserRoles from "../collections/user-roles";
 
 export default class Roles extends Policy {
 	static type_name = "roles";
@@ -14,17 +14,21 @@ export default class Roles extends Policy {
 
 	async countMatchingRoles(context: Context) {
 		const user_id = context.user_id;
-		const user_roles = (
-			await context.app.runAction(
-				new SuperContext(context),
-				["collections", "user-roles"],
-				"show",
-				{ filter: { user: user_id } }
-			)
-		).items.map((role_resource: Item) => role_resource.role);
+		context.app.Logger.debug2(
+			"ROLES",
+			"Checking the roles for user",
+			user_id
+		);
+		const user_roles = await context.app.collections["user-roles"]
+			.list(context)
+			.filter({ user: user_id })
+			.fetch();
+		const roles = user_roles.items.map((user_role) =>
+			user_role.get("role")
+		);
 
 		return this.allowed_roles.filter((allowed_role) =>
-			user_roles.includes(allowed_role)
+			roles.includes(allowed_role)
 		).length;
 	}
 

@@ -3,8 +3,8 @@ import Context from "../context";
 import { ActionName } from "../action";
 import { App } from "../main";
 import QueryStage from "../datastore/query-stage";
-import AttachmentLoader from "../subject/attachments/attachment-loader";
-import ReferenceToCollection from "../subject/attachments/reference-to-collection";
+import { ItemListResult } from "./item-list";
+import { BadSubjectAction } from "../response/errors";
 
 export type Depromisify<T> = T extends Promise<infer V> ? V : T;
 
@@ -16,53 +16,27 @@ export type ExtractOutput<F extends Field> = Depromisify<
 	ReturnType<F["decode"]>
 >;
 
-export type ExtractStorage<F extends Field<any>> = Depromisify<
+export type ExtractStorage<F extends Field> = Depromisify<
 	ReturnType<F["encode"]>
 >;
 
-export type ExtractFormatParams<F> = F extends Field<any, infer T> ? T : never;
-
-export type FieldDefinition<ParamsType> = {
-	name: string;
-	required?: boolean;
-	type: FieldClass;
-	params?: ParamsType;
-	display_hints?: any;
-};
-
-export type FieldClass<T extends Field = Field> = new (
-	app: App,
-	collection: Collection,
-	name: string,
-	required: boolean,
-	display_hints: any
-) => T;
-
-type ValidationResult = {
+export type ValidationResult = {
 	valid: boolean;
 	reason?: string;
 };
 
-/** A function that helps to define a field for a collection. Performs type-checking to ensure that the parameters match the expected format.
- *
- *  **This is the recommended way to define a field**
- *
- *  @category Defining a field in a collection
- */
-export function FieldDefinitionHelper<T extends FieldClass>(
-	name: string,
-	type: T,
-	params: Parameters<InstanceType<T>["setParams"]>[0] = {},
-	required: boolean = false
-): FieldDefinition<Parameters<InstanceType<T>["setParams"]>[0]> {
-	return { name, type, params, required };
-}
-
-/** The field class itself. Stores information on the field name, and methods that decide waht values are valid and how they are stored. The {@link Field} class describes a type of field in general (like "Text" and "Number"), and a {@link Field} instance describes one particular field in a collection (like "name" and "age").
+/** The field class itself. Stores information on the field name, and
+ * methods that decide waht values are valid and how they are
+ * stored. The {@link Field} class describes a type of field in
+ * general (like "Text" and "Number"), and a {@link Field} instance
+ * describes one particular field in a collection (like "name" and
+ * "age").
  *
  *  Extend this class to create fields with custom behavior.
  *
- *  **The recommended way to create a field for a collection is {@link FieldDefinitionHelper}, as it performs  type checking of the field params.**
+ * **The recommended way to create a field for a collection is {@link
+ *    FieldDefinitionHelper}, as it performs type checking of the
+ *    field params.**
  *
  * Some of the most useful field types include:
  * * {@link Boolean}
@@ -78,11 +52,7 @@ export function FieldDefinitionHelper<T extends FieldClass>(
  * * {@link SingleReference}
  * * {@link Text}
  */
-export default abstract class Field<
-	InputType = any,
-	OutputType = InputType,
-	FormatParams = any
-> {
+export default abstract class Field {
 	/** the name of the field */
 	name: string;
 	/** the app that the field exists in
@@ -97,61 +67,38 @@ export default abstract class Field<
 	handles_large_data: boolean = false;
 	/** The collection this field is attached to */
 	collection: Collection;
-	/** Whether or not this field should always have a value. Creating a resource with a value missing for a required field will throw an error */
+	/** Whether or not this field should always have a value. Creating
+	 * a resource with a value missing for a required field will throw
+	 * an error */
 	required: boolean;
 
-	/** Creates a new instance of a field */
-	constructor(
-		app: App,
-		collection: Collection,
-		name: string,
-		required: boolean,
-		display_hints: any
-	) {
-		this.app = app;
-		this.name = name;
-		this.display_hints = display_hints || {};
+	/** Sets the collection @internal  */
+	setCollection(collection: Collection) {
 		this.collection = collection;
-		this.required = required;
 	}
 
-	/** Create a new instance of {@link Field} based on the definition. **It's recommended to use {@link FieldDefinitionHelper} instead */
-	static fromDefinition<T extends FieldClass>(
-		app: App,
-		collection: Collection,
-		definition: {
-			name: string;
-			required?: boolean;
-			display_hints?: any;
-			type: T;
-			params?: Parameters<InstanceType<FieldClass>["setParams"]>[0];
-		}
-	) {
-		const type = definition.type;
-		const ret = new type(
-			app,
-			collection,
-			definition.name,
-			definition.required || false,
-			definition.display_hints
-		);
-		ret.setParams(definition.params || {});
-		return ret;
+	/** Sets the name @internal */
+	setName(name: string) {
+		this.name = name;
 	}
 
-	/** This method is used to set and process the params upon the field's creation when the app starts up. The type of argument of this method determines type checking that's performed by @{link FieldDefinitionHelper}. */
+	/** This method is used to set and process the params upon the
+	 * field's creation when the app starts up. The type of argument
+	 * of this method determines type checking that's performed by
+	 * @{link FieldDefinitionHelper}. */
 	setParams(_: any): void {}
 
 	/** Return a summary of this field */
 	getSpecification() {
 		return {
 			name: this.name,
-			type: this.getTypeName(),
+			type: this.typeName,
 			display_hints: this.display_hints,
 		};
 	}
 
-	/** Whether or not this field should have a dedicated index in the database */
+	/** Whether or not this field should have a dedicated index in the
+	 * database */
 	hasIndex():
 		| boolean
 		| "text"
@@ -159,80 +106,41 @@ export default abstract class Field<
 		return false;
 	}
 
-	/** Creates parts of a Mongo Pipieline that will be used to filter the items when listing items of a collection */
-	async getAggregationStages(
-		context: Context,
-		query_params: { filter?: { [field_name: string]: any } }
-	): Promise<QueryStage[]> {
-		if (!query_params || !query_params.filter) return [];
-		let field_filter = query_params.filter[this.name];
-		if (
-			field_filter &&
-			field_filter.length === 1 &&
-			field_filter[0] instanceof Array
-		) {
-			field_filter = field_filter[0]; // to fix an edge case where instead of array of values the array is wrapped within another array
-		}
-		if (!(this.name in query_params.filter)) {
-			return [];
-		}
-		if (this.name in query_params.filter && field_filter === undefined) {
-			const ret = [
-				{
-					$match: { [await this.getValuePath()]: { $exists: false } },
-				} as QueryStage,
-			];
-
-			return ret;
-		}
-
-		let new_filter = null;
-		if (field_filter instanceof Array) {
-			new_filter = await Promise.all(
-				field_filter.map((element) => this.encode(context, element))
-			).then((filters) => {
-				const ret = { $in: filters };
-				return ret;
-			});
-		} else {
-			new_filter = await this.filterToQuery(context, field_filter);
-		}
-		const ret = [
-			{ $match: { [await this.getValuePath()]: new_filter } },
-		] as QueryStage[];
-		return ret;
-	}
-
-	/** Value path is where inside a single record should the DB look for the field's value when filtering resources. Some fields use complex objects for storage and overwrite this method, and thanks to that they don't have to reimplement {@link Field.getAggregationStages} */
+	/** Value path is where inside a single record should the DB look
+	 * for the field's value when filtering resources. Some fields use
+	 * complex objects for storage and overwrite this method, and
+	 * thanks to that they don't have to reimplement {@link
+	 * Field.getAggregationStages} */
 	async getValuePath(): Promise<string> {
 		return this.name;
 	}
 
-	abstract getTypeName(): string;
+	abstract typeName: string;
 
 	abstract isProperValue(
 		context: Context,
-		new_value: InputType,
-		old_value: InputType
+		new_value: unknown,
+		old_value: unknown
 	): Promise<ValidationResult>;
 
-	/** Decides how to store the given value in the database, based on the context and previous value of the field */
-	async encode(
-		_: Context,
-		value: InputType | null,
-		__?: InputType
-	): Promise<any> {
+	/** Decides how to store the given value in the database, based on
+	 * the context and previous value of the field */
+	async encode(_: Context, value: any | null, __?: any): Promise<any> {
 		return value as any;
 	}
 
 	/** Reverse to the {@link Field.encode} function. Takes what's inside the database and returns the value in a given format */
 	async decode(
-		_: Context,
+		context: Context,
 		storage_value: Depromisify<ReturnType<this["encode"]>>,
-		__: OutputType,
-		___: FormatParams
-	): Promise<OutputType | null> {
-		return (storage_value as unknown) as OutputType;
+		old_value: any,
+		format_params: any
+	): Promise<any | null> {
+		context.app.Logger.debug3("FIELD DECODE", this.name, {
+			storage_value,
+			old_value,
+		});
+		return storage_value;
 	}
 
 	/** Generates a mongo query based on the filter value */
@@ -245,41 +153,98 @@ export default abstract class Field<
 		return false;
 	}
 
-	/** Whether or not a field has a default value - that is, a value given to the field if no value is provided */
+	/** Whether or not a field has a default value - that is, a value
+	 * given to the field if no value is provided */
 	hasDefaultValue = () => true;
 
-	/** The default value that will be assigned to the field if no value is given */
-	getDefaultValue(): Depromisify<ReturnType<this["decode"]>> | null {
+	/** The default value that will be assigned to the field if no
+	 * value is given */
+	async getDefaultValue(
+		context: Context
+	): Promise<Parameters<this["encode"]>[1] | null> {
 		return null;
 	}
 
-	/** Whether or not any of the methods of the field depend on the previous value of the field */
+	/** Whether or not any of the methods of the field depend on the
+	 * previous value of the field */
 	isOldValueSensitive(_: ActionName) {
 		return false;
 	}
 
-	/** Used to signal a positive decision from within {@link Field.isProperValue}. */
+	/** Used to signal a positive decision from within {@link
+	 * Field.isProperValue}. */
 	static valid(): ValidationResult {
 		return { valid: true };
 	}
 
-	/** Used to signal a negative decition from within {@link Field.isProperValue}. */
+	/** Used to signal a negative decition from within {@link
+	 * Field.isProperValue}. */
 	static invalid(reason: string): ValidationResult {
 		return { valid: false, reason };
 	}
 
-	/** Runs when the app is being started. Hooks can be set up within this function */
-	async init(_: App): Promise<void> {}
+	/** Runs when the app is being started. Hooks can be set up within
+	 * this function */
+	async init(app: App): Promise<void> {
+		this.app = app;
+	}
 
-	/** If the field supports attachments, it should return a properly configured {@link AttachmentLoader}. Not necessary for most basic fields. */
-	getAttachmentLoader(
+	async getAttachments(
 		context: Context,
-		omit_it: Boolean,
-		attachment_params: ConstructorParameters<
-			typeof ReferenceToCollection
-		>[2]
-	): AttachmentLoader | null {
-		return null;
+		values: any[], // this method gets called once for multiple resources, to limit the number of queries. Field values of all the resources are passed in this array
+		attachment_options: any
+	): Promise<ItemListResult<any>> {
+		if (attachment_options !== undefined) {
+			throw new BadSubjectAction(
+				`Field '${this.name}' does not support attachments`
+			);
+		}
+		return new ItemListResult([], [], {});
+	}
+
+	/** Creates parts of a Mongo Pipieline that will be used to filter
+	 * the items when listing items of a collection */
+	async getAggregationStages(
+		context: Context,
+		field_filter: unknown
+	): Promise<QueryStage[]> {
+		context.app.Logger.debug2(
+			"FIELD",
+			`${this.name}.getAggregationStages`,
+			field_filter
+		);
+		if (!field_filter) return [];
+		const value_path = await this.getValuePath();
+		let $match: QueryStage = {};
+		if (field_filter === null) {
+			$match = {
+				$or: [
+					{ [value_path]: { $exists: false } },
+					{ [value_path]: null },
+				],
+			};
+		} else if (field_filter instanceof Array) {
+			$match = {
+				[value_path]: {
+					$in: await Promise.all(
+						field_filter.map((value) => this.encode(context, value))
+					),
+				},
+			};
+		} else {
+			const [value_path, filter_value] = await Promise.all([
+				this.getValuePath(),
+				this.filterToQuery(context, field_filter),
+			]);
+			context.app.Logger.debug3("FIELD", "getAggregationStages", {
+				value_path,
+				filter_value,
+			});
+			$match = {
+				[value_path]: filter_value,
+			};
+		}
+		return [{ $match }];
 	}
 }
 

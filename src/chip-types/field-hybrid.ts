@@ -1,17 +1,7 @@
-import Field, {
-	ExtractParams,
-	ExtractInput,
-	ExtractFormatParams,
-	Depromisify,
-	FieldClass,
-} from "./field";
+import Field, { Depromisify } from "./field";
 
 import Context from "../context";
-
-export type HybridFieldParams<T extends Field> = {
-	base_field_type: FieldClass<T>;
-	base_field_params?: ExtractParams<T>;
-};
+import { Collection } from "../main";
 
 /*
 
@@ -20,21 +10,22 @@ uncustomized methods should be taken from that given field type
 
 */
 
-export default abstract class HybridField<T extends Field> extends Field<
-	ExtractInput<T>,
-	ExtractFormatParams<T>
-> {
+export default abstract class HybridField<T extends Field> extends Field {
 	virtual_field: T;
 
-	setParams(params: HybridFieldParams<T>) {
-		this.virtual_field = new params.base_field_type(
-			this.app,
-			this.collection,
-			this.name,
-			false,
-			{}
-		);
-		this.virtual_field.setParams(params.base_field_params || {});
+	constructor(base_field: T) {
+		super();
+		this.virtual_field = base_field;
+	}
+
+	setName(name: string) {
+		super.setName(name);
+		this.virtual_field.setName(name);
+	}
+
+	setCollection(collection: Collection) {
+		super.setCollection(collection);
+		this.virtual_field.setCollection(collection);
 	}
 
 	async encode(

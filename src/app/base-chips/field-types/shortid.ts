@@ -3,7 +3,7 @@ import { Field } from "../../../main";
 import shortid from "shortid";
 
 export default class ShortID extends Field {
-	getTypeName = () => "shortid";
+	typeName = "shortid";
 	hasIndex = () => true;
 
 	async isProperValue() {

@@ -5,7 +5,7 @@ import { assertThrowsAsync } from "../../test_utils/assert-throws-async";
 
 describe("account-creation-details", () => {
 	it("throws when no token/email is present", () =>
-		withRunningApp(({ base_url }) =>
+		withRunningApp(null, ({ base_url }) =>
 			assertThrowsAsync(
 				async () => {
 					await axios.get(`${base_url}/account-creation-details`);
@@ -14,7 +14,7 @@ describe("account-creation-details", () => {
 			)
 		));
 	it("displays an html form after the positive flow", () =>
-		withRunningApp(async ({ base_url }) => {
+		withRunningApp(null, async ({ base_url }) => {
 			const resp = await axios.get(
 				`${base_url}/account-creation-details?token=oieajgoiea&email=ababab@ok.pl`
 			);

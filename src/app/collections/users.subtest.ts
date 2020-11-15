@@ -1,37 +1,36 @@
 import assert from "assert";
 import { withRunningApp } from "../../test_utils/with-test-app";
 import { assertThrowsAsync } from "../../test_utils/assert-throws-async";
-import { Item, App } from "../../main";
-import {
-	CollectionResponse,
-	SingleItemResponse,
-} from "../../../common_lib/response/responses";
+import { App } from "../../main";
 
 describe("users", () => {
 	describe("auto create admin", () => {
 		it("should automatically create a registration intent for the admin user", async () =>
-			withRunningApp(async ({ app }) => {
-				const sealious_response = await app.runAction(
-					new app.SuperContext(),
-					["collections", "registration-intents"],
-					"show",
-					{ filter: { email: app.manifest.admin_email } }
-				);
+			withRunningApp(null, async ({ app }) => {
+				const sealious_response = await app.collections[
+					"registration-intents"
+				]
+					.suList()
+					.filter({ filter: { email: app.manifest.admin_email } })
+					.fetch();
 
 				assert.equal(sealious_response.items.length, 1);
-				assert.equal(sealious_response.items[0].role, "admin");
+				assert.equal(sealious_response.items[0].get("role"), "admin");
 			}));
 
 		it("should properly handle route to account cration", async () =>
-			withRunningApp(async ({ app, rest_api }) => {
-				const sealious_response = await app.runAction(
-					new app.SuperContext(),
-					["collections", "registration-intents"],
-					"show",
-					{ filter: { email: app.manifest.admin_email } }
-				);
+			withRunningApp(null, async ({ app, rest_api }) => {
+				const sealious_response = await app.collections[
+					"registration-intents"
+				]
+					.suList()
+					.filter({ filter: { email: app.manifest.admin_email } })
+					.fetch();
 
-				const { email, token } = sealious_response.items[0];
+				const {
+					email,
+					token,
+				} = sealious_response.items[0].serializeBody();
 				const response = await rest_api.get(
 					`/account-creation-details?token=${token}&email=${email}`
 				);
@@ -41,7 +40,7 @@ describe("users", () => {
 
 	describe("users routes", () => {
 		it("should correctly handle me when not logged in", async () =>
-			withRunningApp(async ({ rest_api }) => {
+			withRunningApp(null, async ({ rest_api }) => {
 				await assertThrowsAsync(
 					async () =>
 						await rest_api.get(
@@ -58,16 +57,16 @@ describe("users", () => {
 			}));
 
 		it("should correctly handle me when logged in", async () =>
-			withRunningApp(async ({ app, rest_api }) => {
+			withRunningApp(null, async ({ app, rest_api }) => {
 				await add_user(app);
 				const session = await rest_api.login({
 					username: "seal",
 					password: "password",
 				});
-				const response = ((await rest_api.getSealiousResponse(
+				const response = await rest_api.get(
 					"/api/v1/users/me?attachments[roles]=true",
 					session
-				)) as unknown) as SingleItemResponse;
+				);
 
 				const roles = response.roles;
 
@@ -80,28 +79,22 @@ describe("users", () => {
 	});
 
 	async function add_user(app: App) {
-		const user = await app.runAction(
-			new app.SuperContext(),
-			["collections", "users"],
-			"create",
-			{
-				username: "seal",
-				password: "password",
-				email: "seal@sealious.com",
-			}
-		);
+		const user = await app.collections.users.suCreate({
+			username: "seal",
+			password: "password",
+			email: "seal@sealious.com",
+			roles: [],
+		});
 
-		return app.runAction(
-			new app.SuperContext(),
-			["collections", "user-roles"],
-			"create",
-			{ user: user.id, role: "admin" }
-		);
+		return app.collections["user-roles"].suCreate({
+			user: user.id,
+			role: "admin",
+		});
 	}
 
 	describe("login", () => {
 		it("correctly rejects when provided incorrect password", async () =>
-			withRunningApp(async ({ app, rest_api }) => {
+			withRunningApp(null, async ({ app, rest_api }) => {
 				await add_user(app);
 				const incorrect_password_variants = [
 					{ password: "", message: "Missing password!" },
@@ -129,7 +122,7 @@ describe("users", () => {
 			}));
 
 		it("correctly rejects when provided incorrect username", async () =>
-			withRunningApp(async ({ app, rest_api }) => {
+			withRunningApp(null, async ({ app, rest_api }) => {
 				await add_user(app);
 				const incorrect_username_variants = [
 					{ username: "", message: "Missing username!" },

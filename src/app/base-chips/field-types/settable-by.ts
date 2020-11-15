@@ -1,21 +1,14 @@
-import Field, {
-	HybridField,
-	HybridFieldParams,
-} from "../../../chip-types/field";
+import Field, { HybridField } from "../../../chip-types/field";
 import { Context } from "../../../main";
 import Policy from "../../../chip-types/policy";
 
 export default class SettableBy<T extends Field> extends HybridField<T> {
-	getTypeName = () => "settable-by";
+	typeName = "settable-by";
 	policy: Policy;
 
-	setParams(
-		params: HybridFieldParams<T> & {
-			policy: Policy;
-		}
-	) {
-		super.setParams(params);
-		this.policy = params.policy;
+	constructor(base_field: T, policy: Policy) {
+		super(base_field);
+		this.policy = policy;
 	}
 
 	async isProperValue(

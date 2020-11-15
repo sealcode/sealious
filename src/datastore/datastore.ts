@@ -3,7 +3,11 @@ import { App } from "../main";
 import Collection from "../chip-types/collection";
 import { QueryStage } from "./query";
 
-export type OutputOptions = { sort?: any; skip?: number; amount?: number };
+export type OutputOptions = Partial<{
+	skip: number;
+	amount: number;
+	sort: { [field_name: string]: -1 | 1 };
+}>;
 
 export default class Datastore {
 	client: MongoClient;
@@ -31,11 +35,13 @@ export default class Datastore {
 		this.db = this.client.db(config.db_name);
 		return this.post_start();
 	}
+
 	async post_start() {
 		for (let collection of Object.values(this.app.collections)) {
 			await this.create_index(collection);
 		}
 	}
+
 	async create_index(collection: Collection) {
 		const indexes: { [field: string]: number }[] = [];
 		const text_index: { [field: string]: "text" } = {};
@@ -88,6 +94,15 @@ export default class Datastore {
 		options: Parameters<MongoCollection["find"]>[1] = {},
 		output_options: OutputOptions = {}
 	) {
+		this.app.Logger.debug2(
+			"DB",
+			"find " + collection_name,
+			{
+				query,
+				options,
+			},
+			null
+		);
 		const cursor = this.db.collection(collection_name).find(query, options);
 		if (output_options.sort) {
 			cursor.sort(output_options.sort);
@@ -100,7 +115,7 @@ export default class Datastore {
 		}
 		return cursor.toArray();
 	}
-	aggregate(
+	async aggregate(
 		collection_name: string,
 		pipeline: QueryStage[],
 		_ = {},
@@ -108,11 +123,15 @@ export default class Datastore {
 	) {
 		const cursor = this.db.collection(collection_name).aggregate(pipeline);
 
-		this.app.Logger.debug(
-			"aggregate!",
-			collection_name,
-			JSON.stringify(pipeline, null, "  "),
-			output_options
+		this.app.Logger.debug2(
+			"DB",
+			"Running aggregate",
+			{
+				collection_name,
+				pipeline,
+				output_options,
+			},
+			null
 		);
 		if (output_options.sort) {
 			cursor.sort(output_options.sort);
@@ -123,28 +142,57 @@ export default class Datastore {
 		if (output_options.amount) {
 			cursor.limit(output_options.amount);
 		}
-		return cursor.toArray();
+		const ret = await cursor.toArray();
+		this.app.Logger.debug3(
+			"DB",
+			`Aggregate on collection ${collection_name} returns`,
+			ret
+		);
+		return ret;
 	}
 	async insert(
 		collection_name: string,
 		to_insert: any,
 		options?: Parameters<MongoCollection["insertOne"]>[1]
 	) {
-		this.app.Logger.debug("db.insert", ...arguments);
+		this.app.Logger.debug2("DB", "Running insert", {
+			collection_name,
+			to_insert,
+			options,
+		});
 		const result = await this.db
 			.collection(collection_name)
 			.insertOne(to_insert, options);
 		return result.ops[0];
 	}
 	update(collection_name: string, query: any, new_value: any) {
-		// console.log("update", collection_name, query, new_value);
+		this.app.Logger.debug2(
+			"DB",
+			"Update",
+			{
+				collection_name,
+				query,
+				new_value,
+			},
+			4
+		);
 		query = process_query(query);
 		return this.db.collection(collection_name).updateOne(query, new_value);
 	}
 	async remove(collection_name: string, query: any, just_one: boolean) {
+		this.app.Logger.debug2(
+			"DB",
+			"remove",
+			{
+				collection_name,
+				query,
+			},
+			3
+		);
 		query = process_query(query);
 		const method = just_one ? "deleteOne" : "deleteMany";
-		return this.db.collection(collection_name)[method](query);
+		const ret = await this.db.collection(collection_name)[method](query);
+		return ret;
 	}
 	createIndex(
 		collection_name: string,
@@ -154,8 +202,8 @@ export default class Datastore {
 		const collection = this.db.collection(collection_name);
 		return collection.createIndex(index, options);
 	}
-	stop() {
-		this.client?.close();
+	async stop() {
+		return this.client?.close();
 	}
 }
 
@@ -165,7 +213,7 @@ function process_query(query: any) {
 	}
 	const new_query: { [key: string]: any } = {};
 	for (const attribute_name in query) {
-		if (attribute_name == "sealious_id") {
+		if (attribute_name == "id") {
 			new_query[attribute_name] = query[attribute_name];
 			continue;
 		}

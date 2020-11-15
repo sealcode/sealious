@@ -1,14 +1,9 @@
 import assert from "assert";
 import { withRunningApp, MockRestApi } from "../../../test_utils/with-test-app";
 import { assertThrowsAsync } from "../../../test_utils/assert-throws-async";
-import {
-	App,
-	Item,
-	Collection,
-	FieldTypes,
-	FieldDefinitionHelper as field,
-} from "../../../main";
-import { CollectionResponse } from "../../../../common_lib/response/responses";
+import { Collection, FieldTypes } from "../../../main";
+import { TestAppType } from "../../../test_utils/test-app";
+import { SerializedItemBody } from "../../../chip-types/collection-item";
 const A = "/api/v1/collections/A";
 const B = "/api/v1/collections/B";
 const C = "/api/v1/collections/C";
@@ -20,32 +15,33 @@ const Food = "/api/v1/collections/food";
 
 describe("single_reference", () => {
 	describe("from A to B", () => {
-		async function create_referencing_collections(app: App) {
-			Collection.fromDefinition(app, {
-				name: "A",
-				fields: [
-					field("reference_to_b", FieldTypes.SingleReference, {
-						target_collection: () => app.collections.B,
-					}),
-					field(
-						"filtered_reference_to_b",
-						FieldTypes.SingleReference,
-						{
-							target_collection: () => app.collections.B,
-							filter: { number: 1 },
-						}
+		function extend(t: TestAppType) {
+			const A = new (class extends Collection {
+				name = "A";
+				fields = {
+					reference_to_b: new FieldTypes.SingleReference("B"),
+					filtered_reference_to_b: new FieldTypes.SingleReference(
+						"B",
+						{ number: 1 }
 					),
-				],
-			});
-			Collection.fromDefinition(app, {
-				name: "B",
-				fields: [field("number", FieldTypes.Int)],
-			});
+				};
+			})();
+			const B = new (class extends Collection {
+				name = "B";
+				fields = { number: new FieldTypes.Int() };
+			})();
+
+			return class extends t {
+				collections = {
+					...t.BaseCollections,
+					A,
+					B,
+				};
+			};
 		}
 
 		it("should not allow a value that is not an existing id", async () =>
-			withRunningApp(async ({ app, rest_api }) => {
-				await create_referencing_collections(app);
+			withRunningApp(extend, async ({ rest_api }) => {
 				await assertThrowsAsync(
 					() =>
 						rest_api.post(A, {
@@ -60,8 +56,7 @@ describe("single_reference", () => {
 			}));
 
 		it("should allow a value that exists in B", async () =>
-			withRunningApp(async ({ app, rest_api }) => {
-				await create_referencing_collections(app);
+			withRunningApp(extend, async ({ rest_api }) => {
 				const { id } = await rest_api.post(B, { number: 1 });
 				await rest_api.post(A, {
 					reference_to_b: id,
@@ -69,8 +64,7 @@ describe("single_reference", () => {
 			}));
 
 		it("should not allow a value that exists in B but does not meet the filter criteria", async () =>
-			withRunningApp(async ({ app, rest_api }) => {
-				await create_referencing_collections(app);
+			withRunningApp(extend, async ({ rest_api }) => {
 				const { id } = await rest_api.post(B, { number: 0 });
 				await assertThrowsAsync(
 					() =>
@@ -87,95 +81,122 @@ describe("single_reference", () => {
 			}));
 
 		it("should allow a value that exists in B and meets the filter criteria", async () =>
-			withRunningApp(async ({ app, rest_api }) => {
-				await create_referencing_collections(app);
+			withRunningApp(extend, async ({ rest_api }) => {
 				const { id } = await rest_api.post(B, { number: 1 });
 				await rest_api.post(A, { filtered_reference_to_b: id });
 			}));
 
 		it("should be filterable by referenced collection fields", async () =>
-			withRunningApp(async ({ app, rest_api }) => {
-				await create_referencing_collections(app);
-
+			withRunningApp(extend, async ({ rest_api }) => {
 				for (let number of [1, 2, 3]) {
-					const { id } = await rest_api.post(B, { number });
-					await rest_api.post(A, { reference_to_b: id });
+					const item = await rest_api.post(B, { number });
+					await rest_api.post(A, { reference_to_b: item.id });
 				}
 
-				const response = (await rest_api.getSealiousResponse(
+				const response = await rest_api.get(
 					`${A}?filter[reference_to_b][number]=3&attachments[reference_to_b]=true`
-				)) as CollectionResponse;
-
-				assert.equal(response.items.length, 1);
-				assert.equal(response.items[0].reference_to_b.number, 3);
-			}));
-
-		it("should be filterable by referenced collection field of referenced collection field", async () =>
-			withRunningApp(async ({ app, rest_api }) => {
-				// A => B => C
-				Collection.fromDefinition(app, {
-					name: "A",
-					fields: [
-						field("reference_to_b", FieldTypes.SingleReference, {
-							target_collection: () => app.collections.B,
-						}),
-					],
-				});
-				Collection.fromDefinition(app, {
-					name: "B",
-					fields: [
-						field("reference_to_c", FieldTypes.SingleReference, {
-							target_collection: () => app.collections.C,
-						}),
-					],
-				});
-
-				Collection.fromDefinition(app, {
-					name: "C",
-					fields: [field("number", FieldTypes.Int)],
-				});
-				let c_ids = [];
-				let b_ids = [];
-				for (let number of [1, 2, 3]) {
-					const { id } = await rest_api.post(C, { number });
-					c_ids.push(id);
-				}
-				for (let c_id of c_ids) {
-					const { id } = await rest_api.post(B, {
-						reference_to_c: c_id,
-					});
-					b_ids.push(id);
-				}
-				for (let b_id of b_ids) {
-					await rest_api.post(A, { reference_to_b: b_id });
-				}
-
-				const response = (await rest_api.getSealiousResponse(
-					`${A}?filter[reference_to_b][reference_to_c][number]=3&attachments[reference_to_b][reference_to_c]=true`
-				)) as CollectionResponse;
-
+				);
 				assert.equal(response.items.length, 1);
 				assert.equal(
-					response.items[0].reference_to_b.reference_to_c.number,
+					response.attachments[response.items[0].reference_to_b]
+						.number,
 					3
 				);
 			}));
+
+		it("should be filterable by referenced collection field of referenced collection field", async () =>
+			withRunningApp(
+				(app_class) => {
+					// A => B => C
+					const A = new (class extends Collection {
+						name = "A";
+						fields = {
+							reference_to_b: new FieldTypes.SingleReference("B"),
+						};
+					})();
+					const B = new (class extends Collection {
+						name = "B";
+						fields = {
+							reference_to_c: new FieldTypes.SingleReference("C"),
+						};
+					})();
+
+					const C = new (class extends Collection {
+						name = "C";
+						fields = { number: new FieldTypes.Int() };
+					})();
+
+					return class extends app_class {
+						collections = {
+							...app_class.BaseCollections,
+							A,
+							B,
+							C,
+						};
+					};
+				},
+				async ({ rest_api }) => {
+					let c_ids = [];
+					let b_ids = [];
+					for (let number of [1, 2, 3]) {
+						const { id } = await rest_api.post(
+							"/api/v1/collections/C",
+							{
+								number,
+							}
+						);
+						c_ids.push(id);
+					}
+					for (let c_id of c_ids) {
+						const { id } = await rest_api.post(
+							"/api/v1/collections/B",
+							{
+								reference_to_c: c_id,
+							}
+						);
+						b_ids.push(id);
+					}
+					for (let b_id of b_ids) {
+						await rest_api.post("/api/v1/collections/A", {
+							reference_to_b: b_id,
+						});
+					}
+
+					const response = await rest_api.get(
+						`/api/v1/collections/A?filter[reference_to_b][reference_to_c][number]=3&attachments[reference_to_b][reference_to_c]=true`
+					);
+
+					assert.equal(response.items.length, 1);
+					assert.equal(
+						response.attachments[
+							response.attachments[
+								response.items[0].reference_to_b
+							].reference_to_c
+						].number,
+						3
+					);
+				}
+			));
 	});
 
 	describe("from A to A", () => {
-		const items: { [name: string]: Item } = {};
+		const items: { [name: string]: SerializedItemBody } = {};
 
-		async function setup(app: App, rest_api: MockRestApi) {
-			Collection.fromDefinition(app, {
-				name: "seals",
-				fields: [
-					field("name", FieldTypes.Text, {}, true),
-					field("best_friend", FieldTypes.SingleReference, {
-						target_collection: () => app.collections.seals,
-					}),
-				],
-			});
+		function extend(t: TestAppType) {
+			const seals = new (class extends Collection {
+				name = "seals";
+				fields = {
+					name: new FieldTypes.Text(),
+					best_friend: new FieldTypes.SingleReference("seals"),
+				};
+			})();
 
+			return class extends t {
+				collections = { ...t.BaseCollections, seals };
+			};
+		}
+
+		async function setup(rest_api: MockRestApi) {
 			items.hoover = await rest_api.post(Seals, {
 				name: "Hoover",
 			});
@@ -202,68 +223,72 @@ describe("single_reference", () => {
 			});
 		}
 
-		it("returns single attachment from directly referenced collection", async () =>
-			withRunningApp(async ({ app, rest_api }) => {
-				await setup(app, rest_api);
+		it("returns single attachment from a directly referenced collection", async () =>
+			withRunningApp(extend, async ({ rest_api }) => {
+				await setup(rest_api);
 
 				const {
 					items: [hoover, nelly, maksiu, cycle],
-				} = await rest_api.getSealiousResponse(
+					attachments,
+				} = await rest_api.get(
 					`${Seals}?attachments[best_friend]=true`
 				);
 
 				assert.equal(hoover.name, "Hoover");
-				assert.equal(hoover.best_friend.name, "Maksiu");
 				assert.equal(nelly.name, "Nelly");
-				assert.equal(nelly.best_friend.name, "Hoover");
+				assert.equal(attachments[nelly.best_friend].name, "Hoover");
 				assert.equal(maksiu.name, "Maksiu");
-				assert.equal(maksiu.best_friend.name, "Nelly");
+				assert.equal(attachments[maksiu.best_friend].name, "Nelly");
 				assert.equal(cycle.name, "Cycle");
-				assert.equal(cycle.best_friend.name, "Cycle");
+				assert.equal(attachments[cycle.best_friend].name, "Cycle");
 			}));
 	});
 
 	describe("attachments behaviour", () => {
-		const items: { [name: string]: Item } = {};
+		const items: { [name: string]: SerializedItemBody } = {};
 
-		async function setup(app: App, rest_api: MockRestApi) {
-			Collection.fromDefinition(app, {
-				name: "seals",
-				fields: [
-					field("name", FieldTypes.Text, {}, true),
-					field("water_area", FieldTypes.SingleReference, {
-						target_collection: () => app.collections.water_areas,
-					}),
-					field("favourite_meal", FieldTypes.SingleReference, {
-						target_collection: () => app.collections.food,
-					}),
-				],
-			});
+		function extend(t: TestAppType) {
+			const seals = new (class extends Collection {
+				name = "seals";
+				fields = {
+					name: new FieldTypes.Text(),
+					water_area: new FieldTypes.SingleReference("water_areas"),
+					favourite_meal: new FieldTypes.SingleReference("food"),
+				};
+			})();
 
-			Collection.fromDefinition(app, {
-				name: "water_areas",
-				fields: [
-					field("name", FieldTypes.Text, {}, true),
-					field("type", FieldTypes.SingleReference, {
-						target_collection: () =>
-							app.collections.water_area_types,
-					}),
-				],
-			});
+			const water_areas = new (class extends Collection {
+				name = "water_areas";
+				fields = {
+					name: new FieldTypes.Text(),
+					type: new FieldTypes.SingleReference("water_area_types"),
+				};
+			})();
 
-			Collection.fromDefinition(app, {
-				name: "water_area_types",
-				fields: [
-					field("type_name", FieldTypes.Text, {}, true),
-					field("how_good_for_seals", FieldTypes.Text, {}, true),
-				],
-			});
+			const water_area_types = new (class extends Collection {
+				name = "water_area_types";
+				fields = {
+					type_name: new FieldTypes.Text(),
+					how_good_for_seals: new FieldTypes.Text(),
+				};
+			})();
 
-			Collection.fromDefinition(app, {
-				name: "food",
-				fields: [field("food_name", FieldTypes.Text, {}, true)],
-			});
+			const food = new (class extends Collection {
+				name = "food";
+				fields = { food_name: new FieldTypes.Text() };
+			})();
+			return class extends t {
+				collections = {
+					...t.BaseCollections,
+					seals,
+					water_areas,
+					water_area_types,
+					food,
+				};
+			};
+		}
 
+		async function setup(rest_api: MockRestApi) {
 			items.cool_sea = await rest_api.post(Water_Area_Types, {
 				type_name: "Cool Sea",
 				how_good_for_seals: "perfect",
@@ -322,20 +347,18 @@ describe("single_reference", () => {
 		}
 
 		it("returns single attachment from directly referenced collection", async () =>
-			withRunningApp(async ({ app, rest_api }) => {
-				await setup(app, rest_api);
+			withRunningApp(extend, async ({ rest_api }) => {
+				await setup(rest_api);
 
 				const {
 					items: seals,
 					attachments,
-					fieldsWithAttachments,
+					fields_with_attachments,
 				} = await rest_api.get(`${Seals}?attachments[water_area]=true`);
 
 				assert.equal(seals.length, 3);
 
-				assert.deepEqual(fieldsWithAttachments, {
-					water_area: {},
-				});
+				assert.deepEqual(fields_with_attachments, ["water_area"]);
 				assert.deepEqual(attachments, {
 					[items.baltic_sea.id]: items.baltic_sea,
 					[items.arabic_sea.id]: items.arabic_sea,
@@ -343,29 +366,26 @@ describe("single_reference", () => {
 			}));
 
 		it("returns attachments when single resource is queried", async () =>
-			withRunningApp(async ({ app, rest_api }) => {
-				await setup(app, rest_api);
+			withRunningApp(extend, async ({ rest_api }) => {
+				await setup(rest_api);
 
 				const {
-					item: seal,
+					items: [seal],
 					attachments,
-					fieldsWithAttachments,
+					fields_with_attachments,
 				} = await rest_api.get(
 					`${Seals}/${items.maksiu.id}?attachments[water_area]=true`
 				);
-
 				assert.equal(seal.name, items.maksiu.name);
-				assert.deepEqual(fieldsWithAttachments, {
-					water_area: {},
-				});
+				assert.deepEqual(fields_with_attachments, ["water_area"]);
 				assert.deepEqual(attachments, {
 					[items.baltic_sea.id]: items.baltic_sea,
 				});
 			}));
 
-		it("throws error when not existing field is given to request", async () =>
-			withRunningApp(async ({ app, rest_api }) => {
-				await setup(app, rest_api);
+		it("throws an error when not existing field is given to request", async () =>
+			withRunningApp(extend, async ({ rest_api }) => {
+				await setup(rest_api);
 
 				const scenarios = {
 					"[fake_field_1]": "fake_field_1",
@@ -394,9 +414,9 @@ describe("single_reference", () => {
 				}
 			}));
 
-		it("throws error when inappropriate field is given to request", async () =>
-			withRunningApp(async ({ app, rest_api }) => {
-				await setup(app, rest_api);
+		it("throws an error when an inappropriate field is given to request", async () =>
+			withRunningApp(extend, async ({ rest_api }) => {
+				await setup(rest_api);
 
 				await assertThrowsAsync(
 					() => rest_api.get(`${Seals}?attachments[name]=true`),
@@ -404,32 +424,30 @@ describe("single_reference", () => {
 						assert.equal(e.response.status, 405);
 						assert.equal(
 							e.response.data.message,
-							"Given field name does not support attachments!"
+							"Field 'name' does not support attachments"
 						);
 					}
 				);
 			}));
 
 		it("returns multiple attachments", async () =>
-			withRunningApp(async ({ app, rest_api }) => {
-				await setup(app, rest_api);
+			withRunningApp(extend, async ({ rest_api }) => {
+				await setup(rest_api);
 
 				const {
 					items: seals,
 					attachments,
-					fieldsWithAttachments,
+					fields_with_attachments,
 				} = await rest_api.get(
 					`${Seals}?attachments[water_area][type]=true&attachments[favourite_meal]=true`
 				);
 
 				assert.equal(seals.length, 3);
 
-				assert.deepEqual(fieldsWithAttachments, {
-					water_area: {
-						type: {},
-					},
-					favourite_meal: {},
-				});
+				assert.deepEqual(fields_with_attachments, [
+					"water_area",
+					"favourite_meal",
+				]);
 				assert.deepEqual(attachments, {
 					[items.cool_sea.id]: items.cool_sea,
 					[items.warm_sea.id]: items.warm_sea,

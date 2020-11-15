@@ -1,12 +1,12 @@
-import Policy, { PolicyDefinition } from "../../chip-types/policy";
+import Policy from "../../chip-types/policy";
 import * as Query from "../../datastore/query";
 import { Context } from "../../main";
-import SealiousResponse from "../../../common_lib/response/sealious-response";
+import { CollectionItem } from "../../chip-types/collection-item";
 
 export default class Not extends Policy {
 	static type_name = "not";
 	strategy_to_negate: Policy;
-	constructor(strategy: PolicyDefinition) {
+	constructor(strategy: Policy) {
 		super(strategy);
 		this.strategy_to_negate = Policy.fromDefinition(strategy);
 	}
@@ -23,11 +23,11 @@ export default class Not extends Policy {
 	}
 	async checkerFunction(
 		context: Context,
-		sealious_response: SealiousResponse
+		item_getter: () => Promise<CollectionItem>
 	) {
 		const result = await this.strategy_to_negate.check(
 			context,
-			sealious_response
+			item_getter
 		);
 		if (result === null) {
 			return null;

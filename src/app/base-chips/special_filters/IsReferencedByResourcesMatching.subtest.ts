@@ -1,59 +1,43 @@
 import * as assert from "assert";
 
 import { withRunningApp, MockRestApi } from "../../../test_utils/with-test-app";
-import {
-	App,
-	Collection,
-	FieldTypes,
-	Policies,
-	FieldDefinitionHelper as field,
-} from "../../../main";
+import { Collection, FieldTypes, Policies } from "../../../main";
 import IsReferencedByResourcesMatching from "./IsReferencedByResourcesMatching";
-import { CollectionResponse } from "../../../../common_lib/response/responses";
+import { TestAppType } from "../../../test_utils/test-app";
+import Users from "../../collections/users";
+
+function extend(t: TestAppType) {
+	return class extends t {
+		collections = {
+			...t.BaseCollections,
+			users: new (class extends Users {
+				policies = {
+					create: new Policies.Public(),
+					show: new Policies.Public(),
+				};
+				special_filters = {
+					staff: new IsReferencedByResourcesMatching("users-roles", {
+						referencing_collection: "users-roles",
+						referencing_field: "user",
+						field_to_check: "role",
+						allowed_values: ["admin", "moderator"],
+						nopass_reason:
+							"Resource you want to retrieve does not match given filter.!",
+					}),
+				};
+			})(),
+			"users-roles": new (class extends Collection {
+				fields = {
+					user: new FieldTypes.SingleReference("users"),
+					role: new FieldTypes.Enum(["admin", "moderator", "user"]),
+				};
+			})(),
+		};
+	};
+}
 
 describe("IsReferencedByResourcesMatching", () => {
-	async function setup(app: App, rest_api: MockRestApi) {
-		const Users = app.collections.users;
-
-		Users.setPolicy({
-			create: Policies.Public,
-			show: Policies.Public,
-		});
-
-		const UsersRoles = Collection.fromDefinition(app, {
-			name: "users-roles", // NOT the default user-roles collection
-			fields: [
-				field(
-					"user",
-					FieldTypes.SingleReference,
-					{ target_collection: () => app.collections.users },
-					true
-				),
-				field(
-					"role",
-					FieldTypes.Enum,
-					{
-						values: ["admin", "moderator", "user"],
-					},
-					true
-				),
-			],
-		});
-
-		Users.addSpecialFilters({
-			staff: new IsReferencedByResourcesMatching(
-				app,
-				() => app.collections["users-roles"],
-				{
-					referencing_field: UsersRoles.fields.user,
-					field_to_check: UsersRoles.fields.role,
-					allowed_values: ["admin", "moderator"],
-					nopass_reason:
-						"Resource you want to retrieve does not match given filter.!",
-				}
-			),
-		});
-
+	async function setup(rest_api: MockRestApi) {
 		const users = [
 			{
 				username: "admin",
@@ -85,14 +69,14 @@ describe("IsReferencedByResourcesMatching", () => {
 	}
 
 	it("returns only users with role matching `allowed_values`", () =>
-		withRunningApp(async ({ app, rest_api }) => {
-			await setup(app, rest_api);
+		withRunningApp(extend, async ({ rest_api }) => {
+			await setup(rest_api);
 
 			return rest_api
 				.get("/api/v1/collections/users/@staff")
-				.then(({ items }: CollectionResponse) => {
+				.then(({ items }: any) => {
 					assert.ok(items.length > 0);
-					items.forEach((user) => {
+					items.forEach((user: any) => {
 						assert.ok(
 							user.username === "admin" ||
 								user.username === "moderator"

@@ -10,21 +10,17 @@ describe("password", () => {
 
 	async function setup(app: App) {
 		user_id = (
-			await app.runAction(
-				new app.SuperContext(),
-				["collections", "users"],
-				"create",
-				{
-					username,
-					password,
-					email: "some-user@example.com",
-				}
-			)
+			await app.collections.users.suCreate({
+				username,
+				password,
+				email: "some-user@example.com",
+				roles: [],
+			})
 		).id;
 	}
 
 	it("Hides password", async () =>
-		withRunningApp(async ({ app, rest_api }) => {
+		withRunningApp(null, async ({ app, rest_api }) => {
 			await setup(app);
 			const session = await rest_api.login({
 				username,
@@ -41,24 +37,20 @@ describe("password", () => {
 			);
 
 			assert.equal(
-				(
-					await app.runAction(
-						new app.SuperContext(),
-						["collections", "users", user_id],
-						"show"
-					)
-				).password,
+				(await app.collections.users.suGetByID(user_id)).get(
+					"password"
+				),
 				"secret"
 			);
 		}));
 
 	it("Stores correct password value", async () =>
-		withRunningApp(async ({ app }) => {
+		withRunningApp(null, async ({ app }) => {
 			await setup(app);
 
 			const hashed_password = (
 				await app.Datastore.find("users", {
-					sealious_id: user_id,
+					id: user_id,
 				})
 			)[0].password;
 

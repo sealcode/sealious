@@ -12,20 +12,20 @@ module.exports = {
 		},
 	},
 	rules: {
-		"jsdoc/require-jsdoc": [
-			"error",
-			{
-				contexts: ["ClassProperty"],
-				require: {
-					ClassExpression: true,
-					ClassDeclaration: true,
-					MethodDefinition: true,
-				},
-			},
-		],
-		"jsdoc/require-param-type": 0,
-		"jsdoc/require-param-description": 1,
-		"jsdoc/require-description": 2,
+		// "jsdoc/require-jsdoc": [
+		// "warn",
+		// {
+		// contexts: ["ClassProperty"],
+		// require: {
+		// ClassExpression: true,
+		// ClassDeclaration: true,
+		// MethodDefinition: true,
+		// },
+		// },
+		// ],
+		// "jsdoc/require-param-type": 0,
+		// "jsdoc/require-param-description": 1,
+		// "jsdoc/require-description": 2,
 	},
 	settings: { jsdoc: { mode: "typescript" } },
 };

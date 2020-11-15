@@ -1,78 +1,70 @@
 import assert from "assert";
-import { withRunningApp, MockRestApi } from "../../test_utils/with-test-app";
+import Policy from "../../chip-types/policy";
+import { ActionName, App, Collection, FieldTypes, Policies } from "../../main";
 import { assertThrowsAsync } from "../../test_utils/assert-throws-async";
-import {
-	App,
-	Collection,
-	ActionName,
-	FieldTypes,
-	Policies,
-	FieldDefinitionHelper as field,
-} from "../../main";
-import { PolicyDefinition } from "../../chip-types/policy";
+import { TestAppType } from "../../test_utils/test-app";
+import { MockRestApi, withRunningApp } from "../../test_utils/with-test-app";
 import Matches from "../base-chips/special_filters/matches";
+
+const extend = (
+	policies: {
+		[action_name in ActionName]?: Policy;
+	}
+) => (t: TestAppType) => {
+	const Numbers = new (class extends Collection {
+		name = "numbers";
+		fields = { number: new FieldTypes.Int() };
+		named_filters = {
+			greater_than_1: new Matches("numbers", {
+				number: { ">": 1 },
+			}),
+		};
+		policies = policies;
+	})();
+
+	const NumberNotes = new (class extends Collection {
+		name = "number-notes";
+		fields = {
+			note: new FieldTypes.Text(),
+			number: new FieldTypes.SingleReference("numbers"),
+		};
+		policies = {
+			create: new Policies.SameAsForResourceInField({
+				action_name: "create",
+				field: "number",
+				collection_name: "number-notes",
+			}),
+			show: new Policies.SameAsForResourceInField({
+				action_name: "show",
+				field: "number",
+				collection_name: "number-notes",
+			}),
+		};
+	})();
+
+	return class extends t {
+		collections = {
+			...t.BaseCollections,
+			"number-notes": NumberNotes,
+			numbers: Numbers,
+		};
+	};
+};
 
 describe("SameAsForResourceInField", () => {
 	const sessions: { [username: string]: any } = {};
 	const numbers: number[] = [];
-	async function setup(
-		app: App,
-		rest_api: MockRestApi,
-		policy: {
-			[action_name in ActionName]?: PolicyDefinition;
-		}
-	) {
+	async function setup(app: App, rest_api: MockRestApi) {
 		numbers.splice(0, numbers.length); // to clear the array;
-		const Numbers = Collection.fromDefinition(app, {
-			name: "numbers",
-			fields: [field("number", FieldTypes.Int)],
-			named_filters: {
-				greater_than_1: new Matches(
-					app,
-					() => app.collections.numbers,
-					{
-						number: { ">": 1 },
-					}
-				),
-			},
-			policy,
-		});
-
-		Collection.fromDefinition(app, {
-			name: "number-notes",
-			fields: [
-				field("note", FieldTypes.Text),
-				field("number", FieldTypes.SingleReference, {
-					target_collection: () => Numbers,
-				}),
-			],
-			policy: {
-				create: new Policies.SameAsForResourceInField({
-					action_name: "create",
-					field: "number",
-					collection_name: "number-notes",
-				}),
-
-				show: new Policies.SameAsForResourceInField({
-					action_name: "show",
-					field: "number",
-					collection_name: "number-notes",
-				}),
-			},
-		});
 
 		const password = "password";
 		for (let username of ["alice", "bob"]) {
-			await app.runAction(
-				new app.SuperContext(),
-				["collections", "users"],
-				"create",
-				{
-					username,
-					password,
-					email: `${username}@example.com`,
-				}
-			);
+			await app.collections.users.suCreate({
+				username,
+				password,
+				email: `${username}@example.com`,
+				roles: [],
+			});
 			sessions[username] = await rest_api.login({
 				username,
 				password,
@@ -112,86 +104,97 @@ describe("SameAsForResourceInField", () => {
 	}
 
 	it("returns everything for number-notes referring to own numbers", () =>
-		withRunningApp(async ({ app, rest_api }) => {
-			await setup(app, rest_api, {
-				create: Policies.Public,
-				show: Policies.Owner,
-			});
+		withRunningApp(
+			extend({
+				create: new Policies.Public(),
+				show: new Policies.Owner(),
+			}),
+			async ({ app, rest_api }) => {
+				await setup(app, rest_api);
 
-			const posted_notes = await post_number_notes(rest_api, "alice");
+				const posted_notes = await post_number_notes(rest_api, "alice");
 
-			const { items: got_notes } = await rest_api.get(
-				"/api/v1/collections/number-notes",
-				sessions.alice
-			);
+				const { items: got_notes } = await rest_api.get(
+					"/api/v1/collections/number-notes",
+					sessions.alice
+				);
 
-			assert.equal(got_notes.length, posted_notes.length);
-		}));
+				assert.equal(got_notes.length, posted_notes.length);
+			}
+		));
 
 	it("returns nothing for number-notes referring to other user's numbers", () =>
-		withRunningApp(async ({ app, rest_api }) => {
-			await setup(app, rest_api, {
-				create: Policies.Public,
-				show: Policies.Owner,
-			});
+		withRunningApp(
+			extend({
+				create: new Policies.Public(),
+				show: new Policies.Owner(),
+			}),
+			async ({ app, rest_api }) => {
+				await setup(app, rest_api);
 
-			await post_number_notes(rest_api, "alice");
+				await post_number_notes(rest_api, "alice");
 
-			const { items: got_notes } = await rest_api.get(
-				"/api/v1/collections/number-notes",
-				sessions.bob
-			);
+				const { items: got_notes } = await rest_api.get(
+					"/api/v1/collections/number-notes",
+					sessions.bob
+				);
 
-			assert.equal(got_notes.length, 0);
-		}));
+				assert.equal(got_notes.length, 0);
+			}
+		));
 
 	it("returns item for number-notes referring to numbers with complex access strategy", () =>
-		withRunningApp(async ({ app, rest_api }) => {
-			await setup(app, rest_api, {
+		withRunningApp(
+			extend({
 				create: Policies.LoggedIn,
 				show: new Policies.Or([
-					Policies.Owner,
-
+					new Policies.Owner(),
 					new Policies.If([
 						"numbers",
 						"greater_than_1",
 						Policies.Public,
 					]),
 				]),
-			});
+			}),
+			async ({ app, rest_api }) => {
+				await setup(app, rest_api);
 
-			await post_number_notes(rest_api, "alice");
+				await post_number_notes(rest_api, "alice");
 
-			const { items: got_notes } = await rest_api.get(
-				"/api/v1/collections/number-notes",
-				sessions.bob
-			);
+				const { items: got_notes } = await rest_api.get(
+					"/api/v1/collections/number-notes",
+					sessions.bob
+				);
 
-			assert.equal(got_notes.length, 1);
-		}));
+				assert.equal(got_notes.length, 1);
+			}
+		));
 
 	it("doesn't allow to edit number-notes referring to other user's numbers", () =>
-		withRunningApp(async ({ app, rest_api }) => {
-			await setup(app, rest_api, {
+		withRunningApp(
+			extend({
 				create: Policies.LoggedIn,
-				edit: Policies.Owner,
-				show: Policies.Owner,
-			});
-			const posted_notes = await post_number_notes(rest_api, "alice");
+				edit: new Policies.Owner(),
+				show: new Policies.Owner(),
+			}),
+			async ({ app, rest_api }) => {
+				await setup(app, rest_api);
+				const posted_notes = await post_number_notes(rest_api, "alice");
 
-			await assertThrowsAsync(
-				() =>
-					rest_api.patch(
-						`/api/v1/collections/number-notes/${posted_notes[0].id}`,
-						{ note: "Lorem ipsumm" },
-						sessions.bob
-					),
-				(error) => {
-					assert.equal(
-						(error as any).response.data.message,
-						"you are not who created this item"
-					);
-				}
-			);
-		}));
+				await assertThrowsAsync(
+					() =>
+						rest_api.patch(
+							`/api/v1/collections/number-notes/${posted_notes[0].id}`,
+							{ note: "Lorem ipsumm" },
+							sessions.bob
+						),
+					(error) => {
+						assert.equal(
+							(error as any).response.data.message,
+							"you are not who created this item"
+						);
+					}
+				);
+			}
+		));
 });

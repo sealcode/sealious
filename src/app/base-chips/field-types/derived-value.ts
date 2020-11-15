@@ -1,14 +1,4 @@
-import {
-	HybridField,
-	Field,
-	ExtractOutput,
-	App,
-	Context,
-	HybridFieldParams,
-	EventMatchers,
-} from "../../../main";
-import Bluebird from "bluebird";
-
+import { HybridField, Field, ExtractOutput, App } from "../../../main";
 /*
 
 todo: make the deriving_fn more type-safe by reading the types of the fields?
@@ -20,39 +10,19 @@ export type DerivingFn<T extends Field> = (
 ) => Promise<ExtractOutput<T>>;
 
 export default class DerivedValue<T extends Field> extends HybridField<T> {
-	getTypeName = () => "derived-value";
+	typeName = "derived-value";
 
 	fields: string[];
 	deriving_fn: DerivingFn<T>;
 
-	private async checkAllCollectionFields(
-		context: Context,
-		event_params: { [field_name: string]: any }
-	) {
-		for (const field_name in event_params) {
-			try {
-				await this.collection.fields[field_name].isProperValue(
-					context,
-					event_params[field_name],
-					null
-				);
-			} catch (e) {
-				return;
-			}
-		}
-	}
-
-	setParams(
-		params: HybridFieldParams<T> & {
+	constructor(
+		base_field: T,
+		params: {
 			fields: string[];
 			deriving_fn: DerivingFn<T>;
 		}
 	) {
-		if (this.app.status !== "stopped") {
-			throw new Error(
-				"Cannot add this kind of field after the app has started"
-			);
-		}
+		super(base_field);
 		if (typeof params.deriving_fn !== "function") {
 			throw new Error(
 				"Error: 'deriving_fn' param in name_and_surname derived-value field is not a function."
@@ -73,7 +43,10 @@ export default class DerivedValue<T extends Field> extends HybridField<T> {
 				`'fields' param in ${this.name} derived-value field is not an array.`
 			);
 		}
+	}
 
+	async init(app: App) {
+		super.init(app);
 		const not_matching_fields = this.fields.filter(
 			(field) => !Object.keys(this.collection.fields).includes(field)
 		);
@@ -87,74 +60,36 @@ export default class DerivedValue<T extends Field> extends HybridField<T> {
 				} collection. REMEMBER: 'derived-value' field must be declared *after* the fields it depends on.`
 			);
 		}
-	}
+		this.collection.on("before:create", async ([context, item]) => {
+			context.app.Logger.debug2(
+				"FIELD.DERIVED VALUE",
+				"Before:create handler"
+			);
+			const derived_fn_args = this.fields.map((field_name) => {
+				const value = item.body.getInput(field_name);
+				return value === undefined || value === null ? "" : value;
+			});
+			context.app.Logger.debug3(
+				"FIELD.DERIVED VALUE",
+				"Passing to derived_fn:",
+				derived_fn_args
+			);
+			const derived_value = await this.deriving_fn(...derived_fn_args);
+			item.set(this.name, derived_value);
+		});
 
-	async init(app: App) {
-		app.addHook(
-			new EventMatchers.CollectionMatcher({
-				when: "before",
-				collection_name: this.collection.name,
-				action: "create",
-			}),
-			async (event, params) => {
-				this.checkAllCollectionFields(event.metadata.context, params);
+		this.collection.on("before:edit", async ([_, item]) => {
+			if (
+				this.fields.some((field) => item.body.changed_fields.has(field))
+			) {
 				const derived_fn_args = this.fields.map((field_name) =>
-					params[field_name] === undefined ||
-					params[field_name] === null
-						? ""
-						: params[field_name]
+					item.get(field_name)
 				);
 				const derived_value = await this.deriving_fn(
 					...derived_fn_args
 				);
-				return {
-					[this.name]: derived_value,
-					...params,
-				};
+				item.set(this.name, derived_value);
 			}
-		);
-
-		app.addHook(
-			new EventMatchers.Resource({
-				when: "before",
-				collection_name: this.collection.name,
-				action: "edit",
-			}),
-			async ({ metadata, subject_path }, params) => {
-				this.checkAllCollectionFields(metadata.context, params);
-
-				if (
-					this.fields.some((field) =>
-						Object.keys(params).includes(field)
-					)
-				) {
-					const derived_fn_args = await Bluebird.map(
-						this.fields,
-						async (field_name) => {
-							if (Object.keys(params).includes(field_name)) {
-								return params[field_name];
-							}
-							const sealious_response = await app.runAction(
-								new app.SuperContext(),
-								subject_path.split("."),
-								"show"
-							);
-							return sealious_response[field_name];
-						}
-					);
-					const derived_value = await this.deriving_fn(
-						...derived_fn_args
-					);
-
-					const ret = {
-						...params,
-						[this.name]: derived_value,
-					};
-					return ret;
-				}
-				return params;
-			},
-			true
-		);
+		});
 	}
 }

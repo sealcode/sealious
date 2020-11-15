@@ -1,7 +1,7 @@
-import SealiousResponse from "../../common_lib/response/sealious-response";
 import Context from "../context";
 import Query from "../datastore/query";
 import { AllowAll } from "../datastore/allow-all";
+import { CollectionItem } from "./collection-item";
 
 export type PolicyDefinition = [PolicyClass, any] | Policy | PolicyClass;
 
@@ -11,7 +11,7 @@ export type PolicyDecision = {
 } | null;
 
 export type PolicyClass = {
-	new (params: any): Policy;
+	new (params?: any): Policy;
 	type_name: string;
 };
 
@@ -24,7 +24,7 @@ export default abstract class Policy {
 	// return null if not possible to give an answer
 	abstract checkerFunction(
 		context: Context,
-		sealious_response?: SealiousResponse
+		item_getter?: () => Promise<CollectionItem<any>>
 	): Promise<PolicyDecision | null>;
 
 	async isItemSensitive() {
@@ -42,19 +42,28 @@ export default abstract class Policy {
 
 	async check(
 		context: Context,
-		sealious_response?: SealiousResponse
+		item_getter?: () => Promise<CollectionItem<any>>
 	): Promise<PolicyDecision | null> {
+		context.app.Logger.debug3(
+			"POLICY",
+			`Checking policy`,
+			{
+				this: this,
+				context,
+			},
+			1
+		);
 		if (context.is_super) {
 			return Policy.allow("super-context is always allowed");
 		}
 
 		const is_item_sensitive = await this.isItemSensitive();
 
-		if (is_item_sensitive && sealious_response === undefined) {
+		if (is_item_sensitive && item_getter === undefined) {
 			return null;
 		}
 
-		return this.checkerFunction(context, sealious_response);
+		return this.checkerFunction(context, item_getter);
 	}
 
 	public static fromDefinition(definition: PolicyDefinition): Policy {
@@ -83,7 +92,7 @@ export default abstract class Policy {
 
 export abstract class ReducingPolicy extends Policy {
 	policies: Policy[];
-	constructor(params: PolicyDefinition[]) {
+	constructor(params: Policy[]) {
 		super(params);
 		this.policies = params.map((definition) =>
 			Policy.fromDefinition(definition)
@@ -91,10 +100,12 @@ export abstract class ReducingPolicy extends Policy {
 	}
 	checkAllPolicies(
 		context: Context,
-		response?: SealiousResponse
+		item_getter?: () => Promise<CollectionItem>
 	): Promise<PolicyDecision[]> {
 		return Promise.all(
-			this.policies.map((strategy) => strategy.check(context, response))
+			this.policies.map((strategy) =>
+				strategy.check(context, item_getter)
+			)
 		);
 	}
 }

@@ -1,31 +1,26 @@
 import assert from "assert";
 import { withRunningApp } from "../../../test_utils/with-test-app";
 import { assertThrowsAsync } from "../../../test_utils/assert-throws-async";
-import { App, Collection, FieldTypes } from "../../../main";
+import { Collection, FieldTypes } from "../../../main";
+import { TestAppType } from "../../../test_utils/test-app";
+
+function extend(t: TestAppType) {
+	return class extends t {
+		collections = {
+			...t.BaseCollections,
+			seals: new (class extends Collection {
+				fields = {
+					name: new FieldTypes.Text(),
+					metadata: new FieldTypes.JsonObject(),
+				};
+			})(),
+		};
+	};
+}
 
 describe("json-object", () => {
-	function setup(app: App) {
-		Collection.fromDefinition(app, {
-			name: "seals",
-			fields: [
-				{
-					name: "name",
-					type: FieldTypes.Text,
-					required: true,
-				},
-				{
-					name: "metadata",
-					type: FieldTypes.JsonObject,
-					required: true,
-					params: {},
-				},
-			],
-		});
-	}
-
 	it("Correctly adds and edits record with json field", async () =>
-		withRunningApp(async ({ app, rest_api }) => {
-			setup(app);
+		withRunningApp(extend, async ({ rest_api }) => {
 			const item = {
 				name: "Hoover",
 				metadata: {
@@ -38,27 +33,23 @@ describe("json-object", () => {
 				item
 			);
 
-			let { name, metadata } = (await rest_api.getSealiousResponse(
-				`/api/v1/collections/seals/${id}`
-			)) as any;
+			let {
+				items: [{ name, metadata }],
+			} = (await rest_api.get(`/api/v1/collections/seals/${id}`)) as any;
 			assert.deepEqual({ name, metadata }, item);
 
 			item.metadata.weight = 320;
 			await rest_api.patch(`/api/v1/collections/seals/${id}`, item);
 
 			let {
-				name: name2,
-				metadata: metadata2,
-			} = (await rest_api.getSealiousResponse(
-				`/api/v1/collections/seals/${id}`
-			)) as any;
+				items: [{ name: name2, metadata: metadata2 }],
+			} = (await rest_api.get(`/api/v1/collections/seals/${id}`)) as any;
 
 			assert.deepEqual({ name: name2, metadata: metadata2 }, item);
 		}));
 
 	it("Doesn't allow to post a primitive", async () =>
-		withRunningApp(async ({ app, rest_api }) => {
-			setup(app);
+		withRunningApp(extend, async ({ rest_api }) => {
 			await assertThrowsAsync(
 				() =>
 					rest_api.post("/api/v1/collections/seals", {
@@ -74,8 +65,7 @@ describe("json-object", () => {
 		}));
 
 	it("Respects filter passed to query", async () =>
-		withRunningApp(async ({ app, rest_api }) => {
-			setup(app);
+		withRunningApp(extend, async ({ rest_api }) => {
 			await rest_api.post("/api/v1/collections/seals", {
 				name: "Hoover",
 				metadata: {
@@ -113,9 +103,7 @@ describe("json-object", () => {
 		}));
 
 	it("Respects filter passed to query when value can be parsed as number", async () =>
-		withRunningApp(async ({ app, rest_api }) => {
-			setup(app);
-
+		withRunningApp(extend, async ({ rest_api }) => {
 			const seals = [
 				{
 					name: "Hoover",

@@ -3,33 +3,33 @@ import http_to_subject_method from "./http-to-method-name";
 import extractContext from "./extract-context";
 import handleResponse from "./handle-response";
 import handleError from "./handle-error";
-import SealiousResponse from "../../common_lib/response/sealious-response";
 import App from "../app/app";
+import { NotFound } from "../response/errors";
 const ID_INDEX = 2;
 
 export default async function handle_request(app: App, request: any, h: any) {
-	try {
-		const path_elements = parsePathElements(request);
-		const action_name =
-			http_to_subject_method[
-				request.method.toUpperCase() as keyof typeof http_to_subject_method
-			];
-		const context = await extractContext(app, request);
-		const body = await getRequestBody(app, context, request);
+	const path_elements = parsePathElements(request);
+	const action_name =
+		http_to_subject_method[
+			request.method.toUpperCase() as keyof typeof http_to_subject_method
+		];
+	const context = await extractContext(app, request);
+	const body = await getRequestBody(app, context, request);
 
-		return app
-			.runAction(context, path_elements, action_name, body)
-			.then((response) =>
-				response instanceof SealiousResponse
-					? response.toObject()
-					: response
-			)
-			.then((result) => handleResponse(app, context, h)(result))
-			.catch((result) => handleError(app)(result));
-	} catch (error) {
-		app.Logger.error(error);
-		return error;
+	app.Logger.info(
+		"REQUEST",
+		`${request.method.toUpperCase()} ${request.params.elements}`,
+		body,
+		3
+	);
+	const subject = await app.RootSubject.getSubject(path_elements);
+	if (!subject) {
+		throw new NotFound("Subject not found: " + path_elements.toString());
 	}
+	return subject
+		.performAction(context, action_name, body)
+		.then((result) => handleResponse(app, context, h)(result))
+		.catch((result) => handleError(app)(result));
 }
 
 function parsePathElements(request: any) {

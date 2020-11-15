@@ -3,7 +3,6 @@ import Field from "../../../chip-types/field";
 import { Context, ExtractInput, File } from "../../../main";
 import FileField, { FileStorage, FileStorageFormat } from "./file";
 
-type ImageOutput = string | FileStorageFormat | null;
 type ImageFormat = "internal" | "original" | string;
 
 /** Like {@link FileField}, but meant for images. Has the capacity to format images and serve thumbnails and different sizes.
@@ -11,8 +10,8 @@ type ImageFormat = "internal" | "original" | string;
  * **Params**:
  * - `default_format` - string - one of the image formats defined in the app config. If not specified otherwise in the `format` parameter upon request, images will be served in the size corresponding to this format.
  */
-export default class Image extends FileStorage<ImageOutput, ImageFormat> {
-	getTypeName = () => "image";
+export default class Image extends FileStorage {
+	typeName = "image";
 	default_format: string;
 
 	async isProperValue(context: Context, input: ExtractInput<FileField>) {
@@ -47,11 +46,16 @@ export default class Image extends FileStorage<ImageOutput, ImageFormat> {
 	}
 
 	async decode(
-		_: Context,
+		context: Context,
 		db_value: FileStorageFormat,
 		__: any,
 		format?: ImageFormat
 	) {
+		context.app.Logger.debug3(
+			"FIELD",
+			"Decoding image field with format",
+			format
+		);
 		if (db_value === undefined || db_value === null) {
 			return null;
 		}

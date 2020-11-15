@@ -1,21 +1,12 @@
-import App from "../app";
-import {
-	Collection,
-	FieldTypes,
-	Policies,
-	FieldDefinitionHelper as field,
-} from "../../main";
+import { Collection, FieldTypes, Policies } from "../../main";
 
-export default (app: App) => {
-	return Collection.fromDefinition(app, {
-		name: "formatted-images",
-		fields: [
-			field("original_photo_file", FieldTypes.FileID, {}, true),
-			field("formatted_photo_file", FieldTypes.FileID, {}, true),
-			field("format", FieldTypes.Text, {}, true),
-		],
-		policy: {
-			default: Policies.Super,
-		},
-	});
-};
+export default class FormattedImages extends Collection {
+	name = "formatted-images";
+	fields = {
+		original_photo_file: new FieldTypes.FileID(),
+		formatted_photo_file: new FieldTypes.FileID(),
+		format: new FieldTypes.Text(),
+	};
+	defaultPolicy = new Policies.Super();
+	policies = {};
+}

@@ -15,8 +15,8 @@ function dateStrToDayInt(date_str: string) {
  *
  * **Params**: None
  */
-export default class DateField extends Field<string> {
-	getTypeName = () => "date";
+export default class DateField extends Field {
+	typeName = "date";
 	async isProperValue(_: Context, value: string) {
 		const date_in_string = value.toString();
 

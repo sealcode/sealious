@@ -9,17 +9,17 @@ const bin_dir = "./node_modules/.bin/";
 const mocha = bin_dir + "mocha";
 
 let mocha_options = [
-	"--require",
-	"ts-node/register",
-	"--require",
-	"source-map-support/register",
 	"--recursive",
 	"--timeout=10000",
+	"--require",
+	"source-map-support/register",
 ];
 
 if (args["test-report"]) {
 	mocha_options = [
 		...mocha_options,
+		"--require",
+		"ts-node/register",
 		"--reporter",
 		"xunit",
 		"--reporter-option",
@@ -27,7 +27,9 @@ if (args["test-report"]) {
 	];
 }
 
-const mocha_files = ["setup-test.ts", "./src/**/*.test.ts"];
+const mocha_files = args["test-report"]
+	? ["src/setup-test.ts", "./src/**/*.test.ts"]
+	: ["lib/src/setup-test.js", "lib/src/**/*.test.js"];
 
 let command = [mocha, ...mocha_options, ...mocha_files];
 
@@ -39,7 +41,7 @@ if (args.debug) {
 	command = ["node", "debug", ...command];
 }
 
-console.log("spawning", command);
+console.log("spawning mocha...");
 
 const proc = spawn(command[0], command.slice(1), { stdio: "inherit" });
 

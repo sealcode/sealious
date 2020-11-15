@@ -13,12 +13,12 @@ export default class MeSubject extends LeafSubject {
 			throw new Errors.InvalidCredentials("You're not logged in!");
 		}
 		try {
-			return await this.app.runAction(
-				context,
-				["collections", "users", context.user_id],
-				action_name,
-				params
-			);
+			if (action_name === "show") {
+				return this.app.collections.users
+					.list(context)
+					.setParams(params)
+					.fetch();
+			}
 		} catch (error) {
 			if (error.type === "not_found") {
 				throw new Errors.InvalidCredentials("You're not logged in!");

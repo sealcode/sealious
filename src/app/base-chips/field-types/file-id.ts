@@ -1,7 +1,7 @@
 import { Field, Context } from "../../../main";
 
 export default class FileID extends Field {
-	getTypeName = () => "file-id";
+	typeName = "file-id";
 	async isProperValue(
 		context: Context,
 		new_file_id: string,

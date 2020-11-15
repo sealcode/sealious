@@ -5,22 +5,18 @@ import { assertThrowsAsync } from "../../test_utils/assert-throws-async";
 import { App } from "../../main";
 
 describe("user-roles", () => {
-	function create_a_user(app: App, username: string) {
-		return app.runAction(
-			new app.SuperContext(),
-			["collections", "users"],
-			"create",
-			{
-				username,
-				email: `${username}@example.com`,
-				password: "password",
-			}
-		);
+	function createAUser(app: App, username: string) {
+		return app.collections.users.suCreate({
+			username,
+			email: `${username}@example.com`,
+			password: "password",
+			roles: [],
+		});
 	}
 
 	it("rejects when given an empty role", async () =>
-		withRunningApp(async ({ app, base_url }) => {
-			const user = await create_a_user(app, "super_user");
+		withRunningApp(null, async ({ app, base_url }) => {
+			const user = await createAUser(app, "super_user");
 			await assertThrowsAsync(
 				() =>
 					axios.post(`${base_url}/api/v1/collections/user-roles`, {
@@ -35,8 +31,8 @@ describe("user-roles", () => {
 			);
 		}));
 	it("accepts correct dataset", async () =>
-		withRunningApp(async ({ app, base_url, rest_api }) => {
-			const user = await create_a_user(app, "special_user");
+		withRunningApp(null, async ({ app, base_url, rest_api }) => {
+			const user = await createAUser(app, "special_user");
 			const session = await rest_api.login({
 				username: "special_user",
 				password: "password",

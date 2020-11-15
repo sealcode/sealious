@@ -8,20 +8,16 @@ import { App } from "../../main";
 
 describe("password-reset-intents", () => {
 	async function createAUser(app: App) {
-		await app.runAction(
-			new app.SuperContext(),
-			["collections", "users"],
-			"create",
-			{
-				username: "user",
-				email: "user@example.com",
-				password: "password",
-			}
-		);
+		await app.collections.users.suCreate({
+			username: "user",
+			email: "user@example.com",
+			password: "password",
+			roles: [],
+		});
 	}
 
 	it("tells you if the email address doesn't exist", async () =>
-		withRunningApp(async ({ base_url }) => {
+		withRunningApp(null, async ({ base_url }) => {
 			try {
 				await axios.post(
 					`${base_url}/api/v1/collections/password-reset-intents`,
@@ -40,7 +36,7 @@ describe("password-reset-intents", () => {
 		}));
 
 	it("allows anyone to create an intent, if the email exists", async () =>
-		withRunningApp(async ({ app, base_url }) => {
+		withRunningApp(null, async ({ app, base_url }) => {
 			await createAUser(app);
 			const { email, token } = (
 				await axios.post(
@@ -60,7 +56,7 @@ describe("password-reset-intents", () => {
 		}));
 
 	it("tells you if the email address is malformed", async () =>
-		withRunningApp(async ({ base_url }) => {
+		withRunningApp(null, async ({ base_url }) => {
 			try {
 				await axios.post(
 					`${base_url}/api/v1/collections/password-reset-intents`,
@@ -79,7 +75,7 @@ describe("password-reset-intents", () => {
 		}));
 
 	it("sends an email with the reset password link", async () =>
-		withRunningAppProd(async ({ app, base_url, mail_api }) => {
+		withRunningAppProd(null, async ({ app, base_url, mail_api }) => {
 			await createAUser(app);
 			await axios.post(
 				`${base_url}/api/v1/collections/password-reset-intents`,

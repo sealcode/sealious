@@ -3,42 +3,51 @@ const locreq = require("locreq")(__dirname);
 import assert from "assert";
 import { ActionName } from "../action";
 import Mailer from "../email/mailer";
-import * as Sealious from "../main";
 import Emittery from "emittery";
-import { runActionCurry } from "./run-action-curry";
 import Datastore from "../datastore/datastore";
 import Metadata from "./metadata";
 import { SubjectPathEquiv } from "../data-structures/subject-path";
 import { PartialConfig } from "./config";
+import Manifest, { ManifestData } from "./manifest";
+
+import BaseCollections from "./collections/base-collections";
+import Logger from "./logger";
+import ConfigManager from "./config-manager";
+import HttpServer from "../http/http";
+import Subject from "../subject/subject";
+import Context, { SuperContext } from "../context";
+import Collection from "../chip-types/collection";
 import {
-	Collection,
-	Hookable,
-	SuperContext,
-	Context,
+	EmailFactory,
+	RootSubject,
+	MetadataFactory,
 	i18nFactory,
 } from "../main";
-import { ManifestData } from "./manifest";
-
-import Collections from "./collections/collections";
-import Logger from "./logger";
+import Users from "./collections/users";
+import UserRoles from "./collections/user-roles";
+import Sessions from "./collections/sessions";
 
 const default_config = locreq("default_config.json");
 
 export type AppEvents = "starting" | "started" | "stopping" | "stopped";
 
 /** The heart of your, well app. It all starts with  `new App(...)` */
-class App extends Hookable {
+abstract class App extends Emittery {
 	/** The current status of the app */
 	status: "stopped" | "running" | "starting" | "stopping";
 
+	/** The base collections including users, registration intents, etc */
+	static BaseCollections = BaseCollections;
+
 	/** The manifest assigned to this app. Stores things like the app name, domain, logo*/
-	manifest: Sealious.Manifest;
+	abstract manifest: ManifestData;
 
 	/** The function that's used to generate translated versions of phrases */
 	i18n: (phrase_id: string, params?: any) => string;
 
-	/** ConfigManager instance. It serves the config based on default values and the config object provided to the app constructor */
-	ConfigManager: Sealious.ConfigManager;
+	/** ConfigManager instance. It serves the config based on default
+	 * values and the config object provided to the app constructor */
+	ConfigManager: ConfigManager;
 
 	/** The {@link Logger} instance assigned to this application */
 	Logger: Logger;
@@ -47,34 +56,29 @@ class App extends Hookable {
 	Email: Mailer;
 
 	/** The server that runs the REST API routing and allows to add custom routes etc */
-	HTTPServer: Sealious.HttpServer;
+	HTTPServer: HttpServer;
 
 	/** The root subject of the app. It's where all subjects are derived from */
-	RootSubject: Sealious.Subject;
-
-	/** Performs an action within an app. The action is specified by the subject path, parametrized with params and ran under the given context */
-	runAction: (
-		context: Sealious.Context,
-		path: SubjectPathEquiv,
-		action: ActionName,
-		params?: any
-	) => Promise<any>;
+	RootSubject: Subject;
 
 	/** The mongoDB client connected to the database specified in the app config */
 	Datastore: Datastore;
 
-	/** The Metadata manager assigned to this app. Used to store certain state information that's not meant to be shown to the user
+	/** The Metadata manager assigned to this app. Used to store
+	 * certain state information that's not meant to be shown to the
+	 * user
+	 *
 	 * @internal
 	 */
 	Metadata: Metadata;
 
-	/** The emittery instance used to signal app state changes, like "started" or "stopped". It's not advised to use it directly, but rather to use the {@App.on} method
-	 * @internal
-	 */
-	private e: Emittery;
-
 	/** The collections defined within the given app. */
-	collections: { [name: string]: Collection } = {};
+	abstract collections: {
+		users: Users;
+		"user-roles": UserRoles;
+		sessions: Sessions;
+		[name: string]: Collection;
+	};
 
 	/** A shorthand-way to create a new SuperContext: `new app.SuperContext()`. */
 	public SuperContext: new () => SuperContext;
@@ -82,67 +86,70 @@ class App extends Hookable {
 	/** A shorthand-way to create a new context: `new app.Context()`. */
 	public Context: new () => Context;
 
+	abstract config: PartialConfig;
+
 	/** The app constructor.
-	 * @param custom_config Specify the details, such as database address and the port to listen on. This is private information and won't be shown to user. See {@link Config}
-	 * @param manifest Specify additional information, such as the URL, logo or the main color of the app. This is public information.
+	 *
+	 * @param custom_config Specify the details, such as database
+	 * address and the port to listen on. This is private information
+	 * and won't be shown to user. See {@link Config}
+	 *
+	 * @param manifest Specify additional information, such as the
+	 * URL, logo or the main color of the app. This is public
+	 * information.
 	 */
-	constructor(custom_config: PartialConfig, manifest: ManifestData) {
+	constructor() {
 		super();
-		this.e = new Emittery();
 
-		this.status = "stopped";
-		this.manifest = new Sealious.Manifest(manifest);
-		this.manifest.validate();
-
-		this.i18n = i18nFactory(this.manifest.default_language);
-
-		this.ConfigManager = new Sealious.ConfigManager();
+		this.ConfigManager = new ConfigManager();
 
 		for (let key in default_config) {
 			this.ConfigManager.setDefault(key, default_config[key]);
 		}
-		this.ConfigManager.setRoot(custom_config);
 
-		this.Logger = new Logger();
+		this.status = "stopped";
 
-		this.Email = Sealious.EmailFactory(this);
-		this.HTTPServer = new Sealious.HttpServer(this);
+		this.Logger = new Logger("error");
 
-		this.RootSubject = new Sealious.RootSubject(this);
-		this.runAction = runActionCurry(this);
+		this.Email = EmailFactory(this);
+		this.HTTPServer = new HttpServer(this);
+
+		this.RootSubject = new RootSubject(this);
 
 		this.Datastore = new Datastore(this);
-		this.Metadata = new Sealious.MetadataFactory(this);
-
-		assert(
-			this.ConfigManager.get("upload_path"),
-			"'upload_path' not set in config"
-		);
-
-		for (const collection_id in Collections) {
-			//those functions call collection.fromDefinition somewhere down the road, which might prove problematic as we don't await them here
-			Collections[collection_id as keyof typeof Collections](this);
-		}
+		this.Metadata = new MetadataFactory(this);
 
 		const app = this;
 		/** Shorthand way to create a {@link SuperContext} */
 		this.SuperContext = class extends SuperContext {
-			/** This constructor does not take any parameters as the {@link App} instance is automatically filled in */
+			/** This constructor does not take any parameters as the
+			 * {@link App} instance is automatically filled in */
 			constructor() {
 				super(app);
 			}
 		};
 		/** Shorthand way to create a {@link Context} */
 		this.Context = class extends Context {
-			/** This constructor does not take any parameters as the {@link App} instance is automatically filled in */
+			/** This constructor does not take any parameters as the
+			 * {@link App} instance is automatically filled in */
 			constructor() {
 				super(app);
 			}
 		};
 	}
 
-	/** Initializes all the collection fields, prepares all the hooks, connects to the database and starts the app, serving the REST API */
+	/** Initializes all the collection fields, prepares all the hooks,
+	 * connects to the database and starts the app, serving the REST
+	 * API */
 	async start() {
+		this.ConfigManager.setRoot(this.config);
+		assert(
+			this.ConfigManager.get("upload_path"),
+			"'upload_path' not set in config"
+		);
+		this.Logger.setLevel(this.ConfigManager.get("logger").level);
+		this.i18n = i18nFactory(this.manifest.default_language);
+		new Manifest(this.manifest).validate();
 		this.status = "starting";
 		assert(
 			["dev", "production"].includes(
@@ -151,27 +158,30 @@ class App extends Hookable {
 			`"core.environment" config should be either "dev" or "production"`
 		);
 
-		for (const collection of Object.values(this.collections)) {
-			await collection.init();
+		for (const [name, collection] of Object.entries(this.collections)) {
+			await collection.init(this, name);
 		}
 
-		await this.e.emit("starting");
+		await this.emit("starting");
 		await this.Datastore.start();
 		await this.Email.init();
 		await this.HTTPServer.start();
-		await this.e.emit("started");
+		await this.emit("started");
 		this.status = "running";
-		return this;
 	}
 
 	/** Stops the HTTP server, disconnects from the DB */
 	async stop() {
 		this.status = "stopping";
-		await this.e.emit("stopping");
+		await this.emit("stopping");
 		await this.HTTPServer.stop();
-		this.Datastore.stop();
+		await this.Datastore.stop();
 		this.status = "stopped";
-		await this.e.emit("stopped");
+		await this.emit("stopped");
+		this.clearListeners();
+		for (const collection of Object.values(this.collections)) {
+			collection.clearListeners();
+		}
 	}
 
 	/** Removes all data inside the app. USE WITH CAUTION
@@ -184,8 +194,9 @@ class App extends Hookable {
 	}
 
 	/** Allows to listen for basic app status change events */
+	// @ts-ignore
 	async on(event_name: AppEvents, callback: () => void) {
-		this.e.on(event_name, callback);
+		return super.on(event_name, callback);
 	}
 
 	/** registers a collection within the app

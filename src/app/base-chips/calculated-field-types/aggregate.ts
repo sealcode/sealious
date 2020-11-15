@@ -5,11 +5,11 @@ import {
 	Queries,
 	Collection,
 } from "../../../main";
-import Item from "../../../../common_lib/response/item";
+import { CollectionItem } from "../../../chip-types/collection-item";
 
 type StagesGetter = (
 	context: Context,
-	item: Item,
+	item: CollectionItem,
 	db_document: any
 ) => Queries.QueryStage[];
 
@@ -20,7 +20,7 @@ export default class Aggregate extends CalculatedField<any> {
 		super(app, collection);
 		this.stages_getter = stages_getter;
 	}
-	async calculate(context: Context, item: Item, db_document: any) {
+	async calculate(context: Context, item: CollectionItem, db_document: any) {
 		const stages = this.stages_getter(context, item, db_document);
 		const documents = await this.app.Datastore.aggregate(
 			this.collection.name,

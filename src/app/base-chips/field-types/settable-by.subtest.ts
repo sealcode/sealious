@@ -2,43 +2,36 @@ import assert from "assert";
 import axios from "axios";
 import { assertThrowsAsync } from "../../../test_utils/assert-throws-async";
 import { withRunningApp } from "../../../test_utils/with-test-app";
-import App from "../../app";
-import { SingleItemResponse } from "../../../../common_lib/response/responses";
-import {
-	Collection,
-	FieldTypes,
-	FieldDefinitionHelper as field,
-	Policies,
-} from "../../../main";
+import { Collection, FieldTypes, Policies } from "../../../main";
+import { TestAppType } from "../../../test_utils/test-app";
+
+function extend(t: TestAppType) {
+	return class extends t {
+		collections = {
+			...t.BaseCollections,
+			"forbidden-collection": new (class extends Collection {
+				fields = {
+					any: new FieldTypes.SettableBy(
+						new FieldTypes.Int(),
+						new Policies.Noone()
+					),
+				};
+			})(),
+			"allowed-collection": new (class extends Collection {
+				fields = {
+					any: new FieldTypes.SettableBy(
+						new FieldTypes.Int(),
+						new Policies.Public()
+					),
+				};
+			})(),
+		};
+	};
+}
 
 describe("settable-by", async () => {
-	function create_collections(app: App) {
-		Collection.fromDefinition(app, {
-			name: "forbidden-collection",
-			fields: [
-				field("any", FieldTypes.SettableBy, {
-					base_field_type: FieldTypes.Int,
-					base_field_params: {},
-					policy: Policies.Noone,
-				}),
-			],
-		});
-
-		Collection.fromDefinition(app, {
-			name: "allowed-collection",
-			fields: [
-				field("any", FieldTypes.SettableBy, {
-					policy: Policies.Public,
-					base_field_type: FieldTypes.Int,
-					base_field_params: {},
-				}),
-			],
-		});
-	}
-
 	it("should not allow any value when rejected by access strategy", async () =>
-		withRunningApp(async ({ app, base_url }) => {
-			create_collections(app);
+		withRunningApp(extend, async ({ base_url }) => {
 			await assertThrowsAsync(
 				() =>
 					axios.post(
@@ -56,9 +49,7 @@ describe("settable-by", async () => {
 		}));
 
 	it("should allow proper value when accepted by access strategy", async () =>
-		withRunningApp(async ({ app, base_url, rest_api }) => {
-			create_collections(app);
-
+		withRunningApp(extend, async ({ base_url, rest_api }) => {
 			const response = (
 				await axios.post(
 					`${base_url}/api/v1/collections/allowed-collection`,
@@ -69,15 +60,16 @@ describe("settable-by", async () => {
 			).data;
 			assert.equal(response.any, 1);
 
-			const response2 = (await rest_api.getSealiousResponse(
+			const {
+				items: [created_item],
+			} = await rest_api.get(
 				`/api/v1/collections/allowed-collection/${response.id}`
-			)) as SingleItemResponse;
-			assert.equal(response2.any, 1);
+			);
+			assert.equal(created_item.any, 1);
 		}));
 
 	it("should not allow invalid value when access strategy allows", async () =>
-		withRunningApp(async ({ app, base_url }) => {
-			create_collections(app);
+		withRunningApp(extend, async ({ base_url }) => {
 			await assertThrowsAsync(
 				() =>
 					axios.post(

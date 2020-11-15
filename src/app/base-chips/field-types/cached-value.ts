@@ -1,21 +1,16 @@
-import {
-	App,
-	Field,
-	Context,
-	EventDescription,
-	EventMatchers,
-} from "../../../main";
-import { EventMatcher } from "../../event-matchers";
-import HybridField, {
-	HybridFieldParams,
-} from "../../../chip-types/field-hybrid";
+import { App, Field, Context } from "../../../main";
+import HybridField from "../../../chip-types/field-hybrid";
+import ItemList from "../../../chip-types/item-list";
+import { EventDescription } from "../../delegate-listener";
+import { CollectionItem } from "../../../chip-types/collection-item";
 
-type RefreshCondition = {
-	event_matcher: EventMatcher;
+export type RefreshCondition = {
+	event: EventDescription;
 	resource_id_getter: (
-		emitted_event: EventDescription,
-		response: any
-	) => Promise<string>;
+		context: Context,
+		item: CollectionItem,
+		event: EventDescription
+	) => Promise<string[]>;
 };
 
 type GetValue<T extends Field> = (
@@ -24,36 +19,35 @@ type GetValue<T extends Field> = (
 ) => Promise<Parameters<T["encode"]>[1]>;
 
 export default class CachedValue<T extends Field> extends HybridField<T> {
-	getTypeName = () => "cached-value";
-
-	value_path_after_field_name: ".value";
+	typeName = "cached-value";
 
 	app: App;
 	refresh_on: RefreshCondition[];
 	get_value: GetValue<T>;
+	hasDefaultValue: () => true;
+	private initial_value: Parameters<T["encode"]>[1];
 
-	setParams(
-		params: HybridFieldParams<T> & {
+	constructor(
+		base_field: T,
+		params: {
 			refresh_on: RefreshCondition[];
 			get_value: GetValue<T>;
+			initial_value: Parameters<T["encode"]>[1];
 		}
 	) {
-		if (this.app.status !== "stopped") {
-			throw new Error(
-				"cannot add this field to a running app. Add it before runing app.start()"
-			);
-		}
+		super(base_field);
 		super.setParams(params);
 		this.refresh_on = params.refresh_on;
 		this.get_value = params.get_value;
+		this.initial_value = params.initial_value;
 	}
 
 	async init(app: App) {
 		this.app = app;
 		this.checkForPossibleRecursiveEdits();
 
-		const create_action = this.refresh_on.find(({ event_matcher }) =>
-			event_matcher.containsAction("create")
+		const create_action = this.refresh_on.find(({ event }) =>
+			event.event_name.includes("create")
 		);
 
 		if (create_action) {
@@ -62,40 +56,40 @@ export default class CachedValue<T extends Field> extends HybridField<T> {
 			);
 		}
 
-		for (let { event_matcher, resource_id_getter } of this.refresh_on) {
-			app.addHook(event_matcher, async (emitted_event, resource) => {
-				const cache_resource_id = await resource_id_getter(
-					emitted_event,
-					resource
+		for (let { event, resource_id_getter } of this.refresh_on) {
+			event.attachTo(app, async ([context, item, event]) => {
+				const cache_resource_ids = await resource_id_getter(
+					context,
+					item,
+					event
 				);
 
-				await app.runAction(
-					new app.SuperContext(),
-					["collections", this.collection.name, cache_resource_id],
-					"edit",
-					{
-						[this.name]: await this.get_value(
-							emitted_event.metadata.context,
-							cache_resource_id
-						),
-					}
-				);
+				app.Logger.debug3("CACHED VALUE", "Inside hook", {
+					cache_resource_ids,
+				});
+				const promises = [];
+				for (const cache_resource_id of cache_resource_ids) {
+					promises.push(
+						this.get_value(context, cache_resource_id).then(
+							async (value) => {
+								const item = await context.app.collections[
+									this.collection.name
+								].suGetByID(cache_resource_id);
+								item.set(this.name, value);
+								await item.save(new app.SuperContext());
+							}
+						)
+					);
+				}
+				await Promise.all(promises);
 			});
 		}
 	}
 
 	checkForPossibleRecursiveEdits() {
-		const doesAnyMatches = this.refresh_on.some(({ event_matcher }) => {
-			if (
-				event_matcher instanceof EventMatchers.CollectionMatcher ||
-				event_matcher instanceof EventMatchers.Resource
-			) {
-				return event_matcher.collection_name === this.collection.name;
-			}
-			return event_matcher.subject_path.test(
-				`collections.${this.collection.name}`
-			);
-		});
+		const doesAnyMatches = this.refresh_on.some(
+			({ event }) => event.collection_name === this.collection.name
+		);
 		if (doesAnyMatches) {
 			throw new Error(
 				"In the " +
@@ -107,35 +101,21 @@ export default class CachedValue<T extends Field> extends HybridField<T> {
 		}
 	}
 
-	private async refresh_outdated_cache_values(
-		create_action: RefreshCondition
-	) {
-		const referenced_collection_name =
-			create_action.event_matcher.collection_name;
-		if (!referenced_collection_name) {
-			this.app.Logger.debug(
-				"Not refreshing outdated values, unknown collection for: " +
-					JSON.stringify(create_action)
-			);
-			return;
-		}
-
-		const response = await this.app.runAction(
-			new this.app.SuperContext(),
-			["collections", referenced_collection_name],
-			"show",
-			{
-				sort: { "_metadata.last_modified_context.timestamp": "desc" },
-				pagination: { items: 1 },
-			}
-		);
+	private async refresh_outdated_cache_values(condition: RefreshCondition) {
+		const referenced_collection_name = condition.event.collection_name;
+		const response = await new ItemList(
+			this.app.collections[referenced_collection_name],
+			new this.app.SuperContext()
+		)
+			.sort({ "_metadata.modified_at": "desc" })
+			.paginate({ items: 1 })
+			.fetch();
 
 		if (response.empty) {
 			return;
 		}
 
-		const last_modified_timestamp =
-			response.items[0]._metadata.last_modified_context.timestamp;
+		const last_modified_timestamp = response.items[0]._metadata.modified_at;
 
 		const outdated_resources = await this.app.Datastore.aggregate(
 			this.collection.name,
@@ -155,22 +135,47 @@ export default class CachedValue<T extends Field> extends HybridField<T> {
 			]
 		);
 
+		this.app.Logger.debug3("CACHED", "Outdated items", outdated_resources);
+
 		if (!outdated_resources) {
 			return;
 		}
 
 		const context = new this.app.SuperContext();
 		for (let resource of outdated_resources) {
-			const cache_value = await this.encode(
-				context,
-				await this.get_value(context, resource.sealious_id)
+			const value = await this.get_value(context, resource.id);
+			const cache_value = await this.encode(context, value);
+			this.app.Logger.debug3(
+				"CACHED",
+				`New value for item ${resource.id}.${this.name}`,
+				value
 			);
 			await this.app.Datastore.update(
 				this.collection.name,
-				{ sealious_id: resource.sealious_id },
+				{ id: resource.id },
 				{ $set: { [this.name]: cache_value } }
 			);
 		}
+	}
+
+	async getDefaultValue(_: Context) {
+		return this.initial_value;
+	}
+
+	async encode(context: Context, new_value: any) {
+		const encoded_value = await super.encode(context, new_value);
+		const ret = { timestamp: Date.now(), value: encoded_value };
+		context.app.Logger.debug3("CACHED VALUE", "Encode", { new_value, ret });
+		return ret;
+	}
+
+	async decode(
+		context: Context,
+		db_value: { timestamp: number; value: any },
+		old_value: any,
+		format: any
+	) {
+		return super.decode(context, db_value.value, old_value, format);
 	}
 
 	async isProperValue(
@@ -182,5 +187,9 @@ export default class CachedValue<T extends Field> extends HybridField<T> {
 			return Promise.reject("This is a read-only field");
 		}
 		return this.virtual_field.isProperValue(context, new_value, old_value);
+	}
+
+	async getValuePath() {
+		return `${this.name}.value`;
 	}
 }

@@ -1,65 +1,56 @@
 import assert from "assert";
 import { withStoppedApp } from "../../test_utils/with-test-app";
-import {
-	App,
-	Collection,
-	FieldTypes,
-	Policies,
-	FieldDefinitionHelper as field,
-} from "../../main";
+import { App, Collection, FieldTypes, Policies } from "../../main";
 import Matches from "../base-chips/special_filters/matches";
+import { TestAppType } from "../../test_utils/test-app";
 
-describe("when", () => {
-	async function createResources(app: App) {
-		Collection.fromDefinition(app, {
-			name: "numbers",
-			fields: [
-				field("number", FieldTypes.Int),
-				field("number_str", FieldTypes.Text),
-			],
-			named_filters: {
-				positive: new Matches(app, () => app.collections.numbers, {
-					number: { ">": 0 },
-				}),
-				negative: new Matches(app, () => app.collections.numbers, {
-					number: { "<": 0 },
-				}),
-			},
-			policy: {
-				default: new Policies.If([
-					"numbers",
-					"negative",
-					Policies.LoggedIn,
-					Policies.Public,
-				]),
-			},
+function extend(t: TestAppType) {
+	return class extends t {
+		collections = {
+			...t.BaseCollections,
+			numbers: new (class extends Collection {
+				fields = {
+					number: new FieldTypes.Int(),
+					number_str: new FieldTypes.Text(),
+				};
+			})(),
+		};
+		named_filters = {
+			positive: new Matches("numbers", {
+				number: { ">": 0 },
+			}),
+			negative: new Matches("numbers", {
+				number: { "<": 0 },
+			}),
+		};
+		defaultPolicy = new Policies.If([
+			"numbers",
+			"negative",
+			Policies.LoggedIn,
+			Policies.Public,
+		]);
+	};
+}
+
+async function createResources(app: App) {
+	for (let number of [-1, 0, 1]) {
+		await app.collections.numbers.suCreate({
+			number,
+			number_str: number.toString(),
 		});
-
-		await app.start();
-
-		for (let number of [-1, 0, 1]) {
-			await app.runAction(
-				new app.SuperContext(),
-				["collections", "numbers"],
-				"create",
-				{ number, number_str: number.toString() }
-			);
-		}
-
-		await app.runAction(
-			new app.SuperContext(),
-			["collections", "users"],
-			"create",
-			{
-				username: "user",
-				password: "password",
-				email: "user@example.com",
-			}
-		);
 	}
 
+	await app.collections.users.suCreate({
+		username: "user",
+		password: "password",
+		email: "user@example.com",
+		roles: [],
+	});
+}
+
+describe("when", () => {
 	it("should only use 'when_true' access strategy when the item passes the filter", async () =>
-		withStoppedApp(async ({ app, rest_api }) => {
+		withStoppedApp(extend, async ({ app, rest_api }) => {
 			await createResources(app);
 			const session = await rest_api.login({
 				username: "user",
@@ -76,7 +67,7 @@ describe("when", () => {
 		}));
 
 	it("should only use 'when_false' access strategy when the item doesn't pass the filter", async () =>
-		withStoppedApp(async ({ app, rest_api }) => {
+		withStoppedApp(extend, async ({ app, rest_api }) => {
 			await createResources(app);
 
 			const { items: public_resources } = await rest_api.get(

@@ -1,55 +1,48 @@
 import assert from "assert";
-import { withStoppedApp } from "../../test_utils/with-test-app";
+import { withRunningApp } from "../../test_utils/with-test-app";
 import { assertThrowsAsync } from "../../test_utils/assert-throws-async";
-import { Collection, FieldTypes } from "../../main";
-import Roles from "./roles";
+import { Collection, FieldTypes, Policies } from "../../main";
+import { TestAppType } from "../../test_utils/test-app";
+
+function extend(t: TestAppType) {
+	return class extends t {
+		collections = {
+			...t.BaseCollections,
+			secrets: new (class extends Collection {
+				fields = {
+					content: new FieldTypes.Text(),
+				};
+				defaultPolicy = new Policies.Roles(["admin"]);
+			})(),
+		};
+	};
+}
 
 describe("roles", () => {
 	it("allows access to users with designated role and denies access to users without it", async () =>
-		withStoppedApp(async ({ app, rest_api }) => {
-			Collection.fromDefinition(app, {
-				name: "secrets",
-				fields: [{ name: "content", type: FieldTypes.Text }],
-				policy: { default: [Roles, ["admin"]] },
+		withRunningApp(extend, async ({ app, rest_api }) => {
+			await app.collections.users.suCreate({
+				username: "regular-user",
+				email: "regular@example.com",
+				password: "password",
+				roles: [],
 			});
 
-			await app.start();
+			const admin = await app.collections.users.suCreate({
+				username: "admin",
+				email: "admin@example.com",
+				password: "admin-password",
+				roles: [],
+			});
 
-			await app.runAction(
-				new app.SuperContext(),
-				["collections", "users"],
-				"create",
-				{
-					username: "regular-user",
-					email: "regular@example.com",
-					password: "password",
-				}
-			);
+			await app.collections["user-roles"].suCreate({
+				user: admin.id,
+				role: "admin",
+			});
 
-			const admin = await app.runAction(
-				new app.SuperContext(),
-				["collections", "users"],
-				"create",
-				{
-					username: "admin",
-					email: "admin@example.com",
-					password: "admin-password",
-				}
-			);
-
-			await app.runAction(
-				new app.SuperContext(),
-				["collections", "user-roles"],
-				"create",
-				{ user: admin.id, role: "admin" }
-			);
-
-			await app.runAction(
-				new app.SuperContext(),
-				["collections", "secrets"],
-				"create",
-				{ content: "It's a secret to everybody" }
-			);
+			await app.collections.secrets.suCreate({
+				content: "It's a secret to everybody",
+			});
 
 			const admin_session = await rest_api.login({
 				username: "admin",

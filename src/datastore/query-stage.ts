@@ -7,6 +7,9 @@ type QueryStage = Partial<{
 	$nor: any;
 	$or: QueryStage[];
 	$and: QueryStage[];
+	$skip: number;
+	$limit: number;
+	$sort: { [field_name: string]: 1 | -1 };
 	$group: {
 		_id: string;
 		[other: string]: any;

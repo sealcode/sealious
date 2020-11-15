@@ -3,8 +3,8 @@ import { Context, Field } from "../../../main";
 
 const MIN_LENGTH = 8;
 
-export default class Password extends Field<string> {
-	getTypeName = () => "password";
+export default class Password extends Field {
+	typeName = "password";
 	async isProperValue(_: Context, input: string) {
 		return input.length >= MIN_LENGTH
 			? Field.valid()

@@ -2,29 +2,29 @@ import assert from "assert";
 import { withRunningApp } from "../../../test_utils/with-test-app";
 import { assertThrowsAsync } from "../../../test_utils/assert-throws-async";
 import { App, Collection, FieldTypes, Policies } from "../../../main";
+import { TestAppType } from "../../../test_utils/test-app";
 
 const URL = "/api/v1/collections/boolseals";
 
-describe("boolean", () => {
-	async function setup(app: App) {
-		Collection.fromDefinition(app, {
-			name: "boolseals",
-			fields: [
-				{
-					name: "is_old",
-					type: FieldTypes.Boolean,
-					required: true,
-				},
-			],
-			policy: {
-				default: Policies.Public,
-			},
-		});
-	}
-	it("Allows to insert values considered correct", () =>
-		withRunningApp(async ({ app, rest_api }) => {
-			await setup(app);
+function extend(t: TestAppType) {
+	const boolseals = new (class extends Collection {
+		name = "boolseals";
+		fields = {
+			is_old: new FieldTypes.Boolean(),
+		};
+		defaultPolicy = new Policies.Public();
+	})();
+	return class extends t {
+		collections = {
+			...App.BaseCollections,
+			boolseals,
+		};
+	};
+}
 
+describe("boolean", () => {
+	it("Allows to insert values considered correct", () =>
+		withRunningApp(extend, async ({ rest_api }) => {
 			const cases = [
 				[true, true],
 				[false, false],
@@ -47,8 +47,7 @@ describe("boolean", () => {
 		}));
 
 	it("Doesn't let undefined in", () =>
-		withRunningApp(async ({ app, rest_api }) => {
-			await setup(app);
+		withRunningApp(extend, async ({ rest_api }) => {
 			await assertThrowsAsync(
 				() => rest_api.post(`${URL}`, { is_old: undefined }),
 				(error) =>
@@ -59,8 +58,7 @@ describe("boolean", () => {
 			);
 		}));
 	it("Doesn't let '' in", () =>
-		withRunningApp(async ({ app, rest_api }) => {
-			await setup(app);
+		withRunningApp(extend, async ({ rest_api }) => {
 			await assertThrowsAsync(
 				() => rest_api.post(`${URL}`, { is_old: "" }),
 				(error) => {
@@ -73,8 +71,7 @@ describe("boolean", () => {
 			);
 		}));
 	it("Doesn't let unwelcomed values in", () =>
-		withRunningApp(async ({ app, rest_api }) => {
-			await setup(app);
+		withRunningApp(extend, async ({ rest_api }) => {
 			const cases = [
 				[null, "Value 'null' is not boolean format."],
 				[{}, "Value '[object Object]' is not boolean format."],

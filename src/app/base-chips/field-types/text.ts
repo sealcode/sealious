@@ -1,4 +1,4 @@
-import { Field } from "../../../main";
+import { Field, Context } from "../../../main";
 import TextStorage from "./text-storage";
 
 export type TextParams = Partial<{
@@ -17,10 +17,7 @@ export type TextParams = Partial<{
  * - `max_length` - `Number` - the text shuld have at most this many characters
  */
 export default class Text extends TextStorage {
-	/** The type name
-	 * @ignore */
-	getTypeName = () => "text";
-	/** @ignore */
+	typeName = "text";
 	params: TextParams;
 
 	/** Depends on the provided params
@@ -35,7 +32,8 @@ export default class Text extends TextStorage {
 
 	/** Checks if the input conforms with the constraints specified in the params
 	 * @internal  */
-	async isProperValue(_: any, input: string) {
+	async isProperValue(context: Context, input: string) {
+		context.app.Logger.debug2("TEXT STORAGE", "isProperValue", input);
 		if (typeof input !== "string") {
 			return Field.invalid(
 				`Type of ${input} is ${typeof input}, not string.`
@@ -55,7 +53,8 @@ export default class Text extends TextStorage {
 	}
 
 	/** Sets the params @ignore */
-	setParams(params: TextParams) {
+	constructor(params: TextParams = {}) {
+		super();
 		this.params = params;
 	}
 }

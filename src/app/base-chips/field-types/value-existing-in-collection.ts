@@ -1,19 +1,29 @@
 import Field from "../../../chip-types/field";
-import { Context } from "../../../main";
+import { Context, App, ItemList } from "../../../main";
 
 export default class ValueExistingInCollection extends Field {
-	getTypeName = () => "value-existing-in-collection";
-	get_field: () => Field;
+	typeName = "value-existing-in-collection";
+	target_field_name: string;
+	target_collection_name: string;
 	include_forbidden: boolean;
+
+	constructor(params: {
+		field: string;
+		collection: string;
+		include_forbidden: boolean;
+	}) {
+		super();
+		this.target_field_name = params.field;
+		this.target_collection_name = params.collection;
+		this.include_forbidden = params.include_forbidden;
+	}
 
 	async isProperValue(
 		context: Context,
-		new_value: Parameters<
-			ReturnType<this["get_field"]>["isProperValue"]
-		>[1],
-		old_value: Parameters<ReturnType<this["get_field"]>["isProperValue"]>[2]
+		new_value: unknown,
+		old_value: unknown
 	) {
-		const field = this.get_field();
+		const field = this.getField(context.app);
 		const collection = field.collection;
 		const result = await field.isProperValue(context, new_value, old_value);
 		if (!result.valid) {
@@ -22,14 +32,12 @@ export default class ValueExistingInCollection extends Field {
 		if (this.include_forbidden) {
 			context = new this.app.SuperContext();
 		}
-		const sealious_response = await this.app.runAction(
-			context,
-			["collections", collection.name],
-			"show",
-			{
-				filter: { [field.name]: new_value },
-			}
-		);
+
+		const sealious_response = await collection
+			.list(context)
+			.filter({ [field.name]: new_value })
+			.fetch();
+
 		if (sealious_response.empty) {
 			return Field.invalid(
 				`No ${collection.name} with ${field.name} set to ${new_value}`
@@ -38,38 +46,25 @@ export default class ValueExistingInCollection extends Field {
 		return Field.valid();
 	}
 
-	setParams(params: { field: () => Field; include_forbidden: boolean }) {
-		this.get_field = params.field;
-		this.include_forbidden = params.include_forbidden;
+	getField(app: App) {
+		return app.collections[this.target_collection_name].fields[
+			this.target_field_name
+		];
 	}
 
-	encode(...args: Parameters<ReturnType<this["get_field"]>["encode"]>) {
-		return this.get_field().encode(
-			...(args as Parameters<Field["encode"]>)
-		);
+	encode(...args: Parameters<Field["encode"]>) {
+		return this.getField(args[0].app).encode(...args);
 	}
 
-	decode(...args: Parameters<ReturnType<this["get_field"]>["decode"]>) {
-		return this.get_field().decode(
-			...(args as Parameters<Field["decode"]>)
-		);
+	decode(...args: Parameters<Field["decode"]>) {
+		return this.getField(args[0].app).decode(...args);
 	}
 
-	filterToQuery(
-		...args: Parameters<ReturnType<this["get_field"]>["filterToQuery"]>
-	) {
-		return this.get_field().filterToQuery(
-			...(args as Parameters<Field["filterToQuery"]>)
-		);
+	filterToQuery(...args: Parameters<Field["filterToQuery"]>) {
+		return this.getField(args[0].app).filterToQuery(...args);
 	}
 
-	getAggregationStages(
-		...args: Parameters<
-			ReturnType<this["get_field"]>["getAggregationStages"]
-		>
-	) {
-		return this.get_field().getAggregationStages(
-			...(args as Parameters<Field["getAggregationStages"]>)
-		);
+	getAggregationStages(...args: Parameters<Field["getAggregationStages"]>) {
+		return this.getField(args[0].app).getAggregationStages(...args);
 	}
 }

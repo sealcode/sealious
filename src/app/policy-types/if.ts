@@ -5,9 +5,9 @@ import {
 	SpecialFilter,
 	Context,
 	Queries,
-	SingleItemResponse,
 } from "../../main";
 import { PolicyDefinition } from "../../chip-types/policy";
+import { CollectionItem } from "../../chip-types/collection-item";
 
 export default class If extends Policy {
 	static type_name = "if";
@@ -56,12 +56,13 @@ export default class If extends Policy {
 	}
 	async checkerFunction(
 		context: Context,
-		sealious_response: SingleItemResponse
+		item_getter: () => Promise<CollectionItem>
 	) {
+		const item = await item_getter();
 		const query = await this.constructQuery(context);
-		query.match({ sealious_id: sealious_response.id });
+		query.match({ id: item.id });
 		const results = await context.app.Datastore.aggregate(
-			sealious_response._metadata.collection_name,
+			item.collection.name,
 			query.toPipeline()
 		);
 		if (!results.length) {

@@ -1,7 +1,7 @@
 import { HybridField, Field, Context, SuperContext } from "../../../main";
 
 export default class DisallowUpdate<T extends Field> extends HybridField<T> {
-	getTypeName = () => "disallow-update";
+	typeName = "disallow-update";
 	async isProperValue(
 		context: Context,
 		new_value: Parameters<T["isProperValue"]>[1],
@@ -9,7 +9,7 @@ export default class DisallowUpdate<T extends Field> extends HybridField<T> {
 	) {
 		if (old_value === undefined) {
 			return this.virtual_field.isProperValue(
-				new SuperContext(context),
+				new context.app.SuperContext(),
 				new_value,
 				old_value
 			);

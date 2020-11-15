@@ -30,11 +30,7 @@ type TryToLoginParams = {
 	password: string;
 };
 
-async function tryToLogin(
-	app: App,
-	context: Context,
-	{ username, password }: TryToLoginParams
-) {
+async function tryToLogin(app: App, { username, password }: TryToLoginParams) {
 	if (!username) {
 		throw new Errors.InvalidCredentials("Missing username!");
 	}
@@ -43,29 +39,22 @@ async function tryToLogin(
 	}
 
 	const user = await validateAuthData(app, username, password);
-	const session = await app.runAction(
-		new app.SuperContext(),
-		["collections", "sessions"],
-		"create",
-		{ user: user.sealious_id, "session-id": null }
-	);
-	await app.runAction(
-		new app.SuperContext(),
-		["collections", "users", user.sealious_id],
-		"edit",
-		{ last_login_context: context }
-	);
-	return new NewSession(session["session-id"]);
+	const session = app.collections.sessions.make({
+		user: user.id,
+		"session-id": null,
+	});
+	await session.save(new app.SuperContext());
+	return new NewSession(session.get("session-id") as string);
 }
 
 export default class SessionsSubject extends Subject {
 	async performAction(
-		context: Context,
+		_: Context,
 		action_name: CreateActionName,
 		params: any
 	) {
 		if (action_name === "create") {
-			return tryToLogin(this.app, context, params || {});
+			return tryToLogin(this.app, params || {});
 		}
 		throw new Errors.BadSubjectAction(
 			`Unknown/unsupported action '${action_name}' for SessionsSubject`

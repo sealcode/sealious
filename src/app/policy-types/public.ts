@@ -1,7 +1,7 @@
 import { Policy } from "../../main";
 import { AllowAll } from "../../datastore/allow-all";
 
-class Public extends Policy {
+export default class Public extends Policy {
 	static type_name = "public";
 	async _getRestrictingQuery() {
 		return new AllowAll();
@@ -11,5 +11,3 @@ class Public extends Policy {
 	}
 	isItemSensitive = async () => false;
 }
-
-export default new Public();

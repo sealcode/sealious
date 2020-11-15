@@ -1,8 +1,8 @@
 import { Field } from "../../../main";
 
 /** Stores a floating point number. DOes not take params. Does not allow range filtering. @todo: add range filtering */
-export default class Float extends Field<number | string, number> {
-	getTypeName = () => "float";
+export default class Float extends Field {
+	typeName = "float";
 	async isProperValue(_: any, input: number) {
 		const test = parseFloat(input.toString());
 		if (test === null || isNaN(test) || isNaN(input) === true) {

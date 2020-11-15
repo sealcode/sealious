@@ -5,7 +5,7 @@ import me_synonyms from "../../../misc/me-synonyms";
 import TextStorage from "./text-storage";
 
 export default class Username extends TextStorage {
-	getTypeName = () => "username";
+	typeName = "username";
 
 	async isProperValue(_: Context, new_value: string, old_value: string) {
 		if (old_value === new_value) {
@@ -16,12 +16,12 @@ export default class Username extends TextStorage {
 				`'${new_value}' is a reserved keyword. Please pick another username.`
 			);
 		}
-		const response = await this.app.runAction(
-			new this.app.SuperContext(),
-			["collections", "users"],
-			"show",
-			{ filter: { username: new_value } }
-		);
+
+		const response = await this.app.collections.users
+			.suList()
+			.filter({ username: new_value })
+			.fetch();
+
 		if (!response.empty) {
 			return Field.invalid("Username already taken");
 		}

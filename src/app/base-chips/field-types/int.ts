@@ -23,7 +23,7 @@ export abstract class IntStorage<
 	Input extends number | string,
 	Output = any,
 	Format = any
-> extends Field<Input, Output, Format> {
+> extends Field {
 	/** the min allowed value */
 	min?: number;
 	/** tha max allowed value*/
@@ -55,7 +55,8 @@ export abstract class IntStorage<
 		return Field.valid();
 	}
 
-	setParams(params: IntStorageParams) {
+	constructor(params: IntStorageParams = {}) {
+		super();
 		this.max = params.max;
 		this.min = params.min;
 	}
@@ -97,7 +98,8 @@ export abstract class IntStorage<
 	};
 }
 
-/** An integer field. Consult {@link IntStorage} for information on customizing it's behavior.*/
+/** An integer field. Consult {@link IntStorage} for information on
+ * customizing it's behavior.*/
 export default class Int extends IntStorage<number | string, number> {
-	getTypeName = () => "int";
+	typeName = "int";
 }

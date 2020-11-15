@@ -3,17 +3,29 @@ import { equal, deepEqual } from "assert";
 import { withRunningApp } from "../../../test_utils/with-test-app";
 import { assertThrowsAsync } from "../../../test_utils/assert-throws-async";
 import { IntStorageParams } from "./int";
-import { App, Collection, FieldTypes } from "../../../main";
+import { Collection, FieldTypes } from "../../../main";
+import { TestAppType } from "../../../test_utils/test-app";
 
 describe("int", () => {
 	const COLLECTION_NAME = "ages";
 
-	function assertFormatIsNotAccepted(provided_value: any) {
-		return withRunningApp(async ({ app, base_url }) => {
-			await createTestCollection({
-				app,
-			});
+	const extend = (params?: IntStorageParams) => (t: TestAppType) => {
+		const col = new (class extends Collection {
+			name = COLLECTION_NAME;
+			fields = {
+				age: new FieldTypes.Int(params || {}),
+			};
+		})();
+		return class extends t {
+			collections = {
+				...t.BaseCollections,
+				[COLLECTION_NAME]: col,
+			};
+		};
+	};
 
+	function assertFormatIsNotAccepted(provided_value: any) {
+		return withRunningApp(extend(), async ({ base_url }) => {
 			await assertThrowsAsync(
 				() =>
 					Axios.post(
@@ -32,31 +44,8 @@ describe("int", () => {
 		});
 	}
 
-	async function createTestCollection({
-		app,
-		params,
-	}: {
-		app: App;
-		params?: IntStorageParams;
-	}) {
-		Collection.fromDefinition(app, {
-			name: COLLECTION_NAME,
-			fields: [
-				{
-					name: "age",
-					type: FieldTypes.Int,
-					params,
-				},
-			],
-		});
-	}
-
 	it("should allow an integer value", async () =>
-		withRunningApp(async ({ app, base_url }) => {
-			await createTestCollection({
-				app,
-			});
-
+		withRunningApp(extend(), async ({ base_url }) => {
 			const { data: response } = await Axios.post(
 				`${base_url}/api/v1/collections/${COLLECTION_NAME}`,
 				{
@@ -67,11 +56,7 @@ describe("int", () => {
 		}));
 
 	it("should allow a string which can be interpreted as an integer value", async () =>
-		withRunningApp(async ({ app, base_url }) => {
-			await createTestCollection({
-				app,
-			});
-
+		withRunningApp(extend(), async ({ base_url }) => {
 			const { data: response } = await Axios.post(
 				`${base_url}/api/v1/collections/${COLLECTION_NAME}`,
 				{
@@ -82,14 +67,7 @@ describe("int", () => {
 		}));
 
 	it("should respect given min and max value", async () =>
-		withRunningApp(async ({ app, base_url }) => {
-			const [min, max] = [30, 50];
-
-			await createTestCollection({
-				app,
-				params: { min, max },
-			});
-
+		withRunningApp(extend({ min: 30, max: 50 }), async ({ base_url }) => {
 			await assertThrowsAsync(
 				() =>
 					Axios.post(
@@ -124,11 +102,7 @@ describe("int", () => {
 		}));
 
 	it("should let proper a string as an integer value in the defined range", async () =>
-		withRunningApp(async ({ app, base_url }) => {
-			await createTestCollection({
-				app,
-				params: { min: -2, max: 6 },
-			});
+		withRunningApp(extend({ min: -2, max: 6 }), async ({ base_url }) => {
 			return Axios.post(
 				`${base_url}/api/v1/collections/${COLLECTION_NAME}`,
 				{
@@ -138,11 +112,7 @@ describe("int", () => {
 		}));
 
 	it("should allow a largest integer value", async () =>
-		withRunningApp(async ({ app, base_url }) => {
-			await createTestCollection({
-				app,
-			});
-
+		withRunningApp(extend(), async ({ base_url }) => {
 			const { data: response } = await Axios.post(
 				`${base_url}/api/v1/collections/${COLLECTION_NAME}`,
 				{
@@ -153,11 +123,7 @@ describe("int", () => {
 		}));
 
 	it("should allow a smallest integer value provided as a string value", async () =>
-		withRunningApp(async ({ app, base_url }) => {
-			await createTestCollection({
-				app,
-			});
-
+		withRunningApp(extend(), async ({ base_url }) => {
 			const { data: response } = await Axios.post(
 				`${base_url}/api/v1/collections/${COLLECTION_NAME}`,
 				{
@@ -168,11 +134,7 @@ describe("int", () => {
 		}));
 
 	it("should allow a string with whitespace characters which can be interpreted as an integer value", async () =>
-		withRunningApp(async ({ app, base_url }) => {
-			await createTestCollection({
-				app,
-			});
-
+		withRunningApp(extend(), async ({ base_url }) => {
 			const { data: response } = await Axios.post(
 				`${base_url}/api/v1/collections/${COLLECTION_NAME}`,
 				{

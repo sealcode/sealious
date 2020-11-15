@@ -1,54 +1,37 @@
-import {
-	Collection,
-	App,
-	FieldTypes,
-	Policies,
-	FieldDefinitionHelper as field,
-} from "../../main";
+import { Collection, App, FieldTypes, Policies } from "../../main";
 
-export default (app: App) => {
-	app.on("started", async () => {
-		const sealious_response = await app.runAction(
-			new app.SuperContext(),
-			["collections", "users"],
-			"show",
-			{ filter: { email: app.manifest.admin_email } }
-		);
-		if (sealious_response.empty) {
-			app.Logger.warning(
-				`Creating an admin account for ${app.manifest.admin_email}`
-			);
-			return app.runAction(
-				new app.SuperContext(),
-				["collections", "registration-intents"],
-				"create",
-				{ email: app.manifest.admin_email, role: "admin" }
-			);
-		}
-	});
+export default class Users extends Collection {
+	fields = {
+		username: new FieldTypes.Username(),
+		email: new FieldTypes.Email(),
+		password: new FieldTypes.Password(),
+		roles: new FieldTypes.ReverseSingleReference({
+			referencing_collection: "user-roles",
+			referencing_field: "user",
+		}),
+	};
 
-	return Collection.fromDefinition(app, {
-		name: "users",
-		fields: [
-			field("username", FieldTypes.Username, {}, true),
-			field("email", FieldTypes.Email, {}, true),
-			field(
-				"password",
-				FieldTypes.Password,
-				{
-					min_length: 6,
-				},
-				true
-			),
-			field("status", FieldTypes.Text),
-			field("last_login_context", FieldTypes.Context),
-			field("roles", FieldTypes.ReverseSingleReference, {
-				referencing_field: () =>
-					app.collections["user-roles"].fields.user,
-			}),
-		],
-		policy: {
-			show: Policies.Themselves,
-		},
-	});
-};
+	policies = {
+		show: new Policies.Themselves(),
+	};
+
+	async init(app: App, name: string) {
+		await super.init(app, name);
+		app.on("started", async () => {
+			const users = await app.collections.users
+				.suList()
+				.filter({ email: app.manifest.admin_email })
+				.fetch();
+			if (users.empty) {
+				app.Logger.warn(
+					"ADMIN",
+					`Creating an admin account for ${app.manifest.admin_email}`
+				);
+				return app.collections["registration-intents"].suCreate({
+					email: app.manifest.admin_email,
+					role: "admin",
+				});
+			}
+		});
+	}
+}

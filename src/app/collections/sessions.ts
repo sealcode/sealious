@@ -1,22 +1,12 @@
-import {
-	App,
-	Collection,
-	FieldTypes,
-	Policies,
-	FieldDefinitionHelper as field,
-} from "../../main";
+import { App, Collection, FieldTypes, Policies } from "../../main";
 
-export default (app: App) => {
-	return Collection.fromDefinition(app, {
-		name: "sessions",
-		fields: [
-			field("session-id", FieldTypes.SessionID),
-			field("user", FieldTypes.SingleReference, {
-				target_collection: () => app.collections.users,
-			}),
-		],
-		policy: {
-			default: Policies.Super,
-		},
-	});
-};
+export default class Sessions extends Collection {
+	name = "sessions";
+	fields = {
+		"session-id": new FieldTypes.SessionID(),
+		user: new FieldTypes.SingleReference("users"),
+	};
+
+	policies = {};
+	defaultPolicy = new Policies.Super();
+}

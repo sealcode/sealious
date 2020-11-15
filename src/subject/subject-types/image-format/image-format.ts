@@ -7,7 +7,6 @@ import App from "../../../app/app";
 import Context from "../../../context";
 import { ShowActionName } from "../../../action";
 import File from "../../../data-structures/file";
-import { CollectionResponse } from "../../../../common_lib/response/responses";
 
 const QUALITY = 80;
 
@@ -84,19 +83,17 @@ class ImageFormatFile extends LeafSubject {
 
 	async getFormattedVersion(format_obj: FormatObject): Promise<File | null> {
 		const hash = formatHash(format_obj);
-		const results = (await this.app.runAction(
-			new this.app.SuperContext(),
-			["collections", "formatted-images"],
-			"show",
-			{
-				original_photo_file: { $eq: this.file_id },
-				format: hash,
-			}
-		)) as CollectionResponse;
+		const results = await this.app.collections["formatted-images"]
+			.suList()
+			.filter({ original_photo_file: this.file_id, format: hash })
+			.fetch();
 		if (results.items.length === 0) {
 			return null;
 		}
-		return File.fromID(this.app, results.items[0].formatted_photo_file);
+		return File.fromID(
+			this.app,
+			results.items[0].get("formatted_photo_file")
+		);
 	}
 
 	getFormatData(format_name: string) {
@@ -125,16 +122,11 @@ class ImageFormatFile extends LeafSubject {
 		const formatted_file = await File.fromPath(this.app, temp_file_path);
 		await formatted_file.save();
 
-		await this.app.runAction(
-			new this.app.SuperContext(),
-			["collections", "formatted-images"],
-			"create",
-			{
-				original_photo_file: original_file.id,
-				formatted_photo_file: formatted_file.id,
-				format: formatHash(format_obj),
-			}
-		);
+		await this.app.collections["formatted-images"].suCreate({
+			original_photo_file: original_file.id,
+			formatted_photo_file: formatted_file.id,
+			format: formatHash(format_obj),
+		});
 
 		await fs.unlink(temp_file_path);
 		return formatted_file;

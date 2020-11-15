@@ -2,12 +2,12 @@ import Policy from "../../chip-types/policy";
 import { App, Context, FieldTypes, Query } from "../../main";
 import Collection from "../../chip-types/collection";
 import { ActionName } from "../../action";
-import SingleItemResponse from "../../../common_lib/response/single-item-response";
 import QueryStage from "../../datastore/query-stage";
 import DenyAll from "../../datastore/deny-all";
 import { AllowAll } from "../../datastore/allow-all";
+import { CollectionItem } from "../../chip-types/collection-item";
 
-export default class gSameAsForResourceInField extends Policy {
+export default class SameAsForResourceInField extends Policy {
 	static type_name = "same-as-for-resource-in-field";
 	current_collection: string;
 	field: string;
@@ -29,19 +29,19 @@ export default class gSameAsForResourceInField extends Policy {
 		return app.collections[this.current_collection];
 	}
 
-	getReferencedCollection(app: App): Collection {
-		return (this.getCollection(app).fields[
+	getReferencedCollection(context: Context): Collection {
+		return (this.getCollection(context.app).fields[
 			this.field
-		] as FieldTypes.SingleReference).get_target_collection();
+		] as FieldTypes.SingleReference).getTargetCollection(context);
 	}
 
-	getReferencedPolicy(app: App): Policy {
-		return this.getReferencedCollection(app).getPolicy("show");
+	getReferencedPolicy(context: Context): Policy {
+		return this.getReferencedCollection(context).getPolicy("show");
 	}
 
 	async _getRestrictingQuery(context: Context) {
 		const referenced_restricting_query = await this.getReferencedPolicy(
-			context.app
+			context
 		).getRestrictingQuery(context);
 
 		if (
@@ -53,9 +53,9 @@ export default class gSameAsForResourceInField extends Policy {
 
 		const query = new Query();
 		const parent_prefix = query.lookup({
-			from: this.getReferencedCollection(context.app).name,
+			from: this.getReferencedCollection(context).name,
 			localField: this.field,
-			foreignField: "sealious_id",
+			foreignField: "id",
 		});
 
 		const referenced_restricting_pipeline = referenced_restricting_query.toPipeline();
@@ -70,24 +70,18 @@ export default class gSameAsForResourceInField extends Policy {
 
 		return Query.fromCustomPipeline(pipeline);
 	}
-	async checkerFunction(context: Context, response: SingleItemResponse) {
-		if (!response) {
+	async checkerFunction(
+		context: Context,
+		item_getter: () => Promise<CollectionItem>
+	) {
+		if (!item_getter) {
 			return null;
 		}
-		const sealious_response_in_field = await context.app.runAction(
-			new context.app.SuperContext(),
-			[
-				"collections",
-				this.getReferencedCollection(context.app).name,
-				response[this.field],
-			],
-			"show"
+		const response = this.getReferencedCollection(context).suGetByID(
+			(await item_getter()).get(this.field) as string
 		);
 
-		return this.getReferencedPolicy(context.app).check(
-			context,
-			sealious_response_in_field
-		);
+		return this.getReferencedPolicy(context).check(context, () => response);
 	}
 	item_sensitive: true;
 }

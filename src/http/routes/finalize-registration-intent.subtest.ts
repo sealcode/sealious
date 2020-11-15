@@ -1,11 +1,10 @@
 import * as assert from "assert";
 import tough from "tough-cookie";
 import { withStoppedAppProd } from "../../test_utils/with-test-app";
-import { SingleItemResponse } from "../../../common_lib/response/responses";
 
 describe("finalize registration", () => {
 	it("allows to register an account (entire flow)", async () =>
-		withStoppedAppProd(async ({ app, mail_api, rest_api }) => {
+		withStoppedAppProd(null, async ({ app, mail_api, rest_api }) => {
 			app.ConfigManager.set("roles", ["admin"]);
 			await app.start();
 			const cookieJar = new tough.CookieJar();
@@ -44,10 +43,10 @@ describe("finalize registration", () => {
 				options
 			);
 
-			const { roles } = (await rest_api.getSealiousResponse(
+			const { roles } = await rest_api.get(
 				"/api/v1/users/me?attachments[roles]=true",
 				options
-			)) as SingleItemResponse;
+			);
 			assert.equal(roles.length, 1);
 			assert.equal(roles[0].role, "admin");
 		}));

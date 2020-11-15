@@ -1,7 +1,7 @@
 import Policy from "../../chip-types/policy";
 import DenyAll from "../../datastore/deny-all";
 
-class Noone extends Policy {
+export default class Noone extends Policy {
 	static type_name = "noone";
 	async _getRestrictingQuery() {
 		return new DenyAll();
@@ -11,5 +11,3 @@ class Noone extends Policy {
 	}
 	isItemSensitive = async () => false;
 }
-
-export default new Noone();

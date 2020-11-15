@@ -2,7 +2,7 @@ import { LeafSubject } from "../subject";
 import * as Errors from "../../response/errors";
 import Context from "../../context";
 import { DeleteActionName } from "../../action";
-import Item from "../../../common_lib/response/item";
+import ItemList from "../../chip-types/item-list";
 
 export default class CurrentSession extends LeafSubject {
 	async performAction(
@@ -16,46 +16,17 @@ export default class CurrentSession extends LeafSubject {
 			);
 		}
 		try {
-			const session_sealious_response = await this.app.runAction(
-				new this.app.SuperContext(),
-				["collections", "sessions"],
-				"show",
-				{
-					filter: { "session-id": context.session_id },
-				}
-			);
-
+			const sessions = await new ItemList(
+				this.app.collections.sessions,
+				new this.app.SuperContext()
+			)
+				.filter({ "session-id": context.session_id })
+				.fetch();
 			await Promise.all(
-				session_sealious_response.items.map((session: Item) =>
-					this.app.runAction(
-						new this.app.SuperContext(),
-						["collections", "sessions", session.id],
-						"delete"
-					)
+				sessions.items.map(async (session) =>
+					session.remove(new this.app.SuperContext())
 				)
 			);
-
-			const anonymous_session_sealious_response = await this.app.runAction(
-				new this.app.SuperContext(),
-				["collections", "anonymous-sessions"],
-				"show",
-				{
-					filter: {
-						"anonymous-session-id": context.anonymous_session_id,
-					},
-				}
-			);
-
-			await Promise.all(
-				anonymous_session_sealious_response.items.map((session: Item) =>
-					this.app.runAction(
-						new this.app.SuperContext(),
-						["collections", "anonymous-sessions", session.id],
-						"delete"
-					)
-				)
-			);
-
 			return "You've been logged out";
 		} catch (e) {
 			return Promise.reject(new Errors.BadContext("Invalid session id!"));

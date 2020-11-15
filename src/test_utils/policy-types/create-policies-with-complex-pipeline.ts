@@ -12,7 +12,7 @@ export default {
 						const id = query.lookup({
 							from: "numbers",
 							localField: "number",
-							foreignField: "sealious_id",
+							foreignField: "id",
 						});
 						query.match({
 							[`${id}._id`]: {

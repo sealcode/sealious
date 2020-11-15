@@ -1,4 +1,4 @@
-import Item from "./item";
+import { CollectionItem } from "../../src/chip-types/collection-item";
 
 export class NewSession {
 	status: string;
@@ -17,12 +17,10 @@ export class NewSession {
 
 export class ResourceCreated {
 	[field: string]: any;
-	constructor(resource_representation: Item) {
-		for (const field in resource_representation) {
-			this[field] = resource_representation[field];
+	constructor(item: CollectionItem) {
+		for (const field in item.collection.fields) {
+			this[field] = item.get(field);
 		}
+		this.id = item.id;
 	}
 }
-
-export { default as CollectionResponse } from "./collection-response";
-export { default as SingleItemResponse } from "./single-item-response";

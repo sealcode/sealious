@@ -1,8 +1,6 @@
 import Bluebird from "bluebird";
-import Collection from "../../../chip-types/collection";
 import { Field, Context } from "../../../main";
-import { CollectionResponse } from "../../../../common_lib/response/responses";
-import ReferenceToCollection from "../../../subject/attachments/reference-to-collection";
+import ItemList, { AttachmentOptions } from "../../../chip-types/item-list";
 
 /** A reference to other item, in the same or other collection. Can point at items from only one, specified collection. Items with field of this type can be filtered by fields of the items it points at. Examples below.
  *
@@ -30,79 +28,97 @@ import ReferenceToCollection from "../../../subject/attachments/reference-to-col
  * {filter: {best_friend: {name: "John"}}}
  * ```
  */
-export default class SingleReference extends Field<string> {
-	getTypeName = () => "single-reference";
+export default class SingleReference extends Field {
+	typeName = "single-reference";
 	hasIndex = () => true;
-	get_target_collection: () => Collection;
+	target_collection: string;
 	filter: any;
 
-	setParams(params: { target_collection: () => Collection; filter?: any }) {
-		this.get_target_collection = params.target_collection;
-		this.filter = params.filter;
+	constructor(target_collection: string, filter?: any) {
+		super();
+		this.target_collection = target_collection;
+		this.filter = filter;
+	}
+
+	getTargetCollection(context: Context) {
+		return context.app.collections[this.target_collection];
 	}
 
 	async isProperValue(context: Context, input: string) {
+		context.app.Logger.debug2("SINGLE REFERENCE", "isProperValue?", input);
 		const filter = this.filter || {};
 		if (input === "") {
 			return Field.valid();
 		}
 
-		let stages = await this.get_target_collection().getAggregationStages(
-			context,
-			"show",
-			{ filter }
-		);
-		stages = [{ $match: { sealious_id: input } }, ...stages];
+		let stages = await this.getTargetCollection(context)
+			.list(context)
+			.filter(filter)
+			.getAggregationStages();
+		stages = [{ $match: { id: input } }, ...stages];
 		const results = await this.app.Datastore.aggregate(
-			this.get_target_collection().name,
+			this.getTargetCollection(context).name,
 			stages
 		);
 
-		return results.length > 0
-			? Field.valid()
-			: Field.invalid(
-					`Nie masz dostępu do danego zasobu z kolekcji ${
-						this.get_target_collection().name
-					} lub on nie istnieje.`
-			  );
+		context.app.Logger.debug3(
+			"SINGLE REFERENCE",
+			"isProperValue/results",
+			results
+		);
+
+		const decision =
+			results.length > 0
+				? Field.valid()
+				: Field.invalid(
+						`Nie masz dostępu do danego zasobu z kolekcji ${
+							this.getTargetCollection(context).name
+						} lub on nie istnieje.`
+				  );
+
+		context.app.Logger.debug2(
+			"SINGLE REFERENCE",
+			"isProperValue/decision",
+			decision
+		);
+		return decision;
 	}
 
 	async filterToQuery(context: Context, filter: any) {
 		// treating filter as a query here
+		context.app.Logger.debug3("SINGLE REFERENCE", "FiltertoQuery", {
+			context,
+			filter,
+		});
 		if (typeof filter !== "object") {
 			return {
 				$eq: filter,
 			};
 		}
-		const { items } = (await this.app.runAction(
-			context,
-			["collections", this.get_target_collection().name],
-			"show",
-			{
-				filter,
-			}
-		)) as CollectionResponse;
+		const { items } = await this.app.collections[this.target_collection]
+			.list(context)
+			.filter(filter)
+			.fetch();
 		return { $in: items.map((resource) => resource.id) };
 	}
-	async getAggregationStages(
-		context: Context,
-		query: Parameters<Field["getAggregationStages"]>[1]
-	) {
+
+	async getAggregationStages(context: Context, filter_value: unknown) {
+		context.app.Logger.debug3("SINGLE REFERENCE", "getAggregationStages", {
+			context,
+			filter_value,
+		});
 		let filter: { [field_name: string]: any } = {};
 		const temp_field_name = `${
-			this.get_target_collection().name
+			this.getTargetCollection(context).name
 		}-lookup${Math.floor(Math.random() * Math.pow(10, 7))}`;
-		const request_filter = query.filter && query.filter[this.name];
-		if (!request_filter || Object.keys(request_filter).length === 0)
+		if (!filter_value || Object.keys(filter_value as Object).length === 0)
 			return [];
-		if (typeof request_filter === "string") {
-			return [
-				{ $match: { [await this.getValuePath()]: request_filter } },
-			];
+		if (typeof filter_value === "string") {
+			return [{ $match: { [await this.getValuePath()]: filter_value } }];
 		}
-		if (request_filter instanceof Array) {
-			let _in = request_filter;
-			if (request_filter[0] instanceof Array) _in = request_filter[0];
+		if (filter_value instanceof Array) {
+			let _in = filter_value;
+			if (filter_value[0] instanceof Array) _in = filter_value[0];
 			return [
 				{
 					$match: {
@@ -111,18 +127,18 @@ export default class SingleReference extends Field<string> {
 				},
 			];
 		}
-		for (let field_name in request_filter) {
-			let field = this.get_target_collection().fields[field_name];
+		for (let field_name in filter_value as Object) {
+			let field = this.getTargetCollection(context).fields[field_name];
 			if (!field)
 				return Promise.reject(
 					"Unknown field in filter for '" +
-						this.get_target_collection().name +
+						this.getTargetCollection(context).name +
 						"': " +
 						field_name
 				);
 			filter[field_name] = field.filterToQuery(
 				context,
-				request_filter[field_name]
+				(filter_value as { [field_name: string]: any })[field_name]
 			);
 		}
 		filter = await Bluebird.props(filter);
@@ -130,13 +146,13 @@ export default class SingleReference extends Field<string> {
 		const ret = [
 			{
 				$lookup: {
-					from: this.get_target_collection().name,
+					from: this.getTargetCollection(context).name,
 					let: { referenced_id: `$${await this.getValuePath()}` },
 					pipeline: [
 						{
 							$match: {
 								$expr: {
-									$eq: ["$sealious_id", "$$referenced_id"],
+									$eq: ["$id", "$$referenced_id"],
 								},
 							},
 						},
@@ -147,15 +163,30 @@ export default class SingleReference extends Field<string> {
 				},
 			},
 			{ $match: { [`${temp_field_name}.count`]: { $gt: 0 } } },
+			{ $unset: temp_field_name },
 		];
 
 		return ret;
 	}
 
-	getAttachmentLoader(context: any, _: any, params: any) {
-		return new ReferenceToCollection(context, this.name, {
-			...params,
-			collection_name: this.get_target_collection().name,
-		});
+	async getAttachments(
+		context: Context,
+		target_ids: string[],
+		attachment_options?: AttachmentOptions
+	) {
+		const ret = new ItemList<any>(
+			this.getTargetCollection(context),
+			context
+		);
+		if (attachment_options) {
+			// ^ is either a boolean or an object
+			ret.ids(target_ids);
+			if (typeof attachment_options === "object") {
+				ret.attach(attachment_options);
+			}
+		} else {
+			ret.ids([]); // return an empty list;
+		}
+		return ret.fetch();
 	}
 }

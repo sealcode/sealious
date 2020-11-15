@@ -7,7 +7,6 @@ import { default as Or } from "./or";
 import { default as Owner } from "./owner";
 import { default as Public } from "./public";
 import { default as Roles } from "./roles";
-import { default as SameAnon } from "./same-anon";
 import { default as SameAsForResourceInField } from "./same-as-for-resource-in-field";
 import { default as Super } from "./super";
 import { default as Themselves } from "./themselves";
@@ -24,7 +23,6 @@ export {
 	Public,
 	Roles,
 	SameAsForResourceInField,
-	SameAnon,
 	Themselves,
 	UserReferencedInField,
 	UsersWhoCan,

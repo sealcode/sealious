@@ -1,61 +1,46 @@
-import {
-	App,
-	Collection,
-	FieldTypes,
-	Policies,
-	FieldDefinitionHelper as field,
-	EventMatchers,
-} from "../../main";
+import { App, Collection, FieldTypes, Policies } from "../../main";
 import RegistrationIntentTemplate from "../../email/templates/registration-intent";
+import ItemList from "../../chip-types/item-list";
 
-export default (app: App) => {
-	app.addHook(
-		new EventMatchers.CollectionMatcher({
-			when: "after",
-			collection_name: "registration-intents",
-			action: "create",
+export default class RegistrationIntents extends Collection {
+	fields = {
+		email: new FieldTypes.ValueNotExistingInCollection({
+			collection: "users",
+			field: "email",
+			include_forbidden: true,
 		}),
-		async (_, intent) => {
-			const token = (
-				await app.runAction(
-					new app.SuperContext(),
-					["collections", "registration-intents", intent.id],
-					"show"
-				)
-			).token;
+		token: new FieldTypes.SecretToken(),
+		role: new FieldTypes.SettableBy(
+			new FieldTypes.Enum((app: App) => app.ConfigManager.get("roles")),
+			new Policies.UsersWhoCan(["create", "user-roles"])
+		),
+	};
+
+	policies = {
+		create: new Policies.Public(),
+		edit: new Policies.Noone(),
+	};
+
+	defaultPolicy = new Policies.Super();
+
+	async init(app: App, name: string) {
+		await super.init(app, name);
+		this.on("after:create", async ([context, intent]) => {
+			await intent.decode(context);
+			const {
+				items: [item],
+			} = await new ItemList(
+				app.collections["registration-intents"],
+				new app.SuperContext()
+			)
+				.ids([intent.id])
+				.fetch();
+			const token = item.get("token");
 			const message = await RegistrationIntentTemplate(app, {
-				email_address: intent.email,
+				email_address: intent.get("email") as string,
 				token,
 			});
 			await message.send(app);
-		}
-	);
-
-	return Collection.fromDefinition(app, {
-		name: "registration-intents",
-		fields: [
-			field(
-				"email",
-				FieldTypes.ValueNotExistingInCollection,
-				{
-					field: () => app.collections.users.fields.email,
-					include_forbidden: true,
-				},
-				true
-			),
-			field("token", FieldTypes.SecretToken),
-			field("role", FieldTypes.SettableBy, {
-				policy: new Policies.UsersWhoCan(["create", "user-roles"]),
-				base_field_type: FieldTypes.Enum,
-				base_field_params: {
-					values: () => app.ConfigManager.get("roles"),
-				},
-			}),
-		],
-		policy: {
-			default: Policies.Super,
-			create: Policies.Public,
-			edit: Policies.Noone,
-		},
-	});
-};
+		});
+	}
+}

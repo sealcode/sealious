@@ -1,16 +1,19 @@
-import SingleItemResponse from "../../../common_lib/response/single-item-response";
 import { Context, Policy, Query } from "../../main";
+import { CollectionItem } from "../../chip-types/collection-item";
 
 export default class Themselves extends Policy {
 	static type_name = "themselves";
 	isItemSensitive = async () => true;
 	async _getRestrictingQuery(context: Context) {
 		return Query.fromSingleMatch({
-			sealious_id: { $eq: context.user_id },
+			id: { $eq: context.user_id },
 		});
 	}
-	async checkerFunction(context: Context, item: SingleItemResponse) {
-		const user_id = item.id;
+	async checkerFunction(
+		context: Context,
+		item_getter: () => Promise<CollectionItem>
+	) {
+		const user_id = (await item_getter()).id;
 		if (context.user_id !== user_id) {
 			return Policy.deny(`you are not the user of id ${user_id}.`);
 		}

@@ -4,7 +4,7 @@ import SimpleTemplate from "./simple";
 
 describe("simpleTemplate", () => {
 	it("sends an email", async () =>
-		withRunningAppProd(async ({ app, mail_api }) => {
+		withRunningAppProd(null, async ({ app, mail_api }) => {
 			const message = await SimpleTemplate(app, {
 				to: "test@example.com",
 				subject: "Congratulations!",
