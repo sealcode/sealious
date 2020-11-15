@@ -40,7 +40,7 @@ function extend(t: TestAppType) {
 	};
 }
 
-describe.only("disallow-update", () => {
+describe("disallow-update", () => {
 	it("Respects target field type", () =>
 		withRunningApp(extend, async ({ rest_api }) => {
 			await assertThrowsAsync(
