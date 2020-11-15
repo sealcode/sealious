@@ -47,6 +47,7 @@ export default abstract class Collection extends Emittery {
 	app: App;
 
 	named_filters: Record<string, SpecialFilter> = {};
+
 	calculated_fields: Record<string, CalculatedField<any>> = {};
 
 	/** initializes the fields @internal */
@@ -125,13 +126,16 @@ export default abstract class Collection extends Emittery {
 		return this.policies[action] || this.defaultPolicy;
 	}
 
-	/** Initialize all the fields
+	/** Initialize all the fields and filters
 	 * @internal
 	 */
 	async init(app: App, collection_name: string) {
 		this.name = collection_name;
 		this.app = app;
 		await this.initFieldDetails();
+		for (const filter of Object.values(this.named_filters)) {
+			filter.init(app);
+		}
 	}
 
 	/** Whether or not any of the fields' behavior depends on the

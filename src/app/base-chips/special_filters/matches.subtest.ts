@@ -14,15 +14,15 @@ function extend(t: TestAppType) {
 				fields = {
 					number: new FieldTypes.Int(),
 				};
+				named_filters = {
+					positive: new Matches("numbers", {
+						number: { ">": 0 },
+					}),
+					negative: new Matches("numbers", {
+						number: { "<": 0 },
+					}),
+				};
 			})(),
-		};
-		named_filters = {
-			positive: new Matches("numbers", {
-				number: { ">": 0 },
-			}),
-			negative: new Matches("numbers", {
-				number: { "<": 0 },
-			}),
 		};
 	};
 }
@@ -40,7 +40,7 @@ describe("Matches", () => {
 			await setup(rest_api);
 			const sealious_response = await app.collections.numbers
 				.suList()
-				.filter(app.collections.numbers.getNamedFilter("positive"))
+				.namedFilter("positive")
 				.fetch();
 
 			assert.deepEqual(

@@ -2,10 +2,11 @@ import { SpecialFilter, Query } from "../../../main";
 import QueryStage from "../../../datastore/query-stage";
 
 export default class Matches extends SpecialFilter {
-	filter: {};
-	constructor(collection_name: string, params: {}) {
-		super(collection_name, params);
-		this.filter = params;
+	constructor(
+		collection_name: string,
+		public filter: { [field_name: string]: any }
+	) {
+		super(collection_name, filter);
 	}
 
 	async getFilteringQuery() {
@@ -13,9 +14,10 @@ export default class Matches extends SpecialFilter {
 		for (let field_name in this.filter) {
 			const field_pipeline = await this.getCollection().fields[
 				field_name
-			].getAggregationStages(new this.app.SuperContext(), {
-				filter: this.filter,
-			});
+			].getAggregationStages(
+				new this.app.SuperContext(),
+				this.filter[field_name]
+			);
 			pipeline = pipeline.concat(field_pipeline);
 		}
 		return Query.fromCustomPipeline(pipeline);

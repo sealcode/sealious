@@ -86,10 +86,11 @@ export default class CollectionSubject extends Subject {
 			`Running listResources on ${this.collection.name}`,
 			params
 		);
-		const ret = await this.collection
-			.list(context)
-			.setParams(params)
-			.fetch();
+		const list = this.collection.list(context).setParams(params);
+		for (const named_filter of this.named_filters) {
+			list.namedFilter(named_filter);
+		}
+		const ret = await list.fetch();
 		this.app.Logger.debug("SUBJECT", "listResources returning", ret);
 		return ret;
 	}
