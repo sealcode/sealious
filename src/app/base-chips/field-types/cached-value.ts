@@ -182,13 +182,13 @@ export default class CachedValue<T extends Field> extends HybridField<T> {
 
 	async isProperValue(
 		context: Context,
-		new_value: Parameters<T["isProperValue"]>[1],
-		old_value: Parameters<T["isProperValue"]>[2]
+		new_value: Parameters<T["checkValue"]>[1],
+		old_value: Parameters<T["checkValue"]>[2]
 	) {
 		if (!isEmpty(new_value) && !context.is_super) {
 			throw new BadContext("This is a read-only field");
 		}
-		return this.virtual_field.isProperValue(context, new_value, old_value);
+		return this.virtual_field.checkValue(context, new_value, old_value);
 	}
 
 	async getValuePath() {

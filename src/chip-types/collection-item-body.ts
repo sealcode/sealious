@@ -188,7 +188,7 @@ export default class CollectionItemBody<T extends Collection = any> {
 			}
 			promises.push(
 				this.collection.fields[field_name as string]
-					.isProperValue(
+					.checkValue(
 						context,
 						this.raw_input[field_name],
 						original_body.encoded[field_name]

@@ -5,6 +5,7 @@ import { App } from "../main";
 import QueryStage from "../datastore/query-stage";
 import { ItemListResult } from "./item-list";
 import { BadSubjectAction } from "../response/errors";
+import isEmpty from "../utils/is-empty";
 
 export type Depromisify<T> = T extends Promise<infer V> ? V : T;
 
@@ -121,11 +122,23 @@ export default abstract class Field {
 
 	abstract typeName: string;
 
-	abstract isProperValue(
+	protected abstract isProperValue(
 		context: Context,
 		new_value: unknown,
 		old_value: unknown
 	): Promise<ValidationResult>;
+
+	public async checkValue(
+		context: Context,
+		new_value: unknown,
+		old_value: unknown
+	): Promise<ValidationResult> {
+		if (isEmpty(new_value) && this.required) {
+			return Field.invalid(`Missing value for field '${this.name}'.`);
+		} else {
+			return this.isProperValue(context, new_value, old_value);
+		}
+	}
 
 	/** Decides how to store the given value in the database, based on
 	 * the context and previous value of the field */

@@ -20,6 +20,6 @@ export default class SettableBy<T extends Field> extends HybridField<T> {
 		if (result && !result.allowed) {
 			return Field.invalid(result.reason);
 		}
-		return this.virtual_field.isProperValue(context, input, old_value);
+		return this.virtual_field.checkValue(context, input, old_value);
 	}
 }

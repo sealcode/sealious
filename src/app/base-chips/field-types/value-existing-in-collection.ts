@@ -1,5 +1,5 @@
 import Field from "../../../chip-types/field";
-import { Context, App, ItemList } from "../../../main";
+import { Context, App } from "../../../main";
 
 export default class ValueExistingInCollection extends Field {
 	typeName = "value-existing-in-collection";
@@ -25,7 +25,7 @@ export default class ValueExistingInCollection extends Field {
 	) {
 		const field = this.getField(context.app);
 		const collection = field.collection;
-		const result = await field.isProperValue(context, new_value, old_value);
+		const result = await field.checkValue(context, new_value, old_value);
 		if (!result.valid) {
 			return result;
 		}
