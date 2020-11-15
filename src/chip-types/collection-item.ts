@@ -176,9 +176,17 @@ export class CollectionItem<T extends Collection = any> {
 		this.setMultiple(values);
 	}
 
-	get<FieldName extends keyof ItemFields<T>>(field_name: FieldName): any {
+	get<FieldName extends keyof ItemFields<T>>(
+		field_name: FieldName,
+		include_raw: boolean = false
+	): any {
 		if (this.fields_with_attachments.includes(field_name as string)) {
 			return this.attachments[this.body.getDecoded(field_name) as string];
+		}
+		if (include_raw) {
+			if (this.body.raw_input[field_name]) {
+				return this.body.raw_input[field_name];
+			}
 		}
 		return this.body.getDecoded(field_name);
 	}

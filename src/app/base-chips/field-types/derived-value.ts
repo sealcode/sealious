@@ -78,15 +78,28 @@ export default class DerivedValue<T extends Field> extends HybridField<T> {
 			item.set(this.name, derived_value);
 		});
 
-		this.collection.on("before:edit", async ([_, item]) => {
+		this.collection.on("before:edit", async ([context, item]) => {
 			if (
 				this.fields.some((field) => item.body.changed_fields.has(field))
 			) {
+				context.app.Logger.debug(
+					"DERIVED VALUE",
+					"Handling before:edit",
+					{ item_body: item.body }
+				);
+				await item.decode(context);
 				const derived_fn_args = this.fields.map((field_name) =>
-					item.get(field_name)
+					item.get(field_name, true)
 				);
 				const derived_value = await this.deriving_fn(
 					...derived_fn_args
+				);
+				context.app.Logger.debug2(
+					"DERIVED VALUE",
+					"Setting new value",
+					{
+						[this.name]: derived_value,
+					}
 				);
 				item.set(this.name, derived_value);
 			}

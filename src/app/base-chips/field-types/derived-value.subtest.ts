@@ -70,33 +70,35 @@ describe("derived-value", () => {
 
 				assert.deepEqual("Jan Kowalski", person.name_and_surname);
 
-				const updated_person = await rest_api.patch(
+				const {
+					items: [updated_person],
+				} = await rest_api.patch(
 					`/api/v1/collections/people/${person.id}`,
 					{
 						username: "Janusz",
 					}
 				);
 
-				assert.deepEqual(updated_person.item.username, "Janusz");
+				assert.deepEqual(updated_person.username, "Janusz");
 
 				assert.deepEqual(
-					updated_person.item.name_and_surname,
+					updated_person.name_and_surname,
 					"Janusz Kowalski"
 				);
 
-				const updated_person2 = await rest_api.patch(
+				const {
+					items: [updated_person2],
+				} = await rest_api.patch(
 					`/api/v1/collections/people/${person.id}`,
 					{
 						username: "John",
 						surname: "Doe",
 					}
 				);
-				assert.deepEqual(updated_person2.item.username, "John");
-				assert.deepEqual(updated_person2.item.surname, "Doe");
-				assert.deepEqual(
-					updated_person2.item.name_and_surname,
-					"John Doe"
-				);
+
+				assert.deepEqual(updated_person2.username, "John");
+				assert.deepEqual(updated_person2.surname, "Doe");
+				assert.deepEqual(updated_person2.name_and_surname, "John Doe");
 			}
 		));
 
@@ -119,20 +121,23 @@ describe("derived-value", () => {
 
 				assert.deepEqual(60, person.age);
 
-				const updated_person = await rest_api.patch(
+				const {
+					items: [updated_person],
+				} = await rest_api.patch(
 					`/api/v1/collections/people/${person.id}`,
 					{
 						age: 22,
 					}
 				);
 
-				assert.deepEqual(updated_person.item.age, 22);
+				assert.deepEqual(updated_person.age, 22);
 				assert.deepEqual(
-					updated_person.item.name_and_surname,
+					updated_person.name_and_surname,
 					"Jan Kowalski"
 				);
 			}
 		));
+
 	it("throws when the value returned from deriving_fn is unnacceptable by target_field_type of derived-value", async () =>
 		withRunningApp(
 			extend<FieldTypes.Int>({

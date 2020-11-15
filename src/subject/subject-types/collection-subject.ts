@@ -31,6 +31,7 @@ export default class CollectionSubject extends Subject {
 	getName() {
 		return "Collection";
 	}
+
 	constructor(
 		collection: Collection,
 		named_filters: Array<string> = [],

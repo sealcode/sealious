@@ -7,6 +7,11 @@ export default class DisallowUpdate<T extends Field> extends HybridField<T> {
 		new_value: Parameters<T["isProperValue"]>[1],
 		old_value?: Parameters<T["isProperValue"]>[2]
 	) {
+		context.app.Logger.debug3(
+			"DISALLOW-UPDATE",
+			"Checking if this field already has a value",
+			{ new_value, old_value }
+		);
 		if (old_value === undefined) {
 			return this.virtual_field.isProperValue(
 				new context.app.SuperContext(),
