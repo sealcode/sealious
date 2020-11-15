@@ -9,6 +9,7 @@ import shortid from "shortid";
 import { AttachmentOptions } from "./item-list";
 import CollectionItemBody, { ItemFields } from "./collection-item-body";
 import { PolicyDecision } from "./policy";
+import isEmpty from "../utils/is-empty";
 
 type ItemMetadata = {
 	modified_at: Number;
@@ -136,8 +137,8 @@ export class CollectionItem<T extends Collection = any> {
 		const promises = [];
 		for (const field_name of Object.keys(this.collection.fields)) {
 			if (
-				!this.body.getInput(field_name) &&
-				!this.body.getEncoded(field_name) &&
+				isEmpty(this.body.getInput(field_name)) &&
+				isEmpty(this.body.getEncoded(field_name)) &&
 				this.collection.fields[field_name].hasDefaultValue()
 			) {
 				context.app.Logger.debug3(

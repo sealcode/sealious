@@ -10,7 +10,7 @@ function extend(t: TestAppType) {
 	const boolseals = new (class extends Collection {
 		name = "boolseals";
 		fields = {
-			is_old: new FieldTypes.Boolean(),
+			is_old: FieldTypes.Required(new FieldTypes.Boolean()),
 		};
 		defaultPolicy = new Policies.Public();
 	})();
@@ -23,7 +23,7 @@ function extend(t: TestAppType) {
 }
 
 describe("boolean", () => {
-	it("Allows to insert values considered correct", () =>
+	it("Allows to insert values considered correct", async () =>
 		withRunningApp(extend, async ({ rest_api }) => {
 			const cases = [
 				[true, true],
@@ -36,14 +36,16 @@ describe("boolean", () => {
 				[0, false],
 			];
 
-			await Promise.all(
-				cases.map(async ([field_value, saved_value]) => {
-					const { is_old } = await rest_api.post(URL, {
-						is_old: field_value,
-					});
-					assert.equal(is_old, saved_value);
-				})
-			);
+			for (const [field_value, saved_value] of cases) {
+				const { is_old } = await rest_api.post(URL, {
+					is_old: field_value,
+				});
+				assert.equal(
+					is_old,
+					saved_value,
+					`While entering ${field_value}, the stored value should be ${saved_value}, but was ${is_old}`
+				);
+			}
 		}));
 
 	it("Doesn't let undefined in", () =>
@@ -53,10 +55,11 @@ describe("boolean", () => {
 				(error) =>
 					assert.deepEqual(
 						error.response.data.data.is_old.message,
-						"Missing value for field 'is_old'"
+						"Missing value for field 'is_old'."
 					)
 			);
 		}));
+
 	it("Doesn't let '' in", () =>
 		withRunningApp(extend, async ({ rest_api }) => {
 			await assertThrowsAsync(
@@ -70,10 +73,11 @@ describe("boolean", () => {
 				}
 			);
 		}));
+
 	it("Doesn't let unwelcomed values in", () =>
 		withRunningApp(extend, async ({ rest_api }) => {
 			const cases = [
-				[null, "Value 'null' is not boolean format."],
+				[null, "Missing value for field 'is_old'."],
 				[{}, "Value '[object Object]' is not boolean format."],
 				[[], "Value '' is not boolean format."],
 				[[false], "Value 'false' is not boolean format."],

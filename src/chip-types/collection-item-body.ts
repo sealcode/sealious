@@ -62,12 +62,24 @@ export default class CollectionItemBody<T extends Collection = any> {
 		const encoded: Partial<ItemFields<T>> = {};
 		const promises = [];
 		for (const field_name of this.changed_fields.values()) {
+			const to_encode = this.raw_input[field_name];
+			context.app.Logger.debug3("ITEM BODY", "encoding value", {
+				[field_name]: this.raw_input[field_name],
+				is_the_value_empty:
+					to_encode === undefined || to_encode === null,
+			});
 			if (!this.collection.fields[field_name as string]) {
+				// field does not exist in this collection
+				continue;
+			}
+
+			if (to_encode === undefined || to_encode === null) {
+				encoded[field_name] = null;
 				continue;
 			}
 			promises.push(
 				this.collection.fields[field_name as string]
-					.encode(context, this.raw_input[field_name])
+					.encode(context, to_encode)
 					.then((value) => {
 						encoded[field_name] = value;
 					})
@@ -161,10 +173,11 @@ export default class CollectionItemBody<T extends Collection = any> {
 		const promises = [];
 		const errors: { [f in keyof ItemFields<T>]?: { message: string } } = {};
 		let valid = true;
-		const fields_to_check = this.changed_fields.values();
+		const fields_to_check = Object.keys(this.collection.fields);
 
 		for (const field_name of fields_to_check) {
 			if (!this.collection.fields[field_name as string]) {
+				// field does not exist
 				continue;
 			}
 			promises.push(

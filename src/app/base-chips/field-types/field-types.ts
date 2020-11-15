@@ -27,3 +27,4 @@ export { default as Username } from "./username";
 export { default as ValueNotExistingInCollection } from "./value-not-existing-in-collection";
 export { default as ValueExistingInCollection } from "./value-existing-in-collection";
 export { default as FileID } from "./file-id";
+export { default as Required } from "./required";
