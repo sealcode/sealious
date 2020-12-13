@@ -15,7 +15,7 @@ export default class UserRoles extends Collection {
 	};
 
 	policies = {
-		create: new Policies.Noone(),
+		create: new Policies.Roles(["admin"]),
 		delete: new Policies.Public(),
 		show: new Policies.UserReferencedInField("user"),
 		edit: new Policies.Noone(),

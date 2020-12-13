@@ -27,10 +27,10 @@ function extend(t: TestAppType) {
 						}
 					),
 				};
+				policies = {
+					create: new Policies.Roles(["admin"]),
+				};
 			})(),
-		};
-		policies = {
-			create: new Policies.Roles(["admin"]),
 		};
 	};
 }
@@ -39,15 +39,18 @@ async function setupUsers(App: App, rest_api: MockRestApi) {
 	const password = "it-really-doesnt-matter";
 	let admin_id;
 	for (let username of ["admin", "regular-user"]) {
-		const user = await App.collections.users.create(
-			new App.SuperContext(),
-			{
-				username,
-				password,
-				email: `${username}@example.com`,
-				roles: [],
-			}
-		);
+		const user = await App.collections.users.suCreate({
+			username,
+			password,
+			email: `${username}@example.com`,
+			roles: [],
+		});
+		if (username == "admin") {
+			await App.collections["user-roles"].suCreate({
+				role: "admin",
+				user: user.id,
+			});
+		}
 
 		sessions[username] = await rest_api.login({
 			username,
@@ -78,7 +81,7 @@ async function fillKeysCollections(App: App) {
 		},
 	];
 	for (let { _public, _private } of keys) {
-		await App.collections["ssh-keys"].create(new App.SuperContext(), {
+		await App.collections["ssh-keys"].suCreate({
 			public: _public,
 			private: _private,
 		});
