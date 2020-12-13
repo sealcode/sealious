@@ -1,9 +1,10 @@
 import assert from "assert";
-import { withRunningApp, MockRestApi } from "../test_utils/with-test-app";
+import { withRunningApp } from "../test_utils/with-test-app";
 import { assertThrowsAsync } from "../test_utils/assert-throws-async";
 import { App, Collection, FieldTypes } from "../main";
 import { TestAppType } from "../test_utils/test-app";
 import { SerializedItemBody } from "../chip-types/collection-item";
+import MockRestApi from "../test_utils/rest-api";
 
 function extend(t: TestAppType) {
 	return class extends t {

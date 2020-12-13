@@ -2,8 +2,9 @@ import assert from "assert";
 import Policy from "../../chip-types/policy";
 import { ActionName, App, Collection, FieldTypes, Policies } from "../../main";
 import { assertThrowsAsync } from "../../test_utils/assert-throws-async";
+import MockRestApi from "../../test_utils/rest-api";
 import { TestAppType } from "../../test_utils/test-app";
-import { MockRestApi, withRunningApp } from "../../test_utils/with-test-app";
+import { withRunningApp } from "../../test_utils/with-test-app";
 import Matches from "../base-chips/special_filters/matches";
 
 const extend = (

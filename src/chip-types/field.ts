@@ -80,6 +80,7 @@ export default abstract class Field {
 
 	setRequired(required: boolean) {
 		this.required = required;
+		return this;
 	}
 
 	/** Sets the name @internal */

@@ -1,11 +1,12 @@
 import assert from "assert";
-import { withRunningApp, MockRestApi } from "../../../test_utils/with-test-app";
+import { withRunningApp } from "../../../test_utils/with-test-app";
 import { assertThrowsAsync } from "../../../test_utils/assert-throws-async";
 import { App, Collection, FieldTypes, Policies } from "../../../main";
 import { TestAppType } from "../../../test_utils/test-app";
+import MockRestApi from "../../../test_utils/rest-api";
 const SSH_KEYS_URL = "/api/v1/collections/ssh-keys";
 
-let sessions: { [username: string]: {}[] } = {};
+let sessions: { [username: string]: {} } = {};
 
 type Key = { [access in "_public" | "_private"]: string };
 

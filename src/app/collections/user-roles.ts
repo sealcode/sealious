@@ -10,7 +10,9 @@ import {
 export default class UserRoles extends Collection {
 	name = "user-roles";
 	fields = {
-		role: new FieldTypes.Enum((app: App) => app.ConfigManager.get("roles")),
+		role: new FieldTypes.Enum((app: App) =>
+			app.ConfigManager.get("roles")
+		).setRequired(true),
 		user: new FieldTypes.SingleReference("users"),
 	};
 

@@ -5,6 +5,7 @@ import { Environment } from "../app/config";
 
 import { get_test_app, TestAppType } from "./test-app";
 import get_rest_api from "./rest-api";
+import MockRestApi from "./rest-api";
 
 type TestCallback = (params: CallbackParams) => Promise<any>;
 
@@ -38,19 +39,12 @@ export async function withStoppedAppProd(
 	await withTestApp.bind("auto_start" && false, "production", extend_fn, cb);
 }
 
-export type MockRestApi = {
-	get: Function;
-	delete: Function;
-	patch: Function;
-	post: Function;
-	login: Function;
-};
-
 type CallbackParams = {
 	app: App;
 	base_url: string;
 	smtp_api_url: string;
 	rest_api: MockRestApi;
+
 	mail_api: {
 		getMessages: () => Promise<
 			{
@@ -106,7 +100,7 @@ async function withTestApp(
 					(await axios.get(`${smtp_api_url}/messages/${id}.html`))
 						.data as string,
 			},
-			rest_api: get_rest_api({ base_url }),
+			rest_api: new MockRestApi(base_url),
 		});
 	} catch (e) {
 		console.error(e);

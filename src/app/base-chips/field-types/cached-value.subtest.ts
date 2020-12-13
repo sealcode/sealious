@@ -1,7 +1,6 @@
 import assert from "assert";
 import {
 	withStoppedApp,
-	MockRestApi,
 	withRunningApp,
 } from "../../../test_utils/with-test-app";
 import { assertThrowsAsync } from "../../../test_utils/assert-throws-async";
@@ -12,6 +11,7 @@ import { TestAppType } from "../../../test_utils/test-app";
 import ItemList from "../../../chip-types/item-list";
 import { RefreshCondition } from "./cached-value";
 import { EventDescription } from "../../delegate-listener";
+import MockRestApi from "../../../test_utils/rest-api";
 
 const action_to_status: { [name: string]: string } = {
 	create: "created",
@@ -31,7 +31,7 @@ const extend = (
 				min: 0,
 			}),
 			{
-				get_value: async (context: Context, resource_id: string) => {
+				get_value: async (_: Context, __: string) => {
 					return 0;
 				},
 				refresh_on: [],
@@ -171,7 +171,7 @@ describe("cached-value", () => {
 			const {
 				items: [{ id: action_id }],
 			} = await rest_api.get("/api/v1/collections/actions", {
-				account: account_id,
+				data: { account: account_id }, // TODO: check if passing the query here works under the new MockRestAPI
 			});
 
 			await rest_api.patch(`/api/v1/collections/actions/${action_id}`, {

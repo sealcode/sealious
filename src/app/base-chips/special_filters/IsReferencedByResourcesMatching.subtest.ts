@@ -1,10 +1,11 @@
 import * as assert from "assert";
 
-import { withRunningApp, MockRestApi } from "../../../test_utils/with-test-app";
+import { withRunningApp } from "../../../test_utils/with-test-app";
 import { Collection, FieldTypes, Policies } from "../../../main";
 import IsReferencedByResourcesMatching from "./IsReferencedByResourcesMatching";
 import { TestAppType } from "../../../test_utils/test-app";
 import Users from "../../collections/users";
+import MockRestApi from "../../../test_utils/rest-api";
 
 function extend(t: TestAppType) {
 	return class extends t {

@@ -1,10 +1,11 @@
 import * as assert from "assert";
 
-import { withRunningApp, MockRestApi } from "../../../test_utils/with-test-app";
+import { withRunningApp } from "../../../test_utils/with-test-app";
 import { Collection, FieldTypes } from "../../../main";
 import Matches from "./matches";
 import { TestAppType } from "../../../test_utils/test-app";
 import { SerializedItemBody } from "../../../chip-types/collection-item";
+import MockRestApi from "../../../test_utils/rest-api";
 
 function extend(t: TestAppType) {
 	return class extends t {
