@@ -30,7 +30,7 @@ export type CollectionCallback = ([context, item, event]: [
 /** Creates a collection. All collections are automatically served via
  * the REST API, with permissions set by the Policies */
 export default abstract class Collection extends Emittery {
-	fields: { [fieldName: string]: Field };
+	abstract fields: { [fieldName: string]: Field };
 
 	/** the name of the collection, will be used as part of the URI in
 	 * the REST API */
@@ -187,5 +187,10 @@ export default abstract class Collection extends Emittery {
 
 	getRequiredFields(): Field[] {
 		return Object.values(this.fields).filter((field) => field.required);
+	}
+
+	setPolicy(action: ActionName, policy: Policy) {
+		this.policies[action] = policy;
+		return this;
 	}
 }

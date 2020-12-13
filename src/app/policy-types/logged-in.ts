@@ -3,7 +3,7 @@ import { Context } from "../../main";
 import { AllowAll } from "../../datastore/allow-all";
 import DenyAll from "../../datastore/deny-all";
 
-class LoggedIn extends Policy {
+export default class LoggedIn extends Policy {
 	static type_name = "logged-in";
 	async _getRestrictingQuery(context: Context) {
 		if (context.user_id) {
@@ -20,5 +20,3 @@ class LoggedIn extends Policy {
 		}
 	}
 }
-
-export default new LoggedIn();

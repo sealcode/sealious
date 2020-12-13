@@ -26,15 +26,18 @@ export default class UsersWhoCan extends Policy {
 		}
 	}
 	async checkerFunction(context: Context) {
-		const result = await this.getPolicy(context.app).check(context);
+		const policy = this.getPolicy(context.app);
+		const result = await policy.check(context);
 		if (result === null) {
 			return null;
 		}
 		if (result.allowed) {
+			context.app.Logger.debug3("UsersWhoCan", "allowed", { policy });
 			return Policy.allow(
 				`you can run action '${this.action_name}' on collection '${this.target_collection_name}'`
 			);
 		} else {
+			context.app.Logger.debug3("UsersWhoCan", "denied");
 			return Policy.deny(
 				`you can't ${this.action_name} ${this.target_collection_name} - because  ${result?.reason}`
 			);

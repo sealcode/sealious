@@ -1,20 +1,17 @@
 import axios from "axios";
 import assert from "assert";
 import { assertThrowsAsync } from "../../test_utils/assert-throws-async";
-import { withRunningApp, withStoppedApp } from "../../test_utils/with-test-app";
+import { withRunningApp } from "../../test_utils/with-test-app";
 import { Policies, Policy } from "../../main";
 import { TestAppType } from "../../test_utils/test-app";
-import Users from "./users";
+import UserRoles from "./user-roles";
+import { DateTime } from "../base-chips/field-types/field-types";
 
 const extend = (policy: Policy) => (t: TestAppType) =>
 	class extends t {
 		collections = {
 			...t.BaseCollections,
-			users: new (class extends Users {
-				policy = {
-					create: policy,
-				};
-			})(),
+			"user-roles": new UserRoles().setPolicy("create", policy),
 		};
 	};
 
@@ -40,11 +37,9 @@ describe("registration-intents", () => {
 		}));
 
 	it("allows setting a role for registration intention when the user in context can create user-roles", async () =>
-		withStoppedApp(
+		withRunningApp(
 			extend(new Policies.Public()),
 			async ({ app, base_url }) => {
-				app.ConfigManager.set("roles", ["admin"]);
-				await app.start();
 				const intent = (
 					await axios.post(
 						`${base_url}/api/v1/collections/registration-intents`,

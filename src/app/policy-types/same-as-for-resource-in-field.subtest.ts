@@ -146,7 +146,7 @@ describe("SameAsForResourceInField", () => {
 	it("returns item for number-notes referring to numbers with complex access strategy", () =>
 		withRunningApp(
 			extend({
-				create: Policies.LoggedIn,
+				create: new Policies.LoggedIn(),
 				show: new Policies.Or([
 					new Policies.Owner(),
 					new Policies.If([
@@ -173,7 +173,7 @@ describe("SameAsForResourceInField", () => {
 	it("doesn't allow to edit number-notes referring to other user's numbers", () =>
 		withRunningApp(
 			extend({
-				create: Policies.LoggedIn,
+				create: new Policies.LoggedIn(),
 				edit: new Policies.Owner(),
 				show: new Policies.Owner(),
 			}),

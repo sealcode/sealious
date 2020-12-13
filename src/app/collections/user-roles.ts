@@ -1,4 +1,11 @@
-import { App, Collection, FieldTypes, Policies, ActionName } from "../../main";
+import {
+	App,
+	Collection,
+	FieldTypes,
+	Policies,
+	ActionName,
+	Policy,
+} from "../../main";
 
 export default class UserRoles extends Collection {
 	name = "user-roles";
@@ -8,11 +15,11 @@ export default class UserRoles extends Collection {
 	};
 
 	policies = {
-		create: new Policies.Public(),
+		create: new Policies.Noone(),
 		delete: new Policies.Public(),
 		show: new Policies.UserReferencedInField("user"),
 		edit: new Policies.Noone(),
-	};
+	} as { [policy: string]: Policy }; // this `as` statement allows the policies to be overwritten;
 
 	async init(app: App, collection_name: string) {
 		await super.init(app, collection_name);
