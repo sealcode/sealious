@@ -15,7 +15,7 @@ function extend(t: TestAppType) {
 					create: new Policies.Public(),
 					show: new Policies.Public(),
 				};
-				special_filters = {
+				named_filters = {
 					staff: new IsReferencedByResourcesMatching("users-roles", {
 						referencing_collection: "users-roles",
 						referencing_field: "user",

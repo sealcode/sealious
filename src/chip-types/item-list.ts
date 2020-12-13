@@ -145,9 +145,9 @@ export default class ItemList<T extends Collection> {
 		this.await_before_fetch.push(
 			this.collection.named_filters[filter_name]
 				.getFilteringQuery()
-				.then((query) =>
-					this.aggregation_stages.push(...query.toPipeline())
-				)
+				.then((query) => {
+					this.aggregation_stages.push(...query.toPipeline());
+				})
 		);
 		return this;
 	}
@@ -214,9 +214,6 @@ export default class ItemList<T extends Collection> {
 		if (result !== null && !result.allowed) {
 			throw new BadContext(result.reason as string);
 		}
-		this.aggregation_stages.sort((a, _) => {
-			return Object.keys(a)[0] === "$match" ? -1 : 1;
-		});
 		const aggregation_stages = await this.getAggregationStages();
 		const documents = await this.context.app.Datastore.aggregate(
 			this.collection.name,
