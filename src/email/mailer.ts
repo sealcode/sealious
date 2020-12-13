@@ -3,9 +3,6 @@ import { MessageData } from "./message";
 
 export default abstract class Mailer {
 	app: App;
-	constructor(app: App) {
-		this.app = app;
-	}
 	abstract verify(): Promise<boolean>;
 	abstract sendEmail(
 		message: MessageData & { from_name: string }
@@ -16,5 +13,7 @@ export default abstract class Mailer {
 			from_name: this.app.ConfigManager.get("email").from_name,
 		});
 	}
-	async init() {}
+	async init(app: App) {
+		this.app = app;
+	}
 }

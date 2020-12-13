@@ -34,12 +34,6 @@ type Config = {
 		from_name: string;
 	};
 	upload_path: string;
-	smtp: {
-		host: string;
-		port: number;
-		user: string;
-		password: string;
-	};
 	app: {
 		version: string;
 	};

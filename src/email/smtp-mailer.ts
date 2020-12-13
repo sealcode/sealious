@@ -7,14 +7,17 @@ import { MessageData } from "./message";
 export default class SmtpMailer extends Mailer {
 	mail_config: { from_name: string; from_address: string };
 	transport: nodemailer.Transporter;
-	constructor(app: App) {
-		super(app);
-		const config = app.ConfigManager.get("smtp");
+	constructor(config: {
+		host: string;
+		port: number;
+		user: string;
+		password: string;
+	}) {
+		super();
 		assert(typeof config.host == "string");
 		assert(typeof config.port == "number");
 		assert(typeof config.user == "string");
 		assert(typeof config.password == "string");
-		this.mail_config = app.ConfigManager.get("email");
 		this.transport = nodemailer.createTransport({
 			host: config.host,
 			port: config.port,
@@ -24,9 +27,16 @@ export default class SmtpMailer extends Mailer {
 			},
 		});
 	}
+
 	async verify() {
 		return this.transport.verify();
 	}
+
+	async init(app: App) {
+		await super.init(app);
+		this.mail_config = app.ConfigManager.get("email");
+	}
+
 	async sendEmail({
 		to,
 		subject,

@@ -1,12 +1,10 @@
 // @ts-ignore
 const locreq = require("locreq")(__dirname);
 import assert from "assert";
-import { ActionName } from "../action";
 import Mailer from "../email/mailer";
 import Emittery from "emittery";
 import Datastore from "../datastore/datastore";
 import Metadata from "./metadata";
-import { SubjectPathEquiv } from "../data-structures/subject-path";
 import { PartialConfig } from "./config";
 import Manifest, { ManifestData } from "./manifest";
 
@@ -17,15 +15,11 @@ import HttpServer from "../http/http";
 import Subject from "../subject/subject";
 import Context, { SuperContext } from "../context";
 import Collection from "../chip-types/collection";
-import {
-	EmailFactory,
-	RootSubject,
-	MetadataFactory,
-	i18nFactory,
-} from "../main";
+import { RootSubject, MetadataFactory, i18nFactory } from "../main";
 import Users from "./collections/users";
 import UserRoles from "./collections/user-roles";
 import Sessions from "./collections/sessions";
+import LoggerMailer from "../email/logger-mailer";
 
 const default_config = locreq("default_config.json");
 
@@ -51,9 +45,6 @@ abstract class App extends Emittery {
 
 	/** The {@link Logger} instance assigned to this application */
 	Logger: Logger;
-
-	/** Mailer configured according to the app's config */
-	Email: Mailer;
 
 	/** The server that runs the REST API routing and allows to add custom routes etc */
 	HTTPServer: HttpServer;
@@ -87,6 +78,7 @@ abstract class App extends Emittery {
 	public Context: new () => Context;
 
 	abstract config: PartialConfig;
+	public mailer: Mailer = new LoggerMailer();
 
 	/** The app constructor.
 	 *
@@ -111,7 +103,6 @@ abstract class App extends Emittery {
 
 		this.Logger = new Logger("error");
 
-		this.Email = EmailFactory(this);
 		this.HTTPServer = new HttpServer(this);
 
 		this.RootSubject = new RootSubject(this);
@@ -164,7 +155,7 @@ abstract class App extends Emittery {
 
 		await this.emit("starting");
 		await this.Datastore.start();
-		await this.Email.init();
+		await this.mailer.init(this);
 		await this.HTTPServer.start();
 		await this.emit("started");
 		this.status = "running";

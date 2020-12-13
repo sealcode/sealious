@@ -24,7 +24,6 @@ export {
 	SubjectPathEquiv,
 } from "./data-structures/subject-path";
 export * as Queries from "./datastore/query";
-export { default as EmailFactory } from "./email/email";
 export { default as HttpServer } from "./http/http";
 export { default as i18nFactory } from "./i18n/i18n";
 export { default as RootSubject } from "./subject/predefined-subjects/root-subject";
@@ -34,3 +33,5 @@ export * as EmailTemplates from "./email/templates/templates";
 export * as Errors from "./response/errors";
 export { default as File } from "./data-structures/file";
 export { default as ItemList } from "./chip-types/item-list";
+export { default as SMTPMailer } from "./email/smtp-mailer";
+export { default as LoggerMailer } from "./email/logger-mailer";

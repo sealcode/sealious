@@ -1,6 +1,7 @@
 import dotProp from "dot-prop";
 import merge from "deepmerge";
 import Config from "./config";
+import Mailer from "../email/mailer";
 
 type ConfigObject = { [key: string]: any };
 

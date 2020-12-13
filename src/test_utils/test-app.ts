@@ -1,6 +1,6 @@
 // @ts-ignore
 const locreq = require("locreq")(__dirname);
-import { App } from "../main";
+import { App, SMTPMailer } from "../main";
 import { Environment } from "../app/config";
 import { LoggerLevel } from "../app/logger";
 
@@ -22,12 +22,6 @@ export const get_test_app = ({
 				host: "localhost",
 				password: "sealious-test",
 				port: 20722,
-			},
-			smtp: {
-				host: "localhost",
-				port: 1025,
-				user: "any",
-				password: "any",
 			},
 			email: {
 				from_name: "Sealious test app",
@@ -54,6 +48,12 @@ export const get_test_app = ({
 			},
 			admin_email: "admin@example.com",
 		};
+		mailer = new SMTPMailer({
+			host: "localhost",
+			port: 1025,
+			user: "any",
+			password: "any",
+		});
 
 		async start() {
 			this.on("stopping", async () => {
