@@ -11,7 +11,7 @@ describe("users", () => {
 					"registration-intents"
 				]
 					.suList()
-					.filter({ filter: { email: app.manifest.admin_email } })
+					.filter({ email: app.manifest.admin_email })
 					.fetch();
 
 				assert.equal(sealious_response.items.length, 1);
@@ -24,7 +24,7 @@ describe("users", () => {
 					"registration-intents"
 				]
 					.suList()
-					.filter({ filter: { email: app.manifest.admin_email } })
+					.filter({ email: app.manifest.admin_email })
 					.fetch();
 
 				const {
@@ -68,7 +68,7 @@ describe("users", () => {
 					session
 				);
 
-				const roles = response.roles;
+				const roles = Object.values(response.attachments);
 
 				assert.equal((roles as string[]).length, 1);
 				assert.equal(

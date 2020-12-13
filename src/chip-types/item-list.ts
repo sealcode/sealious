@@ -79,6 +79,11 @@ export default class ItemList<T extends Collection> {
 				"Setting filter for field:",
 				{ [field_name]: filter[field_name] }
 			);
+			if (!this.collection.fields[field_name]) {
+				throw new Error(
+					`Unknown field: '${field_name}' in '${this.collection.name}' collection`
+				);
+			}
 			const promise = this.collection.fields[field_name]
 				.getAggregationStages(this.context, filter[field_name])
 				.then((stages) => {
