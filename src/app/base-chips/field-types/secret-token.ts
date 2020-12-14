@@ -12,7 +12,8 @@ export default class SecretToken extends Field {
 	}
 
 	async encode(_: Context, __: any, old_value: string) {
-		return old_value ? old_value : uuid();
+		const ret = old_value ? old_value : uuid();
+		return ret;
 	}
 
 	async decode(context: Context, value: string) {
@@ -25,5 +26,9 @@ export default class SecretToken extends Field {
 		} else {
 			return { $eq: "nice try" };
 		}
+	}
+
+	async getDefaultValue() {
+		return uuid();
 	}
 }

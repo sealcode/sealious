@@ -29,10 +29,8 @@ export default class RegistrationIntents extends Collection {
 			await intent.decode(context);
 			const {
 				items: [item],
-			} = await new ItemList(
-				app.collections["registration-intents"],
-				new app.SuperContext()
-			)
+			} = await app.collections["registration-intents"]
+				.suList()
 				.ids([intent.id])
 				.fetch();
 			const token = item.get("token");

@@ -21,14 +21,17 @@ export default class PasswordResetIntents extends Collection {
 		await super.init(app, name);
 		app.collections["password-reset-intents"].on(
 			"after:create",
-			async ([_, intent]: [
+			async ([context, intent]: [
 				Context,
 				CollectionItem<PasswordResetIntents>,
 				any
 			]) => {
+				const intent_as_super = await intent.fetchAs(
+					new app.SuperContext()
+				);
 				const message = await PasswordResetTemplate(app, {
 					email_address: intent.get("email"),
-					token: intent.get("token"),
+					token: intent_as_super.get("token"),
 				});
 				await message.send(app);
 			}

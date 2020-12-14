@@ -315,4 +315,8 @@ export class CollectionItem<T extends Collection = any> {
 			attachments
 		);
 	}
+
+	fetchAs(context: Context) {
+		return this.collection.getByID(context, this.id);
+	}
 }
