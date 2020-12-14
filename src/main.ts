@@ -11,7 +11,6 @@ export * from "./chip-types/field";
 export * as FieldTypes from "./app/base-chips/field-types/field-types";
 
 export { ActionName } from "./action";
-export { default as Action } from "./action";
 export { default as App } from "./app/app";
 export { default as Config } from "./app/config";
 export { default as ConfigManager } from "./app/config-manager";

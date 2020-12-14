@@ -10,7 +10,8 @@
 		"test": "./npm.sh run test-cmd -- ",
 		"build": "tsc",
 		"watch": "npm run build -- --watch",
-		"test-reports": "npm run build && rm -fr .xunit coverage && docker-compose up -d db  && npm run test -- --cover --test-report",
+		"test-reports": "npm run build && rm -fr .xunit coverage && docker-compose up -d db mailcatcher  && npm run test -- --cover --test-report",
+		"cover-html": "npm run test-reports -- --cover-html && xdg-open coverage/lcov-report/index.html",
 		"docs": "typedoc --out docs src --exclude '**/*+(test).ts' --mode file --toc Collection,Field,Policy,App --categorizeByGroup false --stripInternal"
 	},
 	"repository": {

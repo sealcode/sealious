@@ -34,7 +34,13 @@ const mocha_files = args["test-report"]
 let command = [mocha, ...mocha_options, ...mocha_files];
 
 if (args.cover) {
-	command = [bin_dir + "nyc", "--reporter", "clover", ...command];
+	const nyc = [bin_dir + "nyc"];
+	if (args["cover-html"]) {
+		nyc.push("--reporter", "lcov");
+	} else {
+		nyc.push("--reporter", "clover");
+	}
+	command = [...nyc, ...command];
 }
 
 if (args.debug) {
@@ -43,7 +49,10 @@ if (args.debug) {
 
 console.log("spawning mocha...");
 
-const proc = spawn(command[0], command.slice(1), { stdio: "inherit" });
+const proc = spawn(command[0], command.slice(1), {
+	stdio: "inherit",
+	env: process.env,
+});
 
 proc.on("exit", function (code) {
 	process.exit(code);

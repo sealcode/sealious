@@ -17,6 +17,9 @@ services:
     links:
       - db
       - mailcatcher
+    environment:
+      - SEALIOUS_SMTP_HOST=mailcatcher
+      - SEALIOUS_DB_HOST=db
   mailcatcher:
     image: schickling/mailcatcher:latest
     ports:
