@@ -81,7 +81,7 @@ export default class And extends Query {
 	}
 	toPipeline() {
 		const sortedStepIds = this.graph.bestFirstSearch();
-		return sortedStepIds.reduce((pipeline, id) => {
+		const ret = sortedStepIds.reduce((pipeline, id) => {
 			if (Array.isArray(this.aggregation_steps[id])) {
 				for (let step of this.aggregation_steps[id] as QueryStep[]) {
 					step.pushStage(pipeline);
@@ -92,5 +92,6 @@ export default class And extends Query {
 				pipeline
 			);
 		}, []);
+		return ret;
 	}
 }

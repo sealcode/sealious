@@ -42,6 +42,7 @@ function extend(t: TestAppType) {
 				number: new FieldTypes.SingleReference("numbers"),
 			};
 			policies = {
+				list: new And(policies),
 				show: new And(policies),
 				create: new Policies.Public(),
 			};
@@ -51,6 +52,7 @@ function extend(t: TestAppType) {
 	return class extends t {
 		collections = {
 			...t.BaseCollections,
+			...collections,
 			numbers: new (class extends Collection {
 				name = "numbers";
 				fields = {
@@ -70,11 +72,11 @@ describe("AndPolicy", () => {
 		);
 
 		for (const number of numbers) {
-			await Bluebird.map(collections_to_create, ({ name }) =>
+			await Bluebird.map(collections_to_create, ({ name }) => {
 				app.collections[name].suCreate({
 					number: number.id,
-				})
-			);
+				});
+			});
 		}
 	}
 
@@ -112,7 +114,7 @@ describe("AndPolicy", () => {
 					"/api/v1/collections/collection-and(ComplexAllowPipeline, public)"
 				)
 				.then(({ items }: { items: any[] }) =>
-					assert.equal(items.length, 3)
+					assert.strictEqual(items.length, 3)
 				);
 		}));
 
@@ -122,6 +124,6 @@ describe("AndPolicy", () => {
 			const { items } = await rest_api.get(
 				"/api/v1/collections/collection-and(complexDenyPipeline, public)"
 			);
-			assert.equal(items.length, 0);
+			assert.strictEqual(items.length, 0);
 		}));
 });

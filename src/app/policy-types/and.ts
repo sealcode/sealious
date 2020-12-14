@@ -10,7 +10,8 @@ export default class And extends ReducingPolicy {
 		const queries = await Bluebird.map(this.policies, (strategy) =>
 			strategy.getRestrictingQuery(context)
 		);
-		return new AndQuery(...queries);
+		const ret = new AndQuery(...queries);
+		return ret;
 	}
 
 	isItemSensitive() {
