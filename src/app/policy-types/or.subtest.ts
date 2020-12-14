@@ -54,6 +54,7 @@ function extend(t: TestAppType) {
 				number: new FieldTypes.SingleReference("numbers"),
 			};
 			policies = {
+				list: new Policies.Or(policies as Policy[]),
 				show: new Policies.Or(policies as Policy[]),
 				create: new Policies.Public(),
 			};
@@ -63,6 +64,7 @@ function extend(t: TestAppType) {
 	return class extends t {
 		collections = {
 			...t.BaseCollections,
+			...collections_to_add,
 			numbers,
 		};
 	};
