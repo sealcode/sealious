@@ -1,5 +1,5 @@
 import assert from "assert";
-import { withStoppedApp } from "../../test_utils/with-test-app";
+import { withRunningApp } from "../../test_utils/with-test-app";
 import { App, Collection, FieldTypes, Policies } from "../../main";
 import Matches from "../base-chips/special_filters/matches";
 import { TestAppType } from "../../test_utils/test-app";
@@ -13,22 +13,22 @@ function extend(t: TestAppType) {
 					number: new FieldTypes.Int(),
 					number_str: new FieldTypes.Text(),
 				};
+				named_filters = {
+					positive: new Matches("numbers", {
+						number: { ">": 0 },
+					}),
+					negative: new Matches("numbers", {
+						number: { "<": 0 },
+					}),
+				};
+				defaultPolicy = new Policies.If([
+					"numbers",
+					"negative",
+					Policies.LoggedIn,
+					Policies.Public,
+				]);
 			})(),
 		};
-		named_filters = {
-			positive: new Matches("numbers", {
-				number: { ">": 0 },
-			}),
-			negative: new Matches("numbers", {
-				number: { "<": 0 },
-			}),
-		};
-		defaultPolicy = new Policies.If([
-			"numbers",
-			"negative",
-			Policies.LoggedIn,
-			Policies.Public,
-		]);
 	};
 }
 
@@ -50,7 +50,7 @@ async function createResources(app: App) {
 
 describe("when", () => {
 	it("should only use 'when_true' access strategy when the item passes the filter", async () =>
-		withStoppedApp(extend, async ({ app, rest_api }) => {
+		withRunningApp(extend, async ({ app, rest_api }) => {
 			await createResources(app);
 			const session = await rest_api.login({
 				username: "user",
@@ -67,7 +67,7 @@ describe("when", () => {
 		}));
 
 	it("should only use 'when_false' access strategy when the item doesn't pass the filter", async () =>
-		withStoppedApp(extend, async ({ app, rest_api }) => {
+		withRunningApp(extend, async ({ app, rest_api }) => {
 			await createResources(app);
 
 			const { items: public_resources } = await rest_api.get(

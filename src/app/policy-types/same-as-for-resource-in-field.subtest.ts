@@ -52,7 +52,8 @@ const extend = (
 	};
 };
 
-describe("SameAsForResourceInField", () => {
+// skipping in wait for D938
+describe.skip("SameAsForResourceInField", () => {
 	const sessions: { [username: string]: any } = {};
 	const numbers: number[] = [];
 	async function setup(app: App, rest_api: MockRestApi) {

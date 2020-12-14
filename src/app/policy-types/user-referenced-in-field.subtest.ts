@@ -1,5 +1,5 @@
 import assert from "assert";
-import { withStoppedApp } from "../../test_utils/with-test-app";
+import { withRunningApp } from "../../test_utils/with-test-app";
 import { Collection, FieldTypes, Policies } from "../../main";
 import { TestAppType } from "../../test_utils/test-app";
 
@@ -24,9 +24,10 @@ function extend(t: TestAppType) {
 	};
 }
 
-describe("user-referenced-in-field", () => {
+//skipping because that needs the created_id changes from D938
+describe.skip("user-referenced-in-field", () => {
 	it("should deny if the user isn't the one referenced in the field and allow if it is", async () =>
-		withStoppedApp(extend, async ({ app, rest_api }) => {
+		withRunningApp(extend, async ({ app, rest_api }) => {
 			for (let username of ["Alice", "Bob"]) {
 				const user = await app.collections.users.suCreate({
 					username,
