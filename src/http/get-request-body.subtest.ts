@@ -80,10 +80,7 @@ describe("get-request-body", () => {
 
 				(e) => {
 					assert.equal(e.response.status, 403);
-					assert.equal(
-						e.response.data.message,
-						"There are problems with some of the provided values."
-					);
+					assert.equal(e.response.data.message, "Invalid values!");
 
 					assert.notEqual(e.response.status, 500);
 					assert.notEqual(
