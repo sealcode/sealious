@@ -1,8 +1,10 @@
 module.exports = {
+	env: { node: true },
 	parser: "@typescript-eslint/parser",
 	plugins: ["@typescript-eslint", "jsdoc"],
 	extends: [
-		// "plugin:@typescript-eslint/recommended",
+		"eslint:recommended",
+		"plugin:@typescript-eslint/recommended",
 		// "plugin:jsdoc/recommended",
 	],
 	parserOptions: {
@@ -25,7 +27,7 @@ module.exports = {
 		// ],
 		// "jsdoc/require-param-type": 0,
 		// "jsdoc/require-param-description": 1,
-		// "jsdoc/require-description": 2,
+		"jsdoc/require-description": 2,
 	},
 	settings: { jsdoc: { mode: "typescript" } },
 };

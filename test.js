@@ -55,5 +55,9 @@ const proc = spawn(command[0], command.slice(1), {
 });
 
 proc.on("exit", function (code) {
-	process.exit(code);
+	if (args["test-report"]) {
+		process.exit(0);
+	} else {
+		process.exit(code);
+	}
 });
