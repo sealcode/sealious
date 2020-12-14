@@ -7,6 +7,7 @@ import { assertThrowsAsync } from "../../test_utils/assert-throws-async";
 import { withRunningApp } from "../../test_utils/with-test-app";
 import { TestAppType } from "../../test_utils/test-app";
 import { CollectionItem } from "../../chip-types/collection-item";
+import getAttachment from "../../test_utils/get-attachment";
 
 function create_less_than_policy(number: number) {
 	return new (class extends Sealious.Policy {
@@ -73,6 +74,7 @@ function extend(t: TestAppType) {
 				number: new FieldTypes.SingleReference("numbers"),
 			};
 			policies = {
+				list: new Policies.Not(policy),
 				show: new Policies.Not(policy),
 				create: new Policies.Public(),
 			};
@@ -82,6 +84,7 @@ function extend(t: TestAppType) {
 	return class extends t {
 		collections = {
 			...t.BaseCollections,
+			...collections_to_add,
 			numbers: new (class extends Collection {
 				fields = {
 					number: new FieldTypes.Int(),
@@ -128,7 +131,7 @@ describe("NotPolicy", () => {
 			);
 
 			const numbers = response.items.map(
-				(item: any) => (item.number as { number: number }).number
+				(item: any) => getAttachment(item, "number", response).number
 			);
 
 			assert.deepEqual(numbers, [0, 1, 2, 3, 4]);
@@ -143,7 +146,7 @@ describe("NotPolicy", () => {
 			);
 
 			const numbers = response.items.map(
-				(item: any) => (item.number as { number: number }).number
+				(item: any) => getAttachment(item, "number", response).number
 			);
 
 			assert.deepEqual(numbers, [2, 3, 4]);
@@ -158,7 +161,7 @@ describe("NotPolicy", () => {
 			);
 
 			const numbers = response.items.map(
-				(item: any) => (item.number as { number: number }).number
+				(item: any) => getAttachment(item, "number", response).number
 			);
 
 			assert.deepEqual(numbers, []);
