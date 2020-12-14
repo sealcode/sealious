@@ -53,7 +53,7 @@
 		"madge": "^3.9.2",
 		"mime": "^2.4.6",
 		"mjml": "^4.2.0",
-		"mongodb": "^3.5.5",
+		"mongodb": "^3.6.2",
 		"node-uuid": "^1.4.7",
 		"nodemailer": "^6.4.6",
 		"object-hash": "^2.0.3",
