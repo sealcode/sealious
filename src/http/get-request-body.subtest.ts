@@ -92,14 +92,14 @@ describe("get-request-body", () => {
 		}));
 
 	it("handles complex data sent as multipart/form-data", async () => {
-		await withRunningApp(extend, async ({ app }) => {
+		await withRunningApp(extend, async ({ app, port }) => {
 			// PNG file is empty but it doesnt matter for the test
 			const form_data =
 				'------------------------------4ebf00fbcf09\r\nContent-Disposition: form-data; name="source"; filename="test.png"\r\nContent-Type: image/png\r\n\r\nPNG\r\n\r\n\r\n------------------------------4ebf00fbcf09\r\nContent-Disposition: form-data; name="body"; filename="blob"\r\nContent-Type: application/json\r\n\r\n[["Foo", {"Bar": "baz"}]]\r\n------------------------------4ebf00fbcf09--\r\n';
 
 			const options = {
 				hostname: "localhost",
-				port: 8888,
+				port: port,
 				path: "/api/v1/collections/complex-data",
 				method: "POST",
 				headers: {
@@ -107,9 +107,7 @@ describe("get-request-body", () => {
 						"multipart/form-data; boundary=----------------------------4ebf00fbcf09",
 				},
 			};
-			const Test = new RegExp(
-				/\/api\/v1\/formatted-images\/\S*\/test.png/
-			);
+			const Test = new RegExp(/\/api\/v1\/uploaded-files\/\S*\/test.png/);
 			const { body, source } = await asyncRequest(options, form_data);
 			assert.strict.deepEqual(body, [["Foo", { Bar: "baz" }]]);
 			assert.ok(Test.test(source));

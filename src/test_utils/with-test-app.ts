@@ -44,6 +44,7 @@ type CallbackParams = {
 	base_url: string;
 	smtp_api_url: string;
 	rest_api: MockRestApi;
+	port: number;
 
 	mail_api: {
 		getMessages: () => Promise<
@@ -90,6 +91,7 @@ async function withTestApp(
 
 		await fn({
 			app: app as App,
+			port,
 			app_class: modified_app_class,
 			base_url,
 			smtp_api_url,
