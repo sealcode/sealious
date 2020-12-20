@@ -115,7 +115,7 @@ export default class File {
 			this.data?.on("error", reject);
 		});
 
-		this.app.Datastore.insert("files", this.toDBEntry(), {});
+		await this.app.Datastore.insert("files", this.toDBEntry(), {});
 		return this;
 	}
 }
