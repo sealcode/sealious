@@ -3,6 +3,6 @@
 	"arc.land.onto.default": "dev",
 	"load": ["arcanist-linters", "arc-unit-mocha/src"],
 	"unit.engine": "MochaEngine",
-	"unit.mocha.include": ["setup-test.js", "./lib/**/*.test.js"],
+	"unit.mocha.include": ["./lib/**/*.test.js"],
 	"unit.mocha.dockerRoot": "/opt/sealious"
 }

@@ -5,6 +5,7 @@ import SimpleTemplate from "./simple";
 describe("simpleTemplate", () => {
 	it("sends an email", async () =>
 		withRunningAppProd(null, async ({ app, mail_api }) => {
+			await mail_api.deleteAllInstanceEmails();
 			const message = await SimpleTemplate(app, {
 				to: "test@example.com",
 				subject: "Congratulations!",

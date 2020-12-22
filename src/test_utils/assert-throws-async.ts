@@ -1,16 +1,17 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import assert from "assert";
 
 export async function assertThrowsAsync(
-	fn: () => Promise<any>,
-	error_handler: (e: any) => Promise<any> | any
-) {
-	let error = null;
+	fn: () => Promise<unknown>,
+	error_handler: (e: any) => Promise<void> | void
+): Promise<void> {
+	let error: unknown = null;
 	try {
 		await fn();
-	} catch (e) {
+	} catch (e: unknown) {
 		error = e;
 	} finally {
 		assert.notStrictEqual(error, null, "It didn't throw");
-		await error_handler(error as any);
+		await error_handler(error);
 	}
 }

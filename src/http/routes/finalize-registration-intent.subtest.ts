@@ -1,5 +1,4 @@
 import * as assert from "assert";
-import tough from "tough-cookie";
 import UserRoles from "../../app/collections/user-roles";
 import Public from "../../app/policy-types/public";
 import { App } from "../../main";
@@ -22,15 +21,9 @@ describe("finalize registration", () => {
 				},
 			async ({ app, mail_api, rest_api }) => {
 				app.ConfigManager.set("roles", ["admin"]);
-				const cookieJar = new tough.CookieJar();
-				const options = {
-					jar: cookieJar,
-					withCredentials: true,
-				};
 				await rest_api.post(
 					"/api/v1/collections/registration-intents",
-					{ email: "user@example.com", role: "admin" },
-					options
+					{ email: "user@example.com", role: "admin" }
 				);
 				const message_metadata = (await mail_api.getMessages()).filter(
 					(message) => message.recipients[0] == "<user@example.com>"
@@ -40,7 +33,7 @@ describe("finalize registration", () => {
 				const message = await mail_api.getMessageById(
 					message_metadata.id
 				);
-				const match_result = message.match(/token=([^?&]+)/);
+				const match_result = /token=([^?&]+)/.exec(message);
 				if (!match_result) {
 					throw new Error("Didn't find a token");
 				}
@@ -53,11 +46,10 @@ describe("finalize registration", () => {
 					username: "user",
 				});
 
-				await rest_api.post(
-					"/api/v1/sessions",
-					{ username: "user", password: "password" },
-					options
-				);
+				const options = await rest_api.login({
+					username: "user",
+					password: "password",
+				});
 
 				const response = await rest_api.get(
 					"/api/v1/users/me?attachments[roles]=true",

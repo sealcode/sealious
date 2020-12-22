@@ -28,8 +28,8 @@ if (args["test-report"]) {
 }
 
 const mocha_files = args["test-report"]
-	? ["src/setup-test.ts", "./src/**/*.test.ts"]
-	: ["lib/src/setup-test.js", "lib/src/**/*.test.js"];
+	? ["./src/**/*.test.ts"]
+	: ["lib/src/**/*.test.js"];
 
 let command = [mocha, ...mocha_options, ...mocha_files];
 

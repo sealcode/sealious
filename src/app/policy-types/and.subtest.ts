@@ -72,11 +72,11 @@ describe("AndPolicy", () => {
 		);
 
 		for (const number of numbers) {
-			await Bluebird.map(collections_to_create, ({ name }) => {
+			await Bluebird.map(collections_to_create, ({ name }) =>
 				app.collections[name].suCreate({
 					number: number.id,
-				});
-			});
+				})
+			);
 		}
 	}
 
@@ -109,13 +109,10 @@ describe("AndPolicy", () => {
 	it("returns everything for and(ComplexAllowPipeline, public)", () =>
 		withRunningApp(extend, async ({ app, rest_api }) => {
 			await setup(app);
-			return rest_api
-				.get(
-					"/api/v1/collections/collection-and(ComplexAllowPipeline, public)"
-				)
-				.then(({ items }: { items: any[] }) =>
-					assert.strictEqual(items.length, 3)
-				);
+			const { items } = await rest_api.get(
+				"/api/v1/collections/collection-and(ComplexAllowPipeline, public)"
+			);
+			assert.strictEqual(items.length, 3);
 		}));
 
 	it("returns nothing for and(complex-deny-pipeline, public)", () =>

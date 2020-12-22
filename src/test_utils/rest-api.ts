@@ -1,5 +1,23 @@
+/* eslint-disable */
+
 import axios from "axios";
-import tough from "tough-cookie";
+
+export type Item<Fields> = {
+	id: string;
+	[field_name: string]: unknown;
+} & Fields;
+
+export type CollectionResponse<Fields = {}> = {
+	items: Item<Fields>[];
+	attachments: { [id: string]: any };
+};
+
+export type ItemResponse<Fields = {}> = {
+	items: [Item<Fields>];
+	attachments: { [id: string]: any };
+};
+
+export type ItemCreatedResponse<Fields = {}> = Item<Fields>;
 
 export default class MockRestApi {
 	constructor(public base_url: string) {}
@@ -31,19 +49,15 @@ export default class MockRestApi {
 		username: string;
 		password: string;
 	}) {
-		const cookie_jar = new tough.CookieJar();
-		const options = {
-			jar: cookie_jar,
-			withCredentials: true,
-		};
-		await axios.post(
-			`${this.base_url}/api/v1/sessions`,
-			{
-				username,
-				password,
-			},
-			options
-		);
-		return options;
+		const response = await axios.post(`${this.base_url}/api/v1/sessions`, {
+			username,
+			password,
+		});
+
+		const session_id = response.headers["set-cookie"][0]
+			.split(" ")[0]
+			.split("=")[1]
+			.slice(0, -1);
+		return { headers: { Cookie: `sealious-session=${session_id}` } };
 	}
 }

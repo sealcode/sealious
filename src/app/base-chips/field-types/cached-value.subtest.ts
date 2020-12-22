@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import assert from "assert";
 import {
 	withStoppedApp,
@@ -11,7 +12,11 @@ import { TestAppType } from "../../../test_utils/test-app";
 import ItemList from "../../../chip-types/item-list";
 import { RefreshCondition } from "./cached-value";
 import { EventDescription } from "../../delegate-listener";
-import MockRestApi from "../../../test_utils/rest-api";
+import MockRestApi, {
+	CollectionResponse,
+	ItemCreatedResponse,
+	ItemResponse,
+} from "../../../test_utils/rest-api";
 
 const action_to_status: { [name: string]: string } = {
 	create: "created",
@@ -22,7 +27,7 @@ const action_to_status: { [name: string]: string } = {
 
 const extend = (
 	is_status_field_desired: boolean,
-	clear_database_on_stop: boolean = true
+	clear_database_on_stop = true
 ) => (t: TestAppType) => {
 	const account_fields: { [field_name: string]: Field } = {
 		username: new FieldTypes.Username(),
@@ -31,7 +36,7 @@ const extend = (
 				min: 0,
 			}),
 			{
-				get_value: async (_: Context, __: string) => {
+				get_value: async () => {
 					return 0;
 				},
 				refresh_on: [],
@@ -64,9 +69,15 @@ const extend = (
 					context.app.Logger.debug3(
 						"STATUS FIELD",
 						"New cached value is",
-						action_to_status[items[0].get("name")]
+						action_to_status[
+							items[0].get(
+								"name"
+							) as keyof typeof action_to_status
+						]
 					);
-					return action_to_status[items[0].get("name")];
+					return action_to_status[
+						items[0].get("name") as keyof typeof action_to_status
+					];
 				},
 				refresh_on: make_refresh_on(),
 				initial_value: "created",
@@ -99,11 +110,14 @@ const extend = (
 };
 
 describe("cached-value", () => {
-	async function add_account(rest_api: MockRestApi, account: {}) {
-		const { id } = await rest_api.post(
+	async function add_account(
+		rest_api: MockRestApi,
+		account: { username: string; number?: number; date_time?: string }
+	) {
+		const { id } = (await rest_api.post(
 			"/api/v1/collections/accounts",
 			account
-		);
+		)) as ItemCreatedResponse;
 		await rest_api.post("/api/v1/collections/actions", {
 			name: "create",
 			account: id,
@@ -121,37 +135,48 @@ describe("cached-value", () => {
 	}
 
 	it("Correctly fills in cached-values if such field is added later", async () => {
-		const account_ids: string[] = [];
+		let account_ids: string[] = [];
 		await withStoppedApp(
 			extend(false, false),
 			async ({ app, rest_api }) => {
 				await app.start();
-				for (const username of ["user_1", "user_2"]) {
-					account_ids.push(await add_account(rest_api, { username }));
-				}
+				account_ids = await Bluebird.map(
+					["user_1", "user_2"],
+					(username) => add_account(rest_api, { username })
+				);
+
 				await rest_api.post("/api/v1/collections/actions", {
 					name: "suspend",
 					account: account_ids[1],
 				});
-			}
+			},
+			"cached-fill"
 		);
 
-		await withRunningApp(extend(true), async ({ rest_api }) => {
-			await assert_status_equals(rest_api, account_ids[0], "created");
-			await assert_status_equals(rest_api, account_ids[1], "suspended");
-		});
+		await withRunningApp(
+			extend(true),
+			async ({ rest_api }) => {
+				await assert_status_equals(rest_api, account_ids[0], "created");
+				await assert_status_equals(
+					rest_api,
+					account_ids[1],
+					"suspended"
+				);
+			},
+			"cached-fill"
+		);
 	});
 
 	it("Correctly updates cached-value on create", async () =>
 		withRunningApp(extend(true), async ({ rest_api }) => {
-			const account_ids = [];
-			for (const username of ["user_1", "user_2"]) {
-				account_ids.push(await add_account(rest_api, { username }));
-			}
+			const account_ids = await Bluebird.map(
+				["user_1", "user_2"],
+				(username) => add_account(rest_api, { username })
+			);
 			await assert_status_equals(rest_api, account_ids[0], "created");
 
 			const actions = ["open", "suspend", "close"];
-			for (let action of actions) {
+			await Bluebird.each(actions, async (action) => {
 				await rest_api.post("/api/v1/collections/actions", {
 					name: action,
 					account: account_ids[0],
@@ -159,7 +184,7 @@ describe("cached-value", () => {
 				const status = action_to_status[action];
 				await assert_status_equals(rest_api, account_ids[0], status);
 				await assert_status_equals(rest_api, account_ids[1], "created");
-			}
+			});
 		}));
 
 	it("Correctly updates cached-value on update", async () =>
@@ -170,9 +195,9 @@ describe("cached-value", () => {
 
 			const {
 				items: [{ id: action_id }],
-			} = await rest_api.get("/api/v1/collections/actions", {
+			} = (await rest_api.get("/api/v1/collections/actions", {
 				data: { account: account_id }, // TODO: check if passing the query here works under the new MockRestAPI
-			});
+			})) as CollectionResponse;
 
 			await rest_api.patch(`/api/v1/collections/actions/${action_id}`, {
 				name: "open",
@@ -190,7 +215,8 @@ describe("cached-value", () => {
 						number: -1,
 					}),
 				(error) => {
-					assert.equal(
+					assert.strictEqual(
+						//@eslint-ignore
 						error.data.number.message,
 						"Value -1 should be larger than or equal to 0"
 					);
@@ -202,11 +228,11 @@ describe("cached-value", () => {
 		withRunningApp(extend(true), async ({ app, rest_api }) => {
 			await add_a_few_accounts(app);
 
-			const { items: accounts } = await rest_api.get(
+			const { items: accounts } = (await rest_api.get(
 				"/api/v1/collections/accounts?filter[number][>]=3"
-			);
+			)) as CollectionResponse;
 
-			assert.equal(accounts.length, 2);
+			assert.strictEqual(accounts.length, 2);
 		}));
 
 	it("Respects format of base field type", async () =>
@@ -219,9 +245,9 @@ describe("cached-value", () => {
 			);
 			const actual_datetime = ((await rest_api.get(
 				`/api/v1/collections/accounts/${id}?format[date_time]=human_readable`
-			)) as any).items[0].date_time;
+			)) as CollectionResponse).items[0].date_time as string;
 
-			assert.equal(actual_datetime, expected_datetime);
+			assert.strictEqual(actual_datetime, expected_datetime);
 		}));
 
 	it("Properly responds to recursive edits", async () =>
@@ -255,7 +281,7 @@ describe("cached-value", () => {
 												"after:create"
 											),
 											resource_id_getter: async (
-												_: any,
+												_,
 												item
 											) => [item.id],
 										},
@@ -275,7 +301,7 @@ describe("cached-value", () => {
 					await new_app.start();
 				},
 				(e) => {
-					assert.equal(
+					assert.strictEqual(
 						e.message,
 						`In the happy-numbers collection definition you've tried to create the double_number cached-value field that refers to the collection itself. Consider using 'derived-value' field type to avoid problems with endless recurrence.`
 					);
@@ -288,13 +314,13 @@ function make_refresh_on(): RefreshCondition[] {
 	return [
 		{
 			event: new EventDescription("actions", "after:create"),
-			resource_id_getter: async (_: any, item) => [
+			resource_id_getter: async (_, item) => [
 				item.get("account") as string,
 			],
 		},
 		{
 			event: new EventDescription("actions", "after:edit"),
-			resource_id_getter: async (_: any, resource) => [
+			resource_id_getter: async (_, resource) => [
 				resource.get("account") as string,
 			],
 		},
@@ -308,6 +334,6 @@ async function assert_status_equals(
 ) {
 	const { items } = (await rest_api.get(
 		`/api/v1/collections/accounts/${account_id}`
-	)) as any;
-	assert.equal(items[0].status, expected_status);
+	)) as ItemResponse;
+	assert.strictEqual(items[0].status, expected_status);
 }

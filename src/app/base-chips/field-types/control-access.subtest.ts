@@ -1,12 +1,18 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import assert from "assert";
 import { withRunningApp } from "../../../test_utils/with-test-app";
 import { assertThrowsAsync } from "../../../test_utils/assert-throws-async";
 import { App, Collection, FieldTypes, Policies } from "../../../main";
 import { TestAppType } from "../../../test_utils/test-app";
-import MockRestApi from "../../../test_utils/rest-api";
+import MockRestApi, {
+	CollectionResponse,
+	ItemCreatedResponse,
+} from "../../../test_utils/rest-api";
+import { AxiosError, AxiosRequestConfig } from "axios";
+import asyncForEach from "../../../utils/async-foreach";
 const SSH_KEYS_URL = "/api/v1/collections/ssh-keys";
 
-let sessions: { [username: string]: {} } = {};
+const sessions: { [username: string]: AxiosRequestConfig } = {};
 
 type Key = { [access in "_public" | "_private"]: string };
 
@@ -39,7 +45,7 @@ function extend(t: TestAppType) {
 async function setupUsers(App: App, rest_api: MockRestApi) {
 	const password = "it-really-doesnt-matter";
 	let admin_id;
-	for (let username of ["admin", "regular-user"]) {
+	await asyncForEach(["admin", "regular-user"], async (username) => {
 		const user = await App.collections.users.suCreate({
 			username,
 			password,
@@ -58,7 +64,7 @@ async function setupUsers(App: App, rest_api: MockRestApi) {
 			password,
 		});
 		if (username === "admin") admin_id = user.id;
-	}
+	});
 
 	await rest_api.post(
 		"/api/v1/collections/user-roles",
@@ -81,12 +87,12 @@ async function fillKeysCollections(App: App) {
 			_private: "you-cannot-see",
 		},
 	];
-	for (let { _public, _private } of keys) {
+	await asyncForEach(keys, async ({ _public, _private }) => {
 		await App.collections["ssh-keys"].suCreate({
 			public: _public,
 			private: _private,
 		});
-	}
+	});
 }
 
 async function setup(app: App, rest_api: MockRestApi) {
@@ -99,13 +105,13 @@ describe("control-access", () => {
 		withRunningApp(extend, async ({ app, rest_api }) => {
 			await setup(app, rest_api);
 
-			const { items: ssh_keys } = await rest_api.get(
+			const { items: ssh_keys } = (await rest_api.get(
 				SSH_KEYS_URL,
 				sessions["regular-user"]
-			);
+			)) as CollectionResponse;
 
-			ssh_keys.forEach((key: any) => {
-				assert.deepEqual(key.private, "Forbidden");
+			ssh_keys.forEach((key) => {
+				assert.deepStrictEqual(key.private, "Forbidden");
 			});
 		}));
 
@@ -113,13 +119,13 @@ describe("control-access", () => {
 		withRunningApp(extend, async ({ app, rest_api }) => {
 			await setup(app, rest_api);
 
-			const { items: ssh_keys } = await rest_api.get(
+			const { items: ssh_keys } = (await rest_api.get(
 				SSH_KEYS_URL,
 				sessions.admin
-			);
+			)) as CollectionResponse;
 
-			ssh_keys.forEach((key: any) => {
-				assert(key.private.length >= 3);
+			ssh_keys.forEach((key) => {
+				assert((key.private as string).length >= 3);
 			});
 		}));
 
@@ -137,9 +143,9 @@ describe("control-access", () => {
 						},
 						sessions.admin
 					),
-				(e) =>
-					assert.equal(
-						e.response.data.data.private.message,
+				(e: AxiosError) =>
+					assert.strictEqual(
+						e?.response?.data?.data?.private?.message,
 						"Text 'XD' is too short, minimum length is 3 chars."
 					)
 			);
@@ -149,40 +155,40 @@ describe("control-access", () => {
 		withRunningApp(extend, async ({ app, rest_api }) => {
 			await setup(app, rest_api);
 
-			const key = await rest_api.post(
+			const key = (await rest_api.post(
 				SSH_KEYS_URL,
 				{
 					public: "123123",
 					private: "321321",
 				},
 				sessions.admin
-			);
+			)) as ItemCreatedResponse;
 
 			const {
 				items: [updated_key],
-			} = await rest_api.patch(
+			} = (await rest_api.patch(
 				`${SSH_KEYS_URL}/${key.id}`,
 				{
 					private: "654321",
 				},
 				sessions.admin
-			);
+			)) as CollectionResponse;
 
-			assert.deepEqual(updated_key.private, "654321");
+			assert.deepStrictEqual(updated_key.private, "654321");
 		}));
 
 	it("Doesn't allow regular-user to update a protected field", async () =>
 		withRunningApp(extend, async ({ app, rest_api }) => {
 			await setup(app, rest_api);
 
-			const key = await rest_api.post(
+			const key = (await rest_api.post(
 				SSH_KEYS_URL,
 				{
 					public: "123123",
 					private: "321321",
 				},
 				sessions.admin
-			);
+			)) as ItemCreatedResponse;
 
 			await assertThrowsAsync(
 				() =>
@@ -192,7 +198,7 @@ describe("control-access", () => {
 						sessions["regular-user"]
 					),
 				(e) =>
-					assert.deepEqual(
+					assert.strictEqual(
 						e.response.data.data.private.message,
 						"you dont have any of the roles: admin."
 					)

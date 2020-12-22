@@ -1,7 +1,7 @@
-import Query, { Or } from "./query";
+import Query, { And, Not, Or } from "./query";
 import * as assert from "assert";
 import QueryStep, { LookupBody, Lookup } from "./query-step";
-import { QueryTypes } from "../main";
+import DenyAll from "./deny-all";
 
 describe("Query", () => {
 	describe("Query general", () => {
@@ -89,7 +89,7 @@ describe("Query", () => {
 				{ $match: { [`${states_hash}.abbrevation`]: { $eq: "PL" } } },
 			];
 
-			assert.deepEqual(query.toPipeline(), expected_pipeline);
+			assert.deepStrictEqual(query.toPipeline(), expected_pipeline);
 		});
 	});
 	describe("Query.Or", () => {
@@ -130,7 +130,7 @@ describe("Query", () => {
 				{ $unwind: `$${L2_id}` },
 				{ $match: { $or: [M1, M3] } },
 			];
-			assert.deepEqual(or.toPipeline(), expected_pipeline);
+			assert.deepStrictEqual(or.toPipeline(), expected_pipeline);
 		});
 
 		it("Returns correct pipeline stages when And query is provided", () => {
@@ -155,7 +155,7 @@ describe("Query", () => {
 				title: { $ne: "The Joy of PHP" },
 			};
 			queries.push(Query.fromSingleMatch(M3));
-			const and_1 = new QueryTypes.And(...queries);
+			const and_1 = new And(...queries);
 
 			queries = [];
 			subquery = new Query();
@@ -198,9 +198,9 @@ describe("Query", () => {
 			};
 			subquery.match(M7);
 			queries.push(subquery);
-			const and_2 = new QueryTypes.And(...queries);
+			const and_2 = new And(...queries);
 
-			const query = new QueryTypes.Or(and_1, and_2);
+			const query = new Or(and_1, and_2);
 
 			const expected_pipeline = makeQueryFromStageBodies([
 				L1,
@@ -210,23 +210,26 @@ describe("Query", () => {
 					$or: [{ $and: [M3, M2] }, { $and: [M7, M4, M6] }],
 				},
 			]).toPipeline();
-			assert.deepEqual(expected_pipeline, query.toPipeline());
+			assert.deepStrictEqual(expected_pipeline, query.toPipeline());
 		});
 	});
 
 	describe("QueryTypes.Not", () => {
 		it("Correctly converts or to nor and vice versa", () => {
-			const query = new QueryTypes.Or(
+			const query = new Or(
 				Query.fromSingleMatch({ pages: { $gt: 200 } }),
 				Query.fromSingleMatch({ title: { $eq: "The Joy of PHP" } })
 			);
-			let negated_query = new QueryTypes.Not(query);
+			let negated_query = new Not(query);
 
 			const expected_pipeline = query.toPipeline();
 			expected_pipeline[0].$match.$nor = expected_pipeline[0].$match.$or;
 			delete expected_pipeline[0].$match.$or;
 
-			assert.deepEqual(negated_query.toPipeline(), expected_pipeline);
+			assert.deepStrictEqual(
+				negated_query.toPipeline(),
+				expected_pipeline
+			);
 			assertQueryEqualsDoubleNegatedQuery(query, negated_query);
 		});
 
@@ -243,7 +246,7 @@ describe("Query", () => {
 				[`${L1_id}.last_name`]: { $in: ["Christie", "Rowling"] },
 			});
 
-			let negated_query = new QueryTypes.Not(query);
+			let negated_query = new Not(query);
 			const expected_pipeline = query.toPipeline();
 			expected_pipeline[1].$match = {
 				[`${L1_id}.last_name`]: {
@@ -251,7 +254,10 @@ describe("Query", () => {
 				},
 			};
 
-			assert.deepEqual(negated_query.toPipeline(), expected_pipeline);
+			assert.deepStrictEqual(
+				negated_query.toPipeline(),
+				expected_pipeline
+			);
 			assertQueryEqualsDoubleNegatedQuery(query, negated_query);
 		});
 
@@ -266,7 +272,7 @@ describe("Query", () => {
 			};
 			query.match(stage);
 
-			let negated_query = new QueryTypes.Not(query);
+			let negated_query = new Not(query);
 			const expected_pipeline: any[] = [
 				{
 					$match: {
@@ -278,13 +284,16 @@ describe("Query", () => {
 					},
 				},
 			];
-			assert.deepEqual(negated_query.toPipeline(), expected_pipeline);
+			assert.deepStrictEqual(
+				negated_query.toPipeline(),
+				expected_pipeline
+			);
 
 			expected_pipeline[0].$match = {
 				$nor: expected_pipeline[0].$match.$or,
 			};
-			const double_negated_query = new QueryTypes.Not(negated_query);
-			assert.deepEqual(
+			const double_negated_query = new Not(negated_query);
+			assert.deepStrictEqual(
 				double_negated_query.toPipeline(),
 				expected_pipeline
 			);
@@ -294,8 +303,8 @@ describe("Query", () => {
 			query: Query,
 			negated_query: Query
 		) {
-			const double_negated_query = new QueryTypes.Not(negated_query);
-			assert.deepEqual(
+			const double_negated_query = new Not(negated_query);
+			assert.deepStrictEqual(
 				double_negated_query.toPipeline(),
 				query.toPipeline()
 			);
@@ -326,10 +335,10 @@ describe("Query", () => {
 			};
 			queries.push(Query.fromSingleMatch(M3));
 
-			const and = new QueryTypes.And(...queries);
+			const and = new And(...queries);
 			const stageBodies = [M3, L1, M2];
 			assertStagesAreCorrectlyOrdered(stageBodies, and.toPipeline());
-			assert.deepEqual(makeSteps(stageBodies), and.dump());
+			assert.deepStrictEqual(makeSteps(stageBodies), and.dump());
 		});
 
 		function assertStagesAreCorrectlyOrdered(
@@ -337,12 +346,12 @@ describe("Query", () => {
 			actualPipeline: any[]
 		) {
 			const query = makeQueryFromStageBodies(expectedRawPipeline);
-			assert.deepEqual(actualPipeline, query.toPipeline());
+			assert.deepStrictEqual(actualPipeline, query.toPipeline());
 		}
 
 		function makeSteps(stageBodies: any[]) {
 			return stageBodies.reduce((acc, stageBody) => {
-				if (stageBody instanceof QueryTypes.Or) {
+				if (stageBody instanceof Or) {
 					return acc.concat(stageBody.dump());
 				}
 				if ((stageBody as LookupBody).from) {
@@ -410,7 +419,7 @@ describe("Query", () => {
 				books_count: { $lte: 30 },
 			};
 			let subquery2 = Query.fromSingleMatch(O6_M2);
-			const O6 = new QueryTypes.Or(subquery1, subquery2);
+			const O6 = new Or(subquery1, subquery2);
 			queries.push(O6);
 
 			const O7_M1 = {
@@ -419,7 +428,7 @@ describe("Query", () => {
 				},
 			};
 			const O7_M2 = O6_M2;
-			const O7 = new QueryTypes.Or(
+			const O7 = new Or(
 				Query.fromSingleMatch(O7_M1),
 				Query.fromSingleMatch(O7_M2)
 			);
@@ -458,11 +467,11 @@ describe("Query", () => {
 			queries.push(query);
 
 			const stageBodies = [M5, O7, L8, M9, M11, O6, L1, L2, M3_4];
-			let and = new QueryTypes.And(...queries);
+			let and = new And(...queries);
 			assertStagesAreCorrectlyOrdered(stageBodies, and.toPipeline());
 			assert.deepEqual(makeSteps(stageBodies), and.dump());
 		});
-		it("Returns deny all pipeline when provided QueryTypes.DenyAll", () => {
+		it("Returns deny all pipeline when provided DenyAll", () => {
 			const queries: Query[] = [];
 			let query = new Query();
 
@@ -480,7 +489,7 @@ describe("Query", () => {
 			query.match(M2);
 			queries.push(query);
 
-			const deny_all_query = new QueryTypes.DenyAll();
+			const deny_all_query = new DenyAll();
 			queries.push(deny_all_query);
 
 			const M3 = {
@@ -488,7 +497,7 @@ describe("Query", () => {
 			};
 			queries.push(Query.fromSingleMatch(M3));
 
-			const and = new QueryTypes.And(...queries);
+			const and = new And(...queries);
 			assert.deepEqual(and.toPipeline(), deny_all_query.toPipeline());
 			assert.deepEqual(and.dump(), deny_all_query.dump());
 		});

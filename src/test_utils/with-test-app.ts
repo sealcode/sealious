@@ -1,42 +1,70 @@
-import { App } from "../main";
-
-import axios from "axios";
+import { v4 as uuid } from "uuid";
+import getPort from "get-port";
 import { Environment } from "../app/config";
-
-import { get_test_app, TestAppType } from "./test-app";
-import get_rest_api from "./rest-api";
+import { App } from "../main";
+import mailcatcher from "./mailcatcher";
 import MockRestApi from "./rest-api";
+import { get_test_app, TestAppType } from "./test-app";
 
 type TestCallback = (params: CallbackParams) => Promise<any>;
 
 type extendFn = null | ((app_class: TestAppType) => TestAppType);
 
+const test_collections: { [collection: string]: string } = {};
+
 export async function withStoppedApp(
 	extend_fn: extendFn,
-	cb: TestCallback
+	cb: TestCallback,
+	test_collection?: string // tests with the same collection get assigned the same db id
 ): Promise<any> {
-	await withTestApp("auto_start" && false, "dev", extend_fn, cb);
+	await withTestApp(
+		"auto_start" && false,
+		"dev",
+		extend_fn,
+		cb,
+		test_collection
+	);
 }
 
 export async function withRunningApp(
 	extend_fn: extendFn,
-	cb: TestCallback
+	cb: TestCallback,
+	test_collection?: string // tests with the same collection get assigned the same db id
 ): Promise<any> {
-	await withTestApp("auto_start" && true, "dev", extend_fn, cb);
+	await withTestApp(
+		"auto_start" && true,
+		"dev",
+		extend_fn,
+		cb,
+		test_collection
+	);
 }
 
 export async function withRunningAppProd(
 	extend_fn: extendFn,
-	cb: TestCallback
+	cb: TestCallback,
+	test_collection?: string
 ): Promise<any> {
-	await withTestApp("auto_start" && true, "production", extend_fn, cb);
+	await withTestApp(
+		"auto_start" && true,
+		"production",
+		extend_fn,
+		cb,
+		test_collection
+	);
 }
 
-export async function withStoppedAppProd(
-	extend_fn: extendFn,
-	cb: TestCallback
-) {
-	await withTestApp.bind("auto_start" && false, "production", extend_fn, cb);
+function getAppID(test_collection?: string) {
+	let uniq_id;
+	if (test_collection) {
+		if (!test_collections[test_collection]) {
+			test_collections[test_collection] = uuid();
+		}
+		uniq_id = test_collections[test_collection];
+	} else {
+		uniq_id = uuid();
+	}
+	return uniq_id;
 }
 
 type CallbackParams = {
@@ -46,35 +74,30 @@ type CallbackParams = {
 	rest_api: MockRestApi;
 	port: number;
 
-	mail_api: {
-		getMessages: () => Promise<
-			{
-				recipients: string[];
-				subject: string;
-				id: number;
-				sender: string;
-			}[]
-		>;
-		getMessageById: (id: number) => Promise<string>;
-	};
+	mail_api: ReturnType<typeof mailcatcher>;
+
 	app_class: TestAppType;
 };
-
-let port = 4000;
 
 async function withTestApp(
 	auto_start: boolean,
 	env: Environment,
 	extend_fn: extendFn,
-	fn: (params: CallbackParams) => Promise<any>
+	fn: (params: CallbackParams) => Promise<unknown>,
+	test_collection?: string
 ) {
-	port++;
+	const port = await getPort();
 	const base_url = `http://localhost:${port}`;
 	const smtp_api_url = `http://${
 		process.env.SEALIOUS_SMTP_HOST || "localhost"
 	}:1080`;
 
-	const TestApp = get_test_app({ env, port, base_url });
+	const TestApp = get_test_app({
+		env,
+		port,
+		base_url,
+		uniq_id: getAppID(test_collection),
+	});
 	let modified_app_class;
 	if (extend_fn) {
 		modified_app_class = extend_fn(TestApp);
@@ -89,21 +112,13 @@ async function withTestApp(
 	}
 
 	try {
-		await axios.delete(`${smtp_api_url}/messages`);
-
 		await fn({
 			app: app as App,
 			port,
 			app_class: modified_app_class,
 			base_url,
 			smtp_api_url,
-			mail_api: {
-				getMessages: async () =>
-					(await axios.get(`${smtp_api_url}/messages`)).data,
-				getMessageById: async (id: number) =>
-					(await axios.get(`${smtp_api_url}/messages/${id}.html`))
-						.data as string,
-			},
+			mail_api: mailcatcher(smtp_api_url, app),
 			rest_api: new MockRestApi(base_url),
 		});
 	} catch (e) {
