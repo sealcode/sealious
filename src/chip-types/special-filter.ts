@@ -15,7 +15,7 @@ export default abstract class SpecialFilter {
 		this.app = app;
 	}
 
-	abstract async getFilteringQuery(): Promise<Query>;
+	abstract getFilteringQuery(): Promise<Query>;
 	abstract getNopassReason(): string;
 
 	getCollection() {

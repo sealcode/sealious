@@ -14,11 +14,9 @@ export default abstract class Subject {
 
 	abstract getName(): string;
 
-	abstract async getChildSubject(
-		path_element: string
-	): Promise<Subject | null>;
+	abstract getChildSubject(path_element: string): Promise<Subject | null>;
 
-	abstract async performAction(
+	abstract performAction(
 		context: Context,
 		action_name: ActionName,
 		params: any
