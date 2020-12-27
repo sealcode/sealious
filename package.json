@@ -4,6 +4,7 @@
 	"version": "0.12.1",
 	"description": "A declarative framework for fast & easy app development.",
 	"main": "./lib/src/main.js",
+	"types": "./@types/main.d.ts",
 	"scripts": {
 		"test-debug": "npm run test-cmd -- --debug",
 		"test-cmd": "node test.js",

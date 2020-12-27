@@ -24,3 +24,4 @@ coverage.html
 .ash_history
 cosealious
 node_modules*
+.nyc_output
