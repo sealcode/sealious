@@ -1,17 +1,19 @@
+import Router from "@koa/router";
 import Emittery from "emittery";
 import { ActionName } from "../action";
+import App from "../app/app";
+import { EventDescription } from "../app/delegate-listener";
 import Public from "../app/policy-types/public";
 import Context from "../context";
-import Field from "./field";
-import Policy from "./policy";
+import parseBody from "../http/parse-body";
+import { BadContext, NotFound } from "../response/errors";
+import CalculatedField from "./calculated-field";
 import { CollectionItem } from "./collection-item";
 import CollectionItemBody, { ItemFields } from "./collection-item-body";
-import App from "../app/app";
-import { BadContext, NotFound } from "../response/errors";
-import SpecialFilter from "./special-filter";
-import CalculatedField from "./calculated-field";
+import Field from "./field";
 import ItemList from "./item-list";
-import { EventDescription } from "../app/delegate-listener";
+import Policy from "./policy";
+import SpecialFilter from "./special-filter";
 
 export type CollectionEvent =
 	| "before:create"
@@ -29,8 +31,9 @@ export type CollectionCallback = ([context, item, event]: [
 
 /** Creates a collection. All collections are automatically served via
  * the REST API, with permissions set by the Policies */
-export default abstract class Collection extends Emittery {
+export default abstract class Collection {
 	abstract fields: { [fieldName: string]: Field };
+	private emitter = new Emittery();
 
 	/** the name of the collection, will be used as part of the URI in
 	 * the REST API */
@@ -48,17 +51,17 @@ export default abstract class Collection extends Emittery {
 
 	named_filters: Record<string, SpecialFilter> = {};
 
-	calculated_fields: Record<string, CalculatedField<any>> = {};
+	calculated_fields: Record<string, CalculatedField<unknown>> = {};
 
 	/** initializes the fields @internal */
-	async initFieldDetails() {
+	async initFieldDetails(): Promise<void> {
 		const promises = [];
 		for (const [field_name, field] of Object.entries(this.fields)) {
 			field.setCollection(this);
 			field.setName(field_name);
 			promises.push(field.init(this.app));
 		}
-		return Promise.all(promises);
+		await Promise.all(promises);
 	}
 
 	async suCreate(data: ItemFields<this>): Promise<CollectionItem<this>> {
@@ -73,26 +76,28 @@ export default abstract class Collection extends Emittery {
 	}
 
 	/** Makes a new item object that can be saved later */
-	make(input?: ItemFields<this>) {
+	make(input?: ItemFields<this>): CollectionItem<this> {
 		return new CollectionItem<this>(
 			this,
 			new CollectionItemBody(this, input, {}, {})
 		);
 	}
 
-	async suGetByID(id: string) {
+	async suGetByID(id: string): Promise<CollectionItem<this>> {
 		return this.getByID(new this.app.SuperContext(), id);
 	}
 
-	async getByID(context: Context, id: string) {
+	async getByID(context: Context, id: string): Promise<CollectionItem<this>> {
 		const policy = this.getPolicy("show");
-		if (!policy.isItemSensitive()) {
+		if (!(await policy.isItemSensitive())) {
 			const result = await policy.check(context);
 			if (!result?.allowed) {
 				throw new BadContext(result?.reason as string);
 			}
 		}
-		const results = await context.app.Datastore.find(this.name, { id });
+		const results = (await context.app.Datastore.find(this.name, {
+			id,
+		})) as ItemFields<this>[];
 		if (!results.length) {
 			throw new NotFound(`${this.name}: id ${id} not found`);
 		}
@@ -106,11 +111,11 @@ export default abstract class Collection extends Emittery {
 		return ret;
 	}
 
-	async suRemoveByID(id: string) {
-		return this.removeByID(new this.app.SuperContext(), id);
+	async suRemoveByID(id: string): Promise<void> {
+		await this.removeByID(new this.app.SuperContext(), id);
 	}
 
-	async removeByID(context: Context, id: string) {
+	async removeByID(context: Context, id: string): Promise<void> {
 		const result = await this.getPolicy("delete").check(context, () =>
 			this.getByID(context, id)
 		);
@@ -122,14 +127,14 @@ export default abstract class Collection extends Emittery {
 
 	/** Get a policy for given action, or the default policy, if no
 	 * policy is specified for this action */
-	getPolicy(action: ActionName) {
+	getPolicy(action: ActionName): Policy {
 		return this.policies[action] || this.defaultPolicy;
 	}
 
 	/** Initialize all the fields and filters
 	 * @internal
 	 */
-	async init(app: App, collection_name: string) {
+	async init(app: App, collection_name: string): Promise<void> {
 		this.name = collection_name;
 		this.app = app;
 		await this.initFieldDetails();
@@ -144,7 +149,7 @@ export default abstract class Collection extends Emittery {
 	 * @param action_name
 	 * the action for which to check @internal
 	 */
-	isOldValueSensitive(action_name: ActionName) {
+	isOldValueSensitive(action_name: ActionName): boolean {
 		for (const field_name in this.fields) {
 			if (this.fields[field_name].isOldValueSensitive(action_name)) {
 				return true;
@@ -156,11 +161,11 @@ export default abstract class Collection extends Emittery {
 	/** Return a named filter from the collection
 	 * @param filter_name the name of the filter
 	 */
-	getNamedFilter(filter_name: string) {
+	getNamedFilter(filter_name: string): SpecialFilter {
 		return this.named_filters[filter_name];
 	}
 
-	suList() {
+	suList(): ItemList<this> {
 		return this.list(new this.app.SuperContext());
 	}
 
@@ -168,7 +173,7 @@ export default abstract class Collection extends Emittery {
 		return new ItemList<this>(this, context);
 	}
 
-	createFromDB(document: any) {
+	createFromDB(document: ItemFields<this>): CollectionItem<this> {
 		const id = document?.id;
 		delete document.id;
 		delete document._id;
@@ -180,17 +185,84 @@ export default abstract class Collection extends Emittery {
 		);
 	}
 
-	// @ts-ignore
-	on(event_name: CollectionEvent, cb: CollectionCallback) {
-		super.on(event_name, cb);
+	on(
+		event_name: CollectionEvent,
+		cb: CollectionCallback
+	): Emittery.UnsubscribeFn {
+		return this.emitter.on(event_name, cb);
 	}
 
 	getRequiredFields(): Field[] {
 		return Object.values(this.fields).filter((field) => field.required);
 	}
 
-	setPolicy(action: ActionName, policy: Policy) {
+	setPolicy(action: ActionName, policy: Policy): this {
 		this.policies[action] = policy;
 		return this;
+	}
+
+	getRouter(): Router {
+		const router = new Router();
+
+		router.get(["/", "/@:filter1", "/@:filter1/@:filter2"], async (ctx) => {
+			const list = this.list(ctx.$context).setParams(ctx.query);
+			for (const key of ["filter1", "filter2"]) {
+				if (ctx.params[key]) {
+					list.namedFilter(ctx.params[key]);
+				}
+			}
+			ctx.body = (await list.fetch()).serialize();
+		});
+
+		router.post("/", parseBody(), async (ctx) => {
+			const item = this.make();
+			item.setMultiple(ctx.request.body);
+			await item.save(ctx.$context);
+			await item.decode(ctx.$context);
+			ctx.body = item.serializeBody();
+			ctx.status = 201;
+		});
+
+		router.get("/:id", async (ctx) => {
+			const [ret] = await this.list(ctx.$context)
+				.ids([ctx.params.id])
+				.safeFormat(ctx.query.format)
+				.fetch();
+			await ret.safeLoadAttachments(ctx.$context, ctx.query.attachments);
+			ctx.body = ret.serialize();
+		});
+
+		router.patch("/:id", parseBody(), async (ctx) => {
+			const item = await this.getByID(ctx.$context, ctx.params.id);
+			item.setMultiple(ctx.request.body);
+			await item.save(ctx.$context);
+			await item.decode(ctx.$context);
+			ctx.body = item.serialize();
+		});
+
+		router.put("/:id", parseBody(), async (ctx) => {
+			const item = await this.getByID(ctx.$context, ctx.params.id);
+			item.replace(ctx.request.body);
+			await item.save(ctx.$context);
+			await item.decode(ctx.$context);
+			ctx.body = item.serialize();
+		});
+
+		router.delete("/:id", async (ctx) => {
+			await (await this.getByID(ctx.$context, ctx.params.id)).remove(
+				ctx.$context
+			);
+			ctx.status = 204; // "No content"
+		});
+
+		return router;
+	}
+
+	clearListeners() {
+		this.emitter.clearListeners();
+	}
+
+	emit(event_name: string, event_data?: any): Promise<void> {
+		return this.emitter.emit(event_name, event_data);
 	}
 }

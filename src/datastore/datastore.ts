@@ -2,6 +2,7 @@ import { MongoClient, Db, Collection as MongoCollection } from "mongodb";
 import { App } from "../main";
 import Collection from "../chip-types/collection";
 import { QueryStage } from "./query";
+import asyncForEach from "../utils/async-foreach";
 
 export type OutputOptions = Partial<{
 	skip: number;
@@ -15,7 +16,7 @@ export default class Datastore {
 	constructor(public app: App) {
 		this.app = app;
 	}
-	async start() {
+	async start(): Promise<void> {
 		const config = this.app.ConfigManager.get("datastore_mongo") as {
 			host: string;
 			port: number;
@@ -24,7 +25,10 @@ export default class Datastore {
 
 		const url = `mongodb://${config.host}:${config.port}/${config.db_name}`;
 
-		this.client = await MongoClient.connect(url, { useNewUrlParser: true });
+		this.client = await MongoClient.connect(url, {
+			useNewUrlParser: true,
+			useUnifiedTopology: true,
+		});
 
 		if (!this.client) {
 			return Promise.reject(
@@ -33,16 +37,16 @@ export default class Datastore {
 		}
 
 		this.db = this.client.db(config.db_name);
-		return this.post_start();
+		await this.post_start();
 	}
 
-	async post_start() {
-		for (let collection of Object.values(this.app.collections)) {
-			await this.create_index(collection);
-		}
+	async post_start(): Promise<void> {
+		await asyncForEach(Object.values(this.app.collections), (collection) =>
+			this.create_index(collection)
+		);
 	}
 
-	async create_index(collection: Collection) {
+	async create_index(collection: Collection): Promise<void> {
 		const indexes: { [field: string]: number }[] = [];
 		const text_index: { [field: string]: "text" } = {};
 		for (const field_name in collection.fields) {
@@ -56,7 +60,7 @@ export default class Datastore {
 				indexes.push({ [field_name]: 1 });
 			} else if (Array.isArray(index_answer)) {
 				for (const [subfield, index] of index_answer) {
-					const key = `${field_name}.${subfield}`;
+					const key = `${field_name}.${subfield as string}`;
 					if (index === "text") {
 						text_index[key] = "text";
 					} else if (index) {
@@ -67,30 +71,35 @@ export default class Datastore {
 		}
 
 		const db_collection = this.db.collection(collection.name);
-		for (const index of [
-			...indexes,
-			...(Object.keys(text_index).length ? [text_index] : []),
-		]) {
-			await this.createIndex(collection.name, index).catch(
-				async (error: Error & { code?: number; message: string }) => {
-					if (error && error.code === 85) {
-						const index_name = (error.message.match(
-							/name: \"([^\"]+)\"/g
-						) as string[])[1]
-							.replace('name: "', "")
-							.replace('"', "");
-						await db_collection.dropIndex(index_name);
-						return this.createIndex(collection.name, index);
+		await asyncForEach(
+			[
+				...indexes,
+				...(Object.keys(text_index).length ? [text_index] : []),
+			],
+			async (index) => {
+				await this.createIndex(collection.name, index).catch(
+					async (
+						error: Error & { code?: number; message: string }
+					) => {
+						if (error && error.code === 85) {
+							const index_name = (error.message.match(
+								/name: "([^"]+)"/g
+							) as string[])[1]
+								.replace('name: "', "")
+								.replace('"', "");
+							await db_collection.dropIndex(index_name);
+							return this.createIndex(collection.name, index);
+						}
+						throw error;
 					}
-					throw error;
-				}
-			);
-		}
+				);
+			}
+		);
 	}
 
 	find(
 		collection_name: string,
-		query: any,
+		query: Record<string, any>,
 		options: Parameters<MongoCollection["find"]>[1] = {},
 		output_options: OutputOptions = {}
 	) {
@@ -120,7 +129,7 @@ export default class Datastore {
 		pipeline: QueryStage[],
 		_ = {},
 		output_options: OutputOptions = {}
-	) {
+	): Promise<Record<string, any>[]> {
 		const cursor = this.db.collection(collection_name).aggregate(pipeline);
 
 		this.app.Logger.debug2(
@@ -148,11 +157,12 @@ export default class Datastore {
 			`Aggregate on collection ${collection_name} returns`,
 			ret
 		);
-		return ret;
+		return ret as Record<string, any>[];
 	}
+
 	async insert(
 		collection_name: string,
-		to_insert: any,
+		to_insert: Record<string, any>,
 		options?: Parameters<MongoCollection["insertOne"]>[1]
 	) {
 		this.app.Logger.debug2("DB", "Running insert", {
@@ -165,14 +175,15 @@ export default class Datastore {
 			.insertOne(to_insert, options);
 		return result.ops[0];
 	}
+
 	update(collection_name: string, query: any, new_value: any) {
 		this.app.Logger.debug2(
 			"DB",
 			"Update",
 			{
 				collection_name,
-				query,
-				new_value,
+				query: query as unknown,
+				new_value: new_value as unknown,
 			},
 			4
 		);
@@ -185,7 +196,7 @@ export default class Datastore {
 			"remove",
 			{
 				collection_name,
-				query,
+				query: query as unknown,
 			},
 			3
 		);
@@ -207,23 +218,26 @@ export default class Datastore {
 	}
 }
 
-function process_query(query: any) {
+function process_query(query: Record<string, unknown>) {
 	if (!query) {
 		return {};
 	}
-	const new_query: { [key: string]: any } = {};
+	const new_query: Record<string, unknown> = {};
 	for (const attribute_name in query) {
+		const value = query[attribute_name];
 		if (attribute_name == "id") {
-			new_query[attribute_name] = query[attribute_name];
+			new_query[attribute_name] = value;
 			continue;
 		}
-		if (query[attribute_name] instanceof Object) {
+		if (typeof value === "object") {
 			if (attribute_name[0] === "$") {
-				new_query[attribute_name] = query[attribute_name];
+				new_query[attribute_name] = value;
 			} else {
-				for (const i in query[attribute_name]) {
-					new_query[attribute_name + "." + i] =
-						query[attribute_name][i];
+				for (const i in value) {
+					new_query[attribute_name + "." + i] = (value as Record<
+						string,
+						any
+					>)[i];
 				}
 			}
 		} else {

@@ -1,11 +1,12 @@
+import { Middleware } from "@koa/router";
 import * as assert from "assert";
 import fs from "fs";
 import { promisify } from "util";
 import App from "../../app/app";
-import { File } from "../../main";
 const readFile = promisify(fs.readFile);
-// @ts-ignore
-const locreq = require("locreq")(__dirname);
+
+import locreq_curry from "locreq";
+const locreq = locreq_curry(__dirname);
 
 let css: string;
 let get_css = async () => {
@@ -114,19 +115,15 @@ let render_form = async (
 	</html>
 `;
 
-export default (app: App) => {
-	app.HTTPServer.custom_route(
-		"GET",
-		"/account-creation-details",
-		async (app, _, { token, email }) => {
-			assert.equal(typeof token, "string", "Token must be a string.");
-			assert.equal(typeof email, "string", "Email must be a string.");
-			const file = await File.fromData(
-				app,
-				await render_form(app, { token, email })
-			);
-			file.filename = "account-detail.html";
-			return file;
-		}
-	);
+const accountCreationDetails: Middleware = async (ctx) => {
+	const token = ctx.query.token;
+	const email = ctx.query.email;
+	assert.strictEqual(typeof token, "string", "Token must be a string.");
+	assert.strictEqual(typeof email, "string", "Email must be a string.");
+	ctx.body = await render_form(ctx.$app, {
+		token: token as string,
+		email: email as string,
+	});
 };
+
+export default accountCreationDetails;

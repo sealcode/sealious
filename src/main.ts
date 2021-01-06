@@ -18,15 +18,9 @@ export { default as Logger } from "./app/logger";
 export { default as Manifest } from "./app/manifest";
 export { default as MetadataFactory } from "./app/metadata";
 export { default as Context, SuperContext } from "./context";
-export {
-	default as SubjectPath,
-	SubjectPathEquiv,
-} from "./data-structures/subject-path";
 export * as Queries from "./datastore/query";
 export { default as HttpServer } from "./http/http";
 export { default as i18nFactory } from "./i18n/i18n";
-export { default as RootSubject } from "./subject/predefined-subjects/root-subject";
-export { default as Subject } from "./subject/subject";
 export { default as CalculatedField } from "./chip-types/calculated-field";
 export * as EmailTemplates from "./email/templates/templates";
 export * as Errors from "./response/errors";

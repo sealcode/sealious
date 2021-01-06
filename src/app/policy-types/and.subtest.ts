@@ -12,23 +12,22 @@ const [ComplexDenyPipeline, ComplexAllowPipeline] = create_policies.allowDeny();
 
 const collections_to_create = [
 	{
-		name:
-			"collection-and(nested-and(allow, public), nested-or(allow, noone))",
+		name: "collection-and(nested-and(allow,public),nested-or(allow,noone))",
 		policies: [
 			new And([new ComplexAllowPipeline(), new Policies.Public()]),
 			new Policies.Or([new ComplexAllowPipeline(), new Policies.Noone()]),
 		],
 	},
 	{
-		name: "collection-and(ComplexAllowPipeline, noone)",
+		name: "collection-and(ComplexAllowPipeline,noone)",
 		policies: [new ComplexAllowPipeline(), new Policies.Noone()],
 	},
 	{
-		name: "collection-and(ComplexAllowPipeline, public)",
+		name: "collection-and(ComplexAllowPipeline,public)",
 		policies: [new ComplexAllowPipeline(), new Policies.Public()],
 	},
 	{
-		name: "collection-and(complexDenyPipeline, public)",
+		name: "collection-and(complexDenyPipeline,public)",
 		policies: [new ComplexDenyPipeline(), new Policies.Public()],
 	},
 ];
@@ -80,25 +79,25 @@ describe("AndPolicy", () => {
 		}
 	}
 
-	it("return everything for collection-and(nested-and(allow, public), nested-or(allow, noone))", () =>
+	it("return everything for collection-and(nested-and(allow,public),nested-or(allow,noone))", () =>
 		withRunningApp(extend, async ({ app, rest_api }) => {
 			await setup(app);
 			return rest_api
 				.get(
-					"/api/v1/collections/collection-and(nested-and(allow, public), nested-or(allow, noone))"
+					"/api/v1/collections/collection-and(nested-and(allow,public),nested-or(allow,noone))"
 				)
 				.then(({ items }: { items: any[] }) =>
 					assert.equal(items.length, 3)
 				);
 		}));
 
-	it("returns nothing for and(ComplexAllowPipeline, noone)", () =>
+	it("returns nothing for and(ComplexAllowPipeline,noone)", () =>
 		withRunningApp(extend, async ({ app, rest_api }) => {
 			await setup(app);
 			await assertThrowsAsync(
 				() =>
 					rest_api.get(
-						"/api/v1/collections/collection-and(ComplexAllowPipeline, noone)"
+						"/api/v1/collections/collection-and(ComplexAllowPipeline,noone)"
 					),
 				(e) => {
 					assert.equal(e.response.data.message, `noone is allowed`);
@@ -106,20 +105,20 @@ describe("AndPolicy", () => {
 			);
 		}));
 
-	it("returns everything for and(ComplexAllowPipeline, public)", () =>
+	it("returns everything for and(ComplexAllowPipeline,public)", () =>
 		withRunningApp(extend, async ({ app, rest_api }) => {
 			await setup(app);
 			const { items } = await rest_api.get(
-				"/api/v1/collections/collection-and(ComplexAllowPipeline, public)"
+				"/api/v1/collections/collection-and(ComplexAllowPipeline,public)"
 			);
 			assert.strictEqual(items.length, 3);
 		}));
 
-	it("returns nothing for and(complex-deny-pipeline, public)", () =>
+	it("returns nothing for and(complex-deny-pipeline,public)", () =>
 		withRunningApp(extend, async ({ app, rest_api }) => {
 			await setup(app);
 			const { items } = await rest_api.get(
-				"/api/v1/collections/collection-and(complexDenyPipeline, public)"
+				"/api/v1/collections/collection-and(complexDenyPipeline,public)"
 			);
 			assert.strictEqual(items.length, 0);
 		}));

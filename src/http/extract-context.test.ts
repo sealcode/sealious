@@ -21,7 +21,7 @@ describe("Extract context", () => {
 			await rest_api.login({ username: "any", password: "anyanyany" });
 
 			await assertThrowsAsync(
-				() => rest_api.get("/api/v1/users/me"), // cookie left out intentionally
+				() => rest_api.get("/api/v1/collections/users/me"), // cookie left out intentionally
 				(error: AxiosError) => {
 					assert.strictEqual(
 						error?.response?.data?.message,

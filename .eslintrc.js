@@ -31,6 +31,8 @@ module.exports = {
 		// "jsdoc/require-param-type": 0,
 		// "jsdoc/require-param-description": 1,
 		"@typescript-eslint/require-await": 0,
+		"@typescript-eslint/no-this-alias": 0,
+		"@typescript-eslint/no-explicit-any": 1, // maybe we should bring it up to 2 sometime in the future, but so far it seems that this rule has brought more trouble than savings
 		"jsdoc/require-description": 2,
 		"no-await-in-loop": 2,
 	},

@@ -14,14 +14,12 @@ export default class Context {
 	constructor(
 		public app: App,
 		timestamp: number = Date.now(),
-		ip?: string | null,
 		user_id?: string | null,
 		session_id?: string | null
 	) {
 		this.original_context = this;
 		this.loading_user_data = false;
 		this.timestamp = timestamp;
-		this.ip = ip || null;
 		this.user_id = user_id || null;
 		this.session_id = session_id || null;
 	}

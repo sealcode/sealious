@@ -1,46 +1,41 @@
+import { Middleware } from "@koa/router";
 import assert from "assert";
-import { App } from "../../main";
 import { BadContext } from "../../response/errors";
 
-export default (app: App): Promise<void> =>
-	app.HTTPServer.custom_route(
-		"POST",
-		"/finalize-password-reset",
-		async (app, _, params: Record<string, unknown>) => {
-			assert(params.token, "Token missing");
-			assert(params.password, "Password missing");
+const finalizePasswordReset: Middleware = async (ctx) => {
+	assert(ctx.request.body.token, "Token missing");
+	assert(ctx.request.body.password, "Password missing");
 
-			if (typeof params.token !== "string") {
-				throw new Error("Invalid token");
-			}
+	if (typeof ctx.request.body.token !== "string") {
+		throw new Error("Invalid token");
+	}
 
-			if (typeof params.password !== "string") {
-				throw new Error("Invalid password");
-			}
+	if (typeof ctx.request.body.password !== "string") {
+		throw new Error("Invalid password");
+	}
 
-			const intent_response = await app.collections[
-				"password-reset-intents"
-			]
-				.suList()
-				.filter({ token: params.token })
-				.fetch();
+	const intent_response = await ctx.$app.collections["password-reset-intents"]
+		.suList()
+		.filter({ token: ctx.request.body.token })
+		.fetch();
 
-			if (intent_response.empty) {
-				throw new BadContext("Incorrect token");
-			}
+	if (intent_response.empty) {
+		throw new BadContext("Incorrect token");
+	}
 
-			const intent = intent_response.items[0];
+	const intent = intent_response.items[0];
 
-			const user_response = await app.collections.users
-				.suList()
-				.filter({ email: intent.get("email") as string })
-				.fetch();
-			if (user_response.empty) {
-				throw new Error("No user with this email address.");
-			}
-			user_response.items[0].set("password", params.password);
-			await user_response.items[0].save(new app.SuperContext());
-			await intent.remove(new app.SuperContext());
-			return "Password reset successful";
-		}
-	);
+	const user_response = await ctx.$app.collections.users
+		.suList()
+		.filter({ email: intent.get("email") as string })
+		.fetch();
+	if (user_response.empty) {
+		throw new Error("No user with this email address.");
+	}
+	user_response.items[0].set("password", ctx.request.body.password);
+	await user_response.items[0].save(new ctx.$app.SuperContext());
+	await intent.remove(new ctx.$app.SuperContext());
+	ctx.body = "Password reset successful";
+};
+
+export default finalizePasswordReset;

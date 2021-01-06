@@ -1,10 +1,10 @@
 import assert from "assert";
 import { withRunningApp } from "../test_utils/with-test-app";
 import { assertThrowsAsync } from "../test_utils/assert-throws-async";
-import { request, RequestOptions } from "http";
 import Field from "../chip-types/field";
-import { App, Collection, FieldTypes } from "../main";
+import { Collection, FieldTypes } from "../main";
 import { TestAppType } from "../test_utils/test-app";
+import asyncRequest from "../test_utils/async-request";
 
 function extend(t: TestAppType) {
 	class ArrayOfObjects extends Field {
@@ -47,24 +47,6 @@ function extend(t: TestAppType) {
 	};
 }
 
-async function asyncRequest(
-	options: RequestOptions,
-	form_data: string
-): Promise<{ body: any; source: any }> {
-	return new Promise((resolve) => {
-		const req = request(options, (res) => {
-			res.setEncoding("utf-8");
-			res.on("data", (chunk) => {
-				const { body, source } = JSON.parse(chunk);
-				resolve({ body, source });
-			});
-		});
-
-		req.write(form_data);
-		req.end();
-	});
-}
-
 describe("get-request-body", () => {
 	it("throws application error when `null` is provided as root field value and content-type is set to `application/json`", async () =>
 		withRunningApp(extend, async ({ rest_api }) => {
@@ -79,8 +61,11 @@ describe("get-request-body", () => {
 					),
 
 				(e) => {
-					assert.equal(e.response.status, 403);
-					assert.equal(e.response.data.message, "Invalid values!");
+					assert.strictEqual(e.response.status, 403);
+					assert.strictEqual(
+						e.response.data.message,
+						"Invalid values!"
+					);
 
 					assert.notEqual(e.response.status, 500);
 					assert.notEqual(
@@ -92,7 +77,7 @@ describe("get-request-body", () => {
 		}));
 
 	it("handles complex data sent as multipart/form-data", async () => {
-		await withRunningApp(extend, async ({ app, port }) => {
+		await withRunningApp(extend, async ({ port }) => {
 			// PNG file is empty but it doesnt matter for the test
 			const form_data =
 				'------------------------------4ebf00fbcf09\r\nContent-Disposition: form-data; name="source"; filename="test.png"\r\nContent-Type: image/png\r\n\r\nPNG\r\n\r\n\r\n------------------------------4ebf00fbcf09\r\nContent-Disposition: form-data; name="body"; filename="blob"\r\nContent-Type: application/json\r\n\r\n[["Foo", {"Bar": "baz"}]]\r\n------------------------------4ebf00fbcf09--\r\n';
@@ -108,9 +93,12 @@ describe("get-request-body", () => {
 				},
 			};
 			const Test = new RegExp(/\/api\/v1\/uploaded-files\/\S*\/test.png/);
-			const { body, source } = await asyncRequest(options, form_data);
-			assert.strict.deepEqual(body, [["Foo", { Bar: "baz" }]]);
-			assert.ok(Test.test(source));
+			const { body, source } = (await asyncRequest(
+				options,
+				form_data
+			)) as { source: "string"; body: Array<Record<string, unknown>> };
+			assert.strict.deepStrictEqual(body, [["Foo", { Bar: "baz" }]]);
+			assert.match(source, Test);
 		});
 	});
 });

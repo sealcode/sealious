@@ -45,7 +45,7 @@ function extend(t: TestAppType) {
 async function setupUsers(App: App, rest_api: MockRestApi) {
 	const password = "it-really-doesnt-matter";
 	let admin_id;
-	await asyncForEach(["admin", "regular-user"], async (username) => {
+	for (const username of ["admin", "regular-user"]) {
 		const user = await App.collections.users.suCreate({
 			username,
 			password,
@@ -64,7 +64,7 @@ async function setupUsers(App: App, rest_api: MockRestApi) {
 			password,
 		});
 		if (username === "admin") admin_id = user.id;
-	});
+	}
 
 	await rest_api.post(
 		"/api/v1/collections/user-roles",

@@ -1,6 +1,6 @@
 import { Field, Context } from "../../../main";
 
-const uuid = require("node-uuid").v4;
+import { v4 as uuid } from "uuid";
 
 export default class SecretToken extends Field {
 	typeName = "secret-token";
@@ -20,7 +20,7 @@ export default class SecretToken extends Field {
 		return context.is_super ? value : "it's a secret to everybody";
 	}
 
-	async filterToQuery(context: Context, filter: any) {
+	async filterToQuery(context: Context, filter: unknown) {
 		if (context.is_super) {
 			return { $eq: filter };
 		} else {

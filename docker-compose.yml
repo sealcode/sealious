@@ -11,9 +11,9 @@ services:
       dockerfile: test.dockerfile
     volumes:
       - ./:/opt/sealious/
+      - sealious-nm:/opt/sealious/node_modules/
     ports:
       - "127.0.0.1:8080:8080"
-    user: ${UID:-1000}:${GID:-1000}
     links:
       - db
       - mailcatcher
@@ -25,3 +25,5 @@ services:
     ports:
       - "127.0.0.1:1080:1080"
       - "127.0.0.1:1025:1025"
+volumes:
+  sealious-nm:

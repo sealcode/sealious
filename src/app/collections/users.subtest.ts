@@ -14,8 +14,11 @@ describe("users", () => {
 					.filter({ email: app.manifest.admin_email })
 					.fetch();
 
-				assert.equal(sealious_response.items.length, 1);
-				assert.equal(sealious_response.items[0].get("role"), "admin");
+				assert.strictEqual(sealious_response.items.length, 1);
+				assert.strictEqual(
+					sealious_response.items[0].get("role"),
+					"admin"
+				);
 			}));
 
 		it("should properly handle route to account cration", async () =>
@@ -32,7 +35,9 @@ describe("users", () => {
 					token,
 				} = sealious_response.items[0].serializeBody();
 				const response = await rest_api.get(
-					`/account-creation-details?token=${token}&email=${email}`
+					`/account-creation-details?token=${token as string}&email=${
+						email as string
+					}`
 				);
 				assert(response.includes("Uzupełnij dane o Twoim koncie"));
 			}));
@@ -44,11 +49,11 @@ describe("users", () => {
 				await assertThrowsAsync(
 					async () =>
 						await rest_api.get(
-							"/api/v1/users/me?attachments[roles]=true"
+							"/api/v1/collections/users/me?attachments[roles]=true"
 						),
 					(e) => {
-						assert.equal(e.response.status, 401);
-						assert.equal(
+						assert.strictEqual(e.response.status, 401);
+						assert.strictEqual(
 							e.response.data.message,
 							"You're not logged in!"
 						);
@@ -64,14 +69,14 @@ describe("users", () => {
 					password: "password",
 				});
 				const response = await rest_api.get(
-					"/api/v1/users/me?attachments[roles]=true",
+					"/api/v1/collections/users/me?attachments[roles]=true",
 					session
 				);
 
 				const roles = Object.values(response.attachments);
 
-				assert.equal((roles as string[]).length, 1);
-				assert.equal(
+				assert.strictEqual((roles as string[]).length, 1);
+				assert.strictEqual(
 					(roles as { user: string; role: string }[])[0].role,
 					"admin"
 				);
@@ -111,8 +116,8 @@ describe("users", () => {
 								password: variant.password,
 							}),
 						(e) => {
-							assert.equal(e.response.status, 401);
-							assert.equal(
+							assert.strictEqual(e.response.status, 401);
+							assert.strictEqual(
 								e.response.data.message,
 								variant.message
 							);
@@ -139,8 +144,8 @@ describe("users", () => {
 								password: "password",
 							}),
 						(e) => {
-							assert.equal(e.response.status, 401);
-							assert.equal(
+							assert.strictEqual(e.response.status, 401);
+							assert.strictEqual(
 								e.response.data.message,
 								variant.message
 							);

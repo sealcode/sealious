@@ -71,8 +71,9 @@ describe("sorting", () => {
 		}
 		await Promise.all(promises);
 	}
-	it("properly sorts for correct sort key", async () =>
-		withRunningApp(extend, async ({ app, rest_api }) => {
+
+	it("properly sorts for correct sort key", async () => {
+		return withRunningApp(extend, async ({ app, rest_api }) => {
 			await create_resources(app, rest_api);
 			const { items } = await rest_api.get(
 				"/api/v1/collections/seals?sort[favorite_number]=desc"
@@ -82,7 +83,8 @@ describe("sorting", () => {
 				items.map((item: any) => item.favorite_number),
 				[8, 3, 3]
 			);
-		}));
+		});
+	});
 
 	it("throws application error for incorrect sort key", async () =>
 		withRunningApp(extend, async ({ app, rest_api }) => {
@@ -97,7 +99,7 @@ describe("sorting", () => {
 					assert.equal(e.response.status, 405);
 					assert.equal(
 						e.response.data.message,
-						"Unknown sort key: dsc. Available sort keys are: desc, descending, asc, ascending."
+						`Unknown sort key: "dsc". Available sort keys are: desc, descending, asc, ascending.`
 					);
 				}
 			);

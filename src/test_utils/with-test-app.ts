@@ -106,11 +106,9 @@ async function withTestApp(
 	}
 
 	const app = new modified_app_class();
-
 	if (auto_start) {
 		await app.start();
 	}
-
 	try {
 		await fn({
 			app: app as App,

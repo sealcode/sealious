@@ -1,11 +1,12 @@
-import { App, Context } from "../main";
+import { App } from "../main";
 import UUIDGenerator from "shortid";
 import fs, { ReadStream } from "fs";
 import { basename } from "path";
 import { getType } from "mime";
-import { PassThrough, Readable } from "stream";
+import { Readable } from "stream";
 
-const locreq = require("locreq")(__dirname);
+import locreq_curry from "locreq";
+const locreq = locreq_curry(__dirname);
 
 export type FileDBEntry = {
 	filename: string;
@@ -16,7 +17,7 @@ export default class File {
 	filename?: string;
 	mime_type?: string;
 	id?: string;
-	app: App;
+	private app: App;
 	data?: Readable;
 	constructor(app: App) {
 		this.app = app;
@@ -47,6 +48,12 @@ export default class File {
 	}
 
 	getURL() {
+		if (this.id === undefined) {
+			throw new Error("id not set!");
+		}
+		if (this.filename === undefined) {
+			throw new Error("filename not set!");
+		}
 		return `/api/v1/uploaded-files/${this.id}/${this.filename}`;
 	}
 
@@ -59,16 +66,22 @@ export default class File {
 		return ret;
 	}
 
-	static async fromPath(app: App, path: string) {
+	static async fromPath(
+		app: App,
+		path: string,
+		filename: string = basename(path)
+	) {
 		const ret = new FileFromPath(app);
-		ret.filename = basename(path);
+		ret.filename = filename;
 		ret.data = fs.createReadStream(path);
 		return ret;
 	}
 
 	static async fromData(app: App, buffer: Buffer | string) {
 		const stream = new Readable();
-		stream._read = () => {};
+		stream._read = () => {
+			null;
+		};
 		stream.push(buffer);
 		stream.push(null);
 		const ret = new File(app);

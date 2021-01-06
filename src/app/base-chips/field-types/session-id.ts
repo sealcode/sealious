@@ -1,6 +1,6 @@
 import { Field } from "../../../main";
 
-const uuid = require("node-uuid").v4;
+import { v4 as uuid } from "uuid";
 
 export default class SessionID extends Field {
 	typeName = "session-id";

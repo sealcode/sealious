@@ -41,16 +41,8 @@ export abstract class FileStorage extends Field {
  */
 export default class FileField extends FileStorage {
 	typeName = "file";
-	async decode(
-		_: Context,
-		db_value: FileStorageFormat,
-		__: any,
-		format?: FileFormat
-	) {
+	async decode(_: Context, db_value: FileStorageFormat, __: any) {
 		const file = await File.fromID(this.app, db_value.id);
-		if (format === "url") {
-			return file.getURL();
-		}
-		return file;
+		return file.getURL();
 	}
 }

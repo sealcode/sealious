@@ -3,7 +3,7 @@ type QueryStage = Partial<{
 	$match: any;
 	$lookup: any;
 	$search: any;
-	$unwind: any;
+	$unwind: string;
 	$nor: any;
 	$or: QueryStage[];
 	$and: QueryStage[];

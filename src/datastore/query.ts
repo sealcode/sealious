@@ -8,19 +8,23 @@ export default class Query {
 	constructor() {
 		this.steps = [];
 	}
+
 	lookup(body: LookupBody) {
 		const lookup_step = new Lookup(body);
 		this.steps.push(lookup_step);
 		return lookup_step.hash();
 	}
-	match(body: { [key: string]: any }) {
-		for (let key of Object.keys(body)) {
+
+	match(body: { [key: string]: unknown }) {
+		for (const key in body) {
 			this.steps.push(new Match({ [key]: body[key] }));
 		}
 	}
+
 	dump() {
 		return this.steps;
 	}
+
 	toPipeline(): QueryStage[] {
 		return this.steps.reduce(
 			(pipeline, query_step) => query_step.pushStage(pipeline),
@@ -41,7 +45,7 @@ export default class Query {
 				continue;
 			}
 			const stage = transformObject(
-				stages[i],
+				stages[i] as Record<string, unknown>,
 				(prop) => {
 					if (prop.startsWith("$")) {
 						return prop;
@@ -67,10 +71,13 @@ export default class Query {
 						.map((field) => field_as_to_hash[field] || field)
 						.join(".");
 				}
-			);
+			) as QueryStage;
 			steps = QueryStep.fromStage(stage, query._isUnwindStage(stages, i));
 			if (stage.$lookup) {
-				const field_as = stage.$lookup.as;
+				if (typeof stage.$lookup.as !== "string") {
+					throw new Error("Wrong lookup value");
+				}
+				const field_as = stage.$lookup.as as string;
 				field_as_to_hash[field_as] = steps[0].hash();
 			}
 
@@ -82,7 +89,7 @@ export default class Query {
 		if (!stages[i].$lookup) {
 			return false;
 		}
-		return stages[i + 1] && stages[i + 1].$unwind;
+		return (stages[i + 1]?.$unwind && true) || false;
 	}
 }
 

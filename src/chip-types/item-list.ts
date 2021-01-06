@@ -1,7 +1,12 @@
 import { CollectionItem } from "./collection-item";
 import Collection from "./collection";
 import { Context, Query } from "../main";
-import { BadContext, NotFound, BadSubjectAction } from "../response/errors";
+import {
+	BadContext,
+	NotFound,
+	BadSubjectAction,
+	ValidationError,
+} from "../response/errors";
 import QueryStage from "../datastore/query-stage";
 import sealious_to_mongo_sort_param from "../utils/mongo-sorts";
 import { ItemFields } from "./collection-item-body";
@@ -18,9 +23,11 @@ type SortParams<T extends Collection> = {
 	[key in keyof T["fields"]]: keyof typeof sealious_to_mongo_sort_param;
 };
 
-type FormatParam<T extends Collection> = {
-	[key in keyof T["fields"]]: any;
-};
+type FormatParam<T extends Collection> = Partial<
+	{
+		[key in keyof T["fields"]]: any;
+	}
+>;
 
 type AllInOneParams<T extends Collection> = {
 	sort: Parameters<ItemList<T>["sort"]>[0];
@@ -34,13 +41,15 @@ type AllInOneParams<T extends Collection> = {
  * resource can point to another one and that one can also have
  * attachments
  */
-export type AttachmentOptions = {
-	[field_name: string]: any;
-};
+export type AttachmentOptions<T extends Collection> = Partial<
+	{
+		[key in keyof T["fields"]]: any;
+	}
+>;
 
 export default class ItemList<T extends Collection> {
 	private fields_with_attachments_fetched: string[] = [];
-	private _attachments_options: AttachmentOptions = {};
+	private _attachments_options: AttachmentOptions<T> = {};
 	private _filter: FilterT<T>;
 	private _format: FormatParam<T>;
 	private _ids: string[];
@@ -50,8 +59,8 @@ export default class ItemList<T extends Collection> {
 	private collection: Collection;
 	private aggregation_stages: QueryStage[] = [];
 	private await_before_fetch: Promise<any>[] = [];
-	private is_paginated: boolean = false;
-	private is_sorted: boolean = false;
+	private is_paginated = false;
+	private is_sorted = false;
 	private pagination: Partial<PaginationParams> = {};
 
 	constructor(collection: T, context: Context) {
@@ -98,6 +107,29 @@ export default class ItemList<T extends Collection> {
 			this.await_before_fetch.push(promise);
 		}
 		return this;
+	}
+
+	validateFormatParam(format: unknown): FormatParam<T> {
+		if (format === undefined) {
+			return {};
+		}
+		if (typeof format !== "object") {
+			throw new ValidationError("Format should be a proper object");
+		}
+		for (const key in format) {
+			if (!(key in this.collection.fields)) {
+				throw new ValidationError(
+					`Invalid field name in filter: ${key}`
+				);
+			}
+		}
+		return format as FormatParam<T>;
+	}
+
+	// this method should only be used when dealing with user input. Otherwise use the `format` method, as it's type safe and any issues shoyuld arise during the build process
+	safeFormat(format: unknown): this {
+		this.validateFormatParam(format);
+		return this.format(format as FormatParam<T>);
 	}
 
 	format(format?: FormatParam<T>): this {
@@ -158,7 +190,7 @@ export default class ItemList<T extends Collection> {
 		return this;
 	}
 
-	attach(attachment_options?: AttachmentOptions): ItemList<T> {
+	attach(attachment_options?: AttachmentOptions<T>): ItemList<T> {
 		if (attachment_options === undefined || !attachment_options) {
 			return this;
 		}
@@ -193,7 +225,7 @@ export default class ItemList<T extends Collection> {
 				this.collection.fields[field_name]
 					.getAttachments(
 						this.context,
-						items.map((item) => item.get(field_name)),
+						items.map((item) => item.get(field_name) as unknown),
 						this._attachments_options[field_name]
 					)
 					.then((attachmentsList) => {
@@ -218,7 +250,7 @@ export default class ItemList<T extends Collection> {
 			.getPolicy("show")
 			.check(this.context);
 		if (result !== null && !result.allowed) {
-			throw new BadContext(result.reason as string);
+			throw new BadContext(result.reason);
 		}
 		const aggregation_stages = await this.getAggregationStages();
 		const documents = await this.context.app.Datastore.aggregate(
@@ -284,7 +316,9 @@ export default class ItemList<T extends Collection> {
 					sealious_to_mongo_sort_param
 				).join(", ");
 				throw new BadSubjectAction(
-					`Unknown sort key: ${this._sort[field_name]}. Available sort keys are: ${available_sort_keys}.`
+					`Unknown sort key: ${JSON.stringify(
+						this._sort[field_name]
+					)}. Available sort keys are: ${available_sort_keys}.`
 				);
 			}
 			$sort[field_name] = mongo_sort_param as -1 | 1;

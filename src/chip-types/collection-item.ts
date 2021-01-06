@@ -12,8 +12,8 @@ import { PolicyDecision } from "./policy";
 import isEmpty from "../utils/is-empty";
 
 type ItemMetadata = {
-	modified_at: Number;
-	created_at: Number;
+	modified_at: number;
+	created_at: number;
 };
 
 export type SerializedItem = ReturnType<CollectionItem["serialize"]>;
@@ -28,7 +28,7 @@ export class CollectionItem<T extends Collection = any> {
 	private attachments_loaded = false;
 	private save_mode: "update" | "insert" = "insert";
 	public original_body: CollectionItemBody;
-	public has_been_replaced: boolean = false;
+	public has_been_replaced = false;
 
 	constructor(
 		public collection: T,
@@ -185,7 +185,7 @@ export class CollectionItem<T extends Collection = any> {
 
 	get<FieldName extends keyof ItemFields<T>>(
 		field_name: FieldName,
-		include_raw: boolean = false
+		include_raw = false
 	): any {
 		if (this.fields_with_attachments.includes(field_name as string)) {
 			return this.attachments[this.body.getDecoded(field_name) as string];
@@ -264,9 +264,33 @@ export class CollectionItem<T extends Collection = any> {
 		} & ItemFields<T>;
 	}
 
+	async safeLoadAttachments(context: Context, attachment_options: unknown) {
+		if (attachment_options === undefined) {
+			attachment_options = {};
+		}
+		if (typeof attachment_options != "object") {
+			throw new ValidationError(
+				`Expected attachment params to be an object, got ${JSON.stringify(
+					attachment_options
+				)}`
+			);
+		}
+		for (const key in attachment_options) {
+			if (!(key in this.collection.fields)) {
+				throw new ValidationError(
+					`Unknown field name in attachments param: ${key}`
+				);
+			}
+		}
+		return this.loadAttachments(
+			context,
+			attachment_options as AttachmentOptions<T>
+		);
+	}
+
 	async loadAttachments(
 		context: Context,
-		attachment_options: AttachmentOptions = {}
+		attachment_options: AttachmentOptions<T> = {}
 	): Promise<this> {
 		// TODO: This function is kinda like a duplicate of `fetchAttachments` from ItemList?
 		if (this.attachments_loaded) {

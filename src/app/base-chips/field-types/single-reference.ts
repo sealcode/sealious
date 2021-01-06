@@ -1,6 +1,9 @@
 import Bluebird from "bluebird";
 import { Field, Context } from "../../../main";
 import ItemList, { AttachmentOptions } from "../../../chip-types/item-list";
+import { ValidationError } from "../../../response/errors";
+
+type Filter = Record<string, any>;
 
 /** A reference to other item, in the same or other collection. Can point at items from only one, specified collection. Items with field of this type can be filtered by fields of the items it points at. Examples below.
  *
@@ -32,12 +35,12 @@ export default class SingleReference extends Field {
 	typeName = "single-reference";
 	hasIndex = () => true;
 	target_collection: string;
-	filter: any;
+	filter: Filter;
 
-	constructor(target_collection: string, filter?: any) {
+	constructor(target_collection: string, filter?: Filter) {
 		super();
 		this.target_collection = target_collection;
-		this.filter = filter;
+		this.filter = filter || {};
 	}
 
 	getTargetCollection(context: Context) {
@@ -84,7 +87,7 @@ export default class SingleReference extends Field {
 		return decision;
 	}
 
-	async filterToQuery(context: Context, filter: any) {
+	async filterToQuery(context: Context, filter: Filter) {
 		// treating filter as a query here
 		context.app.Logger.debug3("SINGLE REFERENCE", "FiltertoQuery", {
 			context,
@@ -111,7 +114,7 @@ export default class SingleReference extends Field {
 		const temp_field_name = `${
 			this.getTargetCollection(context).name
 		}-lookup${Math.floor(Math.random() * Math.pow(10, 7))}`;
-		if (!filter_value || Object.keys(filter_value as Object).length === 0)
+		if (!filter_value || Object.keys(filter_value as Filter).length === 0)
 			return [];
 		if (typeof filter_value === "string") {
 			return [{ $match: { [await this.getValuePath()]: filter_value } }];
@@ -127,8 +130,11 @@ export default class SingleReference extends Field {
 				},
 			];
 		}
-		for (let field_name in filter_value as Object) {
-			let field = this.getTargetCollection(context).fields[field_name];
+		if (typeof filter_value !== "object") {
+			throw new ValidationError("Invalid filter value");
+		}
+		for (const field_name in filter_value) {
+			const field = this.getTargetCollection(context).fields[field_name];
 			if (!field)
 				return Promise.reject(
 					"Unknown field in filter for '" +
@@ -172,7 +178,7 @@ export default class SingleReference extends Field {
 	async getAttachments(
 		context: Context,
 		target_ids: string[],
-		attachment_options?: AttachmentOptions
+		attachment_options?: AttachmentOptions<any>
 	) {
 		const ret = new ItemList<any>(
 			this.getTargetCollection(context),

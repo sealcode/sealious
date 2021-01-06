@@ -1,6 +1,6 @@
 /* eslint-disable */
-// @ts-ignore
-const locreq = require("locreq")(__dirname);
+import locreq_curry from "locreq";
+const locreq = locreq_curry(__dirname);
 import { App, SMTPMailer } from "../main";
 import { Environment } from "../app/config";
 import { LoggerLevel } from "../app/logger";
@@ -25,7 +25,7 @@ export const get_test_app = ({
 			datastore_mongo: {
 				host: process.env.SEALIOUS_DB_HOST || "localhost",
 				password: "sealious-test",
-				port: parseInt(process.env.SEALIOUS_DB_HOST || "20722"),
+				port: parseInt(process.env.SEALIOUS_DB_PORT || "27017"),
 				db_name: "sealious-test",
 			},
 			email: {
@@ -70,6 +70,7 @@ export const get_test_app = ({
 		async start() {
 			this.on("stopping", async () => {
 				if (this.clear_database_on_stop && this.Datastore.db) {
+					this.Logger.info("TEST APP", "Clearing the database...");
 					for (const collection_name in this.collections) {
 						await this.Datastore.remove(
 							collection_name,

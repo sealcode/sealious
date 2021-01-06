@@ -52,7 +52,7 @@ describe("finalize registration", () => {
 				});
 
 				const response = await rest_api.get(
-					"/api/v1/users/me?attachments[roles]=true",
+					"/api/v1/collections/users/me?attachments[roles]=true",
 					options
 				);
 				assert.equal(response.items[0].roles.length, 1);

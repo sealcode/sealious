@@ -1,9 +1,10 @@
+import { Middleware } from "@koa/router";
 import * as assert from "assert";
-// @ts-ignore
-const locreq = require("locreq")(__dirname);
+
+import locreq_curry from "locreq";
+const locreq = locreq_curry(__dirname);
 import fs from "fs";
 import App from "../../app/app";
-import { File } from "../../main";
 
 let css: string;
 let get_css = async () => {
@@ -76,19 +77,21 @@ let render_form = async (app: App, token: string, email: string) => /* HTML */ `
 	</html>
 `;
 
-export default (app: App) => {
-	app.HTTPServer.custom_route(
-		"GET",
-		"/confirm-password-reset",
-		async (app, _, params) => {
-			assert.ok(params.token);
-			assert.ok(params.email);
-			const file = await File.fromData(
-				app,
-				await render_form(app, params.token, params.email)
-			);
-			file.filename = "confirm-password.html"; // to set the mimetype
-			return file;
-		}
+const confirmPasswordReset: Middleware = async (ctx) => {
+	assert.ok(ctx.request.query.token);
+	assert.ok(ctx.request.query.email);
+
+	if (typeof ctx.request.query.token !== "string") {
+		throw new Error("Token isn't a string or is missing");
+	}
+	if (typeof ctx.request.query.email !== "string") {
+		throw new Error("Email isn't a string or is missing");
+	}
+	ctx.body = await render_form(
+		ctx.$app,
+		ctx.request.query.token,
+		ctx.request.query.email
 	);
 };
+
+export default confirmPasswordReset;

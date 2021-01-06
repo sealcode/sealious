@@ -1,11 +1,10 @@
-FROM node:13-alpine
+FROM node:14-alpine
 LABEL maintainer="Jakub Pieńkowski <jakski@sealcode.org>"
 
-ENV UID=node \
-    GID=node \
+ENV UID=1000 \
+    GID=1000 \
     HOME=/opt/sealious
 
-RUN sed -i 's/http\:\/\/dl-cdn.alpinelinux.org/https\:\/\/mirrors.dotsrc.org/g' /etc/apk/repositories
 # Tini will ensure that any orphaned processes get reaped properly.
 RUN apk add --no-cache tini
 RUN apk --update add git
@@ -16,9 +15,18 @@ RUN apk --update add g++
 VOLUME $HOME
 WORKDIR $HOME
 
-USER $UID:$GID
+RUN chown $UID:$GID /opt/sealious
+RUN mkdir /opt/sealious/node_modules && chown $UID:$GID /opt/sealious/node_modules
+VOLUME /opt/sealious/node_modules
+
+RUN apk --update add vips-dev
+
+ # the user is changed within docker-entrypoint.sh
+USER 0:0
 
 EXPOSE 8080
 
-ENTRYPOINT ["/sbin/tini", "--"]
+ADD docker-entrypoint.sh /
+
+ENTRYPOINT ["/docker-entrypoint.sh"]
 CMD ["/usr/local/bin/node", "."]

@@ -1,6 +1,3 @@
-import SubjectPath from "./data-structures/subject-path";
-import Subject from "./subject/subject";
-
 export type ShowActionName = "show";
 export type CreateActionName = "create";
 export type EditActionName = "edit";

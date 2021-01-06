@@ -1,4 +1,4 @@
-import Query, { And, Not, Or } from "./query";
+import Query, { And, Not, Or, QueryStage } from "./query";
 import * as assert from "assert";
 import QueryStep, { LookupBody, Lookup } from "./query-step";
 import DenyAll from "./deny-all";
@@ -6,7 +6,7 @@ import DenyAll from "./deny-all";
 describe("Query", () => {
 	describe("Query general", () => {
 		it("Creates correct query from custom pipeline", () => {
-			const pipeline = [
+			const pipeline: QueryStage[] = [
 				{ $match: { title: { $ne: "The Joy of PHP" }, edition: 1 } },
 				{
 					$lookup: {

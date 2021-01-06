@@ -1,4 +1,5 @@
-const locreq = require("locreq")(__dirname);
+import locreq_curry from "locreq";
+const locreq = locreq_curry(__dirname);
 import Field from "../../../chip-types/field";
 import { Context, ExtractInput, File } from "../../../main";
 import FileField, { FileStorage, FileStorageFormat } from "./file";

@@ -18,8 +18,10 @@ let mocha_options = [
 if (args["test-report"]) {
 	mocha_options = [
 		...mocha_options,
-		"--require",
-		"ts-node/register",
+		// "--require",
+		// "ts-node/register",
+		// "--require",
+		// "./src/http/type-overrides.ts",
 		"--reporter",
 		"xunit",
 		"--reporter-option",
@@ -27,14 +29,12 @@ if (args["test-report"]) {
 	];
 }
 
-const mocha_files = args["test-report"]
-	? ["./src/**/*.test.ts"]
-	: ["lib/src/**/*.test.js"];
+const mocha_files = ["lib/src/**/*.test.js"];
 
 let command = [mocha, ...mocha_options, ...mocha_files];
 
 if (args.cover) {
-	const nyc = [bin_dir + "nyc"];
+	const nyc = [bin_dir + "nyc", "-all"];
 	if (args["cover-html"]) {
 		nyc.push("--reporter", "lcov");
 	} else {
@@ -47,7 +47,7 @@ if (args.debug) {
 	command = ["node", "inspect", ...command];
 }
 
-console.log("spawning mocha...");
+console.log("spawning mocha...", command);
 
 const proc = spawn(command[0], command.slice(1), {
 	stdio: "inherit",

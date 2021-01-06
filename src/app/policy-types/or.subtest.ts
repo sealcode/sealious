@@ -11,8 +11,7 @@ const [ComplexDenyPipeline, ComplexAllowPipeline] = create_policies.allowDeny();
 
 const collections = [
 	{
-		name:
-			"collection-or(nested-or(allow, noone), nested-and(allow, public))",
+		name: "collection-or(nested-or(allow,noone),nested-and(allow,public))",
 		policies: [
 			new Policies.Or([new ComplexAllowPipeline(), new Policies.Noone()]),
 			new Policies.And([
@@ -22,15 +21,15 @@ const collections = [
 		],
 	},
 	{
-		name: "collection-or(complex-allow-pipeline, public)",
+		name: "collection-or(complex-allow-pipeline,public)",
 		policies: [new ComplexAllowPipeline(), new Policies.Public()],
 	},
 	{
-		name: "collection-or(complex-deny-pipeline, noone)",
+		name: "collection-or(complex-deny-pipeline,noone)",
 		policies: [new ComplexDenyPipeline(), new Policies.Noone()],
 	},
 	{
-		name: "collection-or(complex-deny-pipeline, public)",
+		name: "collection-or(complex-deny-pipeline,public)",
 		policies: [new ComplexDenyPipeline(), new Policies.Public()],
 	},
 ];
@@ -85,42 +84,42 @@ async function createItems(app: Sealious.App) {
 }
 
 describe("OrPolicy", () => {
-	it("returns everything for collection-or(nested-or(allow, noone), nested-and(allow, public))", () =>
+	it("returns everything for collection-or(nested-or(allow,noone),nested-and(allow,public))", () =>
 		withRunningApp(extend, async ({ app, rest_api }) => {
 			await createItems(app);
 			return rest_api
 				.get(
-					"/api/v1/collections/collection-or(nested-or(allow, noone), nested-and(allow, public))"
+					"/api/v1/collections/collection-or(nested-or(allow,noone),nested-and(allow,public))"
 				)
 				.then(({ items }: any) => assert.equal(items.length, 3));
 		}));
 
-	it("returns everything for or(complex-allow-pipeline, public)", () =>
+	it("returns everything for or(complex-allow-pipeline,public)", () =>
 		withRunningApp(extend, async ({ app, rest_api }) => {
 			await createItems(app);
 			return rest_api
 				.get(
-					"/api/v1/collections/collection-or(complex-allow-pipeline, public)"
+					"/api/v1/collections/collection-or(complex-allow-pipeline,public)"
 				)
 				.then(({ items }: any) => assert.equal(items.length, 3));
 		}));
 
-	it("returns nothing for or(complex-deny-pipeline, noone)", () =>
+	it("returns nothing for or(complex-deny-pipeline,noone)", () =>
 		withRunningApp(extend, async ({ app, rest_api }) => {
 			await createItems(app);
 			return rest_api
 				.get(
-					"/api/v1/collections/collection-or(complex-deny-pipeline, noone)"
+					"/api/v1/collections/collection-or(complex-deny-pipeline,noone)"
 				)
 				.then(({ items }: any) => assert.equal(items.length, 0));
 		}));
 
-	it("returns everything for or(complex-deny-pipeline, public)", () =>
+	it("returns everything for or(complex-deny-pipeline,public)", () =>
 		withRunningApp(extend, async ({ app, rest_api }) => {
 			await createItems(app);
 			return rest_api
 				.get(
-					"/api/v1/collections/collection-or(complex-deny-pipeline, public)"
+					"/api/v1/collections/collection-or(complex-deny-pipeline,public)"
 				)
 				.then(({ items }: any) => assert.equal(items.length, 3));
 		}));

@@ -22,7 +22,10 @@ describe("finalize password reset", () => {
 				username: "user",
 				password: "password",
 			});
-			await rest_api.delete("/api/v1/sessions/current", options);
+			await rest_api.delete(
+				"/api/v1/collections/sessions/current",
+				options
+			);
 			await rest_api.post("/api/v1/collections/password-reset-intents", {
 				email: "user@example.com",
 			});

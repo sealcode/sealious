@@ -34,7 +34,7 @@ export default abstract class QueryStep {
 	abstract getUsedFields(): string[];
 
 	abstract getCost(): number;
-	abstract pushStage(pipeline: any[]): any[];
+	abstract pushStage(pipeline: any[]): QueryStage[];
 	abstract negate(): QueryStep;
 }
 
