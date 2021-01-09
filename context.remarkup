@@ -43,6 +43,10 @@ A `SuperContext` is a context that passess all possible policy checks. It's like
 using the sealious-made API endpoints has no ability to create a SuperContext.
 `SuperContext` is only meant to be used in isolated places by the backend code.
 
+Some ORM methods have their `super` equivalents. The Collection clas has `list`
+and `suList`, for example. the `su`-prefixed methods don't ask for context and
+create a SuperContext for you.
+
 ## Middlewares
 
 When writing custom routes, you can use the `extractContext` middleware in order

@@ -19,6 +19,12 @@ type GetValue<T extends Field> = (
 	resource_id: string
 ) => Promise<Parameters<T["encode"]>[1]>;
 
+type CachedValueSettings<T extends Field> = {
+	refresh_on: RefreshCondition[];
+	get_value: GetValue<T>;
+	initial_value: Parameters<T["encode"]>[1];
+};
+
 export default class CachedValue<T extends Field> extends HybridField<T> {
 	typeName = "cached-value";
 
@@ -28,14 +34,7 @@ export default class CachedValue<T extends Field> extends HybridField<T> {
 	hasDefaultValue: () => true;
 	private initial_value: Parameters<T["encode"]>[1];
 
-	constructor(
-		base_field: T,
-		params: {
-			refresh_on: RefreshCondition[];
-			get_value: GetValue<T>;
-			initial_value: Parameters<T["encode"]>[1];
-		}
-	) {
+	constructor(base_field: T, params: CachedValueSettings<T>) {
 		super(base_field);
 		super.setParams(params);
 		this.refresh_on = params.refresh_on;
@@ -64,6 +63,14 @@ export default class CachedValue<T extends Field> extends HybridField<T> {
 					item,
 					event
 				);
+
+				if (!Array.isArray(cache_resource_ids)) {
+					throw new Error(
+						`resource_id_getter return value should be an array of strings, got: ${JSON.stringify(
+							cache_resource_ids
+						)}`
+					);
+				}
 
 				app.Logger.debug3("CACHED VALUE", "Inside hook", {
 					cache_resource_ids,

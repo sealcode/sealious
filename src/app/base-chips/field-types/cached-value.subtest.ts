@@ -9,7 +9,7 @@ import { getDateTime } from "../../../utils/get-datetime";
 import { App, Context, Collection, FieldTypes, Field } from "../../../main";
 import Bluebird from "bluebird";
 import { TestAppType } from "../../../test_utils/test-app";
-import ItemList from "../../../chip-types/item-list";
+import ItemList, { ItemListResult } from "../../../chip-types/item-list";
 import { RefreshCondition } from "./cached-value";
 import { EventDescription } from "../../delegate-listener";
 import MockRestApi, {
@@ -308,6 +308,94 @@ describe("cached-value", () => {
 				}
 			);
 		}));
+
+	it("should pass friendship scenario", async () => {
+		return withRunningApp(
+			(test_app_type) => {
+				return class extends test_app_type {
+					collections = {
+						...test_app_type.BaseCollections,
+						people: new (class extends Collection {
+							fields = {
+								name: new FieldTypes.Text(),
+								popularity: new FieldTypes.CachedValue(
+									new FieldTypes.Int({ min: 0 }),
+									{
+										refresh_on: [
+											{
+												event: new EventDescription(
+													"who-likes-who",
+													"after:create"
+												),
+												resource_id_getter: async (
+													_,
+													item
+												) => [
+													item.get(
+														"likes_this_person"
+													) as string,
+												],
+											},
+										],
+										get_value: async function (
+											context,
+											item_id
+										) {
+											const is_liked_by = (await context.app.collections[
+												"who-likes-who"
+											]
+												.suList()
+												.filter({
+													likes_this_person: item_id,
+												})
+												.fetch()) as ItemListResult<any>;
+											return is_liked_by.items.length;
+										},
+										initial_value: 0,
+									}
+								),
+							};
+						})(),
+						"who-likes-who": new (class extends Collection {
+							fields = {
+								this_person: new FieldTypes.SingleReference(
+									"people"
+								),
+								likes_this_person: new FieldTypes.SingleReference(
+									"people"
+								),
+							};
+						})(),
+					};
+				};
+			},
+			async ({ rest_api }) => {
+				const alice = await rest_api.post(
+					"/api/v1/collections/people",
+					{
+						name: "alice",
+					}
+				);
+				const bob = await rest_api.post("/api/v1/collections/people", {
+					name: "bob",
+				});
+				const friendship = await rest_api.post(
+					"/api/v1/collections/who-likes-who",
+					{
+						this_person: bob.id as string,
+						likes_this_person: alice.id as string,
+					}
+				);
+				const response = await rest_api.get(
+					`/api/v1/collections/people/${alice.id}`
+				);
+				assert.strictEqual(response.items[0].popularity, 1);
+				await rest_api.delete(
+					`/api/v1/collections/who-likes-who/${friendship.id}`
+				);
+			}
+		);
+	});
 });
 
 function make_refresh_on(): RefreshCondition[] {

@@ -1,0 +1,81 @@
+# Cached value field
+
+This field is useful when a certain property of the item is expensive to
+calculate ut changes rarely, or when it depends on fields from other resources,
+but needs to be stored in the database and not calculated on-the-fly so it can
+be efficiently filtered by.
+
+## Constructor
+
+The basic synnopsis is:
+
+```
+lang=typescript
+new FieldTypes.CachedValue(child_field: Field, cache_settings: CachedValueSettings);
+```
+
+the field created by above constructor would have the structure of given `child_field`, but will not be writable by the user directly, instead it's value will be determined by `cache_settings`. `cache_settings` is an object with the following keys:
+
+-   `refresh_on`: an array of `RefreshCondition` objects (described below)
+-   `get_value`: a function that calculates a new value for this field, based on the received event (see `RefreshCondition`). The function takes `context` and `event` as arguments and has to return data that is sotrable within `child_field`.
+-   `initial_value`: the value this field should have right when it's created for a new resource.
+
+`RefreshCondition` has the following structure:
+
+-   `event`: instance of Sealious.EventDescription. Example: `new Sealious.EventDescription("users", "after:create")` will make the refresh condition react every time a new user is created.
+-   `resource_id_getter`: a function that is called when the `event` is triggered. The function has to return the ID (as `string` or a `Promise<string>`) of the resource whose cached_value needs to be recalculated. The function is given `context`, `item` (the item that triggered the event) and `item_id` (that points to the item which is this new value will be added to)
+
+## Example
+
+This app will keep count of how many people like a given person. The
+`popularity` field will be recalculated every time a `who-likes-who` entry
+pointing at the given person is created.
+
+To fully realize the functionality one would have to also add a listener for
+deleting `who-likes-who`, but the below code is only for demonstrative purposes.
+
+```
+lang=typescript
+const app = new (class extends App {
+    config = {
+        /*...*/
+    };
+    manifest = {
+        /*...*/
+    };
+    collections = {
+        ...App.BaseCollections,
+        people: new (class extends Collection {
+            fields = {
+                name: new FieldTypes.Text(),
+                popularity: new FieldTypes.CachedValue(new FieldTypes.Int({ min: 0 }), {
+                    refresh_on: [
+                        {
+                            event: new EventDescription("who-likes-who", "after:create"),
+                            resource_id_getter: async (_, item) => [
+                                item.get("likes_this_person") as string,
+                            ],
+                        },
+                    ],
+                    get_value: async function (context, item_id) {
+                        const is_liked_by = (await context.app.collections["who-likes-who"]
+                            .suList()
+                            .filter({
+                                likes_this_person: item_id,
+                            })
+                            .fetch()) as ItemListResult<any>;
+                        return is_liked_by.items.length;
+                    },
+                    initial_value: 0,
+                }),
+            };
+        })(),
+        "who-likes-who": new (class extends Collection {
+            fields = {
+                this_person: new FieldTypes.SingleReference("people"),
+                likes_this_person: new FieldTypes.SingleReference("people"),
+            };
+        })(),
+    };
+})();
+```
