@@ -8,6 +8,7 @@ declare module "koa" {
 	interface BaseContext {
 		$context: Sealious.Context;
 		$app: Sealious.App;
+		$body: Record<string, unknown>;
 	}
 }
 

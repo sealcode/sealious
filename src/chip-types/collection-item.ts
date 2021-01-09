@@ -20,7 +20,7 @@ export type SerializedItem = ReturnType<CollectionItem["serialize"]>;
 export type SerializedItemBody = ReturnType<CollectionItem["serializeBody"]>;
 
 /** CollectionItem */
-export class CollectionItem<T extends Collection = any> {
+export default class CollectionItem<T extends Collection = any> {
 	id: string;
 
 	fields_with_attachments: string[] = [];

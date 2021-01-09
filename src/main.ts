@@ -29,3 +29,4 @@ export { default as ItemList } from "./chip-types/item-list";
 export { default as SMTPMailer } from "./email/smtp-mailer";
 export { default as LoggerMailer } from "./email/logger-mailer";
 export { default as Middlewares } from "./http/middlewares";
+export { default as CollectionItem } from "./chip-types/collection-item";

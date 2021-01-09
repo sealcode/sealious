@@ -34,6 +34,7 @@ export default function parseBody(): Middleware {
 
 		await Promise.all(promises);
 		ctx.$app.Logger.info("REQUEST", "Parsed body", ctx.request.body);
+		ctx.$body = ctx.request.body;
 		await next();
 	};
 }
