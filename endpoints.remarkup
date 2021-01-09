@@ -106,3 +106,63 @@ GET /api/v1/collections/seals?filter[object_field][weight]=280&sort[age]=asc
 # 10 items per page, show items 11-20:
 GET /api/v1/collections/seals?filter[name]=Hoover?pagination[items]=10&page=2
 ```
+
+Example response:
+
+```
+lang=json
+{
+    "attachments": {},
+    "fields_with_attachments": [],
+    "items": [
+        {
+            "done": false,
+            "id": "YwviNwK-X",
+            "title": "Remember to push to master"
+        },
+        {
+            "done": false,
+            "id": "O6-WocIJs",
+            "title": "Write docs"
+        },
+    ]
+}
+```
+
+### Get an item by ID
+
+`GET /api/v1/collections/:collection_name/:id`
+
+#### Query params:
+
+-   `attach` - key/value. keys are field-names, values are field-type specific.
+    Whether or not to fetch attachments related to given field, and in what
+    form. Currently supported only by `single-reference` and
+    `reverse-single-reference` field types.
+-   `format` key/value. Some fields can have different outputs depending on the
+    provided format.
+
+#### Examples
+
+```
+# get a task with id xyz123
+GET /api/v1/collections/tasks/xyz123
+```
+
+Example response:
+
+```
+lang=json
+{
+    "attachments": {},
+    "fields_with_attachments": [],
+    "items": [
+        {
+            "done": false,
+            "id": "YwviNwK-X",
+            "title": "umyć dupę"
+        }
+    ]
+}
+
+```
