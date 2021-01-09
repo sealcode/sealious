@@ -1,0 +1,56 @@
+# Reverse Single Reference
+
+This field will be an array of all items from a specified collection that point to given item in a given field.
+
+For example, assume you have two collections: "dogs" and "shelters". Each dog
+can belong to one shelter, but a shelter can be taking care of multiple dogs at
+the same time. We have a one-to-many relationship.
+
+Assigning dogs to shelters in this scenario can be easily be done with a
+`single-reference` field in the `dogs` collection.
+
+If we add a `reverse-single-reference` field to the `shelters` collection, that
+field will always be an array of ids of dogs that are assigned to that shelter.
+What's more, loading attachments for that shelter will make Sealious attach all
+the dogs' data, not only the ids.
+
+## Constructor params
+
+```
+lang=typescript
+new FieldTypes.ReverseSingleReference({
+    referencing_collection: "dogs", // the name of the collection to watch
+    referencing_field: "shelter",  // the field within that collection to watch
+})
+```
+
+## Example
+
+```
+lang=typescript
+const app = new (class extends App {
+    config = {
+        /*...*/
+    };
+    manifest = {
+        /*...*/
+    };
+    collections = {
+        ...App.BaseCollections,
+        dogs: new (class extends Collection {
+            fields = {
+                name: new FieldTypes.Text(),
+                shelter: new FieldTypes.SingleReference("shelters"),
+            };
+        })(),
+        shelters: new (class extends Collection {
+            fields = {
+                dogs = new FieldTypes.ReverseSingleReference({
+                    referencing_collection: "dogs",
+                    referencing_field: "shelter",
+                }),
+            };
+        })(),
+    };
+})();
+```
