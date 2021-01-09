@@ -6,6 +6,8 @@ don't have to worry about implementing logic of who can do what. Just make sure
 that the policies are set up properly for each collection and they will be
 enforced.
 
+NOTE: Some query params are expected to have complex, sometimes even nested structure. When the documentation refers to key/value-formatted query params, use [] syntax, so to send `{filter: {name: "Reksio", age: 34}}`, use `filter[name]=Reksio&filter[age]=34`. See the [`qs` module](https://github.com/ljharb/qs) for more details.
+
 ## User/Session management
 
 ### Register:
@@ -54,3 +56,27 @@ There routes set up for some static forms, including:
     `/account-creation-details` contains a form that POSTs to this endpoint.
 -   `POST /finalize-password-reset`
 -   `GET /confirm-password-reset`
+
+## Collection endpoints
+
+Each collection gets a full REST-ful API endpoint. These endpoints work for both the collections created by you, //as well as// for all built-in collections:
+
+-   `users`
+-   `sessions`
+-   `password-reset-intents`
+-   `registration-intents`
+-   `user-roles`
+-   `formatted-images`
+
+### List all elements within the collection
+
+`GET /api/v1/collections/:collection_name`
+
+#### Query Params:
+
+-   `filter` - key/value. Maps field names to the desired values. Example: `?filter[name]=Hoover&filter[age][gt]=18`
+-   `sort` - key/value. Forces the output to be sorted by given field. Example:
+    `?sort[favorite_number]=desc`. Sort order is `desc` or `asc`
+-   `pagination` -
+
+#### Examples
