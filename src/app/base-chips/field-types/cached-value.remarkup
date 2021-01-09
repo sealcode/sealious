@@ -29,7 +29,8 @@ the field created by above constructor would have the structure of given `child_
 
 This app will keep count of how many people like a given person. The
 `popularity` field will be recalculated every time a `who-likes-who` entry
-pointing at the given person is created.
+pointing at the given person is created. This way you can efficiently sort and
+filter people by their popularity.
 
 To fully realize the functionality one would have to also add a listener for
 deleting `who-likes-who`, but the below code is only for demonstrative purposes.
