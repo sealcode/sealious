@@ -13,6 +13,8 @@ export default class Users extends Collection {
 		}),
 	};
 
+	defaultPolicy = new Policies.Themselves();
+
 	policies = {
 		show: new Policies.Themselves(),
 	};

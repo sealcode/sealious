@@ -76,7 +76,7 @@ The app created by the above code also has some handy ORM-style methods to acces
 lang=typescript
 import {Context} from "sealious";
 
-const tasks = app.collections.tasks.list(new Context()).fetch()
+const tasks = app.collections.tasks.list(new Context(app)).fetch()
 ```
 
 To learn more about the ORM methods, see [./orm.remarkup doc file](https://hub.sealcode.org/source/sealious/browse/dev/orm.remarkup).
@@ -96,6 +96,7 @@ current version of Sealious:
 
 -   [List of all endpoints automatically created by Sealious](https://hub.sealcode.org/source/sealious/browse/dev/endpoints.remarkup)
 -   [ORM style accessors to database](https://hub.sealcode.org/source/sealious/browse/dev/orm.remarkup)
+-   [Theory and practice behind Context](https://hub.sealcode.org/source/sealious/browse/dev/context.remarkup)
 
 ### FAQ
 

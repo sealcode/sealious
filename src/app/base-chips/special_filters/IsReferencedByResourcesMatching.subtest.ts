@@ -16,6 +16,7 @@ function extend(t: TestAppType) {
 					create: new Policies.Public(),
 					show: new Policies.Public(),
 				};
+				defaultPolicy = new Policies.Public();
 				named_filters = {
 					staff: new IsReferencedByResourcesMatching("users-roles", {
 						referencing_collection: "users-roles",

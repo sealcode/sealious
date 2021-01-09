@@ -1,0 +1,58 @@
+# Context
+
+`Context`s are central to how Sealious handle access control. Context is
+basically a simple object that contains information about who and when is
+performing a given request. Sealious creates a new context every time a user
+sends an HTTP request to the app and passes it down to every subsequent function
+call. The context is then used by all these methods to ensure that the user has
+enough privileges to access or modify the given resource.
+
+Thanks to that, even though the consequences of a single request can be complex,
+the user will never see what they're not allowed to see and change what they're
+not allowed to change.
+
+Remember that in Sealious you don't have to write your own policy logic for each
+endpoint. If you were to write your own endpoint, you don't have to perform any
+access control checks. You can literally do:
+
+```
+app.HTTPServer.router.get("/", Middlewares.extractContext(), async (ctx) => {
+    const users = await app.collections.users
+        .list(ctx.$context)
+        .fetch()
+    ctx.body = html(/* HTML */ `
+        <body>
+            <h1>My To do list</h1>
+            ${users.map(user=>user.get("username")}
+        </body>
+    `);
+});
+```
+
+And even if there are thousands of users within this app, this endpoint will
+output only one user to every logged in user - themselves.
+
+In short - thanks to Contexts and Policies, you define access control within the
+collection definition and let Sealious worry about the rest.
+
+## Super Context
+
+A `SuperContext` is a context that passess all possible policy checks. It's like
+`sudo` - with SuperContext you can see and modify basically everything. A user
+using the sealious-made API endpoints has no ability to create a SuperContext.
+`SuperContext` is only meant to be used in isolated places by the backend code.
+
+## Middlewares
+
+When writing custom routes, you can use the `extractContext` middleware in order to tell Sealious to extract context and session data from the request and pass it to koa's `ctx`:
+
+```
+import {Middlewares} from "sealious";
+
+app.HTTPServer.router.get("/tasks", Middlewares.extractContext(), async (ctx) => {
+    const tasks = await app.collections.tasks
+        .list(ctx.$context)
+        .fetch()
+    ctx.body.users = tasks.map(task=>task.get("title").join("\n");
+});
+```
