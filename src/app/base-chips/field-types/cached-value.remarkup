@@ -14,7 +14,10 @@ lang=typescript
 new FieldTypes.CachedValue(child_field: Field, cache_settings: CachedValueSettings);
 ```
 
-the field created by above constructor would have the structure of given `child_field`, but will not be writable by the user directly, instead it's value will be determined by `cache_settings`. `cache_settings` is an object with the following keys:
+the field created by above constructor would have the structure of given
+`child_field`, but will not be writable by the user directly, instead it's value
+will be determined by `cache_settings`. `cache_settings` is an object with the
+following keys:
 
 -   `refresh_on`: an array of `RefreshCondition` objects (described below)
 -   `get_value`: a function that calculates a new value for this field, based on the received event (see `RefreshCondition`). The function takes `context` and `event` as arguments and has to return data that is sotrable within `child_field`.
