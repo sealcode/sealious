@@ -1,0 +1,17 @@
+# Derived value
+
+Calculates a value based on other fields within the same item and stores it. The value is recalculated each time the fields it depends on are changed
+
+## Constructor params
+
+```
+lang=typescript
+new FieldTypes.DerivedValue(
+    new FieldTypes.Text(),
+    {
+        fields: ["username", "surname"], // refresh when these fields are changed
+        deriving_fn: async (username: string, surname: string) => // calculate new value based on those fields
+            `${username} ${surname}`,
+    }
+);
+```
