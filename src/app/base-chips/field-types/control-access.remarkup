@@ -1,0 +1,17 @@
+# ControlAccess Field
+
+A wrapper around another field, that allows to view/edit the field only to users that match a certain Policy.
+
+## Constructor params
+
+```
+lang=typescript
+new FieldTypes.ControlAccess(new FieldTypes.Text({ min_length: 3 }), {
+  target_policies: {
+    show: new Policies.Public(),
+    edit: new Policies.Roles(["admin"]),
+  },
+  value_when_not_allowed: "Forbidden",
+});
+
+```
