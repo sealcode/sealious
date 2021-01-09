@@ -160,9 +160,52 @@ lang=json
         {
             "done": false,
             "id": "YwviNwK-X",
-            "title": "umyć dupę"
+            "title": "Write docs"
         }
     ]
 }
+```
 
+### Create an item
+
+`POST /api/v1/collections/:collection_name`
+
+#### Request body:
+
+Fill in all fields defined within the collection as JSON or form-data.
+
+#### Examples
+
+```
+http POST http://localhost:8080/api/v1/collections/tasks title="some title" done=false
+```
+
+### Edit an existing item
+
+`PATCH /api/v1/collections/:collection_name/:id`
+
+`PUT /api/v1/collections/:collection_name/:id`
+
+#### Request body:
+
+JSON or form-data. When using PATCH, only send the fields that you want to change. When using PUT, send all fields you want saved.
+
+When using PUT, ommiting a field means "delete it's value". When using PATCH, omitting a field means "leave it unchanged".
+
+#### Examples
+
+```
+http PATCH https://localhost:8080/api/v1/collections/tasks/YwviNwK-X done=true
+```
+
+### Delete an item
+
+`DELETE /api/v1/collections/:collection_name:/id`
+
+No query params or body params.
+
+#### Examples
+
+```
+http DELETE https://localhost:8080/api/v1/collections/tasks/YwviNwK-X
 ```
