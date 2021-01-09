@@ -6,7 +6,7 @@ don't have to worry about implementing logic of who can do what. Just make sure
 that the policies are set up properly for each collection and they will be
 enforced.
 
-NOTE: Some query params are expected to have complex, sometimes even nested structure. When the documentation refers to key/value-formatted query params, use [] syntax, so to send `{filter: {name: "Reksio", age: 34}}`, use `filter[name]=Reksio&filter[age]=34`. See the [`qs` module](https://github.com/ljharb/qs) for more details.
+NOTE: Some query params are expected to have complex, sometimes even nested structure. When the documentation refers to key/value-formatted query params, use [] syntax, so to send `{filter: {name: "Reksio", age: 34}}`, use `filter[name]=Reksio&filter[age]=34`. See the [qs module](https://github.com/ljharb/qs) for more details.
 
 ## User/Session management
 
