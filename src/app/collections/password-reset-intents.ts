@@ -1,6 +1,12 @@
-import { Collection, FieldTypes, Policies, App, Context } from "../../main";
 import PasswordResetTemplate from "../../email/templates/password-reset";
-import { CollectionItem } from "../../chip-types/collection-item";
+import {
+	App,
+	Collection,
+	CollectionItem,
+	Context,
+	FieldTypes,
+	Policies,
+} from "../../main";
 
 export default class PasswordResetIntents extends Collection {
 	name = "password-reset-intents";

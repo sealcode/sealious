@@ -1,11 +1,10 @@
 import Policy from "../../chip-types/policy";
-import { App, Context, FieldTypes, Query } from "../../main";
+import { App, CollectionItem, Context, FieldTypes, Query } from "../../main";
 import Collection from "../../chip-types/collection";
 import { ActionName } from "../../action";
 import QueryStage from "../../datastore/query-stage";
 import DenyAll from "../../datastore/deny-all";
 import { AllowAll } from "../../datastore/allow-all";
-import { CollectionItem } from "../../chip-types/collection-item";
 
 export default class SameAsForResourceInField extends Policy {
 	static type_name = "same-as-for-resource-in-field";

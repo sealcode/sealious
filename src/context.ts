@@ -1,5 +1,5 @@
 import App from "./app/app";
-import { CollectionItem } from "./chip-types/collection-item";
+import { CollectionItem } from "./main";
 
 export default class Context {
 	timestamp: number;

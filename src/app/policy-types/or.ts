@@ -8,7 +8,7 @@ import Context from "../../context";
 
 import { AllowAll } from "../../datastore/allow-all";
 import { default as QueryOr } from "../../datastore/query-or";
-import { CollectionItem } from "../../chip-types/collection-item";
+import { CollectionItem } from "../../main";
 
 export default class Or extends ReducingPolicy {
 	static type_name = "or";

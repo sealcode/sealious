@@ -1,4 +1,4 @@
-import { CollectionItem } from "./collection-item";
+import CollectionItem from "./collection-item";
 import Collection from "./collection";
 import { Context, Query } from "../main";
 import {

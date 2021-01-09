@@ -5,9 +5,9 @@ import {
 	SpecialFilter,
 	Context,
 	Queries,
+	CollectionItem,
 } from "../../main";
 import { PolicyDefinition } from "../../chip-types/policy";
-import { CollectionItem } from "../../chip-types/collection-item";
 
 export default class If extends Policy {
 	static type_name = "if";

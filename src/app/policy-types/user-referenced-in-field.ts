@@ -1,5 +1,4 @@
-import { Policy, Query, Context, QueryTypes } from "../../main";
-import { CollectionItem } from "../../chip-types/collection-item";
+import { Policy, Query, Context, QueryTypes, CollectionItem } from "../../main";
 
 export default class UserReferencedInField extends Policy {
 	static type_name = "user-referenced-in-field";

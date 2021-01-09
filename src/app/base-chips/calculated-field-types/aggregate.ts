@@ -4,8 +4,8 @@ import {
 	App,
 	Queries,
 	Collection,
+	CollectionItem,
 } from "../../../main";
-import { CollectionItem } from "../../../chip-types/collection-item";
 
 type StagesGetter = (
 	context: Context,

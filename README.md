@@ -10,7 +10,8 @@ You can use it to create a full-featured REST API and ORM with minimal amount of
 
 Instal sealious with `npm install --save sealious`. Then, in your index.ts:
 
-```typescript
+```
+lang=typescript
 import { resolve } from "path";
 import Sealious, { App, Collection, FieldTypes, Policies } from "sealious";
 const locreq = _locreq(__dirname);

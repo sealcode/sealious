@@ -1,4 +1,4 @@
-import { CollectionItem } from "../../src/chip-types/collection-item";
+import CollectionItem from "../../src/chip-types/collection-item";
 
 export class NewSession {
 	status: string;

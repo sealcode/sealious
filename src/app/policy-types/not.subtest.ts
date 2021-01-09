@@ -2,11 +2,10 @@ import assert from "assert";
 import Bluebird from "bluebird";
 import Context from "../../context";
 import * as Sealious from "../../main";
-import { Collection, FieldTypes, Policies } from "../../main";
+import { Collection, CollectionItem, FieldTypes, Policies } from "../../main";
 import { assertThrowsAsync } from "../../test_utils/assert-throws-async";
 import { withRunningApp } from "../../test_utils/with-test-app";
 import { TestAppType } from "../../test_utils/test-app";
-import { CollectionItem } from "../../chip-types/collection-item";
 import getAttachment from "../../test_utils/get-attachment";
 
 function create_less_than_policy(number: number) {
@@ -117,7 +116,7 @@ describe("NotPolicy", () => {
 						"/api/v1/collections/collection-not(public)"
 					),
 				(e) => {
-					assert.equal((e as any).response.status, 401);
+					assert.strictEqual((e as any).response.status, 401);
 				}
 			);
 		}));

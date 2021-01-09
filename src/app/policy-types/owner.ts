@@ -1,6 +1,5 @@
-import { Policy, Context, Query } from "../../main";
+import { Policy, Context, Query, CollectionItem } from "../../main";
 import DenyAll from "../../datastore/deny-all";
-import { CollectionItem } from "../../chip-types/collection-item";
 
 export default class Owner extends Policy {
 	static type_name = "owner";

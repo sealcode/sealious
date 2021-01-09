@@ -8,7 +8,7 @@ import Context from "../context";
 import parseBody from "../http/parse-body";
 import { BadContext, NotFound } from "../response/errors";
 import CalculatedField from "./calculated-field";
-import { CollectionItem } from "./collection-item";
+import CollectionItem from "./collection-item";
 import CollectionItemBody, { ItemFields } from "./collection-item-body";
 import Field from "./field";
 import ItemList from "./item-list";

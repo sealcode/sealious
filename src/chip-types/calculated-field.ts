@@ -1,7 +1,7 @@
 import App from "../app/app";
 import Context from "../context";
+import { CollectionItem } from "../main";
 import Collection from "./collection";
-import { CollectionItem } from "./collection-item";
 
 export default abstract class CalculatedField<ReturnType> {
 	app: App;

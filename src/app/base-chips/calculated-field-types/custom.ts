@@ -1,5 +1,10 @@
-import { CalculatedField, Context, App, Collection } from "../../../main";
-import { CollectionItem } from "../../../chip-types/collection-item";
+import {
+	CalculatedField,
+	Context,
+	App,
+	Collection,
+	CollectionItem,
+} from "../../../main";
 
 type Getter<ReturnType> = (
 	contect: Context,

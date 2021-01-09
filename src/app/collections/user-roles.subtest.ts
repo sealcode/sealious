@@ -1,11 +1,9 @@
-import axios from "axios";
 import assert from "assert";
-import { withRunningApp } from "../../test_utils/with-test-app";
+import axios from "axios";
+import { App, CollectionItem } from "../../main";
 import { assertThrowsAsync } from "../../test_utils/assert-throws-async";
-import { App } from "../../main";
-import { TestAppType } from "../../test_utils/test-app";
 import MockRestApi from "../../test_utils/rest-api";
-import { CollectionItem } from "../../chip-types/collection-item";
+import { withRunningApp } from "../../test_utils/with-test-app";
 import Users from "./users";
 
 function createAUser(app: App, username: string) {
