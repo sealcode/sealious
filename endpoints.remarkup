@@ -97,7 +97,12 @@ the collections created by you, //as well as// for all built-in collections:
 #### Examples
 
 ```
-GET /api/v1/collections/seals?filter[name]=Hoover # show only seals named Hoover
-GET /api/v1/collections/seals?filter[object_field][weight]=280&sort[age]=asc # sort by age, filter by object_field.weight
-GET /api/v1/collections/seals?filter[name]=Hoover?pagination[items]=10&page=2 # 10 items per page, show items 11-20
+# show only seals named Hoover:
+GET /api/v1/collections/seals?filter[name]=Hoover
+
+# sort by age, filter by object_field.weight:
+GET /api/v1/collections/seals?filter[object_field][weight]=280&sort[age]=asc
+
+# 10 items per page, show items 11-20:
+GET /api/v1/collections/seals?filter[name]=Hoover?pagination[items]=10&page=2
 ```
