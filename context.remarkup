@@ -16,6 +16,7 @@ endpoint. If you were to write your own endpoint, you don't have to perform any
 access control checks. You can literally do:
 
 ```
+lang=typescript
 app.HTTPServer.router.get("/", Middlewares.extractContext(), async (ctx) => {
     const users = await app.collections.users
         .list(ctx.$context)
@@ -44,9 +45,12 @@ using the sealious-made API endpoints has no ability to create a SuperContext.
 
 ## Middlewares
 
-When writing custom routes, you can use the `extractContext` middleware in order to tell Sealious to extract context and session data from the request and pass it to koa's `ctx`:
+When writing custom routes, you can use the `extractContext` middleware in order
+to tell Sealious to extract context and session data from the request and pass
+it to koa's `ctx`:
 
 ```
+lang=typescript
 import {Middlewares} from "sealious";
 
 app.HTTPServer.router.get("/tasks", Middlewares.extractContext(), async (ctx) => {
