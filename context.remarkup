@@ -51,12 +51,15 @@ it to koa's `ctx`:
 
 ```
 lang=typescript
-import {Middlewares} from "sealious";
+import { Middlewares } from "sealious";
 
-app.HTTPServer.router.get("/tasks", Middlewares.extractContext(), async (ctx) => {
-    const tasks = await app.collections.tasks
-        .list(ctx.$context)
-        .fetch()
-    ctx.body.users = tasks.map(task=>task.get("title").join("\n");
-});
+app.HTTPServer.router.get(
+  "/tasks",
+  Middlewares.extractContext(),
+  async (ctx) => {
+    const tasks = await app.collections.tasks.list(ctx.$context).fetch();
+    ctx.body.users = tasks.map((task) => task.get("title")).join("\n");
+  }
+);
+
 ```
