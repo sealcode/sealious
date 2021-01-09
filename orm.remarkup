@@ -2,7 +2,44 @@
 
 Each Sealious collection has simple Promise-based accessor methods.
 
-## The List object
+## Creating an item in a database
+
+```
+lang=typescript
+const new_task = app.collections.task.make();
+new_task.set("title", "Write sealious docs");
+new_task.set("done", false);
+await item.save(context);
+```
+
+Alternatively, you can use `setMultiple` to set multiple fields with one call:
+
+```
+lang=typescript
+const new_task = app.collections.task.make();
+new_task.setMultiple({ title: "Write sealious docs", done: false });
+await item.save(context);
+```
+
+## Editing an item
+
+```
+lang=typescript
+const item = await this.getByID(context, "Xi3am-29");
+item.set("done", true);
+await item.save(context);
+```
+
+## Removing an item from database
+
+```
+lang=typescript
+const item = await this.getByID(context, "Xi3am-29");
+item.set("done", true);
+await item.remove(context);
+```
+
+## Listing items
 
 To query a collection, first create an `ItemList`:
 
@@ -105,7 +142,7 @@ const users = await app.collections.users
 
 ### Combining the chain methods
 
-You can combine the `filter`, `paginate`, `format` and `attach` methods into one elegant chain, like so:
+You can combine the `filter`, `paginate`, `format`, `sort` and `attach` methods into one elegant chain, like so:
 
 ```
 const items = await app.collections.items
@@ -113,6 +150,7 @@ const items = await app.collections.items
   .filter({ name: "Reksio" })
   .format({content: "original"})
   .attach({ field1: true })
+  .sort({name: "asc"})
   .paginate({ page: 2, items: 10 })
   .fetch();
 ```
