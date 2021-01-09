@@ -1,0 +1,7 @@
+= Endpoints =
+
+Sealious automatically creates endpoints for all the collections defined within
+your app. All endpoins automatically take care of policy enforcement, so you
+don't have to worry about implementing logic of who can do what. Just make sure
+that the policies are set up properly for each collection and they will be
+enforced.

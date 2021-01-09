@@ -63,7 +63,7 @@ app.start();
 
 Assuming you have the mongo database running, that's it! The above script creates a fully functional REST API with field validation, error messages, etc. Try sending as POST message to `http://localhost:8080/api/v1/collections/tasks` to see the API in action.
 
-You can learn more about the endpoints created by Sealious for each collection [here](./endpoints.md)
+You can learn more about the endpoints created by Sealious for each collection [here](endpoints.md)
 
 ## Technical docs
 
