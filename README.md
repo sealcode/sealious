@@ -2,7 +2,9 @@
 
 # Sealious
 
-Sealious is a declarative node.js framework. It creates a full-featured REST-ful API (with user and session management) based on a declarative description of the database schema and policies.
+Sealious is a declarative node.js framework. It creates a full-featured REST-ful
+API (with user and session management) based on a declarative description of the
+database schema and policies.
 
 You can use it to create a full-featured REST API and ORM with minimal amount of code.
 
@@ -61,14 +63,29 @@ const app = new (class extends App {
 app.start();
 ```
 
-Assuming you have the mongo database running, that's it! The above script creates a fully functional REST API with field validation, error messages, etc. Try sending as POST message to `http://localhost:8080/api/v1/collections/tasks` to see the API in action.
-
-You can learn more about the endpoints created by Sealious for each collection [here](https://hub.sealcode.org/source/sealious/browse/dev/endpoints.remarkup).
+Assuming you have the mongo database running, that's it! The above script
+creates a fully functional REST API with field validation, error messages, etc.
+Try sending as POST message to `http://localhost:8080/api/v1/collections/tasks`
+to see the API in action. You can learn more about the endpoints created by
+Sealious for each collection [in ./endpoints.remarkup doc
+file](https://hub.sealcode.org/source/sealious/browse/dev/endpoints.remarkup).
 
 ## Learning Resources
+
+### Examples
+
+It's best to learn by example. Here are some applications written with the
+current version of Sealious:
+
+-   [Sealious Playground](https://hub.sealcode.org/diffusion/PLAY/) - simple
+    TODO app written in Sealious and Hotwire. Contains docker setup for mongo,
+    linting, typescript etc. Good starting point for a new app.
+
+### References
 
 -   [List of all endpoints automatically created by Sealious](https://hub.sealcode.org/source/sealious/browse/dev/endpoints.remarkup)
 
 ## Technical docs
 
-For technical reference, see [sealious.sealcode.org/docs](https://sealious.sealcode.org/docs)
+For technical reference, see
+[sealious.sealcode.org/docs](https://sealious.sealcode.org/docs)
