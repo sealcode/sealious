@@ -8,14 +8,18 @@ enforced.
 
 ## User/Session management
 
-### Register: `POST /api/v1/collections/registration-intents`
+### Register:
+
+`POST /api/v1/collections/registration-intents`
 
 params: email
 
 Starts user registration flow. THe user needs to confirm the email first, and
 then is redirected to a form that lets them choose their username.
 
-### Log in: `POST /api/v1/sessions/`
+### Log in:
+
+`POST /api/v1/sessions/`
 
 params: username, password
 
@@ -26,11 +30,15 @@ Why isn't it just `POST /api/v1/login`? It's simply to mainain the REST-ful
 semantics. When you log in, you actually want to create (`POST`) a new session
 (`/api/v1/sessions`).
 
-### Log out: `DELETE /api/v1/collections/sessions/current`
+### Log out:
+
+`DELETE /api/v1/collections/sessions/current`
 
 Deletes the current session from DB. No params needed
 
-### Request a password reset: `POST /api/v1/collections/password-reset-intents`
+### Request a password reset:
+
+`POST /api/v1/collections/password-reset-intents`
 
 params: email
 
