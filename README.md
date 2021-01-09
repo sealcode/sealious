@@ -70,6 +70,17 @@ to see the API in action. You can learn more about the endpoints created by
 Sealious for each collection [in ./endpoints.remarkup doc
 file](https://hub.sealcode.org/source/sealious/browse/dev/endpoints.remarkup).
 
+The app created by the above code also has some handy ORM-style methods to access and modify items within the collection:
+
+```
+lang=typescript
+import {Context} from "sealious";
+
+const tasks = app.collections.tasks.list(new Context()).fetch()
+```
+
+To learn more about the ORM methods, see [./orm.remarkup doc file](https://hub.sealcode.org/source/sealious/browse/dev/orm.remarkup).
+
 ## Learning Resources
 
 ### Examples
@@ -84,6 +95,7 @@ current version of Sealious:
 ### References
 
 -   [List of all endpoints automatically created by Sealious](https://hub.sealcode.org/source/sealious/browse/dev/endpoints.remarkup)
+-   [ORM style accessors to database](https://hub.sealcode.org/source/sealious/browse/dev/orm.remarkup)
 
 ### FAQ
 
