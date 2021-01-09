@@ -85,6 +85,40 @@ current version of Sealious:
 
 -   [List of all endpoints automatically created by Sealious](https://hub.sealcode.org/source/sealious/browse/dev/endpoints.remarkup)
 
+### FAQ
+
+#### How do I add a custom route?
+
+Sealious uses `koa` and [@koa/router](https://github.com/koajs/router) to handle HTTP. To add a simple static route:
+
+```
+lang=typescript
+app.HTTPServer.router.get("/", async (ctx) => {
+    ctx.body = html(/* HTML */ `
+        <body>
+            <h1>Hello, world!</h1>
+        </body>
+    `);
+});
+```
+
+If you need to perform some user-specific tasks, or need to extract the context in order to call the database, use the `extractContext` Middleware:
+
+```
+lang=typescript
+import {Middlewares} from "sealious";
+
+app.HTTPServer.router.get("/", Middlewares.extractContext(), async (ctx) => {
+    const tasks = await app.collections.tasks.list(ctx.$context).fetch();
+    ctx.body = html(/* HTML */ `
+        <body>
+            <h1>My To do list</h1>
+            {tasks.map(task=>task.get("title")).join("")}
+        </body>
+    `);
+});
+```
+
 ## Technical docs
 
 For technical reference, see
