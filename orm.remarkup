@@ -1,3 +1,121 @@
 # ORM-style database access
 
-hey hey hey
+Each Sealious collection has simple Promise-based accessor methods.
+
+## The List object
+
+To query a collection, first create an `ItemList`:
+
+```
+lang=typescript
+app.collections.tasks.list(context)
+```
+
+The above code returns an instance of `ItemList`. It supports chainable methods
+that allow you to specify which items you want to fetch before any database
+query is ran. Those methods are described below.
+
+Remember that in order to actually run the database query and get the items you
+want, you have to call the `.fetch()` method of the ItemList object.
+
+### Filtering the list
+
+You can narrow down the items that will be returned by field values. For that,
+use the `.filter` chain method:
+
+```
+lang=typescript
+const matching_animals = await app.collections.animals
+  .list(context)
+  .filter({ name: "Reksio" })
+  .fetch();
+```
+
+You can specify multiple field names and values:
+
+```
+lang=typescript
+const matching_animals = await app.collections.animals
+  .list(context)
+  .filter({ name: "Reksio", species: "dog" })
+  .fetch();
+```
+
+Some field types support more complex filter values. Refer to each of the field
+type's specification for details.
+
+```
+lang=typescript
+const matching_animals = await app.collections.animals
+  .list(context)
+  .filter({ name: "Reksio", species: "dog", age: { ">": 3, "<": 5 } })
+  .fetch();
+```
+
+### Setting field format
+
+Some fields' output varies depending on the specified format. While querying the
+database usint `ItemList`, you can specify different formats for each field.
+Refer to each of the field types' specification for details.
+
+```
+lang=typescript
+const messages = await app.collections.messages.list().fetch();
+console.log(messages[0].get("content")); // foo &amp; bar
+
+const original_messages = await app.collections.messages
+  .list(context)
+  .format({ content: "original" })
+  .fetch();
+console.log(messages[0].get("content")); // foo & bar
+```
+
+### Pagination
+
+You can use pagination to limit the amount of returned entries. Think of it as
+LIMIT/SKIP from SQL, but within Sealious' context.
+
+```
+lang=typescript
+const logs = await app.collections.logs
+  .list(context)
+  .paginate({ page: 2, items: 10 })
+  .fetch(); // returns items 11-20
+```
+
+### Turning on attachments
+
+```
+lang=typescript
+const users = await app.collections.users
+  .list(context)
+  .attach({ field1: true })
+  .fetch();
+```
+
+### Sorting
+
+```
+lang=typescript
+const users = await app.collections.users
+  .list(context)
+  .sort({ price: "asc" }) // "asc" or "desc"
+  .fetch();
+```
+
+### Combining the chain methods
+
+You can combine the `filter`, `paginate`, `format` and `attach` methods into one elegant chain, like so:
+
+```
+const items = await app.collections.items
+  .list(context)
+  .filter({ name: "Reksio" })
+  .format({content: "original"})
+  .attach({ field1: true })
+  .paginate({ page: 2, items: 10 })
+  .fetch();
+```
+
+The order of the methods in chain is not significant, aside from the fact that
+`fetch` has to be at the end of the chain.
