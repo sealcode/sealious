@@ -215,8 +215,9 @@ abstract class App {
 	}
 
 	initRouter(): void {
-		this.HTTPServer.router.use("/api/v1/", extractContext());
-		this.HTTPServer.router.use(async (ctx, next) => {
+		const router = this.HTTPServer.router;
+		router.use("/api/v1/", extractContext());
+		router.use(async (ctx, next) => {
 			ctx.$app.Logger.info("REQUEST", `${ctx.method} ${ctx.url}`, {
 				query: ctx.query as unknown,
 				body: ctx.request.body as unknown,
@@ -224,29 +225,23 @@ abstract class App {
 			await next();
 		});
 
-		this.HTTPServer.router.get(
-			"/account-creation-details",
-			accountCreationDetails
-		);
+		router.get("/account-creation-details", accountCreationDetails);
 
-		this.HTTPServer.router.post(
+		router.post(
 			"/finalize-registration-intent",
 			parseBody(),
 			finalizeRegistrationIntent
 		);
 
-		this.HTTPServer.router.post(
+		router.post(
 			"/finalize-password-reset",
 			parseBody(),
 			finalizePasswordReset
 		);
 
-		this.HTTPServer.router.get(
-			"/confirm-password-reset",
-			confirmPasswordReset
-		);
+		router.get("/confirm-password-reset", confirmPasswordReset);
 
-		this.HTTPServer.router.use(
+		router.use(
 			"/api/v1/uploaded-files",
 			uploaded_files.routes(),
 			uploaded_files.allowedMethods()
@@ -263,23 +258,23 @@ abstract class App {
 				collection_router.allowedMethods()
 			);
 		}
-		this.HTTPServer.router.use(
+		router.use(
 			"/api/v1/collections",
 			collections_router.routes(),
 			collections_router.allowedMethods()
 		);
-		this.HTTPServer.router.use(
+		router.use(
 			"/api/v1/sessions",
 			sessionRouter.routes(),
 			sessionRouter.allowedMethods()
 		);
 
-		this.HTTPServer.router.get(
+		router.get(
 			"/api/v1/formatted-images/:file_id/:format/:filename",
 			formattedImages
 		);
 
-		this.HTTPServer.router.get("/assets/logo", logo);
+		router.get("/assets/logo", logo);
 	}
 }
 

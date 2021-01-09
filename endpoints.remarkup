@@ -6,7 +6,43 @@ don't have to worry about implementing logic of who can do what. Just make sure
 that the policies are set up properly for each collection and they will be
 enforced.
 
+## User/Session management
 
-## Session management
+### Register: `POST /api/v1/collections/registration-intents`
 
-something somethin
+params: email
+
+Starts user registration flow. THe user needs to confirm the email first, and
+then is redirected to a form that lets them choose their username.
+
+### Log in: `POST /api/v1/sessions/`
+
+params: username, password
+
+Attempts to log the user in. If the login is successfull, a cookie with session
+ID is set. Otherwise, an error message in JSON form is returned.
+
+Why isn't it just `POST /api/v1/login`? It's simply to mainain the REST-ful
+semantics. When you log in, you actually want to create (`POST`) a new session
+(`/api/v1/sessions`).
+
+### Log out: `DELETE /api/v1/collections/sessions/current`
+
+Deletes the current session from DB. No params needed
+
+### Request a password reset: `POST /api/v1/collections/password-reset-intents`
+
+params: email
+
+Begins the password reset flow. If the email exists in the database, a message
+with reset link is sent to the user.
+
+### Static forms
+
+There routes set up for some static forms, including:
+
+-   `GET /account-creation-details` asks for user data when creating an account
+-   `POST /finalize-registration-intent` finishes user creation.
+    `/account-creation-details` contains a form that POSTs to this endpoint.
+-   `POST /finalize-password-reset`
+-   `GET /confirm-password-reset`
