@@ -74,9 +74,25 @@ Each collection gets a full REST-ful API endpoint. These endpoints work for both
 
 #### Query Params:
 
--   `filter` - key/value. Maps field names to the desired values. Example: `?filter[name]=Hoover&filter[age][gt]=18`
+-   `filter` - key/value. Maps field names to the desired values. Example:
+    `?filter[name]=Hoover&filter[age][gt]=18`
 -   `sort` - key/value. Forces the output to be sorted by given field. Example:
     `?sort[favorite_number]=desc`. Sort order is `desc` or `asc`
--   `pagination` -
+-   `pagination` - key/value. Keys are: `page` (which page to display), `items`
+    (how many items per page), `forward_buffer` (return this many more
+    additional items per page than specified in `items`. Useful when trying to
+    establish whether or not there is a next page to display)
+-   `attach` - key/value. keys are field-names, values are field-type specific.
+    Whether or not to fetch attachments related to given field, and in what
+    form. Currently supported only by `single-reference` and
+    `reverse-single-reference` field types.
+-   `format` key/value. Some fields can have different outputs depending on the
+    provided format.
 
 #### Examples
+
+```
+GET /api/v1/collections/seals?filter[name]=Hoover # show only seals named Hoover
+GET /api/v1/collections/seals?filter[object_field][weight]=280&sort[age]=asc # sort by age, filter by object_field.weight
+GET /api/v1/collections/seals?filter[name]=Hoover?pagination[items]=10&page=2 # 10 items per page, show items 11-20
+```

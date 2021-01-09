@@ -65,6 +65,10 @@ Assuming you have the mongo database running, that's it! The above script create
 
 You can learn more about the endpoints created by Sealious for each collection [here](https://hub.sealcode.org/source/sealious/browse/dev/endpoints.remarkup).
 
+## Learning Resources
+
+-   [List of all endpoints automatically created by Sealious](https://hub.sealcode.org/source/sealious/browse/dev/endpoints.remarkup)
+
 ## Technical docs
 
 For technical reference, see [sealious.sealcode.org/docs](https://sealious.sealcode.org/docs)
