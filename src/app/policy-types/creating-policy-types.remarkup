@@ -1,0 +1,70 @@
+# Creating custom policy types
+
+When the [built-in policy
+types](https://hub.sealcode.org/source/sealious/browse/dev/src/app/policy-types/policy-types.remarkup)
+are not enough, you can build your custom policy type and use it in a way
+identical to as you'd use the built-in ones.
+
+As policies rely heavily on [MongoDB Aggregation Pipeline
+Stages](https://docs.mongodb.com/manual/reference/operator/aggregation-pipeline/),
+it's recommended to have a basic understanding of how the aggregation pipeline
+works. [This tutorial from MongoDB
+Manual](https://docs.mongodb.com/manual/aggregation/) can be helpful here.
+
+A policy is basically two things:
+
+1. Description of what stages to add to pipeline in order to realize a `list`
+   query with a single aggregation pipeline
+2. A piece of logic that describes to the user why they are/are not allowed to
+   perform a given action.
+
+## Example
+
+```
+lang=typescript
+export default class MyPolicy extends Policy {
+	static type_name = "my-policy";
+	async _getRestrictingQuery(context: Context) {
+		if (context.user_id) {
+			return Query.fromSingleMatch({
+				"_metadata.created_context.user_id": { $eq: context.user_id },
+			});
+		}
+		return new DenyAll();
+	}
+	async checkerFunction(
+		context: Context,
+		item_getter: () => Promise<CollectionItem>
+	) {
+		if ( some_other_condition ) {
+			return Policy.allow("you are who created this item");
+		} else {
+			return Policy.deny("you are not who created this item");
+		}
+	}
+	isItemSensitive = async () => true;
+}
+```
+
+## Methods
+
+### `_getRestrictingQuery`
+
+Returns a `Query` that selects //all the allowed items// from the given
+collection, considering the given context. `AllowAll` and `DenyAll` can be useful here.
+
+**Arguments**:
+
+-   `context` - the context representing the user on whose behalf the action is performed.
+
+### `checkerFunction`
+
+Performs a check on a single item. This is run e.g. when viewing or editing a single item.
+
+Has to return `Policy.allow(reason)` or `Policy.deny(reason)`.
+
+**Arguments**:
+
+-   `context` - the context representing the user on whose behalf the action is performed.
+-   `item_getter` - a function that returns a promise with the item that this
+    action refers to. Only call it if you need the item data to make the decision.

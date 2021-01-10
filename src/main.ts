@@ -1,4 +1,6 @@
 export { default as Query } from "./datastore/query";
+export { default as DenyAll } from "./datastore/deny-all";
+export { AllowAll } from "./datastore/allow-all";
 export { default as QueryTypes } from "./datastore/query-types";
 export { default as SpecialFilter } from "./chip-types/special-filter";
 export * as SpecialFilters from "./app/base-chips/special_filters/special-filters";
