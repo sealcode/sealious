@@ -1,0 +1,93 @@
+# Creating custom field types
+
+If none of the [bulit-in field
+types](https://hub.sealcode.org/source/sealious/browse/dev/src/app/base-chips/field-types/field-types.remarkup)
+suit your needs, you can always create your own. It's recommended to first try
+combining existing fields and policies in order to achieve what you want, but if
+you try that and come epmty-handed, here's how to create your own.
+
+In order to create a custom field type, you have to create a class that extends
+the `Field` class. The below code represents the minimal example of a field that
+only accepts "sealious" as a valid value:
+
+```
+lang=typescript
+class MyField extends Field {
+    typeName = "my-field";
+    async isProperValue(context, new_value, old_value){
+        if ( new_value === "sealious" ){
+            return Field.valid();
+        } else {
+            return Field.invalid("The value is not <<sealious>>");
+        }
+    }
+}
+```
+
+## Methods
+
+### `isProperValue`
+
+The one method you are required to implement when defining a new field type.
+
+**Params**:
+
+-   `context: Context` - the context representing the user on whose behalf the validation is performed;
+-   `new_value` - the value to validate, assumed to be saved in the database if valid
+-   `old_value` - the current value of the field in the given item. Assumed to be
+    overwritten if `new_value` is valid. `null` when item is being created or
+    value not currently present
+
+The purpose of this function is to decide whether or not a given field value is
+valid for a given context, optionally taking the previous value of the field
+into consideration.
+
+If the value is valid, the function should return `Field.valid()`. Otherwise it
+should return `Field.invalid(reason)`, where `reason` is a string describing why
+the value is invalid. That reason will appear in HTTP error responses and might
+be displayed in form validation messages, so don't put any secrets in there!
+
+This function can be async, so asynchronous validation is possible. Sealious
+doesn't care _how_ you reach conclusion on whether or not the value is valid, it
+will just patiently await the decision and act accordingly.
+
+### `encode`
+
+This method gives you control over how data for fields of this type is stored
+within the database. See also: the `decode` method.
+
+Some creative uses of `encode` method include:
+
+-   escaping html entities to make text input safe (already done within the `Text` field type);
+-   hashing passwords;
+-   normalizing from various accepted input formats to make filtering and sorting easier.
+
+`encode` will only be called if the value given to that field passes the `isProperValue` test.
+
+**Params**:
+
+-   `context: Context` - the context representing the user on whose behalf the encoding is performed;
+-   `new_value: any` - the value entered by the user. Already validated by
+    `isProperValue`.
+-   `old_value` - the previous value of the field
+
+The function can be async and has to return any value storable within the database.
+
+If this method is not specified, the default identity method is used.
+
+### `decode`
+
+`decode` takes the value from how it is stored within the database (so basically
+whatever `encode` returned) and formats it into a more user- or program-friendly
+way.
+
+**Params**:
+
+-   `context: Context` - the context representing the user on whose behalf the
+    decoding is performed;
+-   `storage_value: any` - the `encode`d value. Might come from the database, but
+    encoding can also be ran on items that are not yet saved
+-   `old_value: any` - the current value in the database, if the item has not been saved yet.
+-   `format_params: any` - the format params provided with the request by the
+    user. They can be of any shape and form. You can use it to further customize
+    how the value is presented in the response

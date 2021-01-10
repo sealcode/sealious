@@ -99,6 +99,7 @@ current version of Sealious:
 -   [Theory and practice behind Context](https://hub.sealcode.org/source/sealious/browse/dev/context.remarkup)
 -   [List of Built-in field
     types](https://hub.sealcode.org/source/sealious/browse/dev/src/app/base-chips/field-types/field-types.remarkup)
+-   [Creating custom field-types](https://hub.sealcode.org/source/sealious/browse/dev/src/app/base-chips/field-types/creating-field-types.remarkup)
 
 ### FAQ
 
