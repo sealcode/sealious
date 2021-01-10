@@ -1,0 +1,50 @@
+# `If` Policy
+
+When a given collection uses a `named_filter`, you can use `If` to make items
+matching a given filter use one policy, and items not matched by a given filter
+use a different policy.
+
+## Constructor params
+
+-   `collection_name: string` - due to implementation complexities, you have to pass the
+    collection name to this policy. It's the name of the collection that this
+    policy is attached to.
+-   `special_filter_name: string` - which filter from the collection to use when
+    segmenting the items
+-   `when_true: Policy` - Policy to use when the special filter matches a given item
+
+-   `when_false: Policy` - Policy to use when the special filter doesn't match a given Item
+
+## Example
+
+The below app will make non-negative number public, but negative numbers will
+only be visible to logged-in users.
+
+```
+lang=typescript
+class extends App {
+		collections = {
+			...App.BaseCollections,
+			numbers: new (class extends Collection {
+				fields = {
+					number: new FieldTypes.Int(),
+					number_str: new FieldTypes.Text(),
+				};
+				named_filters = {
+					positive: new Matches("numbers", {
+						number: { ">": 0 },
+					}),
+					negative: new Matches("numbers", {
+						number: { "<": 0 },
+					}),
+				};
+				defaultPolicy = new Policies.If([
+					"numbers",
+					"negative",
+					Policies.LoggedIn,
+					Policies.Public,
+				]);
+			})(),
+		};
+	};
+```

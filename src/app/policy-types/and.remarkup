@@ -1,0 +1,11 @@
+# `And` Policy
+
+This policy combines multiple policies and accepts only contexts that match
+every one of those child policies.
+
+## Example
+
+```
+lang=typescript
+new Policies.And([new Policies.Owner(), new Policies.LoggedIn()])
+```
