@@ -91,3 +91,11 @@ way.
 -   `format_params: any` - the format params provided with the request by the
     user. They can be of any shape and form. You can use it to further customize
     how the value is presented in the response
+
+## Examples
+
+You can take a look at the code of the built-in fields in order to get a feeling of how it all works. Here are some good strating points:
+
+-   [Email](https://hub.sealcode.org/source/sealious/browse/dev/src/app/base-chips/field-types/email.ts)
+-   [Boolean](https://hub.sealcode.org/source/sealious/browse/dev/src/app/base-chips/field-types/boolean.ts)
+-   [Enum](https://hub.sealcode.org/source/sealious/browse/dev/src/app/base-chips/field-types/enum.ts)
