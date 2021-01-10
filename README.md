@@ -97,6 +97,7 @@ current version of Sealious:
 -   [List of Built-in field
     types](https://hub.sealcode.org/source/sealious/browse/dev/src/app/base-chips/field-types/field-types.remarkup)
 -   [Creating custom field-types](https://hub.sealcode.org/source/sealious/browse/dev/src/app/base-chips/field-types/creating-field-types.remarkup)
+-   [List of build-int Policies](https://hub.sealcode.org/source/sealious/browse/dev/src/app/policy-types/policy-types.remarkup)
 
 ### FAQ
 
