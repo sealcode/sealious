@@ -1,1 +1,36 @@
 # Policy types
+
+Policies are another central concept in Sealious. They help make sure that users
+see only what they are intented to be allowed to see.
+
+Policy is a piece of logic that runs _before_ every ORM action.
+
+The way Policies are implemented in Sealious is quite unique. Lets say that you
+have a collection with thousands and thousands of items, but the result of a
+given policy is that each user can see only a small portion of the whole.
+
+In such scenario, if the user requests a page of 10 items, the backend is tasked
+with finding 10 items that can the given user has access to. A common,
+non-sealious way to do that would be to query the database for, say, 100 items,
+the check if each one can be seen by the given user, throw away the ones that do
+not match the policy, and repeat the process again and again untill 10
+policy-approved items are found. This in inefficient!
+
+In Sealious, Policies are implemented as database queries (or, to be more
+precies, as [Mongo Aggregation Pipeline
+Stages](https://docs.mongodb.com/manual/reference/operator/aggregation-pipeline/)). If a collection
+has a certain Policy attached for `list` action, then that policy creates an arbitrary number of
+aggregation pipeline stages. Those stages are then pushed before other stages (filtering, sorting, etc).
+Thanks to that, most complex queries - including multiple policies, filters, sorting and
+pagination - are done with just one dataase query.
+
+## List of built-in policy types
+
+| Policy name | Is Higher Order | Description                                                                         | Usage                                                                                             |
+| ----------- | --------------- | ----------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| `And`       | ✅              | Combines multiple policies. Accepts only contexts that pass all of those strategies | [see docs](https://hub.sealcode.org/source/sealious/browse/dev/src/app/policy-types/and.remarkup) |
+| `If`        | ✅              | Uses one of the two specified policies, depending on a named_filter match result    | [see docs](https://hub.sealcode.org/source/sealious/browse/dev/src/app/policy-types/if.remarkup)  |
+| `LoggedIn`  |                 | Accepts only users who are logged in                                                | `new Policies.LoggedIn()`                                                                         |
+| `Noone`     |                 | Accepts noone. The polar oposite of `Public`                                        | `new Policies.Noone()`                                                                            |
+| `Not`       | ✅              | Reverses the given policy. `Not(Public)` is like `Noone`                            | `new Policies.Not(SomeOtherPolicy)`                                                               |
+| `Or`        | ✅              | Combines multiple aces                                                              |                                                                                                   |
