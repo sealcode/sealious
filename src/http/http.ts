@@ -1,7 +1,8 @@
 import Koa from "koa";
+import Static from "koa-static";
 import Router from "@koa/router";
 import { Server } from "http";
-
+import mount from "koa-mount";
 import installQS from "koa-qs";
 import handleError from "./handle-error";
 import { App } from "../main";
@@ -44,5 +45,9 @@ export default class HttpServer {
 
 	async stop() {
 		this.server.close();
+	}
+
+	addStaticRoute(url_path: string, local_path: string) {
+		this.koa.use(mount(url_path, Static(local_path)));
 	}
 }

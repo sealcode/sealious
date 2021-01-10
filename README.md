@@ -137,6 +137,13 @@ app.HTTPServer.router.get("/", Middlewares.extractContext(), async (ctx) => {
 });
 ```
 
+#### How do I serve static files?
+
+```
+lang=typescript
+app.HTTPServer.addStaticRoute("/", locreq.resolve("public"));
+```
+
 ## Technical docs
 
 For technical reference, see
