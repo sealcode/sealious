@@ -25,37 +25,34 @@ const app = new (class extends App {
             port: 20723,
             db_name: "sealious-playground",
         },
-        upload_path: locreq.resolve("uploaded_files"), // this resolves to an `uploaded_files` directory within the root of your project. Uploaded files (images etc) will be stored here
+        upload_path: locreq.resolve("uploaded_files"),
         email: {
-            from_address: "sealious-playground@example.com", // emails from this app (login confirmation etc) will be sent from this address
-            from_name: "Sealious playground app", // email from this app will be signed with this name
+            from_address: "sealious-playground@example.com",
+            from_name: "Sealious playground app",
         },
         "www-server": {
             port: 8080, //listen on this port
         },
     };
     manifest = {
-        name: "My ToDo list", // name of your application
-        logo: resolve(__dirname, "../assets/logo.png"), // a string - absolute path to the application logo
-        version: "0.0.1", // version - any string you want
-        default_language: "en", // currently supported - "en" and partially "pl"
-        base_url: "localhost:8080", // specify the domain and port for the app, as it's seen from outside world. Useful when app is behind a reverse proxy
-        admin_email: "admin@example.com", // when the app is run for the first time, an admin account will be created for this email and an activation message will be sent
+        name: "My ToDo list",
+        logo: resolve(__dirname, "../assets/logo.png"),
+        version: "0.0.1",
+        default_language: "en",
+        base_url: "localhost:8080",
+        admin_email: "admin@example.com",
         colors: {
-            primary: "#5294a1", // the main color of the brand of your app
+            primary: "#5294a1",
         },
     };
     collections = {
-        // this is the heart of a Sealious application - the collections
-        ...App.BaseCollections, // sealious comes with a set of build-in collections (users, sessions, etc). They have to be included like so OR they can be modified from standard behavior
+        ...App.BaseCollections,
         tasks: new (class extends Collection {
-            // here we create a new collection called "tasks"
             fields = {
-                // it has two fields: "title" and "done"
-                title: new FieldTypes.Text(), // "title" is a text field
-                done: new FieldTypes.Boolean(), // "done" is a boolean field
+                title: new FieldTypes.Text(),
+                done: new FieldTypes.Boolean(),
             };
-            defaultPolicy = new Policies.Public(); // all actions are public. That means that anyone, even users that are not logged in, can create, view, edit and delete all tasks stored within this app. This is probably not desired in production, but useful when creating an MVP. Policies are another crucial strenght of Sealious, so read on about them from resources linked below to learn how to limit who can do what
+            defaultPolicy = new Policies.Public();
         })(),
     };
 })();
