@@ -1,0 +1,57 @@
+# `SameAsForResourceInField` Policy
+
+This policy looks at a given field of type `single-reference` and applies policy
+logic from policy attached to the item referenced by that field's value.
+
+## Constructor params
+
+Takes only one constructor param, an object with keys:
+
+-   `collection_name: string` - due to implementation quirks, you have to
+    specify manually the name of the collection that this policy is attached to.
+    For example, if this policy is attached to collection `users`, pass
+    `"users"` in here.
+-   `field: string` - which field to look at when finding the item. It has to be a field of type `single-reference`.
+-   `action: ActionName(string)`: once the referenced item is found, a policy
+    for this action will be extracted from it. Example: "show", "list", "edit",
+    "create"
+
+## Example
+
+Below code creates an app that allows comments under a given photo to be visible
+only to users who can see the given photo. Changing the policy for `photos` will
+automatically influence the policy for `comments`.
+
+```
+lang=typescript
+const app = new (class extends App {
+    config = {
+        /* ... */
+    };
+    manifest = {
+        /* ... */
+    };
+    collections = {
+        ...App.BaseCollections,
+        photos: new (class extends Collection {
+            fields = {
+                photo: new FieldTypes.Image(),
+            };
+            defaultPolicy = new Policies.Owner();
+        })(),
+        comments: new (class extends Collection {
+            fields = {
+                photo: new FieldTypes.SingleReference("photos"),
+                content: new FieldTypes.Text(),
+            };
+            policies = {
+                show: new Policies.SameAsForResourceInField({
+                    collection_name: "comments",
+                    field: "photo",
+                    action_name: "show",
+                }),
+            };
+        })(),
+    };
+})();
+```
