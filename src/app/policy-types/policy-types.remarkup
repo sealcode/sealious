@@ -26,11 +26,15 @@ pagination - are done with just one dataase query.
 
 ## List of built-in policy types
 
-| Policy name | Is Higher Order | Description                                                                         | Usage                                                                                             |
-| ----------- | --------------- | ----------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
-| `And`       | ✅              | Combines multiple policies. Accepts only contexts that pass all of those strategies | [see docs](https://hub.sealcode.org/source/sealious/browse/dev/src/app/policy-types/and.remarkup) |
-| `If`        | ✅              | Uses one of the two specified policies, depending on a named_filter match result    | [see docs](https://hub.sealcode.org/source/sealious/browse/dev/src/app/policy-types/if.remarkup)  |
-| `LoggedIn`  |                 | Accepts only users who are logged in                                                | `new Policies.LoggedIn()`                                                                         |
-| `Noone`     |                 | Accepts noone. The polar oposite of `Public`                                        | `new Policies.Noone()`                                                                            |
-| `Not`       | ✅              | Reverses the given policy. `Not(Public)` is like `Noone`                            | `new Policies.Not(SomeOtherPolicy)`                                                               |
-| `Or`        | ✅              | Combines multiple aces                                                              |                                                                                                   |
+| Policy name                | Is Higher Order | Description                                                                                | Usage                                                                                             |
+| -------------------------- | --------------- | ------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------- |
+| `And`                      | ✅              | Combines multiple policies. Accepts only contexts that pass all of those policies.         | [see docs](https://hub.sealcode.org/source/sealious/browse/dev/src/app/policy-types/and.remarkup) |
+| `If`                       | ✅              | Uses one of the two specified policies, depending on a named_filter match result           | [see docs](https://hub.sealcode.org/source/sealious/browse/dev/src/app/policy-types/if.remarkup)  |
+| `LoggedIn`                 |                 | Accepts only users who are logged in                                                       | `new Policies.LoggedIn()`                                                                         |
+| `Noone`                    |                 | Accepts noone. The polar oposite of `Public`                                               | `new Policies.Noone()`                                                                            |
+| `Not`                      | ✅              | Reverses the given policy. `Not(Public)` is like `Noone`                                   | `new Policies.Not(SomeOtherPolicy)`                                                               |
+| `Or`                       | ✅              | Combines multiple policies. Accepts only contexts that pass one or more of those policies. | `new Policies.Or([Policy1, Policy2, ...])`                                                        |
+| `Owner`                    |                 | Allows the given action only for users who created the given items                         | `new Policies.Owner()`                                                                            |
+| `Public`                   |                 | Always allows                                                                              | `new Policies.Public()`                                                                           |
+| `Roles`                    |                 | Allows only users with any of the provided roles                                           | `new Policies.Roles(["admin"])`                                                                   |
+| `SameAsForResourceInField` |                 |                                                                                            |                                                                                                   |
