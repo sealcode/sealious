@@ -144,7 +144,36 @@ lang=typescript
 app.HTTPServer.addStaticRoute("/", locreq.resolve("public"));
 ```
 
+#### How do I set up SMTP?
+
+When mailer isn't specified, Sealious log messages to `stdout` instead of
+sending them via email. To make it use an SMTP connection, add the following to
+the app definition:
+
+```
+lang=typescript
+import { SMTPMailer } from "sealious";
+
+// in app definition:
+
+const app = new (class extends App {
+    config = {
+        /* ... */
+    };
+    mailer = new SMTPMailer({
+        host: "localhost",
+        port: 1025,
+        user: "any",
+        password: "any",
+    });
+})();
+```
+
 ## Technical docs
 
 For technical reference, see
 [sealious.sealcode.org/docs](https://sealious.sealcode.org/docs)
+
+```
+
+```
