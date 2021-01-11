@@ -82,4 +82,36 @@ const app = new (class extends App {
 
 ```
 
-## Setting Policies
+## Specifying Policies
+
+You can specify different policies for different actions ran on a given
+Collection and its Items. To do that, use the `policies` key within the
+collection's definition. It contains an object where keys are `ActionName`s
+(show, create, edit, delete, list), and values are instances of `Policy`.
+
+```
+import { Collection } from "sealious";
+
+const tasks = new (class extends Collection {
+    fields = {
+        title: new FieldTypes.Text(),
+        done: new FieldTypes.Boolean(),
+    };
+
+    policies = {
+        create: new Policy.Public(),
+        show: new Policy.Owner(),
+        list: new Policy.Owner(),
+    }
+
+    defaultPolicy = new Policies.Public();
+})();
+```
+
+Please note:
+
+1. If no policy is specified for an action in the `policies` object, the `defaultPolicy` is used;
+2. You can omit the `policies` object and just pass `defaultPolicy` if all the actions have the same policy
+3. Until {T2103} is resolved, you have to specifiy policies for `show` and
+   `list` separately. `show` is for viewing a single item while knowing its ID,
+   `list` is for listing all items
