@@ -1,0 +1,82 @@
+# Creating collections
+
+Collections are the way to describe the structure of data in your application.
+Collections contain Items. Each Item has a structure defined by the Fields
+defined in the Collection. Items are stored in the database. Access to Items
+within a Collection is granted or denied based on Policies assigned to that
+Collection.
+
+In order to create a custom collection, you have to add it to your app's definition:
+
+```
+lang=typescript
+const app = new (class extends App {
+    config = {
+        /* ... */
+    };
+    manifest = {
+        /* ... */
+    };
+    collections = {
+        ...App.BaseCollections,
+
+        // Here we define a new collection under the name `tasks`
+
+        tasks: new (class extends Collection {
+
+            // the collection has two fields: title (text) and done (boolean)
+
+            fields = {
+                title: new FieldTypes.Text(),
+                done: new FieldTypes.Boolean(),
+            };
+
+            // the default policy for each action for this collection is Public.
+            // Anyone can create. read, edit and delete any Item from this collection.
+
+            defaultPolicy = new Policies.Public();
+        })(),
+    };
+})();
+```
+
+A collection does not have to be declared inline within the app declaraion. It can easily be stored in a `const` or exported as a module:
+
+```
+lang=typescript, name=tasks.ts
+
+import { Collection } from "sealious";
+
+const tasks = new (class extends Collection {
+    fields = {
+        title: new FieldTypes.Text(),
+        done: new FieldTypes.Boolean(),
+    };
+    defaultPolicy = new Policies.Public();
+})();
+
+export default tasks;
+
+```
+
+```
+lang=typescript, name=index.ts
+
+import tasks from "./tasks";
+
+const app = new (class extends App {
+    config = {
+        /* ... */
+    };
+    manifest = {
+        /* ... */
+    };
+    collections = {
+        ...App.BaseCollections,
+        tasks,
+    };
+})();
+
+```
+
+## Setting Policies
