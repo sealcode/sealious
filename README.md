@@ -170,11 +170,28 @@ const app = new (class extends App {
 })();
 ```
 
+#### How do I change a policy for a built-in collection?
+
+```
+lang=typescript
+const app = new (class extends App {
+    config = {
+        /* ... */
+    };
+    manifest = {
+        /* ... */
+    };
+    collections = {
+        ...App.BaseCollections,
+        users: App.BaseCollections.users.setPolicy(
+            "create",
+            new Policies.Public()
+        ),
+    };
+})();
+```
+
 ## Technical docs
 
 For technical reference, see
 [sealious.sealcode.org/docs](https://sealious.sealcode.org/docs)
-
-```
-
-```

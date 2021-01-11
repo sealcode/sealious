@@ -9,7 +9,10 @@ Collection.
 In order to create a custom collection, you have to add it to your app's definition:
 
 ```
-lang=typescript
+lang=typescript, name=index.ts
+
+import {App, Collection} from "sealious";
+
 const app = new (class extends App {
     config = {
         /* ... */
