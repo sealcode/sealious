@@ -1,0 +1,29 @@
+# User Roles in Sealious
+
+Sealious comes with built-in support for user roles. One user can have multiple
+roles.
+
+Roles assignment is done through the `user-roles` collection. Whoever can create
+items within the `user-roles` collection, has the power to define which user has
+which role. By default only users with the role "admin" can create items within
+the `user-roles` collection.
+
+## `Roles` policy
+
+If you want to make it so only users with certain role can perform a certain
+action, assign `new Policies.Roles(["role1", "role2", /* ... /* ])` to that
+action. [Read more about assigning policies to collection
+actions](https://hub.sealcode.org/source/sealious/browse/dev/src/chip-types/creating-collections.remarkup).
+The [list of all built-in
+policies](https://hub.sealcode.org/source/sealious/browse/dev/src/app/policy-types/policy-types.remarkup)
+might be helpful in combining the Roles logic with other policies through
+higher-order policies.
+
+## Adding types of roles
+
+By default, there's only one role to assign: "admin". When the app starts up,
+Sealious checks if there is any user with the role "admin". If not, it creates a
+[registration
+intent](https://hub.sealcode.org/source/sealious/browse/dev/endpoints.remarkup)
+and sends an activation email to the address specified in the app manifest
+(`manifets.admin_email`).

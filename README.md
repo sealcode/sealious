@@ -103,6 +103,7 @@ current version of Sealious:
 -   [List of build-in Policies](https://hub.sealcode.org/source/sealious/browse/dev/src/app/policy-types/policy-types.remarkup)
 -   [Creating custom Policy
     types](https://hub.sealcode.org/source/sealious/browse/dev/src/app/policy-types/creating-policy-types.remarkup)
+-   [How User Roles work in Sealious](https://hub.sealcode.org/source/sealious/browse/dev/roles.remarkup)
 
 ### FAQ
 
