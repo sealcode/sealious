@@ -91,6 +91,7 @@ current version of Sealious:
 
 ### References
 
+-   [Creating collections](https://hub.sealcode.org/source/sealious/browse/dev/src/chip-types/creating-collections.remarkup)
 -   [List of all endpoints automatically created by
     Sealious](https://hub.sealcode.org/source/sealious/browse/dev/endpoints.remarkup)
 -   [ORM style accessors to database](https://hub.sealcode.org/source/sealious/browse/dev/orm.remarkup)
