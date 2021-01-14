@@ -2,6 +2,7 @@ import { Middleware } from "@koa/router";
 import { promises as fs } from "fs";
 import koaBody from "koa-body";
 import File from "../data-structures/file";
+import { ValidationError } from "../response/errors";
 
 export default function parseBody(): Middleware {
 	const koaParser = koaBody({ multipart: true });
@@ -14,6 +15,11 @@ export default function parseBody(): Middleware {
 		if (ctx.request.files) {
 			for (const file_name in ctx.request.files) {
 				const file = ctx.request.files[file_name];
+				if (Array.isArray(file)) {
+					throw new ValidationError(
+						"Multiple files within one field are not supported"
+					);
+				}
 				if (file.type === "application/json" && file.name === "blob") {
 					promises.push(
 						fs.readFile(file.path, "utf-8").then((string) => {

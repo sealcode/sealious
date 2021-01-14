@@ -6,11 +6,9 @@ Sealious is a declarative node.js framework. It creates a full-featured REST-ful
 API (with user and session management) based on a declarative description of the
 database schema and policies.
 
-You can use it to create a full-featured REST API and ORM with minimal amount of code.
-
 ## Example
 
-Instal sealious with `npm install --save sealious`. Then, in your index.ts:
+Install sealious with `npm install --save sealious`. Then, in your index.ts:
 
 ```
 lang=typescript

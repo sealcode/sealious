@@ -17,8 +17,8 @@ export default class Not extends Policy {
 		);
 		return new Query.Not(query);
 	}
-	async isItemSensitive() {
-		return this.strategy_to_negate.isItemSensitive();
+	async isItemSensitive(context: Context) {
+		return this.strategy_to_negate.isItemSensitive(context);
 	}
 	async checkerFunction(
 		context: Context,

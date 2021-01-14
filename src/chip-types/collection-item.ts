@@ -11,9 +11,10 @@ import CollectionItemBody, { ItemFields } from "./collection-item-body";
 import { PolicyDecision } from "./policy";
 import isEmpty from "../utils/is-empty";
 
-type ItemMetadata = {
+export type ItemMetadata = {
 	modified_at: number;
 	created_at: number;
+	created_by: string | null;
 };
 
 export type SerializedItem = ReturnType<CollectionItem["serialize"]>;
@@ -36,6 +37,7 @@ export default class CollectionItem<T extends Collection = any> {
 		public _metadata: ItemMetadata = {
 			modified_at: Date.now(),
 			created_at: Date.now(),
+			created_by: null,
 		},
 		id?: string,
 		attachments?: Record<string, CollectionItem<T>>
@@ -56,9 +58,11 @@ export default class CollectionItem<T extends Collection = any> {
 	}
 
 	/** Checks whether or not it is allowed to save the given item to the DB using given context */
-	private async canSave(context: Context) {
+	private async canSave(context: Context): Promise<PolicyDecision> {
 		const action = this.save_mode === "insert" ? "create" : "edit";
-		return this.collection.getPolicy(action).check(context);
+		return this.collection
+			.getPolicy(action)
+			.check(context, async () => this);
 	}
 
 	private async canDelete(context: Context): Promise<PolicyDecision> {
@@ -101,6 +105,7 @@ export default class CollectionItem<T extends Collection = any> {
 			this._metadata = {
 				created_at: Date.now(),
 				modified_at: Date.now(),
+				created_by: context.user_id,
 			};
 			await this.collection.emit("before:create", [context, this]);
 			await this.throwIfInvalid(context, true);
@@ -196,6 +201,27 @@ export default class CollectionItem<T extends Collection = any> {
 			}
 		}
 		return this.body.getDecoded(field_name);
+	}
+
+	/**
+	 * if has decoded value it return this otherwise it decode it in first place
+	 * @param field_name name of field we want to get decoded
+	 * @param context
+	 */
+	async getDecoded<FieldName extends keyof ItemFields<T>>(
+		field_name: FieldName,
+		context: Context
+	): Promise<unknown> {
+		if (this.body.raw_input[field_name]) {
+			await this.body.encode(context);
+			await this.body.decode(context);
+			return this.body.decoded[field_name];
+		}
+
+		if (this.body.encoded[field_name]) {
+			await this.body.decode(context);
+			return this.body.decoded[field_name];
+		}
 	}
 
 	async getDecodedBody(

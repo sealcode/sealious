@@ -13,9 +13,9 @@ export default class And extends ReducingPolicy {
 		return ret;
 	}
 
-	isItemSensitive() {
+	isItemSensitive(context: Context) {
 		return Bluebird.map(this.policies, (strategy) =>
-			strategy.isItemSensitive()
+			strategy.isItemSensitive(context)
 		).reduce((a, b) => a || b);
 	}
 

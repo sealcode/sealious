@@ -21,11 +21,13 @@ export default class Or extends ReducingPolicy {
 		}
 		return new QueryOr(...queries);
 	}
-	async isItemSensitive() {
+
+	async isItemSensitive(context: Context) {
 		return Bluebird.map(this.policies, (strategy) =>
-			strategy.isItemSensitive()
+			strategy.isItemSensitive(context)
 		).reduce((a, b) => a || b, true);
 	}
+
 	async checkerFunction(
 		context: Context,
 		item_getter: () => Promise<CollectionItem>

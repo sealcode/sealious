@@ -89,7 +89,7 @@ export default abstract class Collection {
 
 	async getByID(context: Context, id: string): Promise<CollectionItem<this>> {
 		const policy = this.getPolicy("show");
-		if (!(await policy.isItemSensitive())) {
+		if (!(await policy.isItemSensitive(context))) {
 			const result = await policy.check(context);
 			if (!result?.allowed) {
 				throw new BadContext(result?.reason as string);

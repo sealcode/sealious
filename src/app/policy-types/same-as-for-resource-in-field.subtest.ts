@@ -40,6 +40,16 @@ const extend = (
 				field: "number",
 				collection_name: "number-notes",
 			}),
+			edit: new Policies.SameAsForResourceInField({
+				action_name: "edit",
+				field: "number",
+				collection_name: "number-notes",
+			}),
+			list: new Policies.SameAsForResourceInField({
+				action_name: "list",
+				field: "number",
+				collection_name: "number-notes",
+			}),
 		};
 	})();
 
@@ -52,15 +62,14 @@ const extend = (
 	};
 };
 
-// skipping in wait for D938
-describe.skip("SameAsForResourceInField", () => {
+describe("SameAsForResourceInField", () => {
 	const sessions: { [username: string]: any } = {};
 	const numbers: number[] = [];
 	async function setup(app: App, rest_api: MockRestApi) {
 		numbers.splice(0, numbers.length); // to clear the array;
 
 		const password = "password";
-		for (let username of ["alice", "bob"]) {
+		for (const username of ["alice", "bob"]) {
 			await app.collections.users.suCreate({
 				username,
 				password,
@@ -73,7 +82,7 @@ describe.skip("SameAsForResourceInField", () => {
 			});
 		}
 
-		for (let n of [0, 1, 2]) {
+		for (const n of [0, 1, 2]) {
 			numbers.push(
 				(
 					await rest_api.post(
@@ -90,12 +99,12 @@ describe.skip("SameAsForResourceInField", () => {
 
 	async function post_number_notes(rest_api: MockRestApi, user: string) {
 		const notes = [];
-		for (let number of numbers) {
+		for (const number of numbers) {
 			notes.push(
 				await rest_api.post(
 					"/api/v1/collections/number-notes",
 					{
-						note: "Lorem ipsum " + (notes.length + 1),
+						note: `Lorem ipsum ${notes.length + 1}`,
 						number: number,
 					},
 					sessions[user]
@@ -121,7 +130,7 @@ describe.skip("SameAsForResourceInField", () => {
 					sessions.alice
 				);
 
-				assert.equal(got_notes.length, posted_notes.length);
+				assert.strictEqual(got_notes.length, posted_notes.length);
 			}
 		));
 
@@ -130,6 +139,7 @@ describe.skip("SameAsForResourceInField", () => {
 			extend({
 				create: new Policies.Public(),
 				show: new Policies.Owner(),
+				list: new Policies.Owner(),
 			}),
 			async ({ app, rest_api }) => {
 				await setup(app, rest_api);
@@ -141,7 +151,7 @@ describe.skip("SameAsForResourceInField", () => {
 					sessions.bob
 				);
 
-				assert.equal(got_notes.length, 0);
+				assert.strictEqual(got_notes.length, 0);
 			}
 		));
 
@@ -168,7 +178,7 @@ describe.skip("SameAsForResourceInField", () => {
 					sessions.bob
 				);
 
-				assert.equal(got_notes.length, 1);
+				assert.strictEqual(got_notes.length, 1);
 			}
 		));
 
@@ -186,13 +196,15 @@ describe.skip("SameAsForResourceInField", () => {
 				await assertThrowsAsync(
 					() =>
 						rest_api.patch(
-							`/api/v1/collections/number-notes/${posted_notes[0].id}`,
+							`/api/v1/collections/number-notes/${
+								posted_notes[0].id as string
+							}`,
 							{ note: "Lorem ipsumm" },
 							sessions.bob
 						),
 					(error) => {
-						assert.equal(
-							(error as any).response.data.message,
+						assert.strictEqual(
+							error.response.data.message,
 							"you are not who created this item"
 						);
 					}

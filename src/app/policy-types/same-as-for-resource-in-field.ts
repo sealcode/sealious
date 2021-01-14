@@ -76,30 +76,41 @@ export default class SameAsForResourceInField extends Policy {
 		if (!item_getter) {
 			return null;
 		}
+		const item: CollectionItem = await item_getter();
+
+		const field = await item.getDecoded(this.field, context);
+
 		const response = this.getReferencedCollection(context).suGetByID(
-			(await item_getter()).get(this.field) as string
+			field as string
 		);
 
-		return this.getReferencedPolicy(context).check(context, () => response);
+		const ret = await this.getReferencedPolicy(context).check(
+			context,
+			() => response
+		);
+		return ret;
 	}
-	item_sensitive: true;
+
+	async isItemSensitive(context: Context) {
+		return this.getReferencedPolicy(context).isItemSensitive(context);
+	}
 }
 
 function add_parent_prefix_to_pipeline(
 	pipeline: QueryStage[],
 	parent_property: string
 ) {
-	for (let stage of pipeline) {
+	for (const stage of pipeline) {
 		add_parent_prefix(stage, parent_property);
 	}
 }
 
 const prop_regex = /^[a-z0-9_]/;
 function add_parent_prefix(group: QueryStage, parent_property: string) {
-	const ret: { [name: string]: any } = {};
+	const ret: { [name: string]: unknown } = {};
 	for (const prop of Object.keys(group) as (keyof typeof group)[]) {
-		if (Array.isArray(group[prop])) {
-			group[prop] = group[prop].map((subgroup: QueryStage) =>
+		if (prop == "$or" || prop == "$and") {
+			group[prop] = (group[prop] as Array<QueryStage>).map((subgroup) =>
 				add_parent_prefix(subgroup, parent_property)
 			);
 		} else if (group[prop] instanceof Object) {
@@ -108,7 +119,7 @@ function add_parent_prefix(group: QueryStage, parent_property: string) {
 		const new_prop = prop_regex.test(prop)
 			? parent_property + "." + prop
 			: prop;
-		ret[new_prop] = group[prop];
+		ret[new_prop] = group[prop] as unknown;
 	}
 
 	return ret;

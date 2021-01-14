@@ -27,7 +27,7 @@ export default abstract class Policy {
 		item_getter?: () => Promise<CollectionItem<any>>
 	): Promise<PolicyDecision | null>;
 
-	async isItemSensitive() {
+	async isItemSensitive(_: Context) {
 		return false;
 	}
 
@@ -57,7 +57,7 @@ export default abstract class Policy {
 			return Policy.allow("super-context is always allowed");
 		}
 
-		const is_item_sensitive = await this.isItemSensitive();
+		const is_item_sensitive = await this.isItemSensitive(context);
 
 		if (is_item_sensitive && item_getter === undefined) {
 			return null;

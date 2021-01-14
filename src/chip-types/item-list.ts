@@ -245,6 +245,9 @@ export default class ItemList<T extends Collection> {
 		return attachments;
 	}
 
+	/**
+	 * execute crated database request
+	 */
 	async fetch(): Promise<ItemListResult<T>> {
 		const result = await this.collection
 			.getPolicy("show")

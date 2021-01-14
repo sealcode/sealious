@@ -12,8 +12,8 @@ function extend(t: TestAppType) {
 		};
 		policies = {
 			create: new Policies.Public(),
-			default: new Policies.UserReferencedInField("owner"),
 		};
+		defaultPolicy = new Policies.UserReferencedInField("owner");
 	})();
 
 	return class extends t {
@@ -24,8 +24,7 @@ function extend(t: TestAppType) {
 	};
 }
 
-//skipping because that needs the created_id changes from D938
-describe.skip("user-referenced-in-field", () => {
+describe("user-referenced-in-field", () => {
 	it("should deny if the user isn't the one referenced in the field and allow if it is", async () =>
 		withRunningApp(extend, async ({ app, rest_api }) => {
 			for (let username of ["Alice", "Bob"]) {
@@ -51,7 +50,7 @@ describe.skip("user-referenced-in-field", () => {
 				"/api/v1/collections/pets",
 				alice_session
 			);
-			assert.equal(items.length, 1);
-			assert.equal(items[0].name, "Alice&#39;s pet");
+			assert.strictEqual(items.length, 1);
+			assert.strictEqual(items[0].name, "Alice&#39;s pet");
 		}));
 });
