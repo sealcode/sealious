@@ -129,7 +129,7 @@ lang=typescript
 import {Middlewares} from "sealious";
 
 app.HTTPServer.router.get("/", Middlewares.extractContext(), async (ctx) => {
-    const tasks = await app.collections.tasks.list(ctx.$context).fetch();
+    const {items: tasks} = await app.collections.tasks.list(ctx.$context).fetch();
     ctx.body = html(/* HTML */ `
         <body>
             <h1>My To do list</h1>
@@ -190,6 +190,63 @@ const app = new (class extends App {
         ),
     };
 })();
+```
+
+#### How to create a custom login endpoint?
+
+```
+lang=typescript
+function LoginForm(username: string = "", error_message?: string) {
+    return /* HTML */ `
+        <form method="POST" action="/login">
+            ${error_message ? `<div>${error_message}</div>` : ""}
+            <label for="username">
+                Username:
+                <input
+                    id="username"
+                    name="username"
+                    type="text"
+                    value="${username}"
+                    required
+                />
+            </label>
+            <label for="password"
+                >Password:
+                <input
+                    id="password"
+                    name="password"
+                    type="password"
+                    value="${username}"
+                    required
+            /></label>
+            <input type="submit" value="log in" />
+        </form>
+    `;
+}
+
+const router = app.HTTPServer.router;
+
+router.get("/login", async (ctx) => {
+    ctx.body = LoginForm();
+});
+
+router.post("/login", Middlewares.parseBody(), async (ctx) => {
+    try {
+        const session_id = await ctx.$app.collections.sessions.login(
+            ctx.$body.username as string,
+            ctx.$body.password as string
+        );
+        ctx.cookies.set("sealious-session", session_id, {
+            maxAge: 1000 * 60 * 60 * 24 * 7,
+            secure: ctx.request.protocol === "https",
+            overwrite: true,
+        });
+        ctx.redirect("/user");
+    } catch (e) {
+        ctx.body = LoginForm(ctx.$body.username as string, e.message);
+    }
+});
+
 ```
 
 ## Technical docs

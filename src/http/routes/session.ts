@@ -25,21 +25,10 @@ async function validateAuthData(app: App, username: string, password: string) {
 sessionRouter.post("/", parseBody(), async (ctx) => {
 	const username = ctx.request.body.username;
 	const password = ctx.request.body.password;
-	if (!username) {
-		throw new Errors.InvalidCredentials("Missing username!");
-	}
-	if (!password) {
-		throw new Errors.InvalidCredentials("Missing password!");
-	}
-
-	const user = await validateAuthData(ctx.$app, username, password);
-
-	const session = ctx.$app.collections.sessions.make({
-		user: user.id,
-		"session-id": null,
-	});
-	await session.save(new ctx.$app.SuperContext());
-	const session_id = session.get("session-id");
+	const session_id = await ctx.$app.collections.sessions.login(
+		username,
+		password
+	);
 	ctx.body = { status: "logged in!" };
 	ctx.status = 201;
 	const config = ctx.$app.ConfigManager.get("www-server");

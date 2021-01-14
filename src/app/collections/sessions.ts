@@ -1,5 +1,7 @@
 import Router from "@koa/router";
+import { ItemFields } from "../../chip-types/collection-item-body";
 import { Collection, Errors, FieldTypes, Policies } from "../../main";
+import SecureHasher from "../../utils/secure-hasher";
 
 export default class Sessions extends Collection {
 	name = "sessions";
@@ -36,5 +38,35 @@ export default class Sessions extends Collection {
 		const super_router = super.getRouter();
 		router.use(super_router.routes(), super_router.allowedMethods());
 		return router;
+	}
+
+	//returns a session ID to put in the cookie or throws an error if something went wrong
+	async login(username: string, password: string): Promise<string> {
+		if (!username) {
+			throw new Errors.InvalidCredentials("Missing username!");
+		}
+		if (!password) {
+			throw new Errors.InvalidCredentials("Missing password!");
+		}
+
+		const [user] = await this.app.Datastore.find("users", {
+			"username.safe": username,
+		});
+
+		if (!user) {
+			throw new Errors.InvalidCredentials("Incorrect username!");
+		}
+
+		const is_valid = await SecureHasher.matches(password, user.password);
+		if (!is_valid) {
+			throw new Errors.InvalidCredentials("Incorrect password!");
+		}
+		const session = this.make({
+			user: user.id,
+			"session-id": null,
+		} as ItemFields<this>);
+		await session.save(new this.app.SuperContext());
+		const session_id = session.get("session-id");
+		return session_id;
 	}
 }
