@@ -240,6 +240,7 @@ router.post("/login", Middlewares.parseBody(), async (ctx) => {
             overwrite: true,
         });
         ctx.redirect("/user");
+        ctx.status = 303; // more standards- and hotwire-friendly
     } catch (e) {
         ctx.body = LoginForm(ctx.$body.username as string, e.message);
     }
