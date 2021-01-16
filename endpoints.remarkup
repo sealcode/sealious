@@ -42,6 +42,12 @@ semantics. When you log in, you actually want to create (`POST`) a new session
 
 Deletes the current session from DB. No params needed
 
+### Who am i?
+
+In order to check who the currently logged in user is, they can call
+
+`GET /api/v1/collections/users/me`
+
 ### Request a password reset:
 
 `POST /api/v1/collections/password-reset-intents`
