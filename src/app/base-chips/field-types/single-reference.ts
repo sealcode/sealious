@@ -7,30 +7,8 @@ type Filter = Record<string, any>;
 
 /** A reference to other item, in the same or other collection. Can point at items from only one, specified collection. Items with field of this type can be filtered by fields of the items it points at. Examples below.
  *
- * ## Params
- * - `target_collection` - ()=>Collection - the collection that this field points at
- * - `filter` - any - (optional) if provided, only items matching this filter can be referenced
- *
- * ## Filtering
- * Items from a collection with this type of field can be filtered by fields of the items they point at. For example, let's assume we have a collection of People:
- *
- *	```
- *	Collection.fromDefinition(
- *	  app,
- *	  {
- *	   name: "people",
- *	   fields: [
- *		  field("name", FieldTypes.Text),
- *		  field("age", FieldTypes.Int),
- *		  field("best_friend", FieldTypes.SingleReference, {target_collection: ()=>app.collections.people})
- *	   ]
- *	);
- *	```
- * Then we can perform a search for all people who have a best_friend named "John":
- * ```
- * {filter: {best_friend: {name: "John"}}}
- * ```
  */
+
 export default class SingleReference extends Field {
 	typeName = "single-reference";
 	hasIndex = () => true;
