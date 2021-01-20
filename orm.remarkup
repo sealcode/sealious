@@ -130,6 +130,14 @@ const { items: users } = await app.collections.users
   .fetch();
 ```
 
+After turning on attachments for certain field/fields, you can access their full
+values (e.g. `CollectionItem` instances) with `getAttachments`:
+
+```
+lang=typescript
+items[0].getAttachments("field1");
+```
+
 ### Sorting
 
 ```
