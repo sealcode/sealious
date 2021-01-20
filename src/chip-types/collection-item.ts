@@ -6,7 +6,7 @@ import {
 	ValidationError,
 } from "../response/errors";
 import shortid from "shortid";
-import { AttachmentOptions } from "./item-list";
+import { AttachmentOptions, ItemListResult } from "./item-list";
 import CollectionItemBody, { ItemFields } from "./collection-item-body";
 import { PolicyDecision } from "./policy";
 import isEmpty from "../utils/is-empty";
@@ -30,6 +30,7 @@ export default class CollectionItem<T extends Collection = any> {
 	private save_mode: "update" | "insert" = "insert";
 	public original_body: CollectionItemBody;
 	public has_been_replaced = false;
+	private parent_list: ItemListResult<T> | null;
 
 	constructor(
 		public collection: T,
@@ -40,7 +41,7 @@ export default class CollectionItem<T extends Collection = any> {
 			created_by: null,
 		},
 		id?: string,
-		attachments?: Record<string, CollectionItem<T>>
+		attachments?: Record<string, CollectionItem>
 	) {
 		collection.app.Logger.debug3("ITEM", "Creating an item from body", {
 			body,
@@ -368,5 +369,37 @@ export default class CollectionItem<T extends Collection = any> {
 
 	fetchAs(context: Context) {
 		return this.collection.getByID(context, this.id);
+	}
+
+	getAttachments<FieldName extends keyof ItemFields<T>>(
+		field_name: FieldName
+	): CollectionItem[] {
+		if (
+			!this.fields_with_attachments.includes(field_name as string) &&
+			!this.parent_list?.fields_with_attachments.includes(
+				field_name as string
+			)
+		) {
+			throw new Error("No attachments loaded for this field");
+		}
+		if (!this.body.decoded) {
+			throw new Error("Decode first!");
+		}
+
+		const value = this.body.getDecoded(field_name) as string | string[];
+		const ids = Array.isArray(value) ? value : [value];
+		let attachments_source: Record<string, CollectionItem>;
+		if (this.parent_list) {
+			attachments_source = this.parent_list.attachments;
+		} else if (this.attachments_loaded) {
+			attachments_source = this.attachments;
+		} else {
+			throw new Error("Attachments list could not be reached");
+		}
+		return ids.map((id) => attachments_source[id]);
+	}
+
+	setParentList(list: ItemListResult<T>) {
+		this.parent_list = list;
 	}
 }

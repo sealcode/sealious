@@ -48,7 +48,7 @@ export type AttachmentOptions<T extends Collection> = Partial<
 >;
 
 export default class ItemList<T extends Collection> {
-	private fields_with_attachments_fetched: string[] = [];
+	public fields_with_attachments_fetched: string[] = [];
 	private _attachments_options: AttachmentOptions<T> = {};
 	private _filter: FilterT<T>;
 	private _format: FormatParam<T>;
@@ -354,7 +354,9 @@ export class ItemListResult<T extends Collection> {
 		public items: CollectionItem<T>[],
 		public fields_with_attachments: string[],
 		public attachments: { [id: string]: CollectionItem<T> } = {}
-	) {}
+	) {
+		items.forEach((item) => item.setParentList(this));
+	}
 
 	// this generator method makes the instance of this class iterable with for..of
 	*[Symbol.iterator](): Iterator<CollectionItem<T>> {

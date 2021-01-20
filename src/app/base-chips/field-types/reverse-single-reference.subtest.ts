@@ -1,7 +1,14 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import assert from "assert";
 import { withRunningApp } from "../../../test_utils/with-test-app";
-import { App, Collection, FieldTypes, Field } from "../../../main";
+import {
+	App,
+	Collection,
+	FieldTypes,
+	Field,
+	Collections,
+	Policies,
+} from "../../../main";
 import { TestAppType } from "../../../test_utils/test-app";
 import { CollectionResponse } from "../../../test_utils/rest-api";
 import asyncForEach from "../../../utils/async-foreach";
@@ -196,4 +203,97 @@ describe("reverse-single-reference", () => {
 			const referenced_id = items[0].references_in_a[0];
 			assert.strictEqual(attachments[referenced_id].pairity, "odd");
 		}));
+
+	it("handles nested attachments", async () =>
+		withRunningApp(
+			(test_app) =>
+				class extends test_app {
+					collections = {
+						...App.BaseCollections,
+						organizations: new (class extends Collection {
+							fields = {
+								name: FieldTypes.Required(
+									new FieldTypes.Text({
+										full_text_search: true,
+										min_length: 2,
+										max_length: 16,
+									})
+								),
+							};
+						})(),
+						"user-organization": new (class extends Collection {
+							fields = {
+								organization: FieldTypes.Required(
+									new FieldTypes.SingleReference(
+										"organizations"
+									)
+								),
+								user: FieldTypes.Required(
+									new FieldTypes.SingleReference("users")
+								),
+							};
+						})(),
+						users: new (class extends Collections.users {
+							fields = {
+								...App.BaseCollections.users.fields,
+								description: new FieldTypes.Text(),
+								organizations: new FieldTypes.ReverseSingleReference(
+									{
+										referencing_collection:
+											"user-organization",
+										referencing_field: "user",
+									}
+								),
+							};
+							policies = {
+								create: new Policies.Public(),
+								show: new Policies.Public(),
+							};
+							defaultPolicy = new Policies.Public();
+						})(),
+					};
+				},
+			async ({ app, rest_api }) => {
+				const user = await rest_api.post("/api/v1/collections/users", {
+					username: "user1",
+					password: "user1user1",
+					email: "user1@example.com",
+				});
+				const org = await rest_api.post(
+					"/api/v1/collections/organizations",
+					{
+						name: "org",
+					}
+				);
+				await rest_api.post("/api/v1/collections/user-organization", {
+					user: user.id,
+					organization: org.id,
+				});
+				const response = await rest_api.get(
+					"/api/v1/collections/users?attachments[organizations][organization]=true"
+				);
+				const rel_id = response.items[0].organizations[0];
+				const org_id = response.attachments[rel_id].organization;
+				assert.strictEqual(
+					response?.attachments?.[org_id]?.name,
+					"org"
+				);
+				const db_response = await app.collections.users
+					.suList()
+					.attach(({
+						organizations: { organization: true },
+					} as unknown) as any)
+					.fetch();
+				assert.strictEqual(
+					db_response.items[0]
+						.getAttachments(
+							/* @ts-ignore */
+							"organizations"
+						)[0]
+						.getAttachments("organization")[0]
+						.get("name"),
+					"org"
+				);
+			}
+		));
 });

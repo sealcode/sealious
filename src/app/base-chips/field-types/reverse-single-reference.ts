@@ -1,5 +1,5 @@
 import { Field, Context } from "../../../main";
-import ItemList from "../../../chip-types/item-list";
+import ItemList, { AttachmentOptions } from "../../../chip-types/item-list";
 import { CachedValue } from "./field-types";
 import { EventDescription } from "../../delegate-listener";
 
@@ -163,7 +163,11 @@ export default class ReverseSingleReference extends CachedValue<ListOfIDs> {
 		};
 	}
 
-	async getAttachments(context: Context, target_id_lists: string[][]) {
+	async getAttachments(
+		context: Context,
+		target_id_lists: string[][],
+		attachment_options?: AttachmentOptions<any>
+	) {
 		context.app.Logger.debug2(
 			"REVERSE SINGLE REFERENCE",
 			"getAttachments",
@@ -173,8 +177,13 @@ export default class ReverseSingleReference extends CachedValue<ListOfIDs> {
 			(a, b) => a.concat(b),
 			[]
 		);
-		return new ItemList<any>(this.getReferencingCollection(), context)
-			.ids(merged_ids)
-			.fetch();
+		const ret = new ItemList<any>(
+			this.getReferencingCollection(),
+			context
+		).ids(merged_ids);
+		if (typeof attachment_options === "object") {
+			ret.attach(attachment_options);
+		}
+		return ret.fetch();
 	}
 }
