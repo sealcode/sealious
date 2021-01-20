@@ -190,6 +190,32 @@ const app = new (class extends App {
 })();
 ```
 
+#### How do I add a field to a built-in collection?
+
+```
+lang=typescript
+import {Collections} from "sealious";
+
+const app = new (class extends App {
+    config = {
+    /* ... */
+    };
+    manifest = {
+    /* ... */
+    };
+    collections = {
+        ...App.BaseCollections,
+
+        users: new (class users extends Collections.users {
+            fields = {
+                ...App.BaseCollections.users.fields,
+                description: new FieldTypes.Text(),
+            };
+        })(),
+    };
+})();
+```
+
 #### How to create a custom login endpoint?
 
 ```
