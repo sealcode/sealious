@@ -294,6 +294,27 @@ describe("reverse-single-reference", () => {
 						.get("name"),
 					"org"
 				);
+
+				const user2 = await rest_api.post("/api/v1/collections/users", {
+					username: "user2",
+					password: "user2user2",
+					email: "user2@example.com",
+				});
+				const db_response2 = await app.collections.users
+					.suList()
+					.ids([user2.id])
+					.attach(({
+						organizations: { organization: true },
+					} as unknown) as any)
+					.fetch();
+
+				assert.deepStrictEqual(
+					db_response2.items[0].getAttachments(
+						/* @ts-ignore */
+						"organizations"
+					),
+					[]
+				);
 			}
 		));
 });
