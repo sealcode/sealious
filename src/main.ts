@@ -34,3 +34,5 @@ export { default as Middlewares } from "./http/middlewares";
 export { default as CollectionItem } from "./chip-types/collection-item";
 export { EventDescription } from "./app/delegate-listener";
 export { default as Collections } from "./app/collections/collections";
+
+export { ItemListResult } from "./chip-types/item-list";
