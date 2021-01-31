@@ -70,7 +70,10 @@ export default class ItemList<T extends Collection> {
 			this.collection
 				.getPolicy("list")
 				.getRestrictingQuery(context)
-				.then((query) => query.toPipeline())
+				.then((query) => {
+					const pipeline = query.toPipeline();
+					return pipeline;
+				})
 				.then((stages) => this.aggregation_stages.push(...stages)),
 		];
 	}

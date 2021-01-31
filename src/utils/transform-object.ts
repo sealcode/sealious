@@ -1,19 +1,38 @@
-export default function transformObject<T>(
-	obj: T,
-	prop_tranformer: (prop: string) => keyof T,
-	value_transformer: (prop: string, obj: Object) => any
+/* eslint-disable @typescript-eslint/no-unsafe-return */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+
+export default function transformObject(
+	obj: Record<string, any>,
+	prop_tranformer: (prop: string, parent_props: string[]) => string,
+	value_transformer: (
+		prop: string,
+		obj: unknown,
+		parent_props: string[]
+	) => any,
+	parent_props: string[] = []
 ) {
-	const new_obj = Array.isArray(obj) ? (([] as unknown) as T) : ({} as T);
+	// console.log("transformObject", obj);
+	const new_obj = Array.isArray(obj) ? [] : ({} as any);
 	for (const prop in obj) {
-		let new_prop = prop_tranformer(prop);
+		const new_prop = prop_tranformer(prop, parent_props);
+		// if (new_prop !== prop) {
+		// console.log(prop, "→", new_prop);
+		// }
 		new_obj[new_prop] =
 			typeof obj[prop] === "object"
 				? transformObject(
-						(obj[prop] as unknown) as T,
+						obj[prop],
 						prop_tranformer,
-						value_transformer
+						value_transformer,
+						[new_prop, ...parent_props]
 				  )
-				: value_transformer(prop, obj[prop]);
+				: value_transformer(prop, obj[prop], [
+						new_prop,
+						...parent_props,
+				  ]);
+		// console.log(obj[prop], "→", new_obj[new_prop]);
 	}
+	// console.log(obj, "→", new_obj);
 	return new_obj;
 }

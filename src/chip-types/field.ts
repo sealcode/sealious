@@ -2,7 +2,7 @@ import Collection from "./collection";
 import Context from "../context";
 import { ActionName } from "../action";
 import { App } from "../main";
-import QueryStage from "../datastore/query-stage";
+import QueryStage, { MatchBody } from "../datastore/query-stage";
 import { ItemListResult } from "./item-list";
 import { BadSubjectAction } from "../response/errors";
 import isEmpty from "../utils/is-empty";
@@ -233,7 +233,7 @@ export default abstract class Field {
 		);
 		if (!field_filter) return [];
 		const value_path = await this.getValuePath();
-		let $match: QueryStage = {};
+		let $match: MatchBody = {};
 		if (field_filter === null) {
 			$match = {
 				$or: [

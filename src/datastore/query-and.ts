@@ -1,11 +1,11 @@
-import Query from "./query";
+import Query, { QueryStage } from "./query";
 import QueryStep, { Match } from "./query-step";
 import Graph from "./graph";
 import { QueryTypes } from "../main";
 
 export default class And extends Query {
 	graph: Graph;
-	aggregation_steps: { [id: string]: QueryStep | QueryStep[] };
+	aggregation_steps: { [id: string]: QueryStep };
 	received_deny_all: boolean;
 	constructor(...queries: Query[]) {
 		super();
@@ -68,30 +68,20 @@ export default class And extends Query {
 			(node) => id !== node && this.graph.pathExists(id, node)
 		);
 	}
+
 	dump() {
 		const sortedStepIds = this.graph.bestFirstSearch();
 		return sortedStepIds.reduce((steps, id) => {
-			if (Array.isArray(this.aggregation_steps[id])) {
-				steps.push(...(this.aggregation_steps[id] as QueryStep[]));
-			} else {
-				steps.push(this.aggregation_steps[id] as QueryStep);
-			}
+			steps.push(this.aggregation_steps[id]);
 			return steps;
 		}, [] as QueryStep[]);
 	}
-	toPipeline() {
+
+	toPipeline(): QueryStage[] {
 		const sortedStepIds = this.graph.bestFirstSearch();
-		const ret = sortedStepIds.reduce((pipeline, id) => {
-			if (Array.isArray(this.aggregation_steps[id])) {
-				for (let step of this.aggregation_steps[id] as QueryStep[]) {
-					step.pushStage(pipeline);
-				}
-				return pipeline;
-			}
-			return (this.aggregation_steps[id] as QueryStep).pushStage(
-				pipeline
-			);
-		}, []);
+		const ret = sortedStepIds.reduce((pipeline: QueryStage[], id) => {
+			return [...pipeline, ...this.aggregation_steps[id].toPipeline()];
+		}, [] as QueryStage[]);
 		return ret;
 	}
 }

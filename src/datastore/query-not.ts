@@ -1,21 +1,24 @@
-import Query from "./query";
+import Query, { QueryStage } from "./query";
+import QueryStep from "./query-step";
 
 export default class Not extends Query {
 	constructor(query: Query) {
 		super();
 		this.addQuery(query);
 	}
-	addQuery(query: Query) {
+
+	addQuery(query: Query): void {
 		const steps = query.dump();
 		this.steps.push(...steps);
 	}
-	dump() {
+
+	dump(): QueryStep[] {
 		return this.steps.map((step) => step.negate());
 	}
-	toPipeline() {
-		return this.steps.reduce(
-			(acc, step) => step.negate().pushStage(acc),
-			[]
-		);
+
+	toPipeline(): QueryStage[] {
+		return this.dump()
+			.map((step) => step.toPipeline())
+			.reduce((acc, cur) => [...acc, ...cur], []);
 	}
 }

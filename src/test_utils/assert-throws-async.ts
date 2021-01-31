@@ -3,7 +3,7 @@ import assert from "assert";
 
 export async function assertThrowsAsync(
 	fn: () => Promise<unknown>,
-	error_handler: (e: any) => Promise<void> | void
+	error_handler?: (e: any) => Promise<void> | void
 ): Promise<void> {
 	let error: unknown = null;
 	try {
@@ -12,6 +12,8 @@ export async function assertThrowsAsync(
 		error = e;
 	} finally {
 		assert.notStrictEqual(error, null, "It didn't throw");
-		await error_handler(error);
+		if (error_handler) {
+			await error_handler(error);
+		}
 	}
 }

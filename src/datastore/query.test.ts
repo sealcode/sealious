@@ -1,6 +1,12 @@
 import Query, { And, Not, Or, QueryStage } from "./query";
 import * as assert from "assert";
-import QueryStep, { LookupBody, Lookup } from "./query-step";
+import QueryStep, {
+	SimpleLookupBody,
+	SimpleLookup,
+	Lookup,
+	LookupBody,
+	SimpleLookupBodyInput,
+} from "./query-step";
 import DenyAll from "./deny-all";
 
 describe("Query", () => {
@@ -40,14 +46,18 @@ describe("Query", () => {
 				},
 			];
 
-			const query = Query.fromCustomPipeline(pipeline);
+			const query = Query.fromCustomPipeline(pipeline, true);
 
-			const authors_hash = hashLookup(
-				pipeline[1] as { $lookup: LookupBody }
-			);
-			const states_hash = hashLookup(
-				pipeline[4] as { $lookup: LookupBody }
-			);
+			const authors_hash = Lookup.hashBody({
+				...pipeline[1].$lookup,
+				unwind: false,
+			} as LookupBody);
+
+			const states_hash = Lookup.hashBody({
+				...pipeline[4].$lookup,
+				unwind: false,
+			} as SimpleLookupBody);
+
 			const expected_pipeline = [
 				{ $match: { title: { $ne: "The Joy of PHP" } } },
 				{ $match: { edition: 1 } },
@@ -102,7 +112,7 @@ describe("Query", () => {
 			queries.push(Query.fromSingleMatch(M1));
 
 			let query = new Query();
-			const L2: LookupBody = {
+			const L2: SimpleLookupBody = {
 				from: "authors",
 				localField: "author",
 				foreignField: "_id",
@@ -137,12 +147,11 @@ describe("Query", () => {
 			let queries = [];
 			let subquery = new Query();
 
-			const L1: LookupBody = {
+			const L1: SimpleLookupBodyInput = {
 				from: "authors",
 				localField: "author",
 				foreignField: "_id",
 				unwind: true,
-				as: "author", //added during typescript migration for type safety
 			};
 			const L1_id = subquery.lookup(L1);
 			const M2 = {
@@ -159,12 +168,11 @@ describe("Query", () => {
 
 			queries = [];
 			subquery = new Query();
-			const L4: LookupBody = {
+			const L4: SimpleLookupBodyInput = {
 				from: "authors",
 				localField: "author",
 				foreignField: "_id",
 				unwind: true,
-				as: "author", //added during typescript migration for type safety
 			};
 			const L4_id = subquery.lookup(L4);
 			const M4 = {
@@ -176,12 +184,11 @@ describe("Query", () => {
 			subquery = new Query();
 
 			subquery.lookup(L4);
-			const L5: LookupBody = {
+			const L5: SimpleLookupBodyInput = {
 				from: "publisher",
 				localField: `${L4_id}.publisher`,
 				foreignField: "publisher_id",
 				unwind: true,
-				as: "author", //added during typescript migration for type safety
 			};
 			const L5_id = subquery.lookup(L5);
 
@@ -222,7 +229,7 @@ describe("Query", () => {
 			);
 			let negated_query = new Not(query);
 
-			const expected_pipeline = query.toPipeline();
+			const expected_pipeline: any = query.toPipeline();
 			expected_pipeline[0].$match.$nor = expected_pipeline[0].$match.$or;
 			delete expected_pipeline[0].$match.$or;
 
@@ -235,7 +242,7 @@ describe("Query", () => {
 
 		it("Correctly converts query with lookup", () => {
 			const query = new Query();
-			const L1: LookupBody = {
+			const L1: SimpleLookupBody = {
 				from: "authors",
 				localField: "author",
 				foreignField: "_id",
@@ -247,7 +254,7 @@ describe("Query", () => {
 			});
 
 			let negated_query = new Not(query);
-			const expected_pipeline = query.toPipeline();
+			const expected_pipeline: any = query.toPipeline();
 			expected_pipeline[1].$match = {
 				[`${L1_id}.last_name`]: {
 					$not: expected_pipeline[1].$match[`${L1_id}.last_name`],
@@ -321,7 +328,6 @@ describe("Query", () => {
 				localField: "author",
 				foreignField: "_id",
 				unwind: true,
-				as: "author", //added during typescript migration for type safety
 			};
 			const L1_id = query.lookup(L1);
 			const M2 = {
@@ -354,8 +360,10 @@ describe("Query", () => {
 				if (stageBody instanceof Or) {
 					return acc.concat(stageBody.dump());
 				}
-				if ((stageBody as LookupBody).from) {
-					return acc.concat(new Lookup(stageBody as LookupBody));
+				if ((stageBody as SimpleLookupBody).from) {
+					return acc.concat(
+						new SimpleLookup(stageBody as SimpleLookupBody)
+					);
 				}
 				return acc.concat(Query.fromSingleMatch(stageBody).dump());
 			}, []);
@@ -370,7 +378,6 @@ describe("Query", () => {
 				localField: "author",
 				foreignField: "_id",
 				unwind: true,
-				as: "author", //added during typescript migration for type safety
 			};
 			const L1_id = query.lookup(L1);
 
@@ -379,7 +386,6 @@ describe("Query", () => {
 				localField: `${L1_id}.publisher`,
 				foreignField: "publisher_id",
 				unwind: true,
-				as: "author", //added during typescript migration for type safety
 			};
 			const L2_id = query.lookup(L2);
 
@@ -405,7 +411,6 @@ describe("Query", () => {
 				from: "libraries",
 				localField: "first_library",
 				foreignField: "library_id",
-				as: "author", //added during typescript migration for type safety
 			};
 			const O6_L1_id = subquery1.lookup(O6_L1);
 
@@ -440,7 +445,6 @@ describe("Query", () => {
 				localField: "cover",
 				foreignField: "cover_type_id",
 				unwind: true,
-				as: "author", //added during typescript migration for type safety
 			};
 			const L8_id = query.lookup(L8);
 
@@ -457,7 +461,6 @@ describe("Query", () => {
 				from: "cover_types",
 				foreignField: "cover_type_id",
 				unwind: true,
-				as: "author", //added during typescript migration for type safety
 			};
 			const L10_id = query.lookup(L10);
 			const M11 = {
@@ -521,7 +524,7 @@ function makeQueryFromStageBodies(stageBodies: any[]) {
 	return query;
 }
 
-function hashLookup({ $lookup }: { $lookup: LookupBody }) {
+function hashLookup({ $lookup }: { $lookup: SimpleLookupBody }) {
 	const { as, ...lookup_without_as } = $lookup;
 	return QueryStep.hashBody(lookup_without_as);
 }

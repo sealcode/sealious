@@ -1,15 +1,23 @@
-import Policy from "../../chip-types/policy";
-import { App, CollectionItem, Context, FieldTypes, Query } from "../../main";
-import Collection from "../../chip-types/collection";
 import { ActionName } from "../../action";
-import QueryStage from "../../datastore/query-stage";
-import DenyAll from "../../datastore/deny-all";
+import Collection from "../../chip-types/collection";
+import Policy from "../../chip-types/policy";
 import { AllowAll } from "../../datastore/allow-all";
+import DenyAll from "../../datastore/deny-all";
+import QueryStage from "../../datastore/query-stage";
+import {
+	App,
+	CollectionItem,
+	Context,
+	Field,
+	FieldTypes,
+	Query,
+} from "../../main";
 
 export default class SameAsForResourceInField extends Policy {
 	static type_name = "same-as-for-resource-in-field";
 	current_collection: string;
 	field: string;
+	action_name: ActionName;
 	constructor({
 		action_name,
 		collection_name,
@@ -21,6 +29,7 @@ export default class SameAsForResourceInField extends Policy {
 	}) {
 		super({ action_name, collection_name, field });
 		this.current_collection = collection_name;
+		this.action_name = action_name;
 		this.field = field;
 	}
 
@@ -29,13 +38,20 @@ export default class SameAsForResourceInField extends Policy {
 	}
 
 	getReferencedCollection(context: Context): Collection {
-		return (this.getCollection(context.app).fields[
-			this.field
-		] as FieldTypes.SingleReference).getTargetCollection(context);
+		const field = this.getField(context);
+		return field instanceof FieldTypes.SingleReference
+			? field.getTargetCollection(context)
+			: (field as FieldTypes.ReverseSingleReference).getReferencingCollection();
 	}
 
 	getReferencedPolicy(context: Context): Policy {
-		return this.getReferencedCollection(context).getPolicy("show");
+		return this.getReferencedCollection(context).getPolicy(
+			this.action_name
+		);
+	}
+
+	getField(context: Context): Field {
+		return this.getCollection(context.app).fields[this.field];
 	}
 
 	async _getRestrictingQuery(context: Context) {
@@ -51,24 +67,42 @@ export default class SameAsForResourceInField extends Policy {
 		}
 
 		const query = new Query();
-		const parent_prefix = query.lookup({
-			from: this.getReferencedCollection(context).name,
-			localField: this.field,
-			foreignField: "id",
-		});
+		let parent_prefix: string;
 
-		const referenced_restricting_pipeline = referenced_restricting_query.toPipeline();
-		add_parent_prefix_to_pipeline(
-			referenced_restricting_pipeline,
-			parent_prefix
-		);
+		if (this.getField(context) instanceof FieldTypes.SingleReference) {
+			parent_prefix = query.lookup({
+				from: this.getReferencedCollection(context).name,
+				localField: this.field,
+				foreignField: "id",
+			});
+		} else {
+			//assuming ReverseSingleReference;
+			parent_prefix = query.lookup({
+				from: this.getReferencedCollection(context).name,
+				let: { value: `$${this.field}.value` },
+				pipeline: [{ $match: { $expr: { $in: ["$id", "$$value"] } } }],
+			});
+		}
 
-		const pipeline = query
-			.toPipeline()
-			.concat(referenced_restricting_pipeline);
+		const referenced_restricting_pipeline = referenced_restricting_query
+			.prefix(parent_prefix)
+			.toPipeline();
+
+		const pipeline: QueryStage[] = [
+			...query.toPipeline(),
+			{ $unwind: parent_prefix },
+			...referenced_restricting_pipeline,
+			{
+				$group: {
+					_id: "$_id",
+					sizes: { $push: `$${parent_prefix}` },
+				},
+			},
+		];
 
 		return Query.fromCustomPipeline(pipeline);
 	}
+
 	async checkerFunction(
 		context: Context,
 		item_getter: () => Promise<CollectionItem>
@@ -94,33 +128,4 @@ export default class SameAsForResourceInField extends Policy {
 	async isItemSensitive(context: Context) {
 		return this.getReferencedPolicy(context).isItemSensitive(context);
 	}
-}
-
-function add_parent_prefix_to_pipeline(
-	pipeline: QueryStage[],
-	parent_property: string
-) {
-	for (const stage of pipeline) {
-		add_parent_prefix(stage, parent_property);
-	}
-}
-
-const prop_regex = /^[a-z0-9_]/;
-function add_parent_prefix(group: QueryStage, parent_property: string) {
-	const ret: { [name: string]: unknown } = {};
-	for (const prop of Object.keys(group) as (keyof typeof group)[]) {
-		if (prop == "$or" || prop == "$and") {
-			group[prop] = (group[prop] as Array<QueryStage>).map((subgroup) =>
-				add_parent_prefix(subgroup, parent_property)
-			);
-		} else if (group[prop] instanceof Object) {
-			group[prop] = add_parent_prefix(group[prop], parent_property);
-		}
-		const new_prop = prop_regex.test(prop)
-			? parent_property + "." + prop
-			: prop;
-		ret[new_prop] = group[prop] as unknown;
-	}
-
-	return ret;
 }

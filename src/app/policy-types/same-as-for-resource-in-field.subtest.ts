@@ -1,6 +1,13 @@
 import assert from "assert";
 import Policy from "../../chip-types/policy";
-import { ActionName, App, Collection, FieldTypes, Policies } from "../../main";
+import {
+	ActionName,
+	App,
+	Collection,
+	FieldTypes,
+	Policies,
+	Context,
+} from "../../main";
 import { assertThrowsAsync } from "../../test_utils/assert-throws-async";
 import MockRestApi from "../../test_utils/rest-api";
 import { TestAppType } from "../../test_utils/test-app";
@@ -14,7 +21,9 @@ const extend = (
 ) => (t: TestAppType) => {
 	const Numbers = new (class extends Collection {
 		name = "numbers";
-		fields = { number: new FieldTypes.Int() };
+		fields = {
+			number: new FieldTypes.Int(),
+		};
 		named_filters = {
 			greater_than_1: new Matches("numbers", {
 				number: { ">": 1 },
@@ -159,7 +168,7 @@ describe("SameAsForResourceInField", () => {
 		withRunningApp(
 			extend({
 				create: new Policies.LoggedIn(),
-				show: new Policies.Or([
+				list: new Policies.Or([
 					new Policies.Owner(),
 					new Policies.If([
 						"numbers",
@@ -193,21 +202,163 @@ describe("SameAsForResourceInField", () => {
 				await setup(app, rest_api);
 				const posted_notes = await post_number_notes(rest_api, "alice");
 
+				await assertThrowsAsync(() =>
+					rest_api.patch(
+						`/api/v1/collections/number-notes/${
+							posted_notes[0].id as string
+						}`,
+						{ note: "Lorem ipsumm" },
+						sessions.bob
+					)
+				);
+			}
+		));
+
+	it("works on reverse single reference fields", () =>
+		withRunningApp(
+			(t) =>
+				class extends t {
+					collections = {
+						...t.BaseCollections,
+						organizations: new (class extends Collection {
+							fields = {
+								name: new FieldTypes.Text(),
+								user_assignments: new FieldTypes.ReverseSingleReference(
+									{
+										referencing_collection:
+											"user_organizations",
+										referencing_field: "organization",
+									}
+								),
+							};
+							policies = {
+								list: new Policies.SameAsForResourceInField({
+									collection_name: "organizations",
+									action_name: "show",
+									field: "user_assignments",
+								}),
+							};
+						})(),
+						user_organizations: new (class extends Collection {
+							fields = {
+								user: new FieldTypes.SingleReference("users"),
+								organization: new FieldTypes.SingleReference(
+									"organizations"
+								),
+							};
+							policies = {
+								show: new Policies.UserReferencedInField(
+									"user"
+								),
+							};
+						})(),
+						projects: new (class extends Collection {
+							fields = {
+								name: new FieldTypes.Text(),
+								organization: new FieldTypes.SingleReference(
+									"organizations"
+								),
+							};
+							policies = {
+								list: new Policies.SameAsForResourceInField({
+									collection_name: "projects",
+									field: "organization",
+									action_name: "list",
+								}),
+								show: new Policies.SameAsForResourceInField({
+									collection_name: "projects",
+									field: "organization",
+									action_name: "list",
+								}),
+								edit: new Policies.SameAsForResourceInField({
+									collection_name: "projects",
+									field: "organization",
+									action_name: "list",
+								}),
+							};
+						})(),
+					};
+				},
+			async ({ app }) => {
+				const user1 = await app.collections.users.suCreate({
+					username: "user1",
+					email: "any@example.com",
+					password: "user1user1",
+					roles: null,
+				});
+				const user1_context = new Context(app, Date.now(), user1.id);
+
+				const user2 = await app.collections.users.suCreate({
+					username: "user2",
+					email: "any@example.com",
+					password: "user2user2",
+					roles: null,
+				});
+				const user2_context = new Context(app, Date.now(), user2.id);
+
+				const org1 = await app.collections.organizations.suCreate({
+					name: "org1",
+				});
+				await app.collections.user_organizations.suCreate({
+					user: user1.id,
+					organization: org1.id,
+				});
+
+				const org2 = await app.collections.organizations.suCreate({
+					name: "org2",
+				});
+				await app.collections.user_organizations.suCreate({
+					user: user2.id,
+					organization: org2.id,
+				});
+
+				const project = await app.collections.projects.suCreate({
+					organization: org1.id,
+					name: "project1",
+				});
+				assert.strictEqual(
+					(
+						await app.collections.organizations
+							.list(user1_context)
+							.fetch()
+					).items.length,
+					1
+				);
+				assert.strictEqual(
+					(
+						await app.collections.organizations
+							.list(user2_context)
+							.fetch()
+					).items.length,
+					1
+				);
+				assert.strictEqual(
+					(await app.collections.projects.list(user1_context).fetch())
+						.items.length,
+					1
+				);
+				assert.strictEqual(
+					(await app.collections.projects.list(user2_context).fetch())
+						.items.length,
+					0
+				);
+
 				await assertThrowsAsync(
-					() =>
-						rest_api.patch(
-							`/api/v1/collections/number-notes/${
-								posted_notes[0].id as string
-							}`,
-							{ note: "Lorem ipsumm" },
-							sessions.bob
+					async () =>
+						app.collections.projects.getByID(
+							user2_context,
+							project.id
 						),
-					(error) => {
-						assert.strictEqual(
-							error.response.data.message,
-							"you are not who created this item"
-						);
+
+					(e) => {
+						assert.notStrictEqual(e, null);
 					}
+				);
+
+				await assertThrowsAsync(async () =>
+					(await app.collections.projects.suGetByID(project.id))
+						.set("name", "takeover")
+						.save(user2_context)
 				);
 			}
 		));

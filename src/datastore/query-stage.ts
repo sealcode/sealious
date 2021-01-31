@@ -1,12 +1,18 @@
-type QueryStage = Partial<{
-	$not: QueryStage;
-	$match: any;
-	$lookup: any;
+import { ComplexLookupBody, SimpleLookupBody } from "./query-step";
+
+export type MatchBody = Partial<{
+	$not: MatchBody;
 	$search: any;
+	$nor: MatchBody[];
+	$or: MatchBody[];
+	$and: MatchBody[];
+	[field: string]: unknown;
+}>;
+
+type QueryStage = Partial<{
+	$match: MatchBody;
+	$lookup: SimpleLookupBody | ComplexLookupBody;
 	$unwind: string;
-	$nor: any;
-	$or: QueryStage[];
-	$and: QueryStage[];
 	$skip: number;
 	$limit: number;
 	$sort: { [field_name: string]: 1 | -1 };
@@ -14,6 +20,8 @@ type QueryStage = Partial<{
 		_id: string;
 		[other: string]: any;
 	};
+	$count: string;
+	$unset: string;
 }>;
 
 export default QueryStage;

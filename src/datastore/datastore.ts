@@ -3,6 +3,7 @@ import { App } from "../main";
 import Collection from "../chip-types/collection";
 import { QueryStage } from "./query";
 import asyncForEach from "../utils/async-foreach";
+import QueryStep from "./query-step";
 
 export type OutputOptions = Partial<{
 	skip: number;
@@ -124,6 +125,7 @@ export default class Datastore {
 		}
 		return cursor.toArray();
 	}
+
 	async aggregate(
 		collection_name: string,
 		pipeline: QueryStage[],
@@ -132,6 +134,11 @@ export default class Datastore {
 	): Promise<Record<string, any>[]> {
 		const cursor = this.db.collection(collection_name).aggregate(pipeline);
 
+		if (pipeline.find((element) => element instanceof QueryStep)) {
+			throw new Error(
+				"Pipeline elements should be simple objects, not QuerySteps. Perhaps you should use .toPipeline()?"
+			);
+		}
 		this.app.Logger.debug2(
 			"DB",
 			"Running aggregate",

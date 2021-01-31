@@ -95,9 +95,10 @@ export default abstract class Collection {
 				throw new BadContext(result?.reason as string);
 			}
 		}
-		const results = (await context.app.Datastore.find(this.name, {
-			id,
-		})) as ItemFields<this>[];
+		const results = (await context.app.Datastore.aggregate(this.name, [
+			{ $match: { id } },
+			...(await policy.getRestrictingQuery(context)).toPipeline(),
+		])) as ItemFields<this>[];
 		if (!results.length) {
 			throw new NotFound(`${this.name}: id ${id} not found`);
 		}
