@@ -126,10 +126,21 @@ export default abstract class Collection {
 		await context.app.Datastore.remove(this.name, { id: id }, true);
 	}
 
-	/** Get a policy for given action, or the default policy, if no
-	 * policy is specified for this action */
+	/** Get a policy for given action, an inherited policy, or the default
+	 * policy, if no policy is specified for this action */
 	getPolicy(action: ActionName): Policy {
-		return this.policies[action] || this.defaultPolicy;
+		const policy = this.policies[action];
+		if (policy !== undefined) {
+			return policy;
+		}
+
+		// show and list are actions that can use each others' policies.
+		if (action === "show" && this.policies["list"]) {
+			return this.policies["list"];
+		} else if (action === "list" && this.policies["show"]) {
+			return this.policies["show"];
+		}
+		return this.defaultPolicy;
 	}
 
 	/** Initialize all the fields and filters

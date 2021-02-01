@@ -9,7 +9,7 @@
 		"test-debug": "npm run test-cmd -- --debug",
 		"test-cmd": "node test.js",
 		"test": "./npm.sh run test-cmd -- ",
-		"build": "tsc",
+		"build": "rm -rf ./lib && tsc",
 		"watch": "npm run build -- --watch",
 		"test-reports": "npm run build && rm -fr .xunit coverage && docker-compose up -d db mailcatcher  && npm run test -- --cover --test-report",
 		"cover-html": "npm run test-reports -- --cover-html && xdg-open coverage/lcov-report/index.html",
