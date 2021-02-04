@@ -3,10 +3,9 @@ import QueryStage, { MatchBody } from "./query-stage";
 import QueryStep, { Lookup, Match } from "./query-step";
 
 export default class Or extends Query {
-	lookup_steps: QueryStep[];
+	lookup_steps: QueryStep[] = [];
 	constructor(...queries: Query[]) {
 		super();
-		this.lookup_steps = [];
 		for (const query of queries) {
 			this.addQuery(query);
 		}
@@ -21,11 +20,13 @@ export default class Or extends Query {
 			.filter((step) => step instanceof Match)
 			.map((match: Match) => match.body);
 
-		const match_stage: MatchBody =
-			match_stage_bodies.length > 1
-				? { $and: match_stage_bodies }
-				: match_stage_bodies[0];
-		this.steps.push(new Match(match_stage));
+		if (match_stage_bodies.length) {
+			const match_stage: MatchBody =
+				match_stage_bodies.length > 1
+					? { $and: match_stage_bodies }
+					: match_stage_bodies[0];
+			this.steps.push(new Match(match_stage));
+		}
 	}
 
 	dump(): QueryStep[] {
@@ -45,5 +46,13 @@ export default class Or extends Query {
 		return this.steps
 			.filter((step) => step instanceof Match)
 			.map((step) => step.body as MatchBody);
+	}
+
+	prefix(prefix: string): this {
+		super.prefix(prefix);
+		this.lookup_steps = this.lookup_steps.map((step) =>
+			step.prefix(prefix)
+		);
+		return this;
 	}
 }

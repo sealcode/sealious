@@ -232,11 +232,14 @@ describe("SameAsForResourceInField", () => {
 								),
 							};
 							policies = {
-								list: new Policies.SameAsForResourceInField({
-									collection_name: "organizations",
-									action_name: "show",
-									field: "user_assignments",
-								}),
+								list: new Policies.Or([
+									new Policies.SameAsForResourceInField({
+										collection_name: "organizations",
+										action_name: "show",
+										field: "user_assignments",
+									}),
+									new Policies.Roles(["admin"]),
+								]),
 							};
 						})(),
 						user_organizations: new (class extends Collection {

@@ -266,7 +266,7 @@ export class ComplexLookup extends Lookup {
 	}
 
 	prefix(prefix: string): Lookup {
-		return new ComplexLookup({
+		const ret = new ComplexLookup({
 			from: this.body.from,
 			let: Object.fromEntries(
 				Object.entries(this.body.let).map(([key, value]) => [
@@ -285,6 +285,7 @@ export class ComplexLookup extends Lookup {
 			// .reduce((acc, cur) => acc.concat(cur)),
 			as: prefix + "." + this.body.as,
 		});
+		return ret;
 	}
 }
 

@@ -6,6 +6,8 @@ import QueryStep, {
 	Lookup,
 	LookupBody,
 	SimpleLookupBodyInput,
+	ComplexLookup,
+	ComplexLookupBody,
 } from "./query-step";
 import DenyAll from "./deny-all";
 
@@ -218,6 +220,24 @@ describe("Query", () => {
 				},
 			]).toPipeline();
 			assert.deepStrictEqual(expected_pipeline, query.toPipeline());
+		});
+
+		it("Properly prefixes queries", () => {
+			const query = new Or();
+			const subquery = new Query();
+			subquery.lookup({
+				let: { value: "$field" },
+				as: "something",
+				from: "collection",
+				pipeline: [{ $match: { $expr: { $in: ["$id", "$$value"] } } }],
+			});
+			query.addQuery(subquery);
+			query.prefix("prefix");
+			const pipeline = query.toPipeline();
+			assert.strictEqual(
+				(pipeline?.[0].$lookup as ComplexLookupBody).let?.value,
+				"$prefix.field"
+			);
 		});
 	});
 

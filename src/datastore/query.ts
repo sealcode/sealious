@@ -1,13 +1,11 @@
+import QueryStage from "./query-stage";
 import {
+	ComplexLookupBodyInput,
+	default as QueryStep,
 	Lookup,
 	Match,
-	default as QueryStep,
-	ComplexLookupBodyInput,
 	SimpleLookupBodyInput,
-	LookupBody,
 } from "./query-step";
-import transformObject from "../utils/transform-object";
-import QueryStage from "./query-stage";
 
 export default class Query {
 	steps: QueryStep[];
@@ -46,7 +44,6 @@ export default class Query {
 
 	static fromCustomPipeline(stages: QueryStage[], rehash = false) {
 		const ret = new Query();
-		let steps;
 		const lookup_field_to_hash: { [field_as: string]: string } = {};
 		for (const stage of stages) {
 			const query_steps = QueryStep.fromStage(stage, false, rehash);
@@ -81,8 +78,7 @@ export default class Query {
 	}
 }
 
-export { default as Or } from "./query-or";
-
 export { default as And } from "./query-and";
 export { default as Not } from "./query-not";
+export { default as Or } from "./query-or";
 export { default as QueryStage } from "./query-stage";
