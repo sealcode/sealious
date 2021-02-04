@@ -3,7 +3,7 @@ import Query from "./query";
 export default class DenyAll extends Query {
 	constructor() {
 		super();
-		super.match({ _id: { $exists: false } });
+		super.match({ _id: { $eq: -1 } });
 	}
 	lookup() {
 		throw new Error("The query is not mutable!");
