@@ -88,6 +88,10 @@ export default class SameAsForResourceInField extends Policy {
 			.prefix(parent_prefix)
 			.toPipeline();
 
+		const keep_fields: Record<string, Record<"$first", string>> = {}; // this object will help preserve the original fields after $group stage, which serves as a reverse to $unwind
+		for (const field_name in this.getReferencedCollection(context).fields) {
+			keep_fields[field_name] = { $first: `$${field_name}` };
+		}
 		const pipeline: QueryStage[] = [
 			...query.toPipeline(),
 			{ $unwind: parent_prefix },
@@ -95,7 +99,10 @@ export default class SameAsForResourceInField extends Policy {
 			{
 				$group: {
 					_id: "$_id",
-					sizes: { $push: `$${parent_prefix}` },
+					[parent_prefix]: {
+						$push: `$${parent_prefix}`,
+					},
+					...keep_fields,
 				},
 			},
 		];

@@ -335,11 +335,14 @@ describe("SameAsForResourceInField", () => {
 					).items.length,
 					1
 				);
-				assert.strictEqual(
-					(await app.collections.projects.list(user1_context).fetch())
-						.items.length,
-					1
-				);
+
+				const {
+					items: projects1,
+				} = await app.collections.projects.list(user1_context).fetch();
+
+				assert.strictEqual(projects1.length, 1);
+				assert.strictEqual(projects1[0].get("name"), "project1");
+
 				assert.strictEqual(
 					(await app.collections.projects.list(user2_context).fetch())
 						.items.length,
