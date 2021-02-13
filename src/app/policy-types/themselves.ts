@@ -2,7 +2,7 @@ import { CollectionItem, Context, Policy, Query } from "../../main";
 
 export default class Themselves extends Policy {
 	static type_name = "themselves";
-	isItemSensitive = async () => true;
+	isItemSensitive = async (_: Context) => true;
 	async _getRestrictingQuery(context: Context) {
 		return Query.fromSingleMatch({
 			id: { $eq: context.user_id },
