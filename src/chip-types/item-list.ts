@@ -356,7 +356,7 @@ export class ItemListResult<T extends Collection> {
 	constructor(
 		public items: CollectionItem<T>[],
 		public fields_with_attachments: string[],
-		public attachments: { [id: string]: CollectionItem<T> } = {}
+		public attachments: { [id: string]: CollectionItem } = {}
 	) {
 		items.forEach((item) => item.setParentList(this));
 	}
