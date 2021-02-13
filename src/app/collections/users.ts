@@ -1,4 +1,5 @@
 import Router from "@koa/router";
+import Policy from "../../chip-types/policy";
 import { Collection, App, FieldTypes, Policies } from "../../main";
 import { BadContext } from "../../response/errors";
 
@@ -13,7 +14,7 @@ export default class Users extends Collection {
 		}),
 	};
 
-	defaultPolicy = new Policies.Themselves();
+	defaultPolicy: Policy = new Policies.Themselves();
 
 	policies = {
 		create: new Policies.Super(),
