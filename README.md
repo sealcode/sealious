@@ -271,7 +271,26 @@ router.post("/login", Middlewares.parseBody(), async (ctx) => {
         ctx.body = LoginForm(ctx.$body.username as string, e.message);
     }
 });
+```
 
+#### How to set up a default value to a field?
+
+It's possible, but currently not pretty. This will be fixed in the future.
+
+```
+lang=typescript
+const tasks = new (class extends Collection {
+	fields = {
+		title: new FieldTypes.Text(),
+		done: new (class extends FieldTypes.Boolean {
+			hasDefaultValue = () => true;
+			async getDefaultValue() {
+				return false;
+			}
+		})(),
+	};
+	defaultPolicy = new Policies.Public();
+})();
 ```
 
 ## Technical docs
