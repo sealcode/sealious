@@ -70,13 +70,13 @@ export default abstract class Collection {
 
 	async create(
 		context: Context,
-		data: ItemFields<this>
+		data: Partial<ItemFields<this>>
 	): Promise<CollectionItem<this>> {
 		return this.make(data).save(context);
 	}
 
 	/** Makes a new item object that can be saved later */
-	make(input?: ItemFields<this>): CollectionItem<this> {
+	make(input?: Partial<ItemFields<this>>): CollectionItem<this> {
 		return new CollectionItem<this>(
 			this,
 			new CollectionItemBody(this, input, {}, {})
