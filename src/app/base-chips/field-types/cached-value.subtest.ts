@@ -396,6 +396,58 @@ describe("cached-value", () => {
 			}
 		);
 	});
+
+	it("behaves correctly when the initial value is null", () =>
+		withRunningApp(
+			(test_app) =>
+				class extends test_app {
+					collections = {
+						...App.BaseCollections,
+						jobs: new (class extends Collection {
+							fields = {
+								title: new FieldTypes.Text(),
+							};
+						})(),
+						hasdefault: new (class extends Collection {
+							fields = {
+								isdefault: new FieldTypes.CachedValue(
+									new FieldTypes.SingleReference("jobs"),
+									{
+										refresh_on: [
+											{
+												event: new EventDescription(
+													"jobs",
+													"after:edit"
+												),
+												resource_id_getter: async (
+													_,
+													item
+												) => [item.id],
+											},
+										],
+										get_value: async function (
+											context,
+											item_id
+										) {
+											const job = await context.app.collections[
+												"jobs"
+											].getByID(context, item_id);
+											return job.id;
+										},
+										initial_value: null,
+									}
+								),
+							};
+						})(),
+					};
+				},
+			async ({ app }) => {
+				const hasdefault = await app.collections.hasdefault.suCreate(
+					{}
+				);
+				assert.strictEqual(hasdefault.get("isdefault"), null);
+			}
+		));
 });
 
 function make_refresh_on(): RefreshCondition[] {

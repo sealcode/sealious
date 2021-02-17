@@ -73,7 +73,7 @@ export default class CollectionItemBody<T extends Collection = any> {
 				continue;
 			}
 
-			if (to_encode === undefined || to_encode === null) {
+			if (to_encode === undefined) {
 				encoded[field_name] = null;
 				continue;
 			}
