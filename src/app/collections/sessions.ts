@@ -10,7 +10,9 @@ export default class Sessions extends Collection {
 		user: new FieldTypes.SingleReference("users"),
 	};
 
-	policies = {};
+	policies = {
+		list: new Policies.UserReferencedInField("user"),
+	};
 	defaultPolicy = new Policies.Super();
 
 	getRouter() {
