@@ -173,12 +173,14 @@ export default abstract class Field {
 
 	/** Whether or not a field has a default value - that is, a value
 	 * given to the field if no value is provided */
-	hasDefaultValue = () => true;
+	hasDefaultValue() {
+		return true;
+	}
 
 	/** The default value that will be assigned to the field if no
 	 * value is given */
 	async getDefaultValue(
-		context: Context
+		_: Context
 	): Promise<Parameters<this["encode"]>[1] | null> {
 		return null;
 	}

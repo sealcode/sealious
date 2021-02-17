@@ -2,7 +2,7 @@
 import assert from "assert";
 import { withRunningApp } from "../../../test_utils/with-test-app";
 import { assertThrowsAsync } from "../../../test_utils/assert-throws-async";
-import { App, Collection, FieldTypes, Policies } from "../../../main";
+import { App, Collection, Context, FieldTypes, Policies } from "../../../main";
 import { TestAppType } from "../../../test_utils/test-app";
 import MockRestApi, {
 	CollectionResponse,
@@ -204,4 +204,44 @@ describe("control-access", () => {
 					)
 			);
 		}));
+
+	it("Honors the default value of the field", async () => {
+		withRunningApp(
+			(test_app) =>
+				class extends test_app {
+					collections = {
+						...App.BaseCollections,
+						tasks: new (class extends Collection {
+							fields = {
+								title: new FieldTypes.Text(),
+								done: new FieldTypes.ControlAccess(
+									new (class extends FieldTypes.Boolean {
+										hasDefaultValue = () => true;
+										async getDefaultValue() {
+											return false;
+										}
+									})(),
+									{
+										target_policies: {
+											show: new Policies.Public(),
+											edit: new Policies.Super(),
+										},
+										value_when_not_allowed: null,
+									}
+								),
+							};
+
+							defaultPolicy = new Policies.Public();
+						})(),
+					};
+				},
+			async ({ app }) => {
+				const task = await app.collections.tasks.create(
+					new Context(app, new Date().getTime(), null, null),
+					{ title: "" }
+				);
+				assert.strictEqual(task.get("done"), false);
+			}
+		);
+	});
 });

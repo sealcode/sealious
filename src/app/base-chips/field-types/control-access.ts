@@ -82,4 +82,12 @@ export default class ControlAccess<T extends Field> extends HybridField<T> {
 		);
 		return ret;
 	}
+
+	hasDefaultValue() {
+		return this.virtual_field.hasDefaultValue();
+	}
+
+	getDefaultValue(context: Context) {
+		return this.virtual_field.getDefaultValue(context);
+	}
 }
