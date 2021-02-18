@@ -43,7 +43,8 @@ export default class CachedValue<T extends Field> extends HybridField<T> {
 	}
 
 	async init(app: App) {
-		this.app = app;
+		await super.init(app);
+		await this.virtual_field.init(app);
 		this.checkForPossibleRecursiveEdits();
 
 		const create_action = this.refresh_on.find(({ event }) =>

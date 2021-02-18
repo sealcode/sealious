@@ -448,6 +448,69 @@ describe("cached-value", () => {
 				assert.strictEqual(hasdefault.get("isdefault"), null);
 			}
 		));
+
+	it("handles field types that depend on being .inited", () =>
+		withRunningApp(
+			(test_app) =>
+				class extends test_app {
+					collections = {
+						...App.BaseCollections,
+						jobs: new (class extends Collection {
+							fields = {
+								title: new FieldTypes.Text(),
+								hasjob: new FieldTypes.SingleReference(
+									"hasjob"
+								),
+							};
+						})(),
+						hasjob: new (class extends Collection {
+							fields = {
+								job: new FieldTypes.CachedValue(
+									new FieldTypes.SingleReference("jobs"),
+									{
+										refresh_on: [
+											{
+												event: new EventDescription(
+													"jobs",
+													"after:create"
+												),
+												resource_id_getter: async (
+													_,
+													item
+												) => [item.get("hasjob")],
+											},
+										],
+										get_value: async function (
+											context,
+											item_id
+										) {
+											const {
+												items: [job],
+											} = await context.app.collections.jobs
+												.suList()
+												.filter({ hasjob: item_id })
+												.fetch();
+											return job.id;
+										},
+										initial_value: null,
+									}
+								),
+							};
+						})(),
+					};
+				},
+			async ({ app }) => {
+				const hasjob = await app.collections.hasjob.suCreate({});
+				const job = await app.collections.jobs.suCreate({
+					title: "any",
+					hasjob: hasjob.id,
+				});
+				const {
+					items: [hasjob_after],
+				} = await app.collections.hasjob.suList().fetch();
+				assert.strictEqual(hasjob_after.get("job"), job.id);
+			}
+		));
 });
 
 function make_refresh_on(): RefreshCondition[] {
