@@ -293,6 +293,16 @@ const tasks = new (class extends Collection {
 })();
 ```
 
+#### How to sort by modification/creation time?
+
+```
+lang=typescript
+app.collections.entries
+	.suList()
+	.sort({ "_metadata.modified_at": "desc" }) // or: _metadata.created_at
+	.fetch();
+```
+
 ## Technical docs
 
 For technical reference, see
