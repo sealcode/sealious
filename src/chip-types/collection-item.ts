@@ -121,6 +121,7 @@ export default class CollectionItem<T extends Collection = any> {
 			});
 			await this.decode(context);
 			await this.collection.emit("after:create", [context, this]);
+			this.save_mode = "update";
 		} else {
 			this._metadata.modified_at = Date.now();
 			context.app.Logger.debug3("ITEM", "updating an existing item", {
