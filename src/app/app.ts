@@ -216,7 +216,10 @@ abstract class App {
 
 	initRouter(): void {
 		const router = this.HTTPServer.router;
-		router.use("/api/v1/", extractContext());
+		router.use("/api/v1/", extractContext(), async (ctx, next) => {
+			await next();
+			ctx.$app.Logger.debug("HTTP RESPONSE", "Responding with", ctx.body);
+		});
 		router.use(async (ctx, next) => {
 			ctx.$app.Logger.info("REQUEST", `${ctx.method} ${ctx.url}`, {
 				query: ctx.query as unknown,
