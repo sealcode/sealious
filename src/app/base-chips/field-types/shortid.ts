@@ -11,6 +11,9 @@ export default class ShortID extends Field {
 	}
 
 	async encode(_: any, input: string | null) {
+		if (input === null) {
+			return null;
+		}
 		return input ? input : shortid.generate();
 	}
 }

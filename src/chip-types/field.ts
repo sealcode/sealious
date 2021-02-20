@@ -136,6 +136,8 @@ export default abstract class Field {
 	): Promise<ValidationResult> {
 		if (isEmpty(new_value) && this.required) {
 			return Field.invalid(`Missing value for field '${this.name}'.`);
+		} else if (isEmpty(new_value)) {
+			return Field.valid();
 		} else {
 			return this.isProperValue(context, new_value, old_value);
 		}

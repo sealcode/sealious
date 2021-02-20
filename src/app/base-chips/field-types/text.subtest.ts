@@ -95,4 +95,16 @@ describe("text", () => {
 					.then((resp) => assert.deepEqual(resp.status, 201));
 			}
 		));
+
+	it("should respond with null when no value is stored", async () =>
+		withRunningApp(
+			extend({ min_length: 3, max_length: 5 }),
+			async ({ app }) => {
+				await app.collections.surnames.suCreate({});
+				const {
+					items: [surname],
+				} = await app.collections.surnames.suList().fetch();
+				assert.strictEqual(surname.get("surname"), null);
+			}
+		));
 });

@@ -32,8 +32,11 @@ export default class DateField extends Field {
 		}
 		return Field.valid();
 	}
-	async encode(_: Context, value_in_code: string) {
-		const date_str = value_in_code.toString();
+	async encode(_: Context, value: string | null) {
+		if (value === null) {
+			return null;
+		}
+		const date_str = value.toString();
 		// value is already confirmed to be properly formatted
 		return dateStrToDayInt(date_str);
 	}
@@ -65,10 +68,13 @@ export default class DateField extends Field {
 	}
 	async decode(
 		_: Context,
-		value_in_db: number,
+		value_in_db: number | null,
 		old_value: string,
 		format: never
 	) {
+		if (value_in_db === null) {
+			return value_in_db;
+		}
 		const d = new Date(value_in_db * DAY);
 		const month = d.getMonth() + 1;
 		let month_str = month.toString();

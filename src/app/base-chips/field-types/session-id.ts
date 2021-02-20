@@ -10,6 +10,9 @@ export default class SessionID extends Field {
 	}
 
 	async encode(_: any, input: string | null) {
+		if (input === null) {
+			return null;
+		}
 		return input ? input : uuid();
 	}
 

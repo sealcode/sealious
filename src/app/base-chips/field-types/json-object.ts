@@ -21,6 +21,9 @@ export default class JsonObject extends Field {
 	}
 
 	async encode(_: Context, value: {}) {
+		if (value === null) {
+			return null;
+		}
 		return JSON.parse(JSON.stringify(value));
 	}
 

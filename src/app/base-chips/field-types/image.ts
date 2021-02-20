@@ -48,10 +48,13 @@ export default class Image extends FileStorage {
 
 	async decode(
 		context: Context,
-		db_value: FileStorageFormat,
+		db_value: FileStorageFormat | null,
 		__: any,
 		format?: ImageFormat
 	) {
+		if (db_value === null) {
+			return null;
+		}
 		context.app.Logger.debug3(
 			"FIELD",
 			"Decoding image field with format",

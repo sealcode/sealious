@@ -29,6 +29,9 @@ export abstract class FileStorage extends Field {
 	}
 
 	async encode(_: Context, file: File) {
+		if (file === null) {
+			return null;
+		}
 		await file.save();
 		return file.toDBEntry();
 	}
@@ -41,7 +44,10 @@ export abstract class FileStorage extends Field {
  */
 export default class FileField extends FileStorage {
 	typeName = "file";
-	async decode(_: Context, db_value: FileStorageFormat, __: any) {
+	async decode(_: Context, db_value: FileStorageFormat | null, __: any) {
+		if (db_value === null) {
+			return null;
+		}
 		const file = await File.fromID(this.app, db_value.id);
 		return file.getURL();
 	}

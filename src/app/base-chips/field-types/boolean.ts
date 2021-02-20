@@ -30,7 +30,9 @@ export default class Boolean extends Field {
 	}
 
 	async encode(_: Context, value: InputType) {
-		if (typeof value === "boolean") {
+		if (value === null) {
+			return null;
+		} else if (typeof value === "boolean") {
 			return value;
 		} else if (value.toString() === "1") {
 			return true;

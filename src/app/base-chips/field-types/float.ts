@@ -13,8 +13,11 @@ export default class Float extends Field {
 			return Field.valid();
 		}
 	}
-	async encode(_: any, value_in_code: number | string) {
-		const parsed_float = parseFloat(value_in_code.toString());
+	async encode(_: any, value: number | string) {
+		if (value === null) {
+			return null;
+		}
+		const parsed_float = parseFloat(value.toString());
 		return parsed_float;
 	}
 }

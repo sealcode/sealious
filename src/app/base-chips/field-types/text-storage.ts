@@ -6,11 +6,14 @@ type TextStorageFormat = { original: string; safe: string };
 type TextFormatParam = keyof TextStorageFormat;
 
 export default abstract class TextStorage extends Field {
-	async encode(context: Context, input: string) {
+	async encode(context: Context, input: string | null) {
 		context.app.Logger.debug2("TEXT FIELD", "encode", {
 			name: this.name,
 			input,
 		});
+		if (input === null) {
+			return null;
+		}
 		const ret = {
 			original: input,
 			safe: escape(input),
@@ -56,20 +59,21 @@ export default abstract class TextStorage extends Field {
 
 	async decode(
 		context: Context,
-		db_value: TextStorageFormat,
+		db_value: TextStorageFormat | null,
 		__: any,
 		format?: TextFormatParam
 	) {
+		if (db_value === null) {
+			return null;
+		}
 		context.app.Logger.debug2("TEXT FIELD", "decode", { db_value, format });
 		let ret;
 		if (db_value === null || db_value === undefined) {
 			ret = db_value;
 		} else if (!format) {
-			ret = (db_value as TextStorageFormat).safe;
+			ret = db_value.safe;
 		} else {
-			ret =
-				(db_value as TextStorageFormat)[format] ||
-				(db_value as TextStorageFormat).safe;
+			ret = db_value[format] || db_value.safe;
 		}
 		context.app.Logger.debug3("TEXT FIELD", "decode/return", ret);
 		return ret;

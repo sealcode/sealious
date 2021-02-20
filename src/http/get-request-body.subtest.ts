@@ -48,34 +48,6 @@ function extend(t: TestAppType) {
 }
 
 describe("get-request-body", () => {
-	it("throws application error when `null` is provided as root field value and content-type is set to `application/json`", async () =>
-		withRunningApp(extend, async ({ rest_api }) => {
-			await assertThrowsAsync(
-				async () =>
-					await rest_api.post(
-						"/api/v1/collections/strings",
-						{ title: null },
-						{
-							headers: { "content-type": "application/json" },
-						}
-					),
-
-				(e) => {
-					assert.strictEqual(e.response.status, 403);
-					assert.strictEqual(
-						e.response.data.message,
-						"Invalid values!"
-					);
-
-					assert.notEqual(e.response.status, 500);
-					assert.notEqual(
-						e.response.data.message,
-						"An internal server error occurred"
-					);
-				}
-			);
-		}));
-
 	it("handles complex data sent as multipart/form-data", async () => {
 		await withRunningApp(extend, async ({ port }) => {
 			// PNG file is empty but it doesnt matter for the test

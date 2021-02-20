@@ -7,6 +7,9 @@ import Text from "./text";
 export default class Html extends Text {
 	getTypeName = () => "html";
 	async encode(_: any, input: string) {
+		if (input === null) {
+			return null;
+		}
 		const sanitizeHtml = require("sanitize-html"); //putting it here not to slow down `new Sealious.app()`
 		return {
 			original: input,

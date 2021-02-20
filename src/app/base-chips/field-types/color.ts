@@ -17,6 +17,9 @@ export default class Color extends Field {
 	}
 
 	async encode(_: any, value: string) {
+		if (value === null) {
+			return null;
+		}
 		const color = ColorParser(value);
 		return color.hex();
 	}

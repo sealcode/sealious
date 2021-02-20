@@ -89,11 +89,14 @@ export abstract class IntStorage<
 		return new_filter;
 	}
 
-	encode = async (_: Context, value_in_code: number | string | null) => {
-		if (value_in_code === null) {
+	encode = async (_: Context, value: number | string | null) => {
+		if (value === null) {
 			return null;
 		}
-		const ret = parseInt(value_in_code.toString(), 10);
+		if (value === null) {
+			return null;
+		}
+		const ret = parseInt(value.toString(), 10);
 		return ret;
 	};
 }

@@ -14,6 +14,9 @@ export default class Password extends Field {
 	}
 
 	async encode(_: Context, input: string) {
+		if (input === null) {
+			return null;
+		}
 		const hash_params = this.app.ConfigManager.get("password_hash");
 		const salt = SecureHasher.generateRandomSalt(hash_params.salt_length);
 		return SecureHasher.hash(input, salt, hash_params);
