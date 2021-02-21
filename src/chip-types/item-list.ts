@@ -19,9 +19,14 @@ type PaginationParams = {
 	forward_buffer: number;
 };
 
-type SortParams<T extends Collection> = {
-	[key in keyof T["fields"]]: keyof typeof sealious_to_mongo_sort_param;
-};
+type SortParams<T extends Collection> = Partial<
+	{
+		[key in keyof T["fields"]]: keyof typeof sealious_to_mongo_sort_param;
+	} & {
+		"_metadata.created_at": keyof typeof sealious_to_mongo_sort_param;
+		"_metadata.modified_at": keyof typeof sealious_to_mongo_sort_param;
+	}
+>;
 
 type FormatParam<T extends Collection> = Partial<
 	{
@@ -54,7 +59,7 @@ export default class ItemList<T extends Collection> {
 	private _format: FormatParam<T>;
 	private _ids: string[];
 	private _search: string;
-	private _sort: ItemFields<T>;
+	private _sort: SortParams<T>;
 	private context: Context;
 	private collection: Collection;
 	private aggregation_stages: QueryStage[] = [];
@@ -314,9 +319,11 @@ export default class ItemList<T extends Collection> {
 			return [];
 		}
 		const $sort: { [field_name: string]: -1 | 1 } = {};
-		for (const field_name in this._sort) {
-			const mongo_sort_param =
-				sealious_to_mongo_sort_param[this._sort[field_name]];
+		for (const [field_name, sort_value] of Object.entries(this._sort)) {
+			if (sort_value === undefined) {
+				continue;
+			}
+			const mongo_sort_param = sealious_to_mongo_sort_param[sort_value];
 			if (!mongo_sort_param) {
 				const available_sort_keys = Object.keys(
 					sealious_to_mongo_sort_param

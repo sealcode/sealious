@@ -1,6 +1,13 @@
 import { strictEqual } from "assert";
 import { App, Collection, FieldTypes } from "../main";
 import { withRunningApp } from "../test_utils/with-test-app";
+import ItemList from "./item-list";
+
+class Entries extends Collection {
+	fields = {
+		name: new FieldTypes.Text(),
+	};
+}
 
 describe("ItemList", () => {
 	it("allows to sort by modified_date", () =>
@@ -9,19 +16,14 @@ describe("ItemList", () => {
 				class extends test_app {
 					collections = {
 						...App.BaseCollections,
-						entries: new (class extends Collection {
-							fields = {
-								name: new FieldTypes.Text(),
-							};
-						})(),
+						entries: new Entries(),
 					};
 				},
 			async ({ app }) => {
 				await app.collections.entries.suCreate({ name: "older" });
 				await app.collections.entries.suCreate({ name: "newer" });
-				const {
-					items: desc,
-				} = await app.collections.entries
+				const { items: desc } = await (app.collections
+					.entries as Entries)
 					.suList()
 					.sort({ "_metadata.modified_at": "desc" })
 					.fetch();
