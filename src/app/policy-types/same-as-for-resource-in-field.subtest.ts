@@ -370,4 +370,133 @@ describe("SameAsForResourceInField", () => {
 				);
 			}
 		));
+
+	it("behaves properly for SingleReference field", async () =>
+		withRunningApp(
+			(test_app) =>
+				class extends test_app {
+					collections = {
+						...App.BaseCollections,
+						organizations: new (class extends Collection {
+							fields = {
+								name: new FieldTypes.Text(),
+								user_assignments: new FieldTypes.ReverseSingleReference(
+									{
+										referencing_collection:
+											"user-organization",
+										referencing_field: "organization",
+									}
+								),
+							};
+
+							defaultPolicy = new Policies.Roles(["admin"]);
+
+							policies = {
+								list: new Policies.Or([
+									new Policies.SameAsForResourceInField({
+										collection_name: "organizations",
+										action_name: "list",
+										field: "user_assignments",
+									}),
+								]),
+							};
+						})(),
+						"user-organization": new (class UserOrganization extends Collection {
+							fields = {
+								organization: new FieldTypes.SingleReference(
+									"organizations"
+								),
+								user: new FieldTypes.SingleReference("users"),
+							};
+
+							defaultPolicy = new Policies.Roles(["admin"]);
+
+							policies = {
+								list: new Policies.Or([
+									new Policies.UserReferencedInField("user"),
+									new Policies.Roles(["admin"]),
+								]),
+							};
+						})(),
+						projects: new (class Projects extends Collection {
+							fields = {
+								name: FieldTypes.Required(
+									new FieldTypes.Text()
+								),
+								latest_job: new FieldTypes.SingleReference(
+									"jobs"
+								),
+								organization: new FieldTypes.SingleReference(
+									"organizations"
+								),
+							};
+							policies = {
+								list: new Policies.SameAsForResourceInField({
+									collection_name: "projects",
+									field: "organization",
+									action_name: "list",
+								}),
+								create: new Policies.Roles(["admin"]),
+								edit: new Policies.Roles(["admin"]),
+							};
+						})(),
+						jobs: new (class Job extends Collection {
+							fields = {
+								project: new FieldTypes.SingleReference(
+									"projects"
+								),
+								result: new FieldTypes.Text(),
+							};
+
+							policies = {
+								list: new Policies.SameAsForResourceInField({
+									collection_name: "jobs",
+									action_name: "list",
+									field: "project",
+								}),
+								create: new Policies.Super(),
+								edit: new Policies.Super(),
+							};
+						})(),
+					};
+				},
+			async ({ app }) => {
+				const user = await app.collections.users.suCreate({
+					username: "author",
+					email: "author@example.com",
+					password: "anyanyanyany",
+					roles: [],
+				});
+				const organization = await app.collections.organizations.suCreate(
+					{ name: "org" }
+				);
+				await app.collections["user-organization"].suCreate({
+					user: user.id,
+					organization: organization.id,
+				});
+				const project = await app.collections.projects.suCreate({
+					name: "any",
+					organization: organization.id,
+				});
+				const job = await app.collections.jobs.suCreate({
+					project: project.id,
+					result: "I'm a job",
+				});
+				const invisible_project = await app.collections.projects.suCreate(
+					{
+						name: "invisible",
+					}
+				);
+				await app.collections.jobs.suCreate({
+					project: invisible_project.id,
+					result: "I'm an invisible job",
+				});
+				const {
+					items: user_visible_jobs,
+				} = await app.collections.jobs
+					.list(new Context(app, Date.now(), user.id))
+					.fetch();
+				assert.strictEqual(user_visible_jobs.length, 1);
+			}
+		));
 });

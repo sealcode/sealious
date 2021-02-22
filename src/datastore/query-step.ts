@@ -253,7 +253,13 @@ export class SimpleLookup extends Lookup {
 	}
 
 	prefix(prefix: string) {
-		return this;
+		return new SimpleLookup({
+			from: this.body.from,
+			localField: `${prefix}.${this.body.localField}`,
+			foreignField: this.body.foreignField,
+			unwind: this.unwind,
+			as: `${prefix}.${this.body.as}`,
+		});
 	}
 }
 
