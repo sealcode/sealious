@@ -21,7 +21,7 @@ services:
   mailcatcher:
     image: schickling/mailcatcher:latest
     ports:
-      - "127.0.0.1:1080:1080"
-      - "127.0.0.1:1025:1025"
+      - "127.0.0.1:1088:1080"
+      - "127.0.0.1:1825:1025"
 volumes:
   sealious-nm:
