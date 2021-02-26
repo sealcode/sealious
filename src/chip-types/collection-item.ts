@@ -178,10 +178,11 @@ export default class CollectionItem<T extends Collection = any> {
 		return this;
 	}
 
-	setMultiple(values: Partial<ItemFields<T>>) {
+	setMultiple(values: Partial<ItemFields<T>>): this {
 		for (const field_name in values) {
 			this.set(field_name, values[field_name]);
 		}
+		return this;
 	}
 
 	replace(values: Partial<ItemFields<T>>) {

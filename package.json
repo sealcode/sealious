@@ -8,7 +8,7 @@
 	"scripts": {
 		"test-debug": "npm run test-cmd -- --debug",
 		"test-cmd": "node test.js",
-		"test": "./npm.sh run test-cmd -- ",
+		"test": "npm run test-cmd -- ",
 		"build": "rm -rf ./lib && tsc",
 		"watch": "npm run build -- --watch",
 		"test-reports": "npm run build && rm -fr .xunit coverage && docker-compose up -d db mailcatcher  && npm run test -- --cover --test-report",
@@ -95,7 +95,7 @@
 		"eslint-plugin-node": "^11.1.0",
 		"eslint-plugin-prettier": "^3.3.0",
 		"mocha": "^8.2.1",
-		"mri": "^1.1.5",
+		"mri": "^1.1.6",
 		"nyc": "^15.1.0",
 		"prettier": "^2.2.1",
 		"source-map-support": "^0.5.19",

@@ -25,7 +25,7 @@ export const get_test_app = ({
 			datastore_mongo: {
 				host: process.env.SEALIOUS_DB_HOST || "localhost",
 				password: "sealious-test",
-				port: parseInt(process.env.SEALIOUS_DB_PORT || "27017"),
+				port: parseInt(process.env.SEALIOUS_DB_PORT || "20722"),
 				db_name: "sealious-test",
 			},
 			email: {
