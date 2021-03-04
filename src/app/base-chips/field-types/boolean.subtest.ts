@@ -61,27 +61,27 @@ describe("boolean", () => {
 		}));
 
 	it("Doesn't let '' in", () =>
-		withRunningApp(extend, async ({ rest_api }) => {
+		withRunningApp(extend, async ({ app, rest_api }) => {
 			await assertThrowsAsync(
 				() => rest_api.post(`${URL}`, { is_old: "" }),
 				(error) => {
 					assert.equal(error.response.status, 403);
 					assert.deepEqual(
 						error.response.data.data.is_old.message,
-						"Value '' is not boolean format."
+						app.i18n("invalid_boolean", [undefined])
 					);
 				}
 			);
 		}));
 
 	it("Doesn't let unwelcomed values in", () =>
-		withRunningApp(extend, async ({ rest_api }) => {
+		withRunningApp(extend, async ({ app, rest_api }) => {
 			const cases = [
 				[null, "Missing value for field 'is_old'."],
-				[{}, "Value '[object Object]' is not boolean format."],
-				[[], "Value '' is not boolean format."],
-				[[false], "Value 'false' is not boolean format."],
-				[{ a: true }, "Value '[object Object]' is not boolean format."],
+				[{}, app.i18n("invalid_boolean", [{}])],
+				[[], app.i18n("invalid_boolean", [[]])],
+				[[false], app.i18n("invalid_boolean", [[false]])],
+				[{ a: true }, app.i18n("invalid_boolean", [{ a: true }])],
 			];
 
 			await Promise.all(

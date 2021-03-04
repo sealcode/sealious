@@ -138,13 +138,14 @@ describe("derived-value", () => {
 			}
 		));
 
-	it("throws when the value returned from deriving_fn is unnacceptable by target_field_type of derived-value", async () =>
+	it("throws when the value returned from deriving_fn is unnacceptable by target_field_type of derived-value", async () => {
+		const str = 555;
 		withRunningApp(
 			extend<FieldTypes.Int>({
 				fields: ["username", "surname"],
-				deriving_fn: async (_: string, __: string) => 555,
+				deriving_fn: async (_: string, __: string) => str,
 			}),
-			async ({ rest_api }) => {
+			async ({ app, rest_api }) => {
 				await assertThrowsAsync(
 					async () => {
 						await rest_api.post("/api/v1/collections/people", {
@@ -155,10 +156,11 @@ describe("derived-value", () => {
 					(error) => {
 						assert.deepEqual(
 							error.response.data.data.name_and_surname.message,
-							"Type of 555 is number, not string."
+							app.i18n("invalid_text", [str, typeof str])
 						);
 					}
 				);
 			}
-		));
+		);
+	});
 });

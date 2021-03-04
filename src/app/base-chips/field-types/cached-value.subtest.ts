@@ -25,6 +25,8 @@ const action_to_status: { [name: string]: string } = {
 	close: "closed",
 };
 
+const MIN_VALUE = 0;
+
 const extend = (
 	is_status_field_desired: boolean,
 	clear_database_on_stop = true
@@ -33,7 +35,7 @@ const extend = (
 		username: new FieldTypes.Username(),
 		number: new FieldTypes.CachedValue(
 			new FieldTypes.Int({
-				min: 0,
+				min: MIN_VALUE,
 			}),
 			{
 				get_value: async () => {
@@ -208,17 +210,18 @@ describe("cached-value", () => {
 
 	it("Respects is_proper_value of base field type", async () =>
 		withRunningApp(extend(true), async ({ app }) => {
+			const value = -1;
 			await assertThrowsAsync(
 				async () =>
 					app.collections.accounts.suCreate({
 						username: "user_2",
-						number: -1,
+						number: value,
 					}),
 				(error) => {
 					assert.strictEqual(
 						//@eslint-ignore
 						error.data.number.message,
-						"Value -1 should be larger than or equal to 0"
+						app.i18n("too_small_integer", [value, MIN_VALUE])
 					);
 				}
 			);

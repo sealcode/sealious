@@ -34,7 +34,7 @@ const extend = (bricks_allowed: boolean) =>
 
 describe("users-who-can", () => {
 	it("should deny if the user can't perform the action", async () =>
-		withRunningApp(extend(false), async ({ base_url }) => {
+		withRunningApp(extend(false), async ({ app, base_url }) => {
 			await assertThrowsAsync(
 				async () =>
 					axios
@@ -46,7 +46,11 @@ describe("users-who-can", () => {
 					assert.equal(e.response.status, 401);
 					assert.equal(
 						e.response.data.message,
-						"you can't create bricks - because  noone is allowed"
+						app.i18n("policy_users_who_can_deny", [
+							"create",
+							"bricks",
+							app.i18n("policy_noone_deny"),
+						])
 					);
 				}
 			);

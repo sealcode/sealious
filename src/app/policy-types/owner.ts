@@ -24,9 +24,9 @@ export default class Owner extends Policy {
 					_metadata: ItemMetadata;
 				})._metadata.created_by
 		) {
-			return Policy.allow("you are who created this item");
+			return Policy.allow(context.app.i18n("policy_owner_allow"));
 		} else {
-			return Policy.deny("you are not who created this item");
+			return Policy.deny(context.app.i18n("policy_owner_deny"));
 		}
 	}
 	isItemSensitive = async () => true;

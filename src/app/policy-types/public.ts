@@ -1,4 +1,4 @@
-import { Policy } from "../../main";
+import { Context, Policy } from "../../main";
 import { AllowAll } from "../../datastore/allow-all";
 
 export default class Public extends Policy {
@@ -6,8 +6,8 @@ export default class Public extends Policy {
 	async _getRestrictingQuery() {
 		return new AllowAll();
 	}
-	async checkerFunction() {
-		return Policy.allow("everyone is allowed");
+	async checkerFunction(context: Context) {
+		return Policy.allow(context.app.i18n("policy_public_allow"));
 	}
 	isItemSensitive = async () => false;
 }

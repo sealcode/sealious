@@ -13,6 +13,8 @@ import asyncForEach from "../../../utils/async-foreach";
 const SSH_KEYS_URL = "/api/v1/collections/ssh-keys";
 
 const sessions: { [username: string]: AxiosRequestConfig } = {};
+const ALLOWED_ROLES = ["admin"];
+const MIN_TEXT_LENGTH = 3;
 
 type Key = { [access in "_public" | "_private"]: string };
 
@@ -24,18 +26,18 @@ function extend(t: TestAppType) {
 				fields = {
 					public: new FieldTypes.Text(),
 					private: new FieldTypes.ControlAccess(
-						new FieldTypes.Text({ min_length: 3 }),
+						new FieldTypes.Text({ min_length: MIN_TEXT_LENGTH }),
 						{
 							target_policies: {
-								show: new Policies.Roles(["admin"]),
-								edit: new Policies.Roles(["admin"]),
+								show: new Policies.Roles(ALLOWED_ROLES),
+								edit: new Policies.Roles(ALLOWED_ROLES),
 							},
 							value_when_not_allowed: "Forbidden",
 						}
 					),
 				};
 				policies = {
-					create: new Policies.Roles(["admin"]),
+					create: new Policies.Roles(ALLOWED_ROLES),
 				};
 			})(),
 		};
@@ -131,6 +133,7 @@ describe("control-access", () => {
 
 	it("Respects given field type constraints", async () =>
 		withRunningApp(extend, async ({ app, rest_api }) => {
+			const too_short_text = "XD";
 			await setup(app, rest_api);
 
 			await assertThrowsAsync(
@@ -139,14 +142,17 @@ describe("control-access", () => {
 						SSH_KEYS_URL,
 						{
 							public: "XDDDDDDDDDDDD",
-							private: "XD",
+							private: too_short_text,
 						},
 						sessions.admin
 					),
 				(e: AxiosError) =>
 					assert.strictEqual(
 						e?.response?.data?.data?.private?.message,
-						"Text 'XD' is too short, minimum length is 3 chars."
+						app.i18n("too_short_text", [
+							too_short_text,
+							MIN_TEXT_LENGTH,
+						])
 					)
 			);
 		}));
@@ -200,7 +206,7 @@ describe("control-access", () => {
 				(e) =>
 					assert.strictEqual(
 						e.response.data.data.private.message,
-						"you dont have any of the roles: admin."
+						app.i18n("policy_roles_deny", [ALLOWED_ROLES])
 					)
 			);
 		}));

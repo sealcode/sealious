@@ -5,11 +5,11 @@ const email = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@(
 /** Stores an email address. Rejects values not formatted as an email address. Doesn't provide any configuration or advanced filters */
 export default class Email extends Field {
 	typeName = "email";
-	async isProperValue(_: Context, value: string) {
+	async isProperValue(context: Context, value: string) {
 		if (email.test(value) || value === "") {
 			return Field.valid();
 		} else {
-			return Field.invalid(`${value} is a not valid e-mail address.`);
+			return Field.invalid(context.app.i18n("invalid_email", [value]));
 		}
 	}
 }

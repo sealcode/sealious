@@ -1,3 +1,13 @@
+function characters_plural_form(n: number) {
+	if (n == 1) {
+		return "znak";
+	} else if (n > 4) {
+		return "znaki";
+	} else {
+		return "znaków";
+	}
+}
+
 module.exports = {
 	password_reset_email_subject: (app_name: any) =>
 		`Reset hasła w ${app_name}`,
@@ -14,4 +24,95 @@ module.exports = {
 	registration_intent_cta: () => `Założ konto`,
 	registration_intent_form_description: () => `Uzupełnij dane o Twoim koncie`,
 	password: () => "hasło",
+	invalid_boolean: (value: any) =>
+		`Wartość '${value}' nie jest w formacie zerojedynkowym.`,
+	invalid_context: () =>
+		`Dostarczona wartość nie jest instancją Sealious.Context.`,
+	invalid_update: () => `Nie możesz zmienić ustawionej wcześniej wartości.`,
+	invalid_image: () => `Dozwolone są tylko pliki z obrazami.`,
+	invalid_email: (value: string) =>
+		`${value} nie jest prawidłowym adresem e-mail.`,
+	invalid_non_existing_value: ([collection, field, value]: [
+		string,
+		string,
+		string
+	]) =>
+		`Kolekcja ${collection} posiada już rekord z '${field}' o wartości '${value}.'`,
+	invalid_date: (value: string) =>
+		`Wartość '${value}' nie jest w formacie daty. Wymagana jest wartość w formacie standardu ISO 8601 (YYYY-MM-DD).`,
+	invalid_single_reference: (collection: string) =>
+		`Nie masz dostępu do danego zasobu z kolekcji '${collection}' lub on nie istnieje.`,
+	invalid_password: (length: number) =>
+		`Hasło musi mieć co najmniej ${length} ${characters_plural_form(
+			length
+		)}.`,
+	invalid_float: (value: number) =>
+		`Wartość '${value}' nie jest w formacie liczby zmiennoprzecinkowej`,
+	invalid_existing_value: ([collection, field, value]: [
+		string,
+		string,
+		any
+	]) => `Nie ma w ${collection} wpisu z ${field} o wartości ${value}.`,
+	invalid_username: (value: string) =>
+		`'${value}' to zarezerwowane słowo kluczowe. Wybierz inną nazwę użytkownika.`,
+	username_taken: () => `Nazwa użytkownika jest już wykorzystywana.`,
+	invalid_text: ([value, value_type]: [any, any]) =>
+		`Wartość ${value} jest typu ${value_type}, zamiast ciągu znaków.`,
+	too_short_text: ([value, length]: [string, number]) =>
+		`Tekst '${value}' jest zbyt krótki. Minimalna długość to ${length} ${characters_plural_form(
+			length
+		)}.`,
+	too_long_text: ([value, length]: [string, number]) =>
+		`Tekst '${value}' przekracza limit ${length} ${characters_plural_form(
+			length
+		)}.`,
+	invalid_enum: (allowed_values: string) =>
+		`Dozwolone wartości: ${allowed_values}`,
+	invalid_file_id: () => `Plik o podanym ID nie istnieje.`,
+	invalid_json_value: (value: any) =>
+		`Wartość '${value}' nie może być przedstawiona jako obiekt JSON`,
+	invalid_json_object: () => `Wartość nie jest obiektem.`,
+	read_only_field: () => `Pole jest przeznaczone tylko do odczytu.`,
+	invalid_file_storage: () =>
+		`Wartość powinna być udostępnieniem pliku lub instancją obiektu File.`,
+	invalid_datetime: (value: number | string) =>
+		`Wartość '${value}' nie jest w formacie daty. Tylko znaczniki czasu są akceptowalne.`,
+	invalid_color: () => `Nie udało się się zinterpretować koloru.`,
+	invalid_integer: (value: any) =>
+		`Wartość '${value}' nie jest w formacie liczby całkowitej.`,
+	too_small_integer: ([value, min]: [number, number]) =>
+		`Wartość '${value}' powinna być większa lub równa ${min}.`,
+	too_big_integer: ([value, max]: [number, number]) =>
+		`Wartość '${value}' powinna być mniejsza lub równa ${max}.`,
+	policy_if_allow: (filter_name: string) =>
+		`Przedmiot przechodzi filtr '${filter_name}'.`,
+	policy_public_allow: () => `Każdy jest uprawniony.`,
+	policy_themselves_allow: () => `Jesteś danym użytkownikiem.`,
+	policy_themselves_deny: (user_id: string) =>
+		`Nie jesteś użytkownikiem o ID '${user_id}'.`,
+	policy_roles_allow: (roles: string) => `Posiadasz jedną z ról: ${roles}.`,
+	policy_roles_deny: (roles: string) =>
+		`Nie posiadasz żadnej z ról: ${roles}.`,
+	policy_logged_in_allow: () => `Jesteś zalogowany(a).`,
+	policy_logged_in_deny: () => `Nie jesteś zalogowany(a).`,
+	policy_owner_allow: () => `Stworzyłeś/aś ten przedmiot.`,
+	policy_owner_deny: () => `Nie stworzyłeś/aś tego przedmiotu.`,
+	policy_not_allow: (reason: string) => `To nieprawda, że '${reason}'.`,
+	policy_super_allow: () => `Ta metoda była uruchomiona z Super-kontekstem.`,
+	policy_super_deny: () =>
+		`Ta metoda nie była uruchomiona z Super-kontekstem.`,
+	policy_users_who_can_allow: ([action, collection]: [string, string]) =>
+		`Możesz wykonać akcję '${action}' na kolekcji '${collection}'.`,
+	policy_users_who_can_deny: ([action, collection, reason]: [
+		string,
+		string,
+		string?
+	]) =>
+		`Nie możesz wykonać akcji '${action}' na kolekcji '${collection}', ponieważ '${reason}'.`,
+	policy_allow: () => `Super-kontekst jest zawsze uprawniony.`,
+	policy_user_referenced_in_field_allow: (field: string) =>
+		`Jesteś użytkownikiem wspomnianym w polu '${field}'.`,
+	policy_user_referenced_in_field_deny: (field: string) =>
+		`Nie jesteś użytkownikiem wspomnianym w polu '${field}'.`,
+	policy_noone_deny: () => `Nikt nie jest uprawniony.`,
 };

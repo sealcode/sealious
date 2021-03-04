@@ -10,7 +10,7 @@ type InputType = boolean | "false" | "true" | "1" | "0" | 1 | 0;
  */
 export default class Boolean extends Field {
 	typeName = "boolean";
-	async isProperValue(_: Context, value: InputType) {
+	async isProperValue(ctx: Context, value: InputType) {
 		if (typeof value === "boolean") {
 			return Field.valid();
 		}
@@ -26,7 +26,7 @@ export default class Boolean extends Field {
 		) {
 			return Field.valid();
 		}
-		return Field.invalid(`Value '${value}' is not boolean format.`);
+		return Field.invalid(ctx.app.i18n("invalid_boolean", [value]));
 	}
 
 	async encode(_: Context, value: InputType) {

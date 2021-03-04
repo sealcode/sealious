@@ -4,6 +4,8 @@ import { assertThrowsAsync } from "../../test_utils/assert-throws-async";
 import { Collection, FieldTypes, Policies } from "../../main";
 import { TestAppType } from "../../test_utils/test-app";
 
+const ALLOWED_ROLES = ["admin"];
+
 function extend(t: TestAppType) {
 	return class extends t {
 		collections = {
@@ -12,7 +14,7 @@ function extend(t: TestAppType) {
 				fields = {
 					content: new FieldTypes.Text(),
 				};
-				defaultPolicy = new Policies.Roles(["admin"]);
+				defaultPolicy = new Policies.Roles(ALLOWED_ROLES);
 			})(),
 		};
 	};
@@ -65,7 +67,7 @@ describe("roles", () => {
 				(error) => {
 					assert.equal(
 						(error as any).response.data.message,
-						"you dont have any of the roles: admin."
+						app.i18n("policy_roles_deny", ALLOWED_ROLES.join(", "))
 					);
 				}
 			);

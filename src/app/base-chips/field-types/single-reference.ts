@@ -52,9 +52,9 @@ export default class SingleReference extends Field {
 			results.length > 0
 				? Field.valid()
 				: Field.invalid(
-						`Nie masz dostępu do danego zasobu z kolekcji ${
-							this.getTargetCollection(context).name
-						} lub on nie istnieje.`
+						context.app.i18n("invalid_single_reference", [
+							this.getTargetCollection(context).name,
+						])
 				  );
 
 		context.app.Logger.debug2(

@@ -17,18 +17,23 @@ describe("password-reset-intents", () => {
 	}
 
 	it("tells you if the email address doesn't exist", async () =>
-		withRunningApp(null, async ({ base_url }) => {
+		withRunningApp(null, async ({ app, base_url }) => {
+			const email = "fake@example.com";
 			try {
 				await axios.post(
 					`${base_url}/api/v1/collections/password-reset-intents`,
 					{
-						email: "fake@example.com",
+						email: email,
 					}
 				);
 			} catch (e) {
 				assert.equal(
 					e.response.data.data.email.message,
-					"No users with email set to fake@example.com"
+					app.i18n("invalid_existing_value", [
+						"users",
+						"email",
+						email,
+					])
 				);
 				return;
 			}
@@ -56,18 +61,19 @@ describe("password-reset-intents", () => {
 		}));
 
 	it("tells you if the email address is malformed", async () =>
-		withRunningApp(null, async ({ base_url }) => {
+		withRunningApp(null, async ({ app, base_url }) => {
+			const email = "incorrect-address";
 			try {
 				await axios.post(
 					`${base_url}/api/v1/collections/password-reset-intents`,
 					{
-						email: "incorrect-address",
+						email: email,
 					}
 				);
 			} catch (e) {
 				assert.equal(
 					e.response.data.data.email.message,
-					"incorrect-address is a not valid e-mail address."
+					app.i18n("invalid_email", [email])
 				);
 				return;
 			}

@@ -17,7 +17,7 @@ function dateStrToDayInt(date_str: string) {
  */
 export default class DateField extends Field {
 	typeName = "date";
-	async isProperValue(_: Context, value: string) {
+	async isProperValue(context: Context, value: string) {
 		const date_in_string = value.toString();
 
 		const regex = /^([0-9]{4})-(0?[1-9]|1[0-2])-([0-2]?[0-9]|30|31)$/; // granulation_per_day
@@ -26,9 +26,7 @@ export default class DateField extends Field {
 			regex.test(date_in_string) === false ||
 			isNaN(Date.parse(date_in_string))
 		) {
-			return Field.invalid(
-				`Value "${value}" is not date calendar format. Expected value in standard IS0 8601 (YYYY-MM-DD) format`
-			);
+			return Field.invalid(context.app.i18n("invalid_date", [value]));
 		}
 		return Field.valid();
 	}

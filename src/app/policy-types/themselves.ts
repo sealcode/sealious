@@ -14,8 +14,10 @@ export default class Themselves extends Policy {
 	) {
 		const user_id = (await item_getter()).id;
 		if (context.user_id !== user_id) {
-			return Policy.deny(`you are not the user of id ${user_id}.`);
+			return Policy.deny(
+				context.app.i18n("policy_themselves_deny", [user_id])
+			);
 		}
-		return Policy.allow("you are the user in question");
+		return Policy.allow(context.app.i18n("policy_themselves_allow"));
 	}
 }

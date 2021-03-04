@@ -19,7 +19,11 @@ export default class ValueNotExistingInCollection extends ValueExistingInCollect
 			.fetch();
 		if (!sealious_response.empty) {
 			return Field.invalid(
-				`Collection ${field.collection.name} already has a record with '${field.name}' set to '${new_value}'`
+				context.app.i18n("invalid_non_existing_value", [
+					field.collection.name,
+					field.name,
+					new_value,
+				])
 			);
 		}
 		return Field.valid();

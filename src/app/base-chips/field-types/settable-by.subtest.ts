@@ -31,7 +31,7 @@ function extend(t: TestAppType) {
 
 describe("settable-by", async () => {
 	it("should not allow any value when rejected by access strategy", async () =>
-		withRunningApp(extend, async ({ base_url }) => {
+		withRunningApp(extend, async ({ app, base_url }) => {
 			await assertThrowsAsync(
 				() =>
 					axios.post(
@@ -43,7 +43,7 @@ describe("settable-by", async () => {
 				(e) =>
 					assert.equal(
 						e.response.data.data.any.message,
-						"noone is allowed"
+						app.i18n("policy_noone_deny")
 					)
 			);
 		}));
@@ -69,19 +69,20 @@ describe("settable-by", async () => {
 		}));
 
 	it("should not allow invalid value when access strategy allows", async () =>
-		withRunningApp(extend, async ({ base_url }) => {
+		withRunningApp(extend, async ({ app, base_url }) => {
+			const value = "thing";
 			await assertThrowsAsync(
 				() =>
 					axios.post(
 						`${base_url}/api/v1/collections/allowed-collection`,
 						{
-							any: "thing",
+							any: value,
 						}
 					),
 				(e) => {
 					assert.equal(
 						e.response.data.data.any.message,
-						"Value 'thing' is not a int number format."
+						app.i18n("invalid_integer", [value])
 					);
 				}
 			);

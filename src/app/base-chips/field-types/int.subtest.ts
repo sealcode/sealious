@@ -25,7 +25,7 @@ describe("int", () => {
 	};
 
 	function assertFormatIsNotAccepted(provided_value: any) {
-		return withRunningApp(extend(), async ({ base_url }) => {
+		return withRunningApp(extend(), async ({ app, base_url }) => {
 			await assertThrowsAsync(
 				() =>
 					Axios.post(
@@ -37,7 +37,7 @@ describe("int", () => {
 				(e) => {
 					equal(
 						e.response.data.data.age.message,
-						`Value '${provided_value}' is not a int number format.`
+						app.i18n("invalid_integer", [provided_value])
 					);
 				}
 			);
@@ -66,40 +66,47 @@ describe("int", () => {
 			equal(response.age, 1);
 		}));
 
-	it("should respect given min and max value", async () =>
-		withRunningApp(extend({ min: 30, max: 50 }), async ({ base_url }) => {
-			await assertThrowsAsync(
-				() =>
-					Axios.post(
-						`${base_url}/api/v1/collections/${COLLECTION_NAME}`,
-						{
-							age: 29,
-						}
-					),
-				(e) => {
-					equal(
-						e.response.data.data.age.message,
-						`Value 29 should be larger than or equal to 30`
-					);
-				}
-			);
-
-			await assertThrowsAsync(
-				() =>
-					Axios.post(
-						`${base_url}/api/v1/collections/${COLLECTION_NAME}`,
-						{
-							age: 51,
-						}
-					),
-				(e) => {
-					equal(
-						e.response.data.data.age.message,
-						`Value 51 should be smaller than or equal to 50`
-					);
-				}
-			);
-		}));
+	it("should respect given min and max value", async () => {
+		const min = 30;
+		const max = 50;
+		withRunningApp(
+			extend({ min: min, max: max }),
+			async ({ app, base_url }) => {
+				let age = 29;
+				await assertThrowsAsync(
+					() =>
+						Axios.post(
+							`${base_url}/api/v1/collections/${COLLECTION_NAME}`,
+							{
+								age: age,
+							}
+						),
+					(e) => {
+						equal(
+							e.response.data.data.age.message,
+							app.i18n("too_small_integer", [age, min])
+						);
+					}
+				);
+				age = 51;
+				await assertThrowsAsync(
+					() =>
+						Axios.post(
+							`${base_url}/api/v1/collections/${COLLECTION_NAME}`,
+							{
+								age: age,
+							}
+						),
+					(e) => {
+						equal(
+							e.response.data.data.age.message,
+							app.i18n("too_big_integer", [age, max])
+						);
+					}
+				);
+			}
+		);
+	});
 
 	it("should let proper a string as an integer value in the defined range", async () =>
 		withRunningApp(extend({ min: -2, max: 6 }), async ({ base_url }) => {

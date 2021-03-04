@@ -7,13 +7,17 @@ import TextStorage from "./text-storage";
 export default class Username extends TextStorage {
 	typeName = "username";
 
-	async isProperValue(_: Context, new_value: string, old_value: string) {
+	async isProperValue(
+		context: Context,
+		new_value: string,
+		old_value: string
+	) {
 		if (old_value === new_value) {
 			return Field.valid();
 		}
 		if (me_synonyms.indexOf(new_value) !== -1) {
 			return Field.invalid(
-				`'${new_value}' is a reserved keyword. Please pick another username.`
+				context.app.i18n("invalid_username", [new_value])
 			);
 		}
 
@@ -23,7 +27,7 @@ export default class Username extends TextStorage {
 			.fetch();
 
 		if (!response.empty) {
-			return Field.invalid("Username already taken");
+			return Field.invalid(context.app.i18n("username_taken"));
 		}
 		return Field.valid();
 	}

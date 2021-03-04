@@ -8,7 +8,7 @@ class ListOfIDs extends Field {
 	async isProperValue(context: Context, _: any) {
 		return context.is_super
 			? Field.valid()
-			: Field.invalid("This is a read-only field");
+			: Field.invalid(context.app.i18n("read_only_field"));
 	}
 }
 

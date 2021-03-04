@@ -49,20 +49,20 @@ export default class Roles extends Policy {
 
 	async checkerFunction(context: Context) {
 		if (context.user_id === null) {
-			return Policy.deny("you are not logged in");
+			return Policy.deny(context.app.i18n("policy_logged_in_deny"));
 		}
 		const matching_roles_count = await this.countMatchingRoles(context);
 
 		return matching_roles_count > 0
 			? Policy.allow(
-					`you have one of the roles: ${this.allowed_roles.join(
-						", "
-					)}`
+					context.app.i18n("policy_roles_allow", [
+						this.allowed_roles.join(", "),
+					])
 			  )
 			: Policy.deny(
-					`you dont have any of the roles: ${this.allowed_roles.join(
-						", "
-					)}.`
+					context.app.i18n("policy_roles_deny", [
+						this.allowed_roles.join(", "),
+					])
 			  );
 	}
 }

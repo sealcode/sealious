@@ -5,12 +5,10 @@ const MIN_LENGTH = 8;
 
 export default class Password extends Field {
 	typeName = "password";
-	async isProperValue(_: Context, input: string) {
+	async isProperValue(context: Context, input: string) {
 		return input.length >= MIN_LENGTH
 			? Field.valid()
-			: Field.invalid(
-					`Password must have at least ${MIN_LENGTH} characters`
-			  );
+			: Field.invalid(context.app.i18n("invalid_password", [MIN_LENGTH]));
 	}
 
 	async encode(_: Context, input: string) {

@@ -5,17 +5,17 @@ import flattenObjectToDotNotation from "../../../utils/flatten-object-dot-notati
 export default class JsonObject extends Field {
 	typeName = "json-object";
 
-	async isProperValue(_: Context, new_value: {}, __: {}) {
+	async isProperValue(context: Context, new_value: {}, __: {}) {
 		let stringified_value;
 		try {
 			stringified_value = JSON.stringify(new_value);
 		} catch (e) {
 			return Field.invalid(
-				`Value ${new_value} cannot be represented as JSON object`
+				context.app.i18n("invalid_json_object", [new_value])
 			);
 		}
 		if (!stringified_value.startsWith("{")) {
-			return Field.invalid("A primitive, not an object!");
+			return Field.invalid(context.app.i18n("invalid_json_object"));
 		}
 		return Field.valid();
 	}

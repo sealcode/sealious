@@ -14,9 +14,9 @@ export default class LoggedIn extends Policy {
 	}
 	async checkerFunction(context: Context) {
 		if (context.user_id) {
-			return Policy.allow("you are logged in");
+			return Policy.allow(context.app.i18n("policy_logged_in_allow"));
 		} else {
-			return Policy.deny("you are not logged in");
+			return Policy.deny(context.app.i18n("policy_logged_in_deny"));
 		}
 	}
 }

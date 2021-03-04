@@ -29,7 +29,7 @@ export abstract class IntStorage<
 	/** tha max allowed value*/
 	max?: number;
 
-	async isProperValue(_: Context, new_value: number | string) {
+	async isProperValue(context: Context, new_value: number | string) {
 		const number = parseInt(new_value.toString(), 10);
 
 		if (
@@ -38,18 +38,18 @@ export abstract class IntStorage<
 			isNaN(number)
 		) {
 			return Field.invalid(
-				`Value '${new_value}' is not a int number format.`
+				context.app.i18n("invalid_integer", [new_value])
 			);
 		}
 
 		if (this.min !== undefined && new_value < this.min) {
 			return Field.invalid(
-				`Value ${number} should be larger than or equal to ${this.min}`
+				context.app.i18n("too_small_integer", [number, this.min])
 			);
 		}
 		if (this.max !== undefined && new_value > this.max) {
 			return Field.invalid(
-				`Value ${number} should be smaller than or equal to ${this.max}`
+				context.app.i18n("too_big_integer", [number, this.max])
 			);
 		}
 		return Field.valid();

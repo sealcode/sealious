@@ -13,7 +13,7 @@ export default class FileID extends Field {
 		if (results.length === 1) {
 			return Field.valid();
 		} else {
-			return Field.invalid("File of given ID does not exist");
+			return Field.invalid(context.app.i18n("invalid_file_id"));
 		}
 	}
 }

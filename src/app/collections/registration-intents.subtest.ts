@@ -17,24 +17,31 @@ const extend = (policy: Policy) => (t: TestAppType) =>
 
 describe("registration-intents", () => {
 	it("doesn't allow setting a role for registration intention when the user in context can't create user-roles", async () =>
-		withRunningApp(extend(new Policies.Noone()), async ({ base_url }) => {
-			await assertThrowsAsync(
-				() =>
-					axios.post(
-						`${base_url}/api/v1/collections/registration-intents`,
-						{
-							email: "cunning@fox.com",
-							role: "admin",
-						}
-					),
-				(e: any) => {
-					assert.equal(
-						e.response.data.data.role.message,
-						"you can't create user-roles - because  noone is allowed"
-					);
-				}
-			);
-		}));
+		withRunningApp(
+			extend(new Policies.Noone()),
+			async ({ app, base_url }) => {
+				await assertThrowsAsync(
+					() =>
+						axios.post(
+							`${base_url}/api/v1/collections/registration-intents`,
+							{
+								email: "cunning@fox.com",
+								role: "admin",
+							}
+						),
+					(e: any) => {
+						assert.equal(
+							e.response.data.data.role.message,
+							app.i18n("policy_users_who_can_deny", [
+								"create",
+								"user-roles",
+								app.i18n("policy_noone_deny"),
+							])
+						);
+					}
+				);
+			}
+		));
 
 	it("allows setting a role for registration intention when the user in context can create user-roles", async () =>
 		withRunningApp(

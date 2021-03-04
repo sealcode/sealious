@@ -19,6 +19,6 @@ export default class DisallowUpdate<T extends Field> extends HybridField<T> {
 				old_value
 			);
 		}
-		return Field.invalid("You cannot change a previously set value");
+		return Field.invalid(context.app.i18n("invalid_update"));
 	}
 }

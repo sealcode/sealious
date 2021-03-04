@@ -21,7 +21,7 @@ export default class Image extends FileStorage {
 			return result;
 		}
 		if (input.getMimeType().indexOf("image/") !== 0) {
-			return Field.invalid("Only image files are allowed");
+			return Field.invalid(context.app.i18n("invalid_image"));
 		}
 		return Field.valid();
 	}

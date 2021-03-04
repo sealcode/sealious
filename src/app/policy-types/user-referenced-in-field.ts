@@ -17,14 +17,17 @@ export default class UserReferencedInField extends Policy {
 		context: Context,
 		item_getter: () => Promise<CollectionItem>
 	) {
-		if (!context.user_id) return Policy.deny("you are not logged in");
+		if (!context.user_id)
+			return Policy.deny(context.app.i18n("policy_logged_in_deny"));
 		const item = await item_getter();
 		if (context.user_id !== item.get(this.field_name))
 			return Policy.deny(
-				`you are not the user mentioned in field ${this.field_name}`
+				context.app.i18n("policy_user_referenced_in_field_deny")
 			);
 		return Policy.allow(
-			`you are the user mentioned in field ${this.field_name}`
+			context.app.i18n("policy_user_referenced_in_field_allow", [
+				this.field_name,
+			])
 		);
 	}
 	isItemSensitive = async () => true;

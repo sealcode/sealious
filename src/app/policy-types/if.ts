@@ -68,7 +68,9 @@ export default class If extends Policy {
 		if (!results.length) {
 			return Policy.deny(this.getFilter(context.app).getNopassReason());
 		}
-		return Policy.allow(`the item passes the "${this.filter_name}" filter`);
+		return Policy.allow(
+			context.app.i18n("policy_if_allow", [this.filter_name])
+		);
 	}
 	isItemSensitive = async () => true;
 }

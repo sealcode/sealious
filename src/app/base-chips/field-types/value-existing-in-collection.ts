@@ -40,7 +40,11 @@ export default class ValueExistingInCollection extends Field {
 
 		if (sealious_response.empty) {
 			return Field.invalid(
-				`No ${collection.name} with ${field.name} set to ${new_value}`
+				context.app.i18n("invalid_existing_value", [
+					collection.name,
+					field.name,
+					new_value,
+				])
 			);
 		}
 		return Field.valid();

@@ -48,41 +48,44 @@ describe("text", () => {
 	}
 
 	it("shouldn't allow a value that isn't a string", async () =>
-		withRunningApp(extend(), async ({ base_url }) => {
+		withRunningApp(extend(), async ({ app, base_url }) => {
 			const assert_creation_error = assert_creation_error_factory({
 				base_url,
 				collection: "surnames",
 			});
 			await assert_creation_error({
 				resource: { surname: false },
-				message: "Type of false is boolean, not string.",
+				message: app.i18n("invalid_text", [false, typeof false]),
 			});
 			await assert_creation_error({
 				resource: { surname: {} },
-				message: "Type of [object Object] is object, not string.",
+				message: app.i18n("invalid_text", [{}, typeof {}]),
 			});
 		}));
 
-	it("should respect given min and max length", async () =>
+	it("should respect given min and max length", async () => {
+		const min = 3;
+		const max = 5;
 		withRunningApp(
-			extend({ min_length: 3, max_length: 5 }),
-			async ({ base_url }) => {
+			extend({ min_length: min, max_length: max }),
+			async ({ app, base_url }) => {
 				const assert_creation_error = assert_creation_error_factory({
 					base_url,
 					collection: "surnames",
 				});
+				let text = "lo";
 				await assert_creation_error({
-					resource: { surname: "lo" },
-					message:
-						"Text 'lo' is too short, minimum length is 3 chars.",
+					resource: { surname: text },
+					message: app.i18n("too_short_text", [text, min]),
 				});
+				text = "abcdefghijk";
 				await assert_creation_error({
-					resource: { surname: "abcdefghijk" },
-					message:
-						"Text 'abcdefghijk' has exceeded max length of 5 chars.",
+					resource: { surname: text },
+					message: app.i18n("too_long_text", [text, max]),
 				});
 			}
-		));
+		);
+	});
 
 	it("should let proper string in", async () =>
 		withRunningApp(

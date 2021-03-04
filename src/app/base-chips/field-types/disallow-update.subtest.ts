@@ -42,26 +42,28 @@ function extend(t: TestAppType) {
 
 describe("disallow-update", () => {
 	it("Respects target field type", () =>
-		withRunningApp(extend, async ({ rest_api }) => {
+		withRunningApp(extend, async ({ app, rest_api }) => {
+			const age = "abc";
 			await assertThrowsAsync(
 				() => rest_api.post(url, { age: "abc", attribute: 5 }),
 				(error) => {
 					assert.deepEqual(
 						error.response.data.data.age.message,
-						"Value 'abc' is not a int number format."
+						app.i18n("invalid_integer", [age])
 					);
 				}
 			);
 		}));
 
 	it("Respects target field params", () =>
-		withRunningApp(extend, async ({ rest_api }) => {
+		withRunningApp(extend, async ({ app, rest_api }) => {
+			const age = -2;
 			await assertThrowsAsync(
-				() => rest_api.post(url, { age: -2 }),
+				() => rest_api.post(url, { age: age }),
 				(error) =>
 					assert.deepEqual(
 						error.response.data.data.age.message,
-						"Value -2 should be larger than or equal to 0"
+						app.i18n("too_small_integer", [age, 0])
 					)
 			);
 		}));
@@ -72,7 +74,7 @@ describe("disallow-update", () => {
 		}));
 
 	it("Rejects a new value if there's an old value", () =>
-		withRunningApp(extend, async ({ rest_api }) => {
+		withRunningApp(extend, async ({ app, rest_api }) => {
 			const { id } = await rest_api.post(url, {
 				age: 18,
 				attribute: null,
@@ -82,13 +84,13 @@ describe("disallow-update", () => {
 				(error) =>
 					assert.deepEqual(
 						error.response.data.data.age.message,
-						"You cannot change a previously set value"
+						app.i18n("invalid_update")
 					)
 			);
 		}));
 
 	it("Rejects a new value if the old value is `null`", () =>
-		withRunningApp(extend, async ({ rest_api }) => {
+		withRunningApp(extend, async ({ app, rest_api }) => {
 			const { id } = await rest_api.post(url, {
 				age: 21,
 				attribute: null,
@@ -98,7 +100,7 @@ describe("disallow-update", () => {
 				(error) =>
 					assert.deepEqual(
 						error.response.data.data.attribute.message,
-						"You cannot change a previously set value"
+						app.i18n("invalid_update")
 					)
 			);
 		}));

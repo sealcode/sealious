@@ -100,7 +100,10 @@ describe("AndPolicy", () => {
 						"/api/v1/collections/collection-and(ComplexAllowPipeline,noone)"
 					),
 				(e) => {
-					assert.equal(e.response.data.message, `noone is allowed`);
+					assert.equal(
+						e.response.data.message,
+						app.i18n("policy_noone_deny")
+					);
 				}
 			);
 		}));

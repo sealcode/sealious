@@ -9,7 +9,7 @@ export type FileStorageFormat = FileDBEntry;
 export abstract class FileStorage extends Field {
 	handles_large_data = true;
 	get_default_file: (context: Context) => Promise<File>;
-	async isProperValue(_: Context, value: File) {
+	async isProperValue(context: Context, value: File) {
 		if (typeof value === "string") {
 			return Field.valid();
 		}
@@ -17,9 +17,7 @@ export abstract class FileStorage extends Field {
 			return Field.valid();
 		}
 
-		return Field.invalid(
-			"This value should e a file upload or an instance of the File object"
-		);
+		return Field.invalid(context.app.i18n("invalid_file_storage"));
 	}
 
 	setParams(params: {

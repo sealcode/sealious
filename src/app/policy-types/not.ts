@@ -32,7 +32,9 @@ export default class Not extends Policy {
 			return null;
 		}
 		if (result.allowed) {
-			return Policy.deny(`it's not true that "${result.reason}"`);
+			return Policy.deny(
+				context.app.i18n("policy_not_allow", [result.reason])
+			);
 		}
 		return Policy.allow(`it's not true that "${result.reason}"`);
 	}

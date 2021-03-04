@@ -27,7 +27,9 @@ export default class Enum<S> extends Field {
 			return Field.valid();
 		} else {
 			return Field.invalid(
-				"Allowed values: " + this.getAllowedValues(context.app).join()
+				context.app.i18n("invalid_enum", [
+					this.getAllowedValues(context.app).join(),
+				])
 			);
 		}
 	}

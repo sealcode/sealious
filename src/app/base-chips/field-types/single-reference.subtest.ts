@@ -42,7 +42,7 @@ describe("single_reference", () => {
 		}
 
 		it("should not allow a value that is not an existing id", async () =>
-			withRunningApp(extend, async ({ rest_api }) => {
+			withRunningApp(extend, async ({ app, rest_api }) => {
 				await assertThrowsAsync(
 					() =>
 						rest_api.post(A, {
@@ -51,7 +51,7 @@ describe("single_reference", () => {
 					(e) =>
 						assert.equal(
 							e.response.data.data.reference_to_b.message,
-							"Nie masz dostępu do danego zasobu z kolekcji B lub on nie istnieje."
+							app.i18n("invalid_single_reference", ["B"])
 						)
 				);
 			}));
@@ -65,7 +65,7 @@ describe("single_reference", () => {
 			}));
 
 		it("should not allow a value that exists in B but does not meet the filter criteria", async () =>
-			withRunningApp(extend, async ({ rest_api }) => {
+			withRunningApp(extend, async ({ app, rest_api }) => {
 				const { id } = await rest_api.post(B, { number: 0 });
 				await assertThrowsAsync(
 					() =>
@@ -76,7 +76,7 @@ describe("single_reference", () => {
 						assert.equal(
 							e.response.data.data.filtered_reference_to_b
 								.message,
-							"Nie masz dostępu do danego zasobu z kolekcji B lub on nie istnieje."
+							app.i18n("invalid_single_reference", ["B"])
 						)
 				);
 			}));
