@@ -303,6 +303,35 @@ app.collections.entries
 	.fetch();
 ```
 
+### How to add custom validation to a collection?
+
+```
+lang=typescript
+export class CollectionWithComplexValidation extends Collection {
+  fields = {
+    color: new FieldTypes.Color(),
+  };
+
+  async init(app: App, name: string): Promise<void> {
+    await super.init(app, name);
+    this.on("before:create", async ([context, item]) => {
+      // item.body.raw_input - contains all fields passed during creation
+      if (project.body.raw_input.name.includes("green")) {
+        throw new ValidationError("Green is not a creative color");
+      }
+    });
+    this.on("before:edit", async ([context, project]) => {
+      // item.body.raw_input - contains all fields passed to PUT or PATCH. If empty then it means that the user did not change the value
+      if (project.body.raw_input.name.includes("green")) {
+        throw new ValidationError("Green is not a creative color");
+      }
+    });
+  }
+
+  defaultPolicy = new Policies.Public();
+}
+```
+
 ## Technical docs
 
 For technical reference, see
