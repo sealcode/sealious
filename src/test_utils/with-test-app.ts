@@ -90,7 +90,7 @@ async function withTestApp(
 	const base_url = `http://localhost:${port}`;
 	const smtp_api_url = `http://${
 		process.env.SEALIOUS_SMTP_HOST || "localhost"
-	}:1080`;
+	}:1088`;
 
 	const TestApp = get_test_app({
 		env,

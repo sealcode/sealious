@@ -60,7 +60,7 @@ export const get_test_app = ({
 				? new SMTPMailer({
 						host: process.env.SEALIOUS_SMTP_HOST || "localhost",
 						port: parseInt(
-							process.env.SEALIOUS_SMTP_PORT || "1025"
+							process.env.SEALIOUS_SMTP_PORT || "1825"
 						),
 						user: "any",
 						password: "any",
