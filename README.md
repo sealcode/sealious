@@ -332,6 +332,33 @@ export class CollectionWithComplexValidation extends Collection {
 }
 ```
 
+### How to do one-time collection populate?
+
+```
+lang=typescript name=collection.ts
+const my_collection = new (class extends Collection {
+  // ...
+  async populate(): Promise<void> {
+    if (await this.app.Metadata.get("categories_populated")) {
+      return;
+    }
+    const app = this.app as TheApp;
+
+	// create the resources here using the regular CRUD functions
+
+    await this.app.Metadata.set("categories_populated", "true");
+  }
+})();
+
+```
+
+```
+lang=typescript name=index.ts
+void app.start().then(async () => {
+	await app.collections.my_collection.populate();
+});
+```
+
 ## Technical docs
 
 For technical reference, see
