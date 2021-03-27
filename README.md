@@ -339,14 +339,14 @@ lang=typescript, name=collection.ts
 const my_collection = new (class extends Collection {
   // ...
   async populate(): Promise<void> {
-    if (await this.app.Metadata.get("categories_populated")) {
+    if (await this.app.Metadata.get("my_collection_populated")) {
       return;
     }
     const app = this.app as TheApp;
 
 	// create the resources here using the regular CRUD functions
 
-    await this.app.Metadata.set("categories_populated", "true");
+    await this.app.Metadata.set("my_collection_populated", "true");
   }
 })();
 
