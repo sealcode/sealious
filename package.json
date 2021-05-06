@@ -77,7 +77,7 @@
 		"object-hash": "^2.0.3",
 		"pretty-ms": "^7.0.0",
 		"qs": "^6.5.1",
-		"sanitize-html": "^1.13.0",
+		"sanitize-html": "^2.3.2",
 		"sharp": "^0.26.3",
 		"shortid": "^2.2.6",
 		"typedoc": "^0.17.8",
