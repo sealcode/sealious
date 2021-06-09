@@ -27,7 +27,7 @@ export default class Float extends Field {
 	) {
 		if (typeof field_filter !== "object") {
 			return {
-				$eq: parseFloat(field_filter.toString(), 10),
+				$eq: parseFloat(field_filter.toString()),
 			};
 		}
 		// treating filter as a query here
@@ -42,8 +42,7 @@ export default class Float extends Field {
 				);
 			}
 			new_filter[new_comparator] = parseFloat(
-				field_filter[comparator as HumanComparator].toString(),
-				10
+				field_filter[comparator as HumanComparator].toString()
 			);
 		}
 		return new_filter;
