@@ -35,6 +35,7 @@ type FormatParam<T extends Collection> = Partial<
 >;
 
 type AllInOneParams<T extends Collection> = {
+	search: Parameters<ItemList<T>["search"]>[0];
 	sort: Parameters<ItemList<T>["sort"]>[0];
 	filter: Parameters<ItemList<T>["filter"]>[0];
 	pagination: Parameters<ItemList<T>["paginate"]>[0];
@@ -159,7 +160,10 @@ export default class ItemList<T extends Collection> {
 		return this;
 	}
 
-	search(term: string): ItemList<T> {
+	search(term?: string): ItemList<T> {
+		if (!term) {
+			return this;
+		}
 		if (this._search) {
 			throw new Error("Search term already set");
 		}
@@ -310,6 +314,7 @@ export default class ItemList<T extends Collection> {
 		return this.filter(params.filter)
 			.paginate(params.pagination)
 			.sort(params?.sort)
+			.search(params?.search)
 			.attach(params?.attachments)
 			.format(params?.format);
 	}

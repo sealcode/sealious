@@ -359,7 +359,17 @@ void app.start().then(async () => {
 });
 ```
 
-## Technical docs
+## Development
 
-For technical reference, see
-[sealious.sealcode.org/docs](https://sealious.sealcode.org/docs)
+To run test outside of docker, run:
+
+```
+docker-compose up -d
+npm run test-cmd
+```
+
+If you want to debug the tests, run:
+
+```
+npm run test-cmd -- --debug
+```

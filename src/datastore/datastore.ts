@@ -59,8 +59,8 @@ export default class Datastore {
 				text_index[field_name] = "text";
 			} else if (typeof index_answer === "boolean" && index_answer) {
 				indexes.push({ [field_name]: 1 });
-			} else if (Array.isArray(index_answer)) {
-				for (const [subfield, index] of index_answer) {
+			} else if (typeof index_answer === "object") {
+				for (const [subfield, index] of Object.entries(index_answer)) {
 					const key = `${field_name}.${subfield as string}`;
 					if (index === "text") {
 						text_index[key] = "text";
