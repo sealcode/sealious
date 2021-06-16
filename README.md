@@ -359,6 +359,26 @@ void app.start().then(async () => {
 });
 ```
 
+### How to send an email?
+
+```
+lang=typescript
+import { EmailTemplates } from "sealious";
+
+const message = await SimpleTemplate(ctx.$app, {
+  text: "Click this link to finish registration:",
+  subject: "Rejestracja w zmagazynu.pl",
+  to: ctx.$body.email as string,
+  buttons: [
+    {
+      text: "Finish registration",
+      href: `${ctx.$app.manifest.base_url}/finish-registration?token=${some_token}`,
+    },
+  ],
+});
+message.send(ctx.$app);
+```
+
 ## Development
 
 To run test outside of docker, run:
