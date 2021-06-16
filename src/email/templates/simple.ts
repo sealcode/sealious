@@ -29,8 +29,9 @@ export default async function SimpleTemplate(
 	if ((app.ConfigManager.get("core") as any).environment === "production") {
 		html = get_html(app, data, logo_cid);
 	} else {
-		html =
-			"Dummy html text. Enable production mode in app config to render html each time. This is disabled by default to speed up test execution time.";
+		html = /* HTML */ `Dummy html text. Enable production mode in app config
+		to render html each time. This is disabled by default to speed up test
+		execution time.`;
 	}
 
 	const text = data.text + "\n\n" + buttons_to_text(data.buttons);
