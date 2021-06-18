@@ -138,6 +138,30 @@ lang=typescript
 items[0].getAttachments("field1");
 ```
 
+`.attach` is very useful, because you can load all resources related
+to a given item in one command chain. If you want to for example load
+all Images linked to a Gallery item, make sure that the Gallery
+collection has an `images` field that is a `ReverseSingleReference`
+and do:
+
+
+```
+const { items: users } = await app.collections.galleries
+  .list(context)
+  .attach({ images: true })
+  .fetch();
+```
+
+You can nest the attachments, as well:
+
+```
+const { items: users } = await app.collections.galleries
+  .list(context)
+  .attach({ images: {author: true} })
+  .fetch();
+```
+
+
 ### Sorting
 
 ```
