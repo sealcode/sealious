@@ -189,3 +189,12 @@ const { items } = await app.collections.items
 
 The order of the methods in chain is not significant, aside from the fact that
 `fetch` has to be at the end of the chain.
+
+## Custom methods
+
+Some collections have custom methods attached to them, so it's easier
+to perform certain repetitive tasks. Developers are encouraged to add
+all custom logic related to a given collection to the class
+representing that collection.
+
+[Custom methods in Users class](https://hub.sealcode.org/source/sealious/browse/dev/src/app/collections/users.remarkup)

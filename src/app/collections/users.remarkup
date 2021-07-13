@@ -1,0 +1,13 @@
+# `Users` Collection
+
+Stores usernames and passwords.
+
+## Custom methods
+
+* `passwordMatches` - lets you check if the given username matches the
+  given password. This function bypassess all policies. Be careful!
+
+```
+lang=typescript
+await Users.passwordMatches(new Context(app), "user", "password123");
+```
