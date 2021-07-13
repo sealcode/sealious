@@ -1,26 +1,7 @@
 import Router = require("@koa/router");
-import { App, Errors } from "../../main";
-import SecureHasher from "../../utils/secure-hasher";
 import parseBody from "../parse-body";
 
 const sessionRouter = new Router();
-
-async function validateAuthData(app: App, username: string, password: string) {
-	const [user] = await app.Datastore.find("users", {
-		"username.safe": username,
-	});
-
-	if (!user) {
-		throw new Errors.InvalidCredentials("Incorrect username!");
-	}
-
-	const is_valid = await SecureHasher.matches(password, user.password);
-	if (!is_valid) {
-		throw new Errors.InvalidCredentials("Incorrect password!");
-	}
-
-	return user;
-}
 
 sessionRouter.post("/", parseBody(), async (ctx) => {
 	const username = ctx.request.body.username;

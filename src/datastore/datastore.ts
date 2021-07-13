@@ -103,7 +103,7 @@ export default class Datastore {
 		query: Record<string, any>,
 		options: Parameters<MongoCollection["find"]>[1] = {},
 		output_options: OutputOptions = {}
-	) {
+	): Promise<Record<string, unknown>[]> {
 		this.app.Logger.debug2(
 			"DB",
 			"find " + collection_name,

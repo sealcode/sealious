@@ -59,7 +59,10 @@ export default class Sessions extends Collection {
 			throw new Errors.InvalidCredentials("Incorrect username!");
 		}
 
-		const is_valid = await SecureHasher.matches(password, user.password);
+		const is_valid = await SecureHasher.matches(
+			password,
+			user.password as string
+		);
 		if (!is_valid) {
 			throw new Errors.InvalidCredentials("Incorrect password!");
 		}

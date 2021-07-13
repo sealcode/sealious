@@ -1,7 +1,8 @@
 import Router from "@koa/router";
 import Policy from "../../chip-types/policy";
-import { Collection, App, FieldTypes, Policies } from "../../main";
+import { Collection, App, FieldTypes, Policies, Context } from "../../main";
 import { BadContext } from "../../response/errors";
+import SecureHasher from "../../utils/secure-hasher";
 
 export default class Users extends Collection {
 	fields = {
@@ -58,5 +59,22 @@ export default class Users extends Collection {
 		router.use(super_router.routes(), super_router.allowedMethods());
 
 		return router;
+	}
+
+	static async passwordMatches(
+		context: Context,
+		username: string,
+		password: string
+	) {
+		const [user] = await context.app.Datastore.find("users", {
+			"username.safe": username,
+		});
+		if (!user || !user.password) {
+			return false;
+		}
+		return await SecureHasher.matches(
+			password,
+			(user.password as unknown) as string
+		);
 	}
 }

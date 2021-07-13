@@ -1,7 +1,8 @@
 import assert from "assert";
 import { withRunningApp } from "../../test_utils/with-test-app";
 import { assertThrowsAsync } from "../../test_utils/assert-throws-async";
-import { App } from "../../main";
+import { App, Context } from "../../main";
+import Users from "./users";
 
 describe("users", () => {
 	describe("auto create admin", () => {
@@ -153,5 +154,40 @@ describe("users", () => {
 					);
 				}
 			}));
+	});
+
+	describe(".passwordMatches()", () => {
+		it("returns false if the password is incorrect", async () => {
+			withRunningApp(null, async ({ app }) => {
+				await app.collections.users.create(new app.SuperContext(), {
+					username: "user",
+					password: "password123",
+				});
+				assert.strictEqual(
+					await Users.passwordMatches(
+						new Context(app),
+						"user",
+						"wrong-password"
+					),
+					false
+				);
+			});
+		});
+		it("returns true if the password is correct", async () => {
+			withRunningApp(null, async ({ app }) => {
+				await app.collections.users.create(new app.SuperContext(), {
+					username: "user",
+					password: "password123",
+				});
+				assert.strictEqual(
+					await Users.passwordMatches(
+						new Context(app),
+						"user",
+						"password123"
+					),
+					true
+				);
+			});
+		});
 	});
 });
