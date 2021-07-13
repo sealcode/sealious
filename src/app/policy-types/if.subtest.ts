@@ -1,6 +1,12 @@
 import assert from "assert";
 import { withRunningApp } from "../../test_utils/with-test-app";
-import { App, Collection, FieldTypes, Policies } from "../../main";
+import {
+	App,
+	Collection,
+	FieldTypes,
+	Policies,
+	SpecialFilters,
+} from "../../main";
 import Matches from "../base-chips/special_filters/matches";
 import { TestAppType } from "../../test_utils/test-app";
 
@@ -48,7 +54,7 @@ async function createResources(app: App) {
 	});
 }
 
-describe("when", () => {
+describe("if", () => {
 	it("should only use 'when_true' access strategy when the item passes the filter", async () =>
 		withRunningApp(extend, async ({ app, rest_api }) => {
 			await createResources(app);
@@ -76,4 +82,47 @@ describe("when", () => {
 
 			assert.equal(public_resources.length, 2);
 		}));
+
+	it("should work properly with a boolean field set to false", async () =>
+		withRunningApp(
+			(test_app) =>
+				class extends test_app {
+					collections = {
+						...test_app.BaseCollections,
+						tasks: new (class extends Collection {
+							fields = {
+								title: new FieldTypes.Text(),
+								done: new FieldTypes.Boolean(),
+							};
+
+							named_filters = {
+								todo: new SpecialFilters.Matches("tasks", {
+									done: false,
+								}),
+							};
+							policies = {
+								list: new Policies.If([
+									"tasks",
+									"todo",
+									new Policies.Public(),
+									new Policies.Noone(),
+								]),
+							};
+						})(),
+					};
+				},
+			async ({ app, rest_api }) => {
+				const data = {
+					username: "user",
+					password: "passwordpassword",
+				};
+				await app.collections.users.create(
+					new app.SuperContext(),
+					data
+				);
+				const session = await rest_api.login(data);
+
+				await rest_api.get("/api/v1/collections/tasks", session);
+			}
+		));
 });

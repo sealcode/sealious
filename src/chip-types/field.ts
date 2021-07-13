@@ -235,7 +235,7 @@ export default abstract class Field {
 			`${this.name}.getAggregationStages`,
 			field_filter
 		);
-		if (!field_filter) return [];
+		if (field_filter === undefined) return [];
 		const value_path = await this.getValuePath();
 		let $match: MatchBody = {};
 		if (field_filter === null) {

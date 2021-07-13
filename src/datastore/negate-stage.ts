@@ -15,6 +15,10 @@ export default function negate_match(stage: MatchBody) {
 			if ((stage[key] as MatchBody).$not) {
 				negated_stage[key] = (stage[key] as MatchBody)
 					.$not as MatchBody;
+			} else if (typeof stage[key] == "boolean") {
+				negated_stage[key] = !stage[key];
+			} else if (typeof stage[key] !== "object") {
+				negated_stage[key] = { $not: { $eq: stage[key] } };
 			} else {
 				negated_stage[key] = { $not: stage[key] };
 			}

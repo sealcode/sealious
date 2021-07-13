@@ -99,4 +99,19 @@ describe("boolean", () => {
 				)
 			);
 		}));
+
+	it("lets filter by literal false value", () =>
+		withRunningApp(extend, async ({ app }) => {
+			await app.collections.boolseals.create(new app.SuperContext(), {
+				is_old: true,
+			});
+			await app.collections.boolseals.create(new app.SuperContext(), {
+				is_old: false,
+			});
+			const { items: seals } = await app.collections.boolseals
+				.list(new app.SuperContext())
+				.filter({ is_old: false })
+				.fetch();
+			assert.strictEqual(seals.length, 1);
+		}));
 });

@@ -54,6 +54,7 @@ export default class If extends Policy {
 	async _getRestrictingQuery(context: Context) {
 		return this.constructQuery(context);
 	}
+
 	async checkerFunction(
 		context: Context,
 		item_getter: () => Promise<CollectionItem>

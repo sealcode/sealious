@@ -157,7 +157,7 @@ describe("users", () => {
 	});
 
 	describe(".passwordMatches()", () => {
-		it("returns false if the password is incorrect", async () => {
+		it("returns false if the password is incorrect", async () =>
 			withRunningApp(null, async ({ app }) => {
 				await app.collections.users.create(new app.SuperContext(), {
 					username: "user",
@@ -171,9 +171,8 @@ describe("users", () => {
 					),
 					false
 				);
-			});
-		});
-		it("returns true if the password is correct", async () => {
+			}));
+		it("returns true if the password is correct", async () =>
 			withRunningApp(null, async ({ app }) => {
 				await app.collections.users.create(new app.SuperContext(), {
 					username: "user",
@@ -187,7 +186,6 @@ describe("users", () => {
 					),
 					true
 				);
-			});
-		});
+			}));
 	});
 });
