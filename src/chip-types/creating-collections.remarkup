@@ -115,3 +115,29 @@ Please note:
 3. Until {T2103} is resolved, you have to specifiy policies for `show` and
    `list` separately. `show` is for viewing a single item while knowing its ID,
    `list` is for listing all items
+
+## Specifying named filters
+
+You can use special filter to segment the collection based on some
+filters. Named filters can then be used to [apply different Policies based on the
+segment the given item belongs to](https://hub.sealcode.org/source/sealious/browse/dev/src/app/policy-types/if.remarkup).
+
+```
+lang=typescript
+import { Collection, SpecialFilters } from "sealious";
+
+const tasks = new (class extends Collection {
+    fields = {
+        title: new FieldTypes.Text(),
+        done: new FieldTypes.Boolean(),
+    };
+
+	named_filters = {
+		todo: new SpecialFilters.Matches("tasks", { done: false }),
+	};
+
+})();
+```
+
+With named filters set as above, you can `GET /api/v1/collections/tasks/@todo`
+to list only tasks that are not done yet.
