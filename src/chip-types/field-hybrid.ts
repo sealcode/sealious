@@ -1,7 +1,7 @@
 import Field, { Depromisify } from "./field";
 
 import Context from "../context";
-import { Collection } from "../main";
+import { App, Collection } from "../main";
 
 /*
 
@@ -60,5 +60,10 @@ export default abstract class HybridField<T extends Field> extends Field {
 			old_value,
 			format
 		);
+	}
+
+	async init(app: App) {
+		super.init(app);
+		this.virtual_field.init(app);
 	}
 }

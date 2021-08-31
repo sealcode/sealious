@@ -48,7 +48,7 @@ describe("derived-value", () => {
 					}
 				);
 
-				assert.deepEqual(person.name_and_surname, "Jan Kowalski");
+				assert.deepStrictEqual(person.name_and_surname, "Jan Kowalski");
 			}
 		));
 
@@ -68,7 +68,7 @@ describe("derived-value", () => {
 					}
 				);
 
-				assert.deepEqual("Jan Kowalski", person.name_and_surname);
+				assert.deepStrictEqual("Jan Kowalski", person.name_and_surname);
 
 				const {
 					items: [updated_person],
@@ -79,9 +79,9 @@ describe("derived-value", () => {
 					}
 				);
 
-				assert.deepEqual(updated_person.username, "Janusz");
+				assert.deepStrictEqual(updated_person.username, "Janusz");
 
-				assert.deepEqual(
+				assert.deepStrictEqual(
 					updated_person.name_and_surname,
 					"Janusz Kowalski"
 				);
@@ -96,9 +96,12 @@ describe("derived-value", () => {
 					}
 				);
 
-				assert.deepEqual(updated_person2.username, "John");
-				assert.deepEqual(updated_person2.surname, "Doe");
-				assert.deepEqual(updated_person2.name_and_surname, "John Doe");
+				assert.deepStrictEqual(updated_person2.username, "John");
+				assert.deepStrictEqual(updated_person2.surname, "Doe");
+				assert.deepStrictEqual(
+					updated_person2.name_and_surname,
+					"John Doe"
+				);
 			}
 		));
 
@@ -119,7 +122,7 @@ describe("derived-value", () => {
 					}
 				);
 
-				assert.deepEqual(60, person.age);
+				assert.deepStrictEqual(60, person.age);
 
 				const {
 					items: [updated_person],
@@ -130,8 +133,8 @@ describe("derived-value", () => {
 					}
 				);
 
-				assert.deepEqual(updated_person.age, 22);
-				assert.deepEqual(
+				assert.deepStrictEqual(updated_person.age, 22);
+				assert.deepStrictEqual(
 					updated_person.name_and_surname,
 					"Jan Kowalski"
 				);
@@ -154,7 +157,7 @@ describe("derived-value", () => {
 						});
 					},
 					(error) => {
-						assert.deepEqual(
+						assert.deepStrictEqual(
 							error.response.data.data.name_and_surname.message,
 							app.i18n("invalid_text", [str, typeof str])
 						);
@@ -162,5 +165,40 @@ describe("derived-value", () => {
 				);
 			}
 		);
+
+		it("should init the base field with the given app", () =>
+			withRunningApp(
+				(app_class: TestAppType) => {
+					return class extends app_class {
+						collections = {
+							...app_class.BaseCollections,
+							A: new (class extends Collection {
+								fields = {
+									simple: new FieldTypes.Text(),
+									derived: new FieldTypes.DerivedValue(
+										new FieldTypes.SingleReference("A"),
+										{
+											fields: ["simple"],
+											deriving_fn: async (simple) => {
+												return "any_id"; // this isn't a proper ID, and the SingleReference should detect that by being able to access the `this.app` instance and reading the database. If any other error than "bad id" will be thrown, it means that the base field is not initiated properly
+											},
+										}
+									),
+								};
+							})(),
+						};
+					};
+				},
+				async ({ app }) => {
+					await assertThrowsAsync(
+						() =>
+							app.collections.A.create(new app.SuperContext(), {
+								simple: "anything",
+							}),
+						(error) =>
+							assert.strictEqual(error.message, "Invalid values!")
+					);
+				}
+			));
 	});
 });
