@@ -275,6 +275,6 @@ export default abstract class Collection {
 	}
 
 	emit(event_name: string, event_data?: any): Promise<void> {
-		return this.emitter.emit(event_name, event_data);
+		return this.emitter.emitSerial(event_name, event_data);
 	}
 }

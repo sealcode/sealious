@@ -1,9 +1,10 @@
 import assert from "assert";
 import { withRunningApp } from "../../../test_utils/with-test-app";
 import { assertThrowsAsync } from "../../../test_utils/assert-throws-async";
-import { Collection, FieldTypes, Field } from "../../../main";
+import { Collection, FieldTypes, Field, App } from "../../../main";
 import { DerivingFn } from "./derived-value";
 import { TestAppType } from "../../../test_utils/test-app";
+import { sleep } from "../../../test_utils/sleep";
 
 const extend = <T extends Field = FieldTypes.Text>(derived_value_params: {
 	deriving_fn: DerivingFn<T>;
@@ -201,4 +202,51 @@ describe("derived-value", () => {
 				}
 			));
 	});
+
+	it("avoids a race condition when there is a derived field and a before:edit listener on the collection", () =>
+		withRunningApp(
+			(test_class) =>
+				class extends test_class {
+					collections = {
+						...test_class.BaseCollections,
+						products: new (class Products extends Collection {
+							fields: Record<string, Field> = {
+								name: new FieldTypes.Text(),
+								category: new FieldTypes.DerivedValue(
+									new FieldTypes.Text(),
+									{
+										fields: ["name"],
+										deriving_fn: async (name: string) => {
+											await sleep(0);
+											return `${name} after sleep`;
+										},
+									}
+								),
+							};
+
+							async init(app: App, name: string): Promise<void> {
+								await super.init(app, name);
+
+								this.on(
+									"before:edit",
+									async ([context, product]) => {
+										await product.decode(context);
+										product.get("name");
+										await sleep(100);
+										product.get("name"); // should throw an error "decode first" if there's a race condition
+									}
+								);
+							}
+						})(),
+					};
+				},
+			async ({ app }) => {
+				const product = await app.collections.products.create(
+					new app.SuperContext(),
+					{ name: "aaa" }
+				);
+				product.setMultiple({ name: "bbb" });
+				await product.save(new app.SuperContext());
+			}
+		));
 });
