@@ -28,10 +28,27 @@ export default class ReverseSingleReference extends CachedValue<ListOfIDs> {
 						params.referencing_collection,
 						"after:create"
 					),
-					resource_id_getter: async (_, item) => {
-						const ret = [
-							item.get(params.referencing_field) as string,
-						];
+					resource_id_getter: async (context, item) => {
+						this.app.Logger.debug3(
+							"REVERSE SINGLE REFERENCE",
+							"resource_getter for after create",
+							{
+								item,
+								referencing_field: this.referencing_field,
+								referencing_collection: this
+									.referencing_collection,
+							}
+						);
+						const ret_id = await item.getDecoded(
+							params.referencing_field,
+							context
+						);
+						if (typeof ret_id !== "string") {
+							throw new Error(
+								`Expected the id to be a string, got: ${typeof ret_id}`
+							);
+						}
+						const ret = [ret_id];
 						this.app.Logger.debug3(
 							"REVERSE SINGLE REFERENCE",
 							"resource_getter for after create",
@@ -114,7 +131,12 @@ export default class ReverseSingleReference extends CachedValue<ListOfIDs> {
 				context.app.Logger.debug2(
 					"REVERSE SINGLE REFERENCE",
 					"get_value",
-					{ affected_id: resource_id }
+					{
+						affected_id: resource_id,
+						referencing_collection: this.getReferencingCollection()
+							.name,
+						collection: this.collection.name,
+					}
 				);
 				const list = await new ItemList(
 					this.getReferencingCollection(),

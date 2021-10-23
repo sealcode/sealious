@@ -216,6 +216,7 @@ export default class CollectionItem<T extends Collection = any> {
 		context: Context
 	): Promise<unknown> {
 		if (this.body.raw_input[field_name]) {
+			this.body.is_decoded = false;
 			await this.body.encode(context);
 			await this.body.decode(context);
 			return this.body.decoded[field_name];

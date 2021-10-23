@@ -46,7 +46,7 @@ export default class DerivedValue<T extends Field> extends HybridField<T> {
 	}
 
 	async init(app: App) {
-		super.init(app);
+		await super.init(app);
 		const not_matching_fields = this.fields.filter(
 			(field) => !Object.keys(this.collection.fields).includes(field)
 		);

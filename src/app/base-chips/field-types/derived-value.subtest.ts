@@ -249,4 +249,38 @@ describe("derived-value", () => {
 				await product.save(new app.SuperContext());
 			}
 		));
+
+	it("does not crash the app after removing an item", () =>
+		withRunningApp(
+			(test_class) =>
+				class extends test_class {
+					collections = {
+						...test_class.BaseCollections,
+						products: new (class Products extends Collection {
+							fields: Record<string, Field> = {
+								name: new FieldTypes.Text(),
+								category: new FieldTypes.DerivedValue(
+									new FieldTypes.Text(),
+									{
+										fields: ["name"],
+										deriving_fn: async (name: string) => {
+											await sleep(0);
+											return `${name} after sleep`;
+										},
+									}
+								),
+							};
+						})(),
+					};
+				},
+			async ({ app }) => {
+				const product = await app.collections.products.create(
+					new app.SuperContext(),
+					{ name: "aaa" }
+				);
+				product.setMultiple({ name: "bbb" });
+				await product.save(new app.SuperContext());
+				await product.remove(new app.SuperContext());
+			}
+		));
 });
