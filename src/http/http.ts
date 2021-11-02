@@ -51,8 +51,18 @@ export default class HttpServer {
 		this.koa.use(
 			mount(
 				url_path,
-				Static(local_path, { maxage: 1000 * 60 * 60 * 24 * 15 })
+				Static(local_path, {
+					maxage: 1000 * 60 * 60 * 24 * 15,
+					defer: true,
+				})
 			)
+		);
+
+		this.koa.use(
+			mount(url_path, async (ctx, next) => {
+				ctx.set("etag", ctx.URL.toString());
+				await next();
+			})
 		);
 	}
 }
