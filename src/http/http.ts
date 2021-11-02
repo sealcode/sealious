@@ -1,4 +1,4 @@
-import Koa from "koa";
+import { BaseContext, default as Koa } from "koa";
 import Static from "koa-static";
 import Router from "@koa/router";
 import { Server } from "http";
@@ -59,8 +59,8 @@ export default class HttpServer {
 		);
 
 		this.koa.use(
-			mount(url_path, async (ctx, next) => {
-				ctx.set("etag", ctx.URL.toString());
+			mount(url_path, async function (ctx: BaseContext, next) {
+				ctx.set("etag", `W/"${ctx.URL.toString()}"`);
 				await next();
 			})
 		);
