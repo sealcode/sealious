@@ -1,4 +1,4 @@
-import { BaseContext, default as Koa } from "koa";
+import { Context, default as Koa } from "koa";
 import Static from "koa-static";
 import Router from "@koa/router";
 import { Server } from "http";
@@ -59,8 +59,19 @@ export default class HttpServer {
 		);
 
 		this.koa.use(
-			mount(url_path, async function (ctx: BaseContext, next) {
-				ctx.set("etag", `W/"${ctx.URL.toString()}"`);
+			mount(url_path, async function (ctx: Context, next) {
+				ctx.set("ETag", `W/"${ctx.URL.toString()}"`);
+				ctx.set("cache-control", "public, max-age=2592000");
+
+				if (
+					ctx.response.header.etag &&
+					ctx.request.headers["if-none-match"] ==
+						ctx.response.header.etag
+				) {
+					ctx.status = 304;
+					return;
+				}
+
 				await next();
 			})
 		);
