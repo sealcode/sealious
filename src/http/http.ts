@@ -48,6 +48,11 @@ export default class HttpServer {
 	}
 
 	addStaticRoute(url_path: string, local_path: string) {
-		this.koa.use(mount(url_path, Static(local_path)));
+		this.koa.use(
+			mount(
+				url_path,
+				Static(local_path, { maxage: 1000 * 60 * 60 * 24 * 15 })
+			)
+		);
 	}
 }
