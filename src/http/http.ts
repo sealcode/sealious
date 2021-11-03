@@ -48,32 +48,6 @@ export default class HttpServer {
 	}
 
 	addStaticRoute(url_path: string, local_path: string) {
-		this.koa.use(
-			mount(
-				url_path,
-				Static(local_path, {
-					maxage: 1000 * 60 * 60 * 24 * 15,
-					defer: true,
-				})
-			)
-		);
-
-		this.koa.use(
-			mount(url_path, async function (ctx: Context, next) {
-				ctx.set("ETag", `W/"${ctx.URL.toString()}"`);
-				ctx.set("cache-control", "public, max-age=2592000");
-
-				if (
-					ctx.response.header.etag &&
-					ctx.request.headers["if-none-match"] ==
-						ctx.response.header.etag
-				) {
-					ctx.status = 304;
-					return;
-				}
-
-				await next();
-			})
-		);
+		this.koa.use(mount(url_path, Static(local_path)));
 	}
 }
