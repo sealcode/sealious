@@ -62,7 +62,7 @@ function get_html(app: App, data: SimpleTemplateData, logo_cid: string) {
 		  <mj-body>
 			<mj-section>
 			  <mj-column>
-				<mj-image width="100" src="cid:${logo_cid}"></mj-image>
+				<mj-image width="220" src="cid:${logo_cid}"></mj-image>
 				<mj-divider border-color="${
 					(app.manifest.colors && app.manifest.colors.primary) ||
 					"black"
@@ -77,7 +77,13 @@ function get_html(app: App, data: SimpleTemplateData, logo_cid: string) {
 					(data.buttons &&
 						data.buttons.map(
 							(button) =>
-								`<mj-button href="${button.href}" font-size="20px" background-color="#0074D9">${button.text}</mj-button>`
+								`<mj-button href="${
+									button.href
+								}" font-size="20px" background-color="${
+									(app.manifest.colors &&
+										app.manifest.colors.primary) ||
+									"#0074D9"
+								}">${button.text}</mj-button>`
 						)) ||
 					""
 				}
