@@ -170,11 +170,11 @@ describe("SameAsForResourceInField", () => {
 				create: new Policies.LoggedIn(),
 				list: new Policies.Or([
 					new Policies.Owner(),
-					new Policies.If([
+					new Policies.If(
 						"numbers",
 						"greater_than_1",
-						Policies.Public,
-					]),
+						Policies.Public
+					),
 				]),
 			}),
 			async ({ app, rest_api }) => {

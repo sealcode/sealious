@@ -14,12 +14,12 @@ export default class If extends Policy {
 	collection_name: string;
 	filter_name: string;
 	strategy_when: { [key in "true" | "false"]: Policy };
-	constructor([
-		collection_name,
-		special_filter_name,
-		when_true,
-		when_false = Policies.Noone,
-	]: [string, string, PolicyDefinition, PolicyDefinition?]) {
+	constructor(
+		collection_name: string,
+		special_filter_name: string,
+		when_true: PolicyDefinition,
+		when_false: PolicyDefinition = Policies.Noone
+	) {
 		super([collection_name, special_filter_name, when_true, when_false]);
 		this.filter_name = special_filter_name;
 		this.collection_name = collection_name;

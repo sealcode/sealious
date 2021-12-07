@@ -38,12 +38,12 @@ class extends App {
 						number: { "<": 0 },
 					}),
 				};
-				defaultPolicy = new Policies.If([
+				defaultPolicy = new Policies.If(
 					"numbers",
 					"negative",
 					Policies.LoggedIn,
 					Policies.Public,
-				]);
+				);
 			})(),
 		};
 	};

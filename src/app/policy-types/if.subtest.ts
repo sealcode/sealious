@@ -27,12 +27,12 @@ function extend(t: TestAppType) {
 						number: { "<": 0 },
 					}),
 				};
-				defaultPolicy = new Policies.If([
+				defaultPolicy = new Policies.If(
 					"numbers",
 					"negative",
 					Policies.LoggedIn,
-					Policies.Public,
-				]);
+					Policies.Public
+				);
 			})(),
 		};
 	};
@@ -101,12 +101,12 @@ describe("if", () => {
 								}),
 							};
 							policies = {
-								list: new Policies.If([
+								list: new Policies.If(
 									"tasks",
 									"todo",
 									new Policies.Public(),
-									new Policies.Noone(),
-								]),
+									new Policies.Noone()
+								),
 							};
 						})(),
 					};
