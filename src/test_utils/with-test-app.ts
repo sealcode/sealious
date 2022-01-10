@@ -87,9 +87,9 @@ async function withTestApp(
 	test_collection?: string
 ) {
 	const port = await getPort();
-	const base_url = `http://localhost:${port}`;
+	const base_url = `http://127.0.0.1:${port}`;
 	const smtp_api_url = `http://${
-		process.env.SEALIOUS_SMTP_HOST || "localhost"
+		process.env.SEALIOUS_SMTP_HOST || "127.0.0.1"
 	}:1088`;
 
 	const TestApp = get_test_app({

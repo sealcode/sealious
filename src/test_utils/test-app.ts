@@ -23,7 +23,7 @@ export const get_test_app = ({
 		config = {
 			upload_path: "/tmp",
 			datastore_mongo: {
-				host: process.env.SEALIOUS_DB_HOST || "localhost",
+				host: process.env.SEALIOUS_DB_HOST || "127.0.0.1",
 				password: "sealious-test",
 				port: parseInt(process.env.SEALIOUS_DB_PORT || "20722"),
 				db_name: "sealious-test",
@@ -58,7 +58,7 @@ export const get_test_app = ({
 		mailer =
 			env == "production"
 				? new SMTPMailer({
-						host: process.env.SEALIOUS_SMTP_HOST || "localhost",
+						host: process.env.SEALIOUS_SMTP_HOST || "127.0.0.1",
 						port: parseInt(
 							process.env.SEALIOUS_SMTP_PORT || "1825"
 						),

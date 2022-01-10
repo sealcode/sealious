@@ -13,8 +13,8 @@ describe("simpleTemplate", () => {
 			});
 			await message.send(app);
 			const messages = await mail_api.getMessages();
-			assert.equal(messages.length, 1);
-			assert.equal(
+			assert.strictEqual(messages.length, 1);
+			assert.strictEqual(
 				messages[0].sender,
 				`<${app.ConfigManager.get("email").from_address}>`
 			);
