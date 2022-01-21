@@ -16,17 +16,12 @@ import Context, { SuperContext } from "../context";
 import Collection from "../chip-types/collection";
 import { MetadataFactory, i18nFactory } from "../main";
 import Users from "./collections/users";
-import UserRoles from "./collections/user-roles";
 import Sessions from "./collections/sessions";
 import LoggerMailer from "../email/logger-mailer";
 import Router from "@koa/router";
 import sessionRouter from "../http/routes/session";
-import accountCreationDetails from "../http/routes/account-creation-details";
 import extractContext from "../http/extract-context";
-import finalizeRegistrationIntent from "../http/routes/finalize-registration-intent";
 import parseBody from "../http/parse-body";
-import finalizePasswordReset from "../http/routes/finalize-password-reset";
-import confirmPasswordReset from "../http/routes/confirm-password-reset";
 import formattedImages from "../http/routes/formatted-images";
 import logo from "../http/routes/logo";
 import uploaded_files from "../http/routes/uploaded-files";
@@ -74,7 +69,6 @@ abstract class App {
 	/** The collections defined within the given app. */
 	abstract collections: {
 		users: Users;
-		"user-roles": UserRoles;
 		sessions: Sessions;
 		[name: string]: Collection;
 	};
@@ -227,22 +221,6 @@ abstract class App {
 			});
 			await next();
 		});
-
-		router.get("/account-creation-details", accountCreationDetails);
-
-		router.post(
-			"/finalize-registration-intent",
-			parseBody(),
-			finalizeRegistrationIntent
-		);
-
-		router.post(
-			"/finalize-password-reset",
-			parseBody(),
-			finalizePasswordReset
-		);
-
-		router.get("/confirm-password-reset", confirmPasswordReset);
 
 		router.use(
 			"/api/v1/uploaded-files",

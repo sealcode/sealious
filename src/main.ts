@@ -36,3 +36,5 @@ export { EventDescription } from "./app/delegate-listener";
 export { default as Collections } from "./app/collections/collections";
 
 export { ItemListResult } from "./chip-types/item-list";
+
+export * as TestUtils from "./test_utils/test-utils";

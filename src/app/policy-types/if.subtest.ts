@@ -49,8 +49,6 @@ async function createResources(app: App) {
 	await app.collections.users.suCreate({
 		username: "user",
 		password: "password",
-		email: "user@example.com",
-		roles: [],
 	});
 }
 

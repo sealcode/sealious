@@ -5,6 +5,7 @@ import { App } from "../main";
 import mailcatcher from "./mailcatcher";
 import MockRestApi from "./rest-api";
 import { get_test_app, TestAppType } from "./test-app";
+import { strategy } from "sharp";
 
 type TestCallback = (params: CallbackParams) => Promise<any>;
 
@@ -65,6 +66,59 @@ function getAppID(test_collection?: string) {
 		uniq_id = uuid();
 	}
 	return uniq_id;
+}
+
+type ProdAppCallbackParams = {
+	app: App;
+	base_url: string;
+	smtp_api_uri: string;
+	rest_api: MockRestApi;
+	port: number;
+
+	mail_api: ReturnType<typeof mailcatcher>;
+};
+
+export async function withProdApp(
+	app: App,
+	port: number,
+	smtp_api_uri: string,
+	stop_app: boolean = false,
+	fn: (params: ProdAppCallbackParams) => Promise<unknown>
+): Promise<any> {
+	const base_url = `http://localhost:${port}`;
+	try {
+		await fn({
+			app: app,
+			port: port,
+			base_url,
+			smtp_api_uri,
+			mail_api: mailcatcher(smtp_api_uri, app),
+			rest_api: new MockRestApi(base_url),
+		});
+	} catch (e) {
+		console.error(e);
+		throw e;
+	} finally {
+		if (app.Datastore.db) {
+			app.Logger.info("TEST APP", "Clearing the database...");
+			for (const collection_name in app.collections) {
+				// eslint-disable-next-line no-await-in-loop
+				await app.Datastore.remove(
+					collection_name,
+					{},
+					"just_one" && false
+				);
+			}
+			await app.Datastore.remove(
+				app.Metadata.db_collection_name,
+				{},
+				"just_one" && false
+			);
+		}
+		if (app.status !== "stopped" && stop_app) {
+			await app.stop();
+		}
+	}
 }
 
 type CallbackParams = {

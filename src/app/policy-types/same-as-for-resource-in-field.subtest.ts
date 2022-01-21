@@ -82,8 +82,6 @@ describe("SameAsForResourceInField", () => {
 			await app.collections.users.suCreate({
 				username,
 				password,
-				email: `${username}@example.com`,
-				roles: [],
 			});
 			sessions[username] = await rest_api.login({
 				username,
@@ -238,7 +236,7 @@ describe("SameAsForResourceInField", () => {
 										action_name: "show",
 										field: "user_assignments",
 									}),
-									new Policies.Roles(["admin"]),
+									new Policies.Super(),
 								]),
 							};
 						})(),
@@ -285,17 +283,13 @@ describe("SameAsForResourceInField", () => {
 			async ({ app }) => {
 				const user1 = await app.collections.users.suCreate({
 					username: "user1",
-					email: "any@example.com",
 					password: "user1user1",
-					roles: null,
 				});
 				const user1_context = new Context(app, Date.now(), user1.id);
 
 				const user2 = await app.collections.users.suCreate({
 					username: "user2",
-					email: "any@example.com",
 					password: "user2user2",
-					roles: null,
 				});
 				const user2_context = new Context(app, Date.now(), user2.id);
 
@@ -389,7 +383,7 @@ describe("SameAsForResourceInField", () => {
 								),
 							};
 
-							defaultPolicy = new Policies.Roles(["admin"]);
+							defaultPolicy = new Policies.Super();
 
 							policies = {
 								list: new Policies.Or([
@@ -409,12 +403,12 @@ describe("SameAsForResourceInField", () => {
 								user: new FieldTypes.SingleReference("users"),
 							};
 
-							defaultPolicy = new Policies.Roles(["admin"]);
+							defaultPolicy = new Policies.Super();
 
 							policies = {
 								list: new Policies.Or([
 									new Policies.UserReferencedInField("user"),
-									new Policies.Roles(["admin"]),
+									new Policies.Super(),
 								]),
 							};
 						})(),
@@ -436,8 +430,8 @@ describe("SameAsForResourceInField", () => {
 									field: "organization",
 									action_name: "list",
 								}),
-								create: new Policies.Roles(["admin"]),
-								edit: new Policies.Roles(["admin"]),
+								create: new Policies.Super(),
+								edit: new Policies.Super(),
 							};
 						})(),
 						jobs: new (class Job extends Collection {
@@ -463,9 +457,7 @@ describe("SameAsForResourceInField", () => {
 			async ({ app }) => {
 				const user = await app.collections.users.suCreate({
 					username: "author",
-					email: "author@example.com",
 					password: "anyanyanyany",
-					roles: [],
 				});
 				const organization = await app.collections.organizations.suCreate(
 					{ name: "org" }
