@@ -5,10 +5,12 @@ export * from "./rest-api";
 export * from "./mailcatcher";
 export * from "./get-attachment";
 export * from "./async-request";
-export * from "./assert-throws-async";
+import { assertThrowsAsync } from "./assert-throws-async";
 export * from "./policy-types/create-policies-with-complex-pipeline";
-export * from "./rest-api";
+import { default as MockRestApi } from "./rest-api";
 export * from "./database-clear";
-export * from "./mailcatcher";
+import { default as MailcatcherAPI } from "./mailcatcher";
 
 export * from "./test-app";
+
+export { assertThrowsAsync, MockRestApi, MailcatcherAPI };
