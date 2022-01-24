@@ -36,7 +36,7 @@ describe("int", () => {
 					),
 				(e) => {
 					equal(
-						e.response.data.data.age.message,
+						e.response.data.data.field_messages.age.message,
 						app.i18n("invalid_integer", [provided_value])
 					);
 				}

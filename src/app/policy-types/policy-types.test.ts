@@ -5,6 +5,5 @@ describe("policy-types", () => {
 	require("./same-as-for-resource-in-field.subtest");
 	require("./users-who-can.subtest");
 	require("./user-referenced-in-field.subtest");
-	require("./roles.subtest");
 	require("./if.subtest");
 });

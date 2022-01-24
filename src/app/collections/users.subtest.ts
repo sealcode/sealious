@@ -5,45 +5,6 @@ import { App, Context } from "../../main";
 import Users from "./users";
 
 describe("users", () => {
-	describe("auto create admin", () => {
-		it("should automatically create a registration intent for the admin user", async () =>
-			withRunningApp(null, async ({ app }) => {
-				const sealious_response = await app.collections[
-					"registration-intents"
-				]
-					.suList()
-					.filter({ email: app.manifest.admin_email })
-					.fetch();
-
-				assert.strictEqual(sealious_response.items.length, 1);
-				assert.strictEqual(
-					sealious_response.items[0].get("role"),
-					"admin"
-				);
-			}));
-
-		it("should properly handle route to account cration", async () =>
-			withRunningApp(null, async ({ app, rest_api }) => {
-				const sealious_response = await app.collections[
-					"registration-intents"
-				]
-					.suList()
-					.filter({ email: app.manifest.admin_email })
-					.fetch();
-
-				const {
-					email,
-					token,
-				} = sealious_response.items[0].serializeBody();
-				const response = await rest_api.get(
-					`/account-creation-details?token=${token as string}&email=${
-						email as string
-					}`
-				);
-				assert(response.includes("Uzupełnij dane o Twoim koncie"));
-			}));
-	});
-
 	describe("users routes", () => {
 		it("should correctly handle me when not logged in", async () =>
 			withRunningApp(null, async ({ rest_api }) => {
@@ -70,31 +31,17 @@ describe("users", () => {
 					password: "password",
 				});
 				const response = await rest_api.get(
-					"/api/v1/collections/users/me?attachments[roles]=true",
+					"/api/v1/collections/users/me",
 					session
 				);
-
-				const roles = Object.values(response.attachments);
-
-				assert.strictEqual((roles as string[]).length, 1);
-				assert.strictEqual(
-					(roles as { user: string; role: string }[])[0].role,
-					"admin"
-				);
+				assert.strictEqual(response.items[0].username, "seal");
 			}));
 	});
 
 	async function add_user(app: App) {
-		const user = await app.collections.users.suCreate({
+		return await app.collections.users.suCreate({
 			username: "seal",
 			password: "password",
-			email: "seal@sealious.com",
-			roles: [],
-		});
-
-		return app.collections["user-roles"].suCreate({
-			user: user.id,
-			role: "admin",
 		});
 	}
 

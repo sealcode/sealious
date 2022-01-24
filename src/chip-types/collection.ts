@@ -68,11 +68,30 @@ export default abstract class Collection {
 		return this.create(new this.app.SuperContext(), data);
 	}
 
+	/* the "unsafe" flavor of CRUD functions are meant for cases where you want
+	to just get the errror message and parse it - for example, when you want to
+	get a nice error that can be used to display errors in a form */
+	async suCreateUnsafe(
+		data: Record<string, unknown>
+	): Promise<CollectionItem<this>> {
+		return this.createUnsafe(new this.app.SuperContext(), data);
+	}
+
 	async create(
 		context: Context,
 		data: Partial<ItemFields<this>>
 	): Promise<CollectionItem<this>> {
 		return this.make(data).save(context);
+	}
+
+	/* the "unsafe" flavor of CRUD functions are meant for cases where you want
+	to just get the errror message and parse it - for example, when you want to
+	get a nice error that can be used to display errors in a form */
+	async createUnsafe(
+		context: Context,
+		data: Record<string, unknown>
+	): Promise<CollectionItem<this>> {
+		return this.make(data as Partial<ItemFields<this>>).save(context);
 	}
 
 	/** Makes a new item object that can be saved later */

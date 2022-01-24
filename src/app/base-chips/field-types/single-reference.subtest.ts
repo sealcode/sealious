@@ -50,7 +50,8 @@ describe("single_reference", () => {
 						}),
 					(e) =>
 						assert.equal(
-							e.response.data.data.reference_to_b.message,
+							e.response.data.data.field_messages.reference_to_b
+								.message,
 							app.i18n("invalid_single_reference", ["B"])
 						)
 				);
@@ -74,8 +75,8 @@ describe("single_reference", () => {
 						}),
 					(e) =>
 						assert.equal(
-							e.response.data.data.filtered_reference_to_b
-								.message,
+							e.response.data.data.field_messages
+								.filtered_reference_to_b.message,
 							app.i18n("invalid_single_reference", ["B"])
 						)
 				);

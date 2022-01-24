@@ -22,6 +22,5 @@ coverage.html
 .npm
 .config
 .ash_history
-cosealious
 node_modules*
 .nyc_output

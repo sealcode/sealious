@@ -12,25 +12,24 @@ export type MailcatcherMessage = {
 	sender: string;
 };
 
-export default (smtp_api_url: string, app: App) => {
-	const ret = {
-		getMessages: async () => {
-			const app_address = app.ConfigManager.get("email").from_address;
-			const all_messages = (await axios.get(`${smtp_api_url}/messages`))
-				.data as MailcatcherMessage[];
-			return all_messages.filter(
-				(message) => message.sender == `<${app_address}>`
-			);
-		},
-		getMessageById: async (id: number) =>
-			(await axios.get(`${smtp_api_url}/messages/${id}.html`))
-				.data as string,
-		deleteAllInstanceEmails: async () => {
-			const messages = await ret.getMessages();
-			await asyncForEach(messages, async (m) => {
-				await axios.delete(`${smtp_api_url}/messages/${m.id}`);
-			});
-		},
-	};
-	return ret;
-};
+export default class MailcatcherAPI {
+	constructor(public smtp_api_url: string, private app: App) {}
+	async getMessages() {
+		const app_address = this.app.ConfigManager.get("email").from_address;
+		const all_messages = (await axios.get(`${this.smtp_api_url}/messages`))
+			.data as MailcatcherMessage[];
+		return all_messages.filter(
+			(message) => message.sender == `<${app_address}>`
+		);
+	}
+	async getMessageById(id: number) {
+		return (await axios.get(`${this.smtp_api_url}/messages/${id}.html`))
+			.data as string;
+	}
+	async deleteAllInstanceEmails() {
+		const messages = await this.getMessages();
+		await asyncForEach(messages, async (m) => {
+			await axios.delete(`${this.smtp_api_url}/messages/${m.id}`);
+		});
+	}
+}

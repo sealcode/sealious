@@ -42,7 +42,7 @@ describe("settable-by", async () => {
 					),
 				(e) =>
 					assert.equal(
-						e.response.data.data.any.message,
+						e.response.data.data.field_messages.any.message,
 						app.i18n("policy_noone_deny")
 					)
 			);
@@ -81,7 +81,7 @@ describe("settable-by", async () => {
 					),
 				(e) => {
 					assert.equal(
-						e.response.data.data.any.message,
+						e.response.data.data.field_messages.any.message,
 						app.i18n("invalid_integer", [value])
 					);
 				}

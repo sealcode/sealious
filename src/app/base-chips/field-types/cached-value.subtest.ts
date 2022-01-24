@@ -220,7 +220,7 @@ describe("cached-value", () => {
 				(error) => {
 					assert.strictEqual(
 						//@eslint-ignore
-						error.data.number.message,
+						error.data.field_messages.number.message,
 						app.i18n("too_small_integer", [value, MIN_VALUE])
 					);
 				}
@@ -267,14 +267,16 @@ describe("cached-value", () => {
 										context: Context,
 										number_id: string
 									) => {
-										const response = await new ItemList(
-											app.collections["happy-numbers"],
-											context
-										)
+										const response = await app.collections[
+											"happy-numbers"
+										]
+											.list(context)
 											.ids([number_id])
 											.fetch();
 										return (
-											response.items[0].get("number") * 2
+											(response.items[0].get(
+												"number"
+											) as number) * 2
 										);
 									},
 									refresh_on: [

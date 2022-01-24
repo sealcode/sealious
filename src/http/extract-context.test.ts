@@ -9,13 +9,6 @@ describe("Extract context", () => {
 			const user = await app.collections.users.suCreate({
 				username: "any",
 				password: "anyanyany",
-				email: "any@example.com",
-				roles: [],
-			});
-
-			await app.collections["user-roles"].suCreate({
-				role: "admin",
-				user: user.id,
 			});
 
 			await rest_api.login({ username: "any", password: "anyanyany" });

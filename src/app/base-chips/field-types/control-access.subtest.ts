@@ -12,8 +12,8 @@ import { AxiosError, AxiosRequestConfig } from "axios";
 import asyncForEach from "../../../utils/async-foreach";
 const SSH_KEYS_URL = "/api/v1/collections/ssh-keys";
 
-const sessions: { [username: string]: AxiosRequestConfig } = {};
-const ALLOWED_ROLES = ["admin"];
+let session: AxiosRequestConfig = {};
+const username = "regular-user";
 const MIN_TEXT_LENGTH = 3;
 
 type Key = { [access in "_public" | "_private"]: string };
@@ -29,15 +29,15 @@ function extend(t: TestAppType) {
 						new FieldTypes.Text({ min_length: MIN_TEXT_LENGTH }),
 						{
 							target_policies: {
-								show: new Policies.Roles(ALLOWED_ROLES),
-								edit: new Policies.Roles(ALLOWED_ROLES),
+								show: new Policies.LoggedIn(),
+								edit: new Policies.LoggedIn(),
 							},
 							value_when_not_allowed: "Forbidden",
 						}
 					),
 				};
 				policies = {
-					create: new Policies.Roles(ALLOWED_ROLES),
+					create: new Policies.LoggedIn(),
 				};
 			})(),
 		};
@@ -46,36 +46,15 @@ function extend(t: TestAppType) {
 
 async function setupUsers(App: App, rest_api: MockRestApi) {
 	const password = "it-really-doesnt-matter";
-	let admin_id;
-	for (const username of ["admin", "regular-user"]) {
-		const user = await App.collections.users.suCreate({
-			username,
-			password,
-			email: `${username}@example.com`,
-			roles: [],
-		});
-		if (username == "admin") {
-			await App.collections["user-roles"].suCreate({
-				role: "admin",
-				user: user.id,
-			});
-		}
+	await App.collections.users.suCreate({
+		username,
+		password,
+	});
 
-		sessions[username] = await rest_api.login({
-			username,
-			password,
-		});
-		if (username === "admin") admin_id = user.id;
-	}
-
-	await rest_api.post(
-		"/api/v1/collections/user-roles",
-		{
-			user: admin_id,
-			role: "admin",
-		},
-		sessions.admin
-	);
+	session = await rest_api.login({
+		username,
+		password,
+	});
 }
 
 async function fillKeysCollections(App: App) {
@@ -103,13 +82,12 @@ async function setup(app: App, rest_api: MockRestApi) {
 }
 
 describe("control-access", () => {
-	it("Hides a protected value from regular-user", async () =>
+	it("Hides a protected value from not-logged", async () =>
 		withRunningApp(extend, async ({ app, rest_api }) => {
 			await setup(app, rest_api);
 
 			const { items: ssh_keys } = (await rest_api.get(
-				SSH_KEYS_URL,
-				sessions["regular-user"]
+				SSH_KEYS_URL
 			)) as CollectionResponse;
 
 			ssh_keys.forEach((key) => {
@@ -117,13 +95,13 @@ describe("control-access", () => {
 			});
 		}));
 
-	it("Uncovers a protected value for admin", async () =>
+	it("Uncovers a protected value for logged", async () =>
 		withRunningApp(extend, async ({ app, rest_api }) => {
 			await setup(app, rest_api);
 
 			const { items: ssh_keys } = (await rest_api.get(
 				SSH_KEYS_URL,
-				sessions.admin
+				session
 			)) as CollectionResponse;
 
 			ssh_keys.forEach((key) => {
@@ -144,11 +122,12 @@ describe("control-access", () => {
 							public: "XDDDDDDDDDDDD",
 							private: too_short_text,
 						},
-						sessions.admin
+						session
 					),
 				(e: AxiosError) =>
 					assert.strictEqual(
-						e?.response?.data?.data?.private?.message,
+						e?.response?.data?.data?.field_messages?.private
+							?.message,
 						app.i18n("too_short_text", [
 							too_short_text,
 							MIN_TEXT_LENGTH,
@@ -157,7 +136,7 @@ describe("control-access", () => {
 			);
 		}));
 
-	it("Allows admin to update a protected field", async () =>
+	it("Allows logged to update a protected field", async () =>
 		withRunningApp(extend, async ({ app, rest_api }) => {
 			await setup(app, rest_api);
 
@@ -167,7 +146,7 @@ describe("control-access", () => {
 					public: "123123",
 					private: "321321",
 				},
-				sessions.admin
+				session
 			)) as ItemCreatedResponse;
 
 			const {
@@ -177,13 +156,13 @@ describe("control-access", () => {
 				{
 					private: "654321",
 				},
-				sessions.admin
+				session
 			)) as CollectionResponse;
 
 			assert.deepStrictEqual(updated_key.private, "654321");
 		}));
 
-	it("Doesn't allow regular-user to update a protected field", async () =>
+	it("Doesn't allow not logged to update a protected field", async () =>
 		withRunningApp(extend, async ({ app, rest_api }) => {
 			await setup(app, rest_api);
 
@@ -193,25 +172,23 @@ describe("control-access", () => {
 					public: "123123",
 					private: "321321",
 				},
-				sessions.admin
+				session
 			)) as ItemCreatedResponse;
 
 			await assertThrowsAsync(
 				() =>
-					rest_api.patch(
-						`${SSH_KEYS_URL}/${key.id}`,
-						{ private: "331c6883dd6010864b7ead130be77cd5" },
-						sessions["regular-user"]
-					),
+					rest_api.patch(`${SSH_KEYS_URL}/${key.id}`, {
+						private: "331c6883dd6010864b7ead130be77cd5",
+					}),
 				(e) =>
 					assert.strictEqual(
-						e.response.data.data.private.message,
-						app.i18n("policy_roles_deny", [ALLOWED_ROLES])
+						e.response.data.data.field_messages.private.message,
+						app.i18n("policy_logged_in_deny")
 					)
 			);
 		}));
 
-	it("Honors the default value of the field", async () => {
+	it("Honors the default value of the field", async () =>
 		withRunningApp(
 			(test_app) =>
 				class extends test_app {
@@ -248,6 +225,5 @@ describe("control-access", () => {
 				);
 				assert.strictEqual(task.get("done"), false);
 			}
-		);
-	});
+		));
 });

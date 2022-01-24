@@ -54,7 +54,7 @@ describe("boolean", () => {
 				() => rest_api.post(`${URL}`, { is_old: undefined }),
 				(error) =>
 					assert.deepEqual(
-						error.response.data.data.is_old.message,
+						error.response.data.data.field_messages.is_old.message,
 						"Missing value for field 'is_old'."
 					)
 			);
@@ -65,10 +65,10 @@ describe("boolean", () => {
 			await assertThrowsAsync(
 				() => rest_api.post(`${URL}`, { is_old: "" }),
 				(error) => {
-					assert.equal(error.response.status, 403);
-					assert.deepEqual(
-						error.response.data.data.is_old.message,
-						app.i18n("invalid_boolean", [undefined])
+					assert.strictEqual(error.response.status, 403);
+					assert.deepStrictEqual(
+						error.response.data.data.field_messages.is_old.message,
+						app.i18n("invalid_boolean", [""])
 					);
 				}
 			);
@@ -91,7 +91,8 @@ describe("boolean", () => {
 						(error) => {
 							assert.equal(error.response.status, 403);
 							assert.deepEqual(
-								error.response.data.data.is_old.message,
+								error.response.data.data.field_messages.is_old
+									.message,
 								error_message
 							);
 						}

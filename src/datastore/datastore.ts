@@ -29,6 +29,7 @@ export default class Datastore {
 		this.client = await MongoClient.connect(url, {
 			useNewUrlParser: true,
 			useUnifiedTopology: true,
+			connectTimeoutMS: 1000,
 		});
 
 		if (!this.client) {

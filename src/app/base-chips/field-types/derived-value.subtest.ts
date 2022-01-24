@@ -159,7 +159,8 @@ describe("derived-value", () => {
 					},
 					(error) => {
 						assert.deepStrictEqual(
-							error.response.data.data.name_and_surname.message,
+							error.response.data.data.field_messages
+								.name_and_surname.message,
 							app.i18n("invalid_text", [str, typeof str])
 						);
 					}

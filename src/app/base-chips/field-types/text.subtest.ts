@@ -42,7 +42,10 @@ describe("text", () => {
 				);
 				throw "This should not pass";
 			} catch (e) {
-				assert.deepEqual(e.response.data.data.surname.message, message);
+				assert.deepStrictEqual(
+					e.response.data.data.field_messages.surname.message,
+					message
+				);
 			}
 		};
 	}

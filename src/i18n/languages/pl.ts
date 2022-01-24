@@ -11,7 +11,7 @@ function characters_plural_form(n: number) {
 module.exports = {
 	password_reset_email_subject: (app_name: any) =>
 		`Reset hasła w ${app_name}`,
-	password_reset_email_text: ([app_name, username]: [string, string]) =>
+	password_reset_email_text: (app_name: string, username: string) =>
 		`Witaj ${username}, ktoś użył opcji 'reset hasła' na Twoim koncie w ${app_name}. Jeżeli to byłeś Ty, kliknij w poniższy przycisk, aby dokonać zmiany hasła. W przeciwnym wypadku zignoruj tę wiadomość.`,
 	password_reset_cta: () => "Zmień hasło",
 	password_reset_input_cta: (email_address: string) =>
@@ -32,11 +32,11 @@ module.exports = {
 	invalid_image: () => `Dozwolone są tylko pliki z obrazami.`,
 	invalid_email: (value: string) =>
 		`${value} nie jest prawidłowym adresem e-mail.`,
-	invalid_non_existing_value: ([collection, field, value]: [
-		string,
-		string,
-		string
-	]) =>
+	invalid_non_existing_value: (
+		collection: string,
+		field: string,
+		value: string
+	) =>
 		`Kolekcja ${collection} posiada już rekord z '${field}' o wartości '${value}.'`,
 	invalid_date: (value: string) =>
 		`Wartość '${value}' nie jest w formacie daty. Wymagana jest wartość w formacie standardu ISO 8601 (YYYY-MM-DD).`,
@@ -48,21 +48,21 @@ module.exports = {
 		)}.`,
 	invalid_float: (value: number) =>
 		`Wartość '${value}' nie jest w formacie liczby zmiennoprzecinkowej`,
-	invalid_existing_value: ([collection, field, value]: [
-		string,
-		string,
-		any
-	]) => `Nie ma w ${collection} wpisu z ${field} o wartości ${value}.`,
+	invalid_existing_value: (
+		collection: string,
+		field: string,
+		value: string
+	) => `Nie ma w ${collection} wpisu z ${field} o wartości ${value}.`,
 	invalid_username: (value: string) =>
 		`'${value}' to zarezerwowane słowo kluczowe. Wybierz inną nazwę użytkownika.`,
 	username_taken: () => `Nazwa użytkownika jest już wykorzystywana.`,
-	invalid_text: ([value, value_type]: [any, any]) =>
+	invalid_text: (value: string, value_type: string) =>
 		`Wartość ${value} jest typu ${value_type}, zamiast ciągu znaków.`,
-	too_short_text: ([value, length]: [string, number]) =>
+	too_short_text: (value: string, length: number) =>
 		`Tekst '${value}' jest zbyt krótki. Minimalna długość to ${length} ${characters_plural_form(
 			length
 		)}.`,
-	too_long_text: ([value, length]: [string, number]) =>
+	too_long_text: (value: string, length: number) =>
 		`Tekst '${value}' przekracza limit ${length} ${characters_plural_form(
 			length
 		)}.`,
@@ -80,9 +80,9 @@ module.exports = {
 	invalid_color: () => `Nie udało się się zinterpretować koloru.`,
 	invalid_integer: (value: any) =>
 		`Wartość '${value}' nie jest w formacie liczby całkowitej.`,
-	too_small_integer: ([value, min]: [number, number]) =>
+	too_small_integer: (value: number, min: number) =>
 		`Wartość '${value}' powinna być większa lub równa ${min}.`,
-	too_big_integer: ([value, max]: [number, number]) =>
+	too_big_integer: (value: string, max: string) =>
 		`Wartość '${value}' powinna być mniejsza lub równa ${max}.`,
 	policy_if_allow: (filter_name: string) =>
 		`Przedmiot przechodzi filtr '${filter_name}'.`,
@@ -101,13 +101,13 @@ module.exports = {
 	policy_super_allow: () => `Ta metoda była uruchomiona z Super-kontekstem.`,
 	policy_super_deny: () =>
 		`Ta metoda nie była uruchomiona z Super-kontekstem.`,
-	policy_users_who_can_allow: ([action, collection]: [string, string]) =>
+	policy_users_who_can_allow: (action: string, collection: string) =>
 		`Możesz wykonać akcję '${action}' na kolekcji '${collection}'.`,
-	policy_users_who_can_deny: ([action, collection, reason]: [
-		string,
-		string,
-		string?
-	]) =>
+	policy_users_who_can_deny: (
+		action: string,
+		collection: string,
+		reason: string
+	) =>
 		`Nie możesz wykonać akcji '${action}' na kolekcji '${collection}', ponieważ '${reason}'.`,
 	policy_allow: () => `Super-kontekst jest zawsze uprawniony.`,
 	policy_user_referenced_in_field_allow: (field: string) =>

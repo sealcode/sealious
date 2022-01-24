@@ -28,11 +28,13 @@ export default function parseBody(): Middleware {
 					);
 				} else {
 					promises.push(
-						File.fromPath(ctx.$app, file.path, file.name).then(
-							(sealious_file) => {
-								ctx.request.body[file_name] = sealious_file;
-							}
-						)
+						File.fromPath(
+							ctx.$app,
+							file.path,
+							file.name || undefined
+						).then((sealious_file) => {
+							ctx.request.body[file_name] = sealious_file;
+						})
 					);
 				}
 			}

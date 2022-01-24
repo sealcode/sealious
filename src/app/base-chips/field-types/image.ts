@@ -4,8 +4,6 @@ import Field from "../../../chip-types/field";
 import { Context, ExtractInput, File } from "../../../main";
 import FileField, { FileStorage, FileStorageFormat } from "./file";
 
-type ImageFormat = "internal" | "original" | string;
-
 /** Like {@link FileField}, but meant for images. Has the capacity to format images and serve thumbnails and different sizes.
  *
  * **Params**:
@@ -49,32 +47,11 @@ export default class Image extends FileStorage {
 	async decode(
 		context: Context,
 		db_value: FileStorageFormat | null,
-		__: any,
-		format?: ImageFormat
+		__: any
 	) {
-		if (db_value === null) {
-			return null;
-		}
-		context.app.Logger.debug3(
-			"FIELD",
-			"Decoding image field with format",
-			format
-		);
 		if (db_value === undefined || db_value === null) {
 			return null;
 		}
-		if (format === "internal") return db_value;
-
-		if (format === undefined) format = this.default_format || "original";
-
-		if (format === "original") {
-			const file = await File.fromID(this.app, db_value.id);
-			return file.getURL();
-		} else {
-			return (
-				`/api/v1/formatted-images/${db_value.id}/` +
-				`${format}/${db_value.filename}`
-			);
-		}
+		return db_value;
 	}
 }

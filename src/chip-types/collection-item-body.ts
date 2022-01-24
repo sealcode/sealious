@@ -1,14 +1,19 @@
 import Collection from "./collection";
 import { Context, ExtractInput } from "../main";
+import { ExtractOutput } from "./field";
 
 export type ItemFields<T extends Collection> = {
 	[field in keyof T["fields"]]: ExtractInput<T["fields"][field]>;
 };
 
+export type ItemFieldsOutput<T extends Collection> = {
+	[field in keyof T["fields"]]: ExtractOutput<T["fields"][field]>;
+};
+
 export default class CollectionItemBody<T extends Collection = any> {
 	changed_fields: Set<keyof ItemFields<T>> = new Set();
-	is_decoded: boolean = false;
-	is_encoded: boolean = false;
+	is_decoded = false;
+	is_encoded = false;
 
 	constructor(
 		public collection: T,

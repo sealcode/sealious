@@ -4,10 +4,14 @@ import {
 	DeveloperError,
 	BadContext,
 	ValidationError,
+	FieldsError,
 } from "../response/errors";
 import shortid from "shortid";
 import { AttachmentOptions, ItemListResult } from "./item-list";
-import CollectionItemBody, { ItemFields } from "./collection-item-body";
+import CollectionItemBody, {
+	ItemFields,
+	ItemFieldsOutput,
+} from "./collection-item-body";
 import { PolicyDecision } from "./policy";
 import isEmpty from "../utils/is-empty";
 
@@ -88,7 +92,7 @@ export default class CollectionItem<T extends Collection = any> {
 			errors,
 		});
 		if (!valid) {
-			throw new ValidationError("Invalid values!", errors);
+			throw new FieldsError(this.collection, errors);
 		}
 	}
 
@@ -194,16 +198,17 @@ export default class CollectionItem<T extends Collection = any> {
 	get<FieldName extends keyof ItemFields<T>>(
 		field_name: FieldName,
 		include_raw = false
-	): any {
-		if (this.fields_with_attachments.includes(field_name as string)) {
-			return this.attachments[this.body.getDecoded(field_name) as string];
-		}
+	): ItemFieldsOutput<T>[FieldName] {
 		if (include_raw) {
 			if (this.body.raw_input[field_name]) {
-				return this.body.raw_input[field_name];
+				return this.body.raw_input[
+					field_name
+				] as ItemFieldsOutput<T>[FieldName];
 			}
 		}
-		return this.body.getDecoded(field_name);
+		return this.body.getDecoded(
+			field_name
+		) as ItemFieldsOutput<T>[FieldName];
 	}
 
 	/**

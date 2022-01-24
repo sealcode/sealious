@@ -47,8 +47,8 @@ describe("disallow-update", () => {
 			await assertThrowsAsync(
 				() => rest_api.post(url, { age: "abc", attribute: 5 }),
 				(error) => {
-					assert.deepEqual(
-						error.response.data.data.age.message,
+					assert.deepStrictEqual(
+						error.response.data.data.field_messages.age.message,
 						app.i18n("invalid_integer", [age])
 					);
 				}
@@ -62,7 +62,7 @@ describe("disallow-update", () => {
 				() => rest_api.post(url, { age: age }),
 				(error) =>
 					assert.deepEqual(
-						error.response.data.data.age.message,
+						error.response.data.data.field_messages.age.message,
 						app.i18n("too_small_integer", [age, 0])
 					)
 			);
@@ -83,7 +83,7 @@ describe("disallow-update", () => {
 				() => rest_api.patch(`${url}/${id}`, { age: 21 }),
 				(error) =>
 					assert.deepEqual(
-						error.response.data.data.age.message,
+						error.response.data.data.field_messages.age.message,
 						app.i18n("invalid_update")
 					)
 			);
@@ -99,7 +99,8 @@ describe("disallow-update", () => {
 				() => rest_api.patch(`${url}/${id}`, { attribute: 5 }),
 				(error) =>
 					assert.deepEqual(
-						error.response.data.data.attribute.message,
+						error.response.data.data.field_messages.attribute
+							.message,
 						app.i18n("invalid_update")
 					)
 			);

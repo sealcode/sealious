@@ -1,10 +1,10 @@
 import assert from "assert";
-import { withRunningAppProd } from "../../test_utils/with-test-app";
+import { withRunningApp, withTestApp } from "../../test_utils/with-test-app";
 import SimpleTemplate from "./simple";
 
 describe("simpleTemplate", () => {
 	it("sends an email", async () =>
-		withRunningAppProd(null, async ({ app, mail_api }) => {
+		withTestApp(true, "production", null, async ({ app, mail_api }) => {
 			await mail_api.deleteAllInstanceEmails();
 			const message = await SimpleTemplate(app, {
 				to: "test@example.com",

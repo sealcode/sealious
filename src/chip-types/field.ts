@@ -155,12 +155,12 @@ export default abstract class Field {
 		storage_value: Depromisify<ReturnType<this["encode"]>>,
 		old_value: any,
 		format_params: any
-	): Promise<any | null> {
+	): Promise<unknown | null> {
 		context.app.Logger.debug3("FIELD DECODE", this.name, {
 			storage_value,
 			old_value,
 		});
-		return storage_value;
+		return storage_value as unknown;
 	}
 
 	/** Generates a mongo query based on the filter value */

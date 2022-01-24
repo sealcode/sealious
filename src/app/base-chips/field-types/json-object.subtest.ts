@@ -58,7 +58,7 @@ describe("json-object", () => {
 					}),
 				(e) =>
 					assert.equal(
-						e.response.data.data.metadata.message,
+						e.response.data.data.field_messages.metadata.message,
 						app.i18n("invalid_json_object")
 					)
 			);

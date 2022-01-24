@@ -62,7 +62,7 @@ export default abstract class TextStorage extends Field {
 		db_value: TextStorageFormat | null,
 		__: any,
 		format?: TextFormatParam
-	) {
+	): Promise<string | null> {
 		if (db_value === null) {
 			return null;
 		}

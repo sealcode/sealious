@@ -1,4 +1,4 @@
-import { Field } from "../../../main";
+import { Context, Field } from "../../../main";
 
 import { v4 as uuid } from "uuid";
 
@@ -9,7 +9,7 @@ export default class SessionID extends Field {
 		return Field.valid();
 	}
 
-	async encode(_: any, input: string | null) {
+	async encode(_: any, input: string | null): Promise<string | null> {
 		if (input === null) {
 			return null;
 		}
@@ -18,5 +18,12 @@ export default class SessionID extends Field {
 
 	async getDefaultValue(_: any) {
 		return uuid();
+	}
+
+	async decode(
+		_: Context,
+		storage_value: string | null
+	): Promise<string | null> {
+		return storage_value;
 	}
 }

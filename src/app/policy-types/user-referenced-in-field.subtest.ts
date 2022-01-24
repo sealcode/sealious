@@ -31,8 +31,6 @@ describe("user-referenced-in-field", () => {
 				const user = await app.collections.users.suCreate({
 					username,
 					password: "password",
-					email: `${username.toLowerCase()}@example.com`,
-					roles: [],
 				});
 
 				await app.collections.pets.suCreate({

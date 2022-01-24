@@ -72,6 +72,6 @@ export default class Sessions extends Collection {
 		} as ItemFields<this>);
 		await session.save(new this.app.SuperContext());
 		const session_id = session.get("session-id");
-		return session_id;
+		return session_id as string;
 	}
 }

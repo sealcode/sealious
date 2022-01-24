@@ -13,8 +13,6 @@ describe("password", () => {
 			await app.collections.users.suCreate({
 				username,
 				password,
-				email: "some-user@example.com",
-				roles: [],
 			})
 		).id;
 	}

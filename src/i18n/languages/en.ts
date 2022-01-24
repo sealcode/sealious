@@ -35,19 +35,16 @@ module.exports = {
 		`Password must have at least ${length} characters.`,
 	invalid_float: (value: number) =>
 		`Value '${value}' is not a float number format.`,
-	invalid_existing_value: ([collection, field, value]: [
-		string,
-		string,
-		any
-	]) => `No ${collection} with ${field} set to ${value}.`,
+	invalid_existing_value: (collection: string, field: string, value: any) =>
+		`No ${collection} with ${field} set to ${value}.`,
 	invalid_username: (value: string) =>
 		`'${value}' is a reserved keyword. Please pick another username.`,
 	username_taken: () => `Username already taken.`,
-	invalid_text: ([value, value_type]: [any, any]) =>
+	invalid_text: (value: any, value_type: any) =>
 		`Type of ${value} is ${value_type}, not string.`,
-	too_short_text: ([value, length]: [string, number]) =>
+	too_short_text: (value: string, length: number) =>
 		`Text '${value}' is too short, minimum length is ${length} chars.`,
-	too_long_text: ([value, length]: [string, number]) =>
+	too_long_text: (value: string, length: number) =>
 		`Text '${value}' has exceeded max length of ${length} chars.`,
 	invalid_enum: (allowed_values: string) =>
 		`Allowed values: ${allowed_values}`,
@@ -63,9 +60,9 @@ module.exports = {
 	invalid_color: () => `Couldn't parse the color.`,
 	invalid_integer: (value: any) =>
 		`Value '${value}' is not a int number format.`,
-	too_small_integer: ([value, min]: [number, number]) =>
+	too_small_integer: (value: string, min: number) =>
 		`Value ${value} should be larger than or equal to ${min}.`,
-	too_big_integer: ([value, max]: [number, number]) =>
+	too_big_integer: (value: string, max: number) =>
 		`Value ${value} should be smaller than or equal to ${max}.`,
 	policy_if_allow: (filter_name: string) =>
 		`Item passes '${filter_name}' filter.`,
@@ -84,13 +81,13 @@ module.exports = {
 	policy_not_allow: (reason: string) => `It's not true that '${reason}'.`,
 	policy_super_allow: () => `This method was ran with a supercontext.`,
 	policy_super_deny: () => `This method was not ran with a supercontext.`,
-	policy_users_who_can_allow: ([action, collection]: [string, string]) =>
+	policy_users_who_can_allow: (action: string, collection: string) =>
 		`You can run action '${action}' on collection '${collection}'.`,
-	policy_users_who_can_deny: ([action, collection, reason]: [
-		string,
-		string,
-		string?
-	]) => `You can't ${action} ${collection} - because '${reason}'.`,
+	policy_users_who_can_deny: (
+		action: string,
+		collection: string,
+		reason: string
+	) => `You can't ${action} ${collection} - because '${reason}'.`,
 	policy_allow: () => `Super-context is always allowed.`,
 	policy_user_referenced_in_field_allow: (field: string) =>
 		`You are the user mentioned in field '${field}'`,

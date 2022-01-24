@@ -64,13 +64,15 @@ describe("get-request-body", () => {
 						"multipart/form-data; boundary=----------------------------4ebf00fbcf09",
 				},
 			};
-			const Test = new RegExp(/\/api\/v1\/uploaded-files\/\S*\/test.png/);
 			const { body, source } = (await asyncRequest(
 				options,
 				form_data
-			)) as { source: "string"; body: Array<Record<string, unknown>> };
+			)) as {
+				source: Record<string, unknown>;
+				body: Array<Record<string, unknown>>;
+			};
 			assert.strict.deepStrictEqual(body, [["Foo", { Bar: "baz" }]]);
-			assert.match(source, Test);
+			assert.deepStrictEqual(source?.filename, "test.png");
 		});
 	});
 });

@@ -55,6 +55,7 @@ export const get_test_app = ({
 			},
 			admin_email: "admin@example.com",
 		};
+
 		mailer =
 			env == "production"
 				? new SMTPMailer({

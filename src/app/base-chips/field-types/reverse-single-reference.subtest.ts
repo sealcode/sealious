@@ -1,18 +1,17 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import assert from "assert";
-import { withRunningApp } from "../../../test_utils/with-test-app";
+import Bluebird from "bluebird";
 import {
 	App,
 	Collection,
-	FieldTypes,
-	Field,
 	Collections,
+	Field,
+	FieldTypes,
 	Policies,
 } from "../../../main";
-import { TestAppType } from "../../../test_utils/test-app";
 import { CollectionResponse } from "../../../test_utils/rest-api";
-import asyncForEach from "../../../utils/async-foreach";
-import Bluebird from "bluebird";
+import { TestAppType } from "../../../test_utils/test-app";
+import { withRunningApp } from "../../../test_utils/with-test-app";
 
 const extend = (with_reverse = true, clear_database = true) =>
 	function (t: TestAppType) {
@@ -53,7 +52,7 @@ describe("reverse-single-reference", () => {
 		);
 
 		for (const b of bs) {
-			for (let i = 1; i <= b.get("number"); i++) {
+			for (let i = 1; i <= (b.get("number") as number); i++) {
 				await app.collections.A.suCreate({
 					reference_to_b: b.id,
 					pairity: i % 2 ? "odd" : "even",

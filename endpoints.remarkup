@@ -74,10 +74,6 @@ the collections created by you, //as well as// for all built-in collections:
 
 -   `users`
 -   `sessions`
--   `password-reset-intents`
--   `registration-intents`
--   `user-roles`
--   `formatted-images`
 
 ### List all elements within the collection
 

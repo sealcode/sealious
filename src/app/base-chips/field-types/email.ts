@@ -12,4 +12,8 @@ export default class Email extends Field {
 			return Field.invalid(context.app.i18n("invalid_email", [value]));
 		}
 	}
+
+	async decode(_: Context, storage_value: string): Promise<string> {
+		return storage_value;
+	}
 }

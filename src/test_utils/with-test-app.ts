@@ -5,6 +5,7 @@ import { App } from "../main";
 import mailcatcher from "./mailcatcher";
 import MockRestApi from "./rest-api";
 import { get_test_app, TestAppType } from "./test-app";
+import MailcatcherAPI from "./mailcatcher";
 
 type TestCallback = (params: CallbackParams) => Promise<any>;
 
@@ -40,20 +41,6 @@ export async function withRunningApp(
 	);
 }
 
-export async function withRunningAppProd(
-	extend_fn: extendFn,
-	cb: TestCallback,
-	test_collection?: string
-): Promise<any> {
-	await withTestApp(
-		"auto_start" && true,
-		"production",
-		extend_fn,
-		cb,
-		test_collection
-	);
-}
-
 function getAppID(test_collection?: string) {
 	let uniq_id;
 	if (test_collection) {
@@ -74,12 +61,12 @@ type CallbackParams = {
 	rest_api: MockRestApi;
 	port: number;
 
-	mail_api: ReturnType<typeof mailcatcher>;
+	mail_api: MailcatcherAPI;
 
 	app_class: TestAppType;
 };
 
-async function withTestApp(
+export async function withTestApp(
 	auto_start: boolean,
 	env: Environment,
 	extend_fn: extendFn,
@@ -116,7 +103,7 @@ async function withTestApp(
 			app_class: modified_app_class,
 			base_url,
 			smtp_api_url,
-			mail_api: mailcatcher(smtp_api_url, app),
+			mail_api: new MailcatcherAPI(smtp_api_url, app),
 			rest_api: new MockRestApi(base_url),
 		});
 	} catch (e) {
