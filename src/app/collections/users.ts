@@ -1,6 +1,13 @@
 import Router from "@koa/router";
 import Policy from "../../chip-types/policy";
-import { Collection, App, FieldTypes, Policies, Context } from "../../main";
+import {
+	Collection,
+	App,
+	FieldTypes,
+	Policies,
+	Context,
+	ActionName,
+} from "../../main";
 import { BadContext } from "../../response/errors";
 import SecureHasher from "../../utils/secure-hasher";
 
@@ -15,7 +22,7 @@ export default class Users extends Collection {
 	policies = {
 		create: new Policies.Super(),
 		show: new Policies.Themselves(),
-	};
+	} as Partial<{ [a in ActionName]: Policy }>;
 
 	getRouter() {
 		const router = new Router();
