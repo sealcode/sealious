@@ -13,6 +13,6 @@ export default function MatchPolicy(policy: Policy): Middleware {
 			ctx.body = result.reason;
 			ctx.status = 403;
 		}
-		await next();
+		if (result.allowed) await next();
 	};
 }
