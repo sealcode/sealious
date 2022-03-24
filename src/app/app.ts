@@ -21,9 +21,9 @@ import LoggerMailer from "../email/logger-mailer";
 import Router from "@koa/router";
 import sessionRouter from "../http/routes/session";
 import extractContext from "../http/extract-context";
-import parseBody from "../http/parse-body";
 import logo from "../http/routes/logo";
 import uploaded_files from "../http/routes/uploaded-files";
+import fs from "fs";
 
 const default_config = locreq("default_config.json") as Config;
 
@@ -134,10 +134,14 @@ abstract class App {
 	 * API */
 	async start(): Promise<void> {
 		this.ConfigManager.setRoot(this.config);
-		assert(
-			this.ConfigManager.get("upload_path"),
-			"'upload_path' not set in config"
-		);
+
+		const promises = [];
+		const uploadPath = this.ConfigManager.get("upload_path");
+
+		assert(uploadPath, "'upload_path' not set in config");
+		if (!fs.existsSync(uploadPath)) {
+			fs.mkdirSync(uploadPath, { recursive: false });
+		}
 		this.Logger.setLevel(this.ConfigManager.get("logger").level);
 		this.i18n = i18nFactory(this.manifest.default_language);
 		new Manifest(this.manifest).validate();
@@ -149,7 +153,6 @@ abstract class App {
 			`"core.environment" config should be either "dev" or "production"`
 		);
 
-		const promises = [];
 		for (const [name, collection] of Object.entries(this.collections)) {
 			promises.push(collection.init(this, name));
 		}

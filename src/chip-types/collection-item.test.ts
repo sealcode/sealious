@@ -20,9 +20,9 @@ describe("CollectionItem", () => {
 				});
 				entry.set("title", "title2");
 				await entry.save(new SuperContext(app));
-				const {
-					items: entries,
-				} = await app.collections.entries.suList().fetch();
+				const { items: entries } = await app.collections.entries
+					.suList()
+					.fetch();
 				assert.strictEqual(entries.length, 1);
 				assert.strictEqual(entries[0].get("title"), "title2");
 			}
@@ -51,9 +51,9 @@ describe("CollectionItem", () => {
 					title: "title",
 				});
 				await entry.save(new SuperContext(app));
-				const {
-					items: entries,
-				} = await app.collections.entries.suList().fetch();
+				const { items: entries } = await app.collections.entries
+					.suList()
+					.fetch();
 				assert.strictEqual(entries.length, 1);
 				assert.strictEqual(
 					entries[0].get("title"),
