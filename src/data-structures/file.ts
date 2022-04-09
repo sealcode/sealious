@@ -77,7 +77,11 @@ export default class File {
 		return ret;
 	}
 
-	static async fromData(app: App, buffer: Buffer | string) {
+	static async fromData(
+		app: App,
+		buffer: Buffer | string,
+		filename: string
+	): Promise<File> {
 		const stream = new Readable();
 		stream._read = () => {
 			null;
@@ -85,6 +89,7 @@ export default class File {
 		stream.push(buffer);
 		stream.push(null);
 		const ret = new File(app);
+		ret.filename = filename;
 		ret.data = stream;
 		return ret;
 	}
