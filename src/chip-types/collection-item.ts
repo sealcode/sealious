@@ -4,6 +4,7 @@ import {
 	DeveloperError,
 	BadContext,
 	ValidationError,
+	FieldsError,
 } from "../response/errors";
 import shortid from "shortid";
 import { AttachmentOptions, ItemListResult } from "./item-list";
@@ -73,6 +74,7 @@ export default class CollectionItem<T extends Collection = any> {
 	}
 
 	private async throwIfInvalid(
+		action: "create" | "edit",
 		context: Context,
 		replace_mode: boolean //if true, meaning that if a field has no value, it should be deleted
 	) {
@@ -89,6 +91,41 @@ export default class CollectionItem<T extends Collection = any> {
 		});
 		if (!valid) {
 			throw new ValidationError("Invalid values!", errors);
+		}
+		const collection_validation_errors = await this.collection.validate(
+			context,
+			this.body,
+			this.original_body,
+			action
+		);
+		if (collection_validation_errors.length > 0) {
+			const field_messages = {} as Record<string, string[]>;
+			const other_messages = [] as string[];
+			for (const collection_validation_error of collection_validation_errors) {
+				if ((collection_validation_error.fields || []).length == 0) {
+					other_messages.push(collection_validation_error.error);
+				} else {
+					for (const field of collection_validation_error.fields ||
+						[]) {
+						if (!field_messages[field]) {
+							field_messages[field] = [];
+						}
+						field_messages[field].push(
+							collection_validation_error.error
+						);
+					}
+				}
+			}
+			throw new FieldsError(
+				this.collection,
+				Object.fromEntries(
+					Object.entries(field_messages).map(([field, value]) => [
+						field,
+						{ message: value.join(" | ") },
+					])
+				),
+				other_messages
+			);
 		}
 	}
 
@@ -109,7 +146,7 @@ export default class CollectionItem<T extends Collection = any> {
 				created_by: context.user_id,
 			};
 			await this.collection.emit("before:create", [context, this]);
-			await this.throwIfInvalid(context, true);
+			await this.throwIfInvalid("create", context, true);
 			const encoded = await this.body.encode(context);
 			context.app.Logger.debug3("ITEM", "creating a new item", {
 				metadata: this._metadata,
@@ -128,7 +165,7 @@ export default class CollectionItem<T extends Collection = any> {
 				metadata: this._metadata,
 			});
 			await this.collection.emit("before:edit", [context, this]);
-			await this.throwIfInvalid(context, this.has_been_replaced);
+			await this.throwIfInvalid("edit", context, this.has_been_replaced);
 			const encoded = await this.body.encode(context);
 			await context.app.Datastore.update(
 				this.collection.name,

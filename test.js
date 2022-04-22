@@ -47,7 +47,7 @@ if (args.debug) {
 	command = ["node", "inspect", ...command];
 }
 
-console.log("spawning mocha...", command);
+/* console.log("spawning mocha...", command); */
 
 const proc = spawn(command[0], command.slice(1), {
 	stdio: "inherit",

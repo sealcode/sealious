@@ -6,7 +6,7 @@ import { EventDescription } from "../app/delegate-listener";
 import Public from "../app/policy-types/public";
 import Context from "../context";
 import parseBody from "../http/parse-body";
-import { BadContext, NotFound } from "../response/errors";
+import { BadContext, FieldsError, NotFound } from "../response/errors";
 import CalculatedField from "./calculated-field";
 import CollectionItem from "./collection-item";
 import CollectionItemBody, { ItemFields } from "./collection-item-body";
@@ -28,6 +28,8 @@ export type CollectionCallback = ([context, item, event]: [
 	CollectionItem,
 	EventDescription
 ]) => Promise<void>;
+
+export type CollectionValidationResult = { error: string; fields: string[] }[];
 
 /** Creates a collection. All collections are automatically served via
  * the REST API, with permissions set by the Policies */
@@ -261,9 +263,9 @@ export default abstract class Collection {
 		});
 
 		router.delete("/:id", async (ctx) => {
-			await (await this.getByID(ctx.$context, ctx.params.id)).remove(
-				ctx.$context
-			);
+			await (
+				await this.getByID(ctx.$context, ctx.params.id)
+			).remove(ctx.$context);
 			ctx.status = 204; // "No content"
 		});
 
@@ -276,5 +278,19 @@ export default abstract class Collection {
 
 	emit(event_name: string, event_data?: any): Promise<void> {
 		return this.emitter.emitSerial(event_name, event_data);
+	}
+
+	async validate(
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
+		context: Context,
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
+		new_body: CollectionItemBody,
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
+		old_body: CollectionItemBody,
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
+		action: "create" | "edit"
+	): Promise<CollectionValidationResult> {
+		// empty function, meant to be overwritten in order to implement custom validation logic
+		return [];
 	}
 }

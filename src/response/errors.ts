@@ -1,3 +1,6 @@
+import { ItemFields } from "../chip-types/collection-item-body";
+import { Collection } from "../main";
+
 export type ErrorParams = {
 	is_user_fault: boolean;
 	type: string;
@@ -11,9 +14,11 @@ export interface ErrorLikeObject {
 	data: any;
 }
 
-export default class SealiousError extends Error {
+export default class SealiousError<
+	DataShape = Record<string, unknown>
+> extends Error {
 	is_user_fault: boolean;
-	data: any;
+	data: DataShape;
 	is_developer_fault: boolean;
 	sealious_error = true;
 	type: string;
@@ -21,7 +26,7 @@ export default class SealiousError extends Error {
 	constructor(message: string, _params?: ErrorParams, data?: any) {
 		super(message);
 		this.message = message;
-		let params = _params || ({} as ErrorParams);
+		const params = _params || ({} as ErrorParams);
 		this.is_user_fault = params?.is_user_fault || false;
 		this.type = params.type === undefined ? "error" : params.type;
 		this.data = data || params.data || {};
@@ -140,5 +145,53 @@ export class FieldDoesNotSupportAttachments extends SealiousError {
 			is_user_fault: true,
 			type: "field_does_not_support_attachments",
 		});
+	}
+}
+
+export class FieldsError<C extends Collection> extends SealiousError<{
+	collection: C;
+	field_messages: { [field in keyof ItemFields<C>]: { message: string } };
+	other_messages: string[];
+}> {
+	constructor(
+		collection: C,
+		public field_messages: {
+			[index: string]: { message: string } | undefined;
+		},
+		public other_messages: string[] = []
+	) {
+		super("Invalid field values", {
+			is_user_fault: true,
+			is_developer_fault: false,
+			type: "validation",
+			data: {
+				collection: collection.name,
+				field_messages,
+				other_messages,
+			},
+		});
+	}
+
+	hasErrors(): boolean {
+		return Object.keys(this.field_messages).length > 0;
+	}
+
+	getSimpleMessages(): Partial<{ [field in keyof ItemFields<C>]: string }> {
+		return Object.fromEntries(
+			Object.entries(this.data.field_messages).map(
+				([field_name, { message }]) => [field_name, message]
+			)
+		) as Partial<{ [field in keyof ItemFields<C>]: string }>;
+	}
+
+	static isFieldsError<C extends Collection>(
+		collection: C,
+		e: unknown
+	): e is FieldsError<C> {
+		return e instanceof FieldsError && e.data.collection == collection.name;
+	}
+
+	getErrorForField(field_name: keyof ItemFields<C>): string {
+		return this.data.field_messages?.[field_name]?.message || "";
 	}
 }

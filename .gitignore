@@ -23,3 +23,5 @@ coverage
 docs
 .vscode
 /.log/
+.idea
+/hint-report/
