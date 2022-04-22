@@ -151,24 +151,36 @@ export class FieldDoesNotSupportAttachments extends SealiousError {
 export class FieldsError<C extends Collection> extends SealiousError<{
 	collection: C;
 	field_messages: { [field in keyof ItemFields<C>]: { message: string } };
+	other_messages: string[];
 }> {
 	constructor(
 		collection: C,
-		field_messages: { [index: string]: { message: string } | undefined }
+		public field_messages: {
+			[index: string]: { message: string } | undefined;
+		},
+		public other_messages: string[] = []
 	) {
 		super("Invalid field values", {
 			is_user_fault: true,
 			is_developer_fault: false,
 			type: "validation",
-			data: { collection: collection.name, field_messages },
+			data: {
+				collection: collection.name,
+				field_messages,
+				other_messages,
+			},
 		});
+	}
+
+	hasErrors(): boolean {
+		return Object.keys(this.field_messages).length > 0;
 	}
 
 	getSimpleMessages(): Partial<{ [field in keyof ItemFields<C>]: string }> {
 		return Object.fromEntries(
-			Object.entries(
-				this.data.field_messages
-			).map(([field_name, { message }]) => [field_name, message])
+			Object.entries(this.data.field_messages).map(
+				([field_name, { message }]) => [field_name, message]
+			)
 		) as Partial<{ [field in keyof ItemFields<C>]: string }>;
 	}
 
