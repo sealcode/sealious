@@ -312,20 +312,14 @@ export class CollectionWithComplexValidation extends Collection {
     color: new FieldTypes.Color(),
   };
 
-  async init(app: App, name: string): Promise<void> {
-    await super.init(app, name);
-    this.on("before:create", async ([context, item]) => {
-      // item.body.raw_input - contains all fields passed during creation
-      if (project.body.raw_input.name.includes("green")) {
-        throw new ValidationError("Green is not a creative color");
-      }
-    });
-    this.on("before:edit", async ([context, project]) => {
-      // item.body.raw_input - contains all fields passed to PUT or PATCH. If empty then it means that the user did not change the value
-      if (project.body.raw_input.name.includes("green")) {
-        throw new ValidationError("Green is not a creative color");
-      }
-    });
+  async validate(_: Context, body: CollectionItemBody) {
+    if ((body.getInput("color") as string).includes("green")) {
+      return [{
+          error: "Green is not a creative color",
+          fields: ["color"],
+       }];
+    }
+    return [];
   }
 
   defaultPolicy = new Policies.Public();
