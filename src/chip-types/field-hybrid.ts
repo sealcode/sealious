@@ -1,7 +1,7 @@
 import Field, { Depromisify } from "./field";
 
 import Context from "../context";
-import { App, Collection } from "../main";
+import { App, Collection, ItemListResult } from "../main";
 
 /*
 
@@ -62,8 +62,20 @@ export default abstract class HybridField<T extends Field> extends Field {
 		);
 	}
 
+	async getAttachments(
+		context: Context,
+		values: any[],
+		attachment_options: any
+	): Promise<ItemListResult<any>> {
+		return this.virtual_field.getAttachments(
+			context,
+			values,
+			attachment_options
+		);
+	}
+
 	async init(app: App) {
-		super.init(app);
-		this.virtual_field.init(app);
+		await super.init(app);
+		await this.virtual_field.init(app);
 	}
 }
