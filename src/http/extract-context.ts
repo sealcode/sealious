@@ -8,6 +8,10 @@ export default function extract_context(): Middleware {
 		const cookie_name = config["session-cookie-name"];
 		let session_id: string | undefined = ctx.cookies.get(cookie_name);
 		const timestamp = Date.now();
+		if (ctx.$context) {
+			await next();
+			return;
+		}
 
 		if (!session_id) {
 			ctx.$context = new Context(ctx.$app, timestamp, null, null);
