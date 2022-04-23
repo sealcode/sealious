@@ -5,7 +5,7 @@
 		"noImplicitAny": true,
 		"noImplicitThis": true,
 		"strictNullChecks": true,
-		"target": "ES6",
+		"target": "ES2020",
 		"declaration": true,
 		"esModuleInterop": true,
 		"lib": ["es6", "esnext"],
