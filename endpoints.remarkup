@@ -168,6 +168,32 @@ lang=json
 }
 ```
 
+```
+# get a task with id xyz123 and inline bodies of the attachments from field 'roles'
+GET /api/v1/collections/tasks/xyz123?attach[roles]=true
+```
+
+Example response:
+
+```
+lang=json
+{
+    "attachments": {
+        "o0wb6n": { "name": "admin" },
+        "kegfd7qg": { "name": "user" }
+    },
+    "fields_with_attachments": [],
+    "items": [
+        {
+            "done": false,
+            "id": "YwviNwK-X",
+            "title": "Write docs",
+            "roles": ["o0wb6n", "kegfd7qg"]
+        }
+    ]
+}
+```
+
 ### Create an item
 
 `POST /api/v1/collections/:collection_name`
