@@ -89,7 +89,7 @@ the collections created by you, //as well as// for all built-in collections:
     (how many items per page), `forward_buffer` (return this many more
     additional items per page than specified in `items`. Useful when trying to
     establish whether or not there is a next page to display)
--   `attach` - key/value. keys are field-names, values are field-type specific.
+-   `attachments` - key/value. keys are field-names, values are field-type specific.
     Whether or not to fetch attachments related to given field, and in what
     form. Currently supported only by `single-reference` and
     `reverse-single-reference` field types.
@@ -137,7 +137,7 @@ lang=json
 
 #### Query params:
 
--   `attach` - key/value. keys are field-names, values are field-type specific.
+-   `attachments` - key/value. keys are field-names, values are field-type specific.
     Whether or not to fetch attachments related to given field, and in what
     form. Currently supported only by `single-reference` and
     `reverse-single-reference` field types.
@@ -170,7 +170,7 @@ lang=json
 
 ```
 # get a task with id xyz123 and inline bodies of the attachments from field 'roles'
-GET /api/v1/collections/tasks/xyz123?attach[roles]=true
+GET /api/v1/collections/tasks/xyz123?attachments[roles]=true
 ```
 
 Example response:
