@@ -1,4 +1,4 @@
-import { Middleware } from "@koa/router";
+import type { Middleware } from "@koa/router";
 import { basename, dirname } from "path";
 import send from "koa-send";
 

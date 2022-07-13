@@ -1,7 +1,7 @@
 import assert from "assert";
 import { withRunningApp } from "../../../test_utils/with-test-app";
 import SecureHasher from "../../../utils/secure-hasher";
-import App from "../../app";
+import type App from "../../app";
 
 describe("password", () => {
 	const password = "it-really-doesnt-matter";

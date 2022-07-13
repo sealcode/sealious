@@ -1,4 +1,4 @@
-import { ValidationResult } from "../../../chip-types/field";
+import type { ValidationResult } from "../../../chip-types/field";
 import { Context, Errors, Field } from "../../../main";
 import humanComparatorToQuery, {
 	ComparatorObject,

@@ -1,8 +1,8 @@
 import assert from "assert";
 import nodemailer from "nodemailer";
-import { App } from "../main";
+import type { App } from "../main";
 import Mailer from "./mailer";
-import { MessageData } from "./message";
+import type { MessageData } from "./message";
 
 export default class SmtpMailer extends Mailer {
 	mail_config: { from_name: string; from_address: string };

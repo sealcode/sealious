@@ -1,11 +1,11 @@
 import { Context, default as Koa } from "koa";
 import Static from "koa-static";
 import Router from "@koa/router";
-import { Server } from "http";
+import type { Server } from "http";
 import mount from "koa-mount";
 import installQS from "koa-qs";
 import handleError from "./handle-error";
-import { App } from "../main";
+import type { App } from "../main";
 
 export default class HttpServer {
 	name: "www-serer";

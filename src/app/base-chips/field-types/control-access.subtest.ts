@@ -1,15 +1,19 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import assert from "assert";
-import { withRunningApp } from "../../../test_utils/with-test-app";
+import {
+	TestAppConstructor,
+	withRunningApp,
+} from "../../../test_utils/with-test-app";
 import { assertThrowsAsync } from "../../../test_utils/assert-throws-async";
 import { App, Collection, Context, FieldTypes, Policies } from "../../../main";
-import { TestAppType } from "../../../test_utils/test-app";
-import MockRestApi, {
+import type MockRestApi from "../../../test_utils/rest-api";
+import type {
 	CollectionResponse,
 	ItemCreatedResponse,
 } from "../../../test_utils/rest-api";
-import { AxiosError, AxiosRequestConfig } from "axios";
+import type { AxiosError, AxiosRequestConfig } from "axios";
 import asyncForEach from "../../../utils/async-foreach";
+import { TestApp } from "../../../test_utils/test-app";
 const SSH_KEYS_URL = "/api/v1/collections/ssh-keys";
 
 let session: AxiosRequestConfig = {};
@@ -18,10 +22,10 @@ const MIN_TEXT_LENGTH = 3;
 
 type Key = { [access in "_public" | "_private"]: string };
 
-function extend(t: TestAppType) {
+function extend(t: TestAppConstructor) {
 	return class extends t {
 		collections = {
-			...t.BaseCollections,
+			...TestApp.BaseCollections,
 			"ssh-keys": new (class extends Collection {
 				fields = {
 					public: new FieldTypes.Text(),

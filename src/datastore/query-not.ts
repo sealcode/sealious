@@ -1,5 +1,5 @@
 import Query, { QueryStage } from "./query";
-import QueryStep from "./query-step";
+import type QueryStep from "./query-step";
 
 export default class Not extends Query {
 	constructor(query: Query) {

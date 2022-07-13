@@ -1,5 +1,5 @@
 import assert from "assert";
-import Policy from "../../chip-types/policy";
+import type Policy from "../../chip-types/policy";
 import {
 	ActionName,
 	App,
@@ -9,67 +9,70 @@ import {
 	Context,
 } from "../../main";
 import { assertThrowsAsync } from "../../test_utils/assert-throws-async";
-import MockRestApi from "../../test_utils/rest-api";
-import { TestAppType } from "../../test_utils/test-app";
-import { withRunningApp } from "../../test_utils/with-test-app";
+import type MockRestApi from "../../test_utils/rest-api";
+import { TestApp } from "../../test_utils/test-app";
+import {
+	TestAppConstructor,
+	withRunningApp,
+} from "../../test_utils/with-test-app";
 import Matches from "../base-chips/special_filters/matches";
 
-const extend = (
-	policies: {
+const extend =
+	(policies: {
 		[action_name in ActionName]?: Policy;
-	}
-) => (t: TestAppType) => {
-	const Numbers = new (class extends Collection {
-		name = "numbers";
-		fields = {
-			number: new FieldTypes.Int(),
-		};
-		named_filters = {
-			greater_than_1: new Matches("numbers", {
-				number: { ">": 1 },
-			}),
-		};
-		policies = policies;
-	})();
+	}) =>
+	(t: TestAppConstructor) => {
+		const Numbers = new (class extends Collection {
+			name = "numbers";
+			fields = {
+				number: new FieldTypes.Int(),
+			};
+			named_filters = {
+				greater_than_1: new Matches("numbers", {
+					number: { ">": 1 },
+				}),
+			};
+			policies = policies;
+		})();
 
-	const NumberNotes = new (class extends Collection {
-		name = "number-notes";
-		fields = {
-			note: new FieldTypes.Text(),
-			number: new FieldTypes.SingleReference("numbers"),
-		};
-		policies = {
-			create: new Policies.SameAsForResourceInField({
-				action_name: "create",
-				field: "number",
-				collection_name: "number-notes",
-			}),
-			show: new Policies.SameAsForResourceInField({
-				action_name: "show",
-				field: "number",
-				collection_name: "number-notes",
-			}),
-			edit: new Policies.SameAsForResourceInField({
-				action_name: "edit",
-				field: "number",
-				collection_name: "number-notes",
-			}),
-			list: new Policies.SameAsForResourceInField({
-				action_name: "list",
-				field: "number",
-				collection_name: "number-notes",
-			}),
-		};
-	})();
+		const NumberNotes = new (class extends Collection {
+			name = "number-notes";
+			fields = {
+				note: new FieldTypes.Text(),
+				number: new FieldTypes.SingleReference("numbers"),
+			};
+			policies = {
+				create: new Policies.SameAsForResourceInField({
+					action_name: "create",
+					field: "number",
+					collection_name: "number-notes",
+				}),
+				show: new Policies.SameAsForResourceInField({
+					action_name: "show",
+					field: "number",
+					collection_name: "number-notes",
+				}),
+				edit: new Policies.SameAsForResourceInField({
+					action_name: "edit",
+					field: "number",
+					collection_name: "number-notes",
+				}),
+				list: new Policies.SameAsForResourceInField({
+					action_name: "list",
+					field: "number",
+					collection_name: "number-notes",
+				}),
+			};
+		})();
 
-	return class extends t {
-		collections = {
-			...t.BaseCollections,
-			"number-notes": NumberNotes,
-			numbers: Numbers,
+		return class extends t {
+			collections = {
+				...TestApp.BaseCollections,
+				"number-notes": NumberNotes,
+				numbers: Numbers,
+			};
 		};
 	};
-};
 
 describe("SameAsForResourceInField", () => {
 	const sessions: { [username: string]: any } = {};
@@ -217,17 +220,16 @@ describe("SameAsForResourceInField", () => {
 			(t) =>
 				class extends t {
 					collections = {
-						...t.BaseCollections,
+						...TestApp.BaseCollections,
 						organizations: new (class extends Collection {
 							fields = {
 								name: new FieldTypes.Text(),
-								user_assignments: new FieldTypes.ReverseSingleReference(
-									{
+								user_assignments:
+									new FieldTypes.ReverseSingleReference({
 										referencing_collection:
 											"user_organizations",
 										referencing_field: "organization",
-									}
-								),
+									}),
 							};
 							policies = {
 								list: new Policies.Or([
@@ -330,9 +332,9 @@ describe("SameAsForResourceInField", () => {
 					1
 				);
 
-				const {
-					items: projects1,
-				} = await app.collections.projects.list(user1_context).fetch();
+				const { items: projects1 } = await app.collections.projects
+					.list(user1_context)
+					.fetch();
 
 				assert.strictEqual(projects1.length, 1);
 				assert.strictEqual(projects1[0].get("name"), "project1");
@@ -374,13 +376,12 @@ describe("SameAsForResourceInField", () => {
 						organizations: new (class extends Collection {
 							fields = {
 								name: new FieldTypes.Text(),
-								user_assignments: new FieldTypes.ReverseSingleReference(
-									{
+								user_assignments:
+									new FieldTypes.ReverseSingleReference({
 										referencing_collection:
 											"user-organization",
 										referencing_field: "organization",
-									}
-								),
+									}),
 							};
 
 							defaultPolicy = new Policies.Super();
@@ -395,23 +396,29 @@ describe("SameAsForResourceInField", () => {
 								]),
 							};
 						})(),
-						"user-organization": new (class UserOrganization extends Collection {
-							fields = {
-								organization: new FieldTypes.SingleReference(
-									"organizations"
-								),
-								user: new FieldTypes.SingleReference("users"),
-							};
+						"user-organization":
+							new (class UserOrganization extends Collection {
+								fields = {
+									organization:
+										new FieldTypes.SingleReference(
+											"organizations"
+										),
+									user: new FieldTypes.SingleReference(
+										"users"
+									),
+								};
 
-							defaultPolicy = new Policies.Super();
+								defaultPolicy = new Policies.Super();
 
-							policies = {
-								list: new Policies.Or([
-									new Policies.UserReferencedInField("user"),
-									new Policies.Super(),
-								]),
-							};
-						})(),
+								policies = {
+									list: new Policies.Or([
+										new Policies.UserReferencedInField(
+											"user"
+										),
+										new Policies.Super(),
+									]),
+								};
+							})(),
 						projects: new (class Projects extends Collection {
 							fields = {
 								name: FieldTypes.Required(
@@ -459,9 +466,10 @@ describe("SameAsForResourceInField", () => {
 					username: "author",
 					password: "anyanyanyany",
 				});
-				const organization = await app.collections.organizations.suCreate(
-					{ name: "org" }
-				);
+				const organization =
+					await app.collections.organizations.suCreate({
+						name: "org",
+					});
 				await app.collections["user-organization"].suCreate({
 					user: user.id,
 					organization: organization.id,
@@ -474,18 +482,15 @@ describe("SameAsForResourceInField", () => {
 					project: project.id,
 					result: "I'm a job",
 				});
-				const invisible_project = await app.collections.projects.suCreate(
-					{
+				const invisible_project =
+					await app.collections.projects.suCreate({
 						name: "invisible",
-					}
-				);
+					});
 				await app.collections.jobs.suCreate({
 					project: invisible_project.id,
 					result: "I'm an invisible job",
 				});
-				const {
-					items: user_visible_jobs,
-				} = await app.collections.jobs
+				const { items: user_visible_jobs } = await app.collections.jobs
 					.list(new Context(app, Date.now(), user.id))
 					.fetch();
 				assert.strictEqual(user_visible_jobs.length, 1);

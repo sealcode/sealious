@@ -1,5 +1,5 @@
-import { ItemFields } from "../chip-types/collection-item-body";
-import { Collection } from "../main";
+import type { ItemFields } from "../chip-types/collection-item-body";
+import type { Collection } from "../main";
 
 export type ErrorParams = {
 	is_user_fault: boolean;
@@ -178,9 +178,9 @@ export class FieldsError<C extends Collection> extends SealiousError<{
 
 	getSimpleMessages(): Partial<{ [field in keyof ItemFields<C>]: string }> {
 		return Object.fromEntries(
-			Object.entries(this.data.field_messages).map(
-				([field_name, { message }]) => [field_name, message]
-			)
+			Object.entries(
+				this.data.field_messages as Record<string, { message: string }>
+			).map(([field_name, { message }]) => [field_name, message])
 		) as Partial<{ [field in keyof ItemFields<C>]: string }>;
 	}
 

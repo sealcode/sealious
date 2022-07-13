@@ -1,12 +1,14 @@
 import assert from "assert";
-import { withRunningApp } from "../../../test_utils/with-test-app";
+import {
+	TestAppConstructor,
+	withRunningApp,
+} from "../../../test_utils/with-test-app";
 import { assertThrowsAsync } from "../../../test_utils/assert-throws-async";
 import { App, Collection, FieldTypes, Policies } from "../../../main";
-import { TestAppType } from "../../../test_utils/test-app";
 
 const URL = "/api/v1/collections/boolseals";
 
-function extend(t: TestAppType) {
+function extend(t: TestAppConstructor) {
 	const boolseals = new (class extends Collection {
 		name = "boolseals";
 		fields = {

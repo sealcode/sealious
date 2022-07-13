@@ -1,7 +1,6 @@
-import * as Sealious from "../main";
-import Router from "@koa/router";
-import { Socket } from "net";
-import * as url from "url";
+import type * as Sealious from "../main";
+import type { Socket } from "net";
+import type * as url from "url";
 // adding this so properties `$app` and `$context` of `ctx` are known
 
 declare module "koa" {

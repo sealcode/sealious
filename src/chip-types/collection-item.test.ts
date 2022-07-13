@@ -2,7 +2,7 @@ import assert from "assert";
 import { App, Collection, Context, FieldTypes, SuperContext } from "../main";
 import { assertThrowsAsync } from "../test_utils/assert-throws-async";
 import { withRunningApp } from "../test_utils/with-test-app";
-import CollectionItemBody from "./collection-item-body";
+import type CollectionItemBody from "./collection-item-body";
 
 describe("CollectionItem", () => {
 	it("first inserts, then updates on successive .save() calls", async () =>

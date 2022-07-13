@@ -2,6 +2,7 @@ import assert from "assert";
 import FileField from "../../app/base-chips/field-types/file";
 import { Collection } from "../../main";
 import asyncRequest from "../../test_utils/async-request";
+import { TestApp } from "../../test_utils/test-app";
 import { withRunningApp } from "../../test_utils/with-test-app";
 
 describe("uploaded_files", () => {
@@ -10,7 +11,7 @@ describe("uploaded_files", () => {
 			(test_app_type) => {
 				return class extends test_app_type {
 					collections = {
-						...test_app_type.BaseCollections,
+						...TestApp.BaseCollections,
 						with_file: new (class extends Collection {
 							fields = {
 								file: new FileField(),

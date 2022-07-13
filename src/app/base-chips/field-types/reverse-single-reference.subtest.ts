@@ -9,12 +9,15 @@ import {
 	FieldTypes,
 	Policies,
 } from "../../../main";
-import { CollectionResponse } from "../../../test_utils/rest-api";
-import { TestAppType } from "../../../test_utils/test-app";
-import { withRunningApp } from "../../../test_utils/with-test-app";
+import type { CollectionResponse } from "../../../test_utils/rest-api";
+import { TestApp } from "../../../test_utils/test-app";
+import {
+	TestAppConstructor,
+	withRunningApp,
+} from "../../../test_utils/with-test-app";
 
 const extend = (with_reverse = true, clear_database = true) =>
-	function (t: TestAppType) {
+	function (t: TestAppConstructor) {
 		const b_fields: { [name: string]: Field } = {
 			number: new FieldTypes.Int(),
 		};
@@ -28,7 +31,7 @@ const extend = (with_reverse = true, clear_database = true) =>
 		return class extends t {
 			clear_database_on_stop = clear_database;
 			collections = {
-				...t.BaseCollections,
+				...TestApp.BaseCollections,
 				A: new (class extends Collection {
 					fields = {
 						reference_to_b: new FieldTypes.SingleReference("B"),
@@ -182,13 +185,17 @@ describe("reverse-single-reference", () => {
 				"/api/v1/collections/B?filter[references_in_a][pairity]=non-existant"
 			)) as CollectionResponse;
 			assert.strictEqual(results.length, 0);
-			results = ((await rest_api.get(
-				"/api/v1/collections/B?filter[references_in_a][pairity]=odd"
-			)) as CollectionResponse).items;
+			results = (
+				(await rest_api.get(
+					"/api/v1/collections/B?filter[references_in_a][pairity]=odd"
+				)) as CollectionResponse
+			).items;
 			assert.strictEqual(results.length, 3);
-			results = ((await rest_api.get(
-				"/api/v1/collections/B?filter[references_in_a][pairity]=even&filter[number]=3"
-			)) as CollectionResponse).items;
+			results = (
+				(await rest_api.get(
+					"/api/v1/collections/B?filter[references_in_a][pairity]=even&filter[number]=3"
+				)) as CollectionResponse
+			).items;
 			assert.strictEqual(results.length, 1);
 		}));
 
@@ -205,10 +212,10 @@ describe("reverse-single-reference", () => {
 
 	it("handles nested attachments", async () =>
 		withRunningApp(
-			(test_app) =>
+			(test_app: TestAppConstructor) =>
 				class extends test_app {
 					collections = {
-						...App.BaseCollections,
+						...TestApp.BaseCollections,
 						organizations: new (class extends Collection {
 							fields = {
 								name: FieldTypes.Required(
@@ -236,13 +243,12 @@ describe("reverse-single-reference", () => {
 							fields = {
 								...App.BaseCollections.users.fields,
 								description: new FieldTypes.Text(),
-								organizations: new FieldTypes.ReverseSingleReference(
-									{
+								organizations:
+									new FieldTypes.ReverseSingleReference({
 										referencing_collection:
 											"user-organization",
 										referencing_field: "user",
-									}
-								),
+									}),
 							};
 							policies = {
 								create: new Policies.Public(),
@@ -279,9 +285,9 @@ describe("reverse-single-reference", () => {
 				);
 				const db_response = await app.collections.users
 					.suList()
-					.attach(({
+					.attach({
 						organizations: { organization: true },
-					} as unknown) as any)
+					} as unknown as any)
 					.fetch();
 				assert.strictEqual(
 					db_response.items[0]
@@ -302,9 +308,9 @@ describe("reverse-single-reference", () => {
 				const db_response2 = await app.collections.users
 					.suList()
 					.ids([user2.id])
-					.attach(({
+					.attach({
 						organizations: { organization: true },
-					} as unknown) as any)
+					} as unknown as any)
 					.fetch();
 
 				assert.deepStrictEqual(

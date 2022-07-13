@@ -1,4 +1,4 @@
-import { Context } from "../../main";
+import type { Context } from "../../main";
 import Policy from "../../chip-types/policy";
 import DenyAll from "../../datastore/deny-all";
 

@@ -1,4 +1,4 @@
-import { Middleware } from "@koa/router";
+import type { Middleware } from "@koa/router";
 import { promises as fs } from "fs";
 import koaBody from "koa-body";
 import File from "../data-structures/file";

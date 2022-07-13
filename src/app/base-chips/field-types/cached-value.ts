@@ -1,7 +1,7 @@
-import { App, Field, Context, CollectionItem } from "../../../main";
+import type { App, Field, Context, CollectionItem } from "../../../main";
 import HybridField from "../../../chip-types/field-hybrid";
 import ItemList from "../../../chip-types/item-list";
-import { EventDescription } from "../../delegate-listener";
+import type { EventDescription } from "../../delegate-listener";
 import { BadContext } from "../../../response/errors";
 import isEmpty from "../../../utils/is-empty";
 

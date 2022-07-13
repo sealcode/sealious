@@ -1,5 +1,8 @@
 import assert from "assert";
-import { withRunningApp } from "../../test_utils/with-test-app";
+import {
+	TestAppConstructor,
+	withRunningApp,
+} from "../../test_utils/with-test-app";
 import {
 	App,
 	Collection,
@@ -8,12 +11,12 @@ import {
 	SpecialFilters,
 } from "../../main";
 import Matches from "../base-chips/special_filters/matches";
-import { TestAppType } from "../../test_utils/test-app";
+import { TestApp } from "../../test_utils/test-app";
 
-function extend(t: TestAppType) {
+function extend(t: TestAppConstructor) {
 	return class extends t {
 		collections = {
-			...t.BaseCollections,
+			...TestApp.BaseCollections,
 			numbers: new (class extends Collection {
 				fields = {
 					number: new FieldTypes.Int(),
@@ -86,7 +89,7 @@ describe("if", () => {
 			(test_app) =>
 				class extends test_app {
 					collections = {
-						...test_app.BaseCollections,
+						...TestApp.BaseCollections,
 						tasks: new (class extends Collection {
 							fields = {
 								title: new FieldTypes.Text(),

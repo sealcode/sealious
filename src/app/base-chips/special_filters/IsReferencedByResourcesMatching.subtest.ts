@@ -1,16 +1,19 @@
 import * as assert from "assert";
 
-import { withRunningApp } from "../../../test_utils/with-test-app";
+import {
+	TestAppConstructor,
+	withRunningApp,
+} from "../../../test_utils/with-test-app";
 import { Collection, FieldTypes, Policies } from "../../../main";
 import IsReferencedByResourcesMatching from "./IsReferencedByResourcesMatching";
-import { TestAppType } from "../../../test_utils/test-app";
 import Users from "../../collections/users";
-import MockRestApi from "../../../test_utils/rest-api";
+import type MockRestApi from "../../../test_utils/rest-api";
+import { TestApp } from "../../../test_utils/test-app";
 
-function extend(t: TestAppType) {
+function extend(t: TestAppConstructor) {
 	return class extends t {
 		collections = {
-			...t.BaseCollections,
+			...TestApp.BaseCollections,
 			users: new (class extends Users {
 				policies = {
 					create: new Policies.Public(),

@@ -1,15 +1,18 @@
 import Axios from "axios";
 import { equal, deepEqual } from "assert";
-import { withRunningApp } from "../../../test_utils/with-test-app";
+import {
+	TestAppConstructor,
+	withRunningApp,
+} from "../../../test_utils/with-test-app";
 import { assertThrowsAsync } from "../../../test_utils/assert-throws-async";
-import { IntStorageParams } from "./int";
+import type { IntStorageParams } from "./int";
 import { Collection, FieldTypes } from "../../../main";
-import { TestAppType } from "../../../test_utils/test-app";
+import { TestApp } from "../../../test_utils/test-app";
 
 describe("int", () => {
 	const COLLECTION_NAME = "ages";
 
-	const extend = (params?: IntStorageParams) => (t: TestAppType) => {
+	const extend = (params?: IntStorageParams) => (t: TestAppConstructor) => {
 		const col = new (class extends Collection {
 			name = COLLECTION_NAME;
 			fields = {
@@ -18,7 +21,7 @@ describe("int", () => {
 		})();
 		return class extends t {
 			collections = {
-				...t.BaseCollections,
+				...TestApp.BaseCollections,
 				[COLLECTION_NAME]: col,
 			};
 		};
@@ -69,7 +72,7 @@ describe("int", () => {
 	it("should respect given min and max value", async () => {
 		const min = 30;
 		const max = 50;
-		withRunningApp(
+		await withRunningApp(
 			extend({ min: min, max: max }),
 			async ({ app, base_url }) => {
 				let age = 29;
@@ -83,7 +86,7 @@ describe("int", () => {
 						),
 					(e) => {
 						equal(
-							e.response.data.data.age.message,
+							e.response?.data?.data?.field_messages.age.message,
 							app.i18n("too_small_integer", [age, min])
 						);
 					}
@@ -99,7 +102,7 @@ describe("int", () => {
 						),
 					(e) => {
 						equal(
-							e.response.data.data.age.message,
+							e.response?.data?.data?.field_messages.age.message,
 							app.i18n("too_big_integer", [age, max])
 						);
 					}

@@ -1,12 +1,15 @@
 import assert from "assert";
 import Bluebird from "bluebird";
-import Context from "../../context";
+import type Context from "../../context";
 import * as Sealious from "../../main";
 import { Collection, CollectionItem, FieldTypes, Policies } from "../../main";
 import { assertThrowsAsync } from "../../test_utils/assert-throws-async";
-import { withRunningApp } from "../../test_utils/with-test-app";
-import { TestAppType } from "../../test_utils/test-app";
+import {
+	TestAppConstructor,
+	withRunningApp,
+} from "../../test_utils/with-test-app";
 import getAttachment from "../../test_utils/get-attachment";
+import { TestApp } from "../../test_utils/test-app";
 
 function create_less_than_policy(number: number) {
 	return new (class extends Sealious.Policy {
@@ -30,9 +33,11 @@ function create_less_than_policy(number: number) {
 			item_getter: () => Promise<CollectionItem>
 		) {
 			const item = await item_getter();
-			const item_number = ((item as unknown) as {
-				number: { number: number };
-			}).number.number;
+			const item_number = (
+				item as unknown as {
+					number: { number: number };
+				}
+			).number.number;
 			if (item_number >= number) {
 				return Sealious.Policy.deny(
 					`Given value is not lower than ${number}`
@@ -65,7 +70,7 @@ const collections_to_create = [
 	},
 ];
 
-function extend(t: TestAppType) {
+function extend(t: TestAppConstructor) {
 	const collections_to_add: { [name: string]: Collection } = {};
 	for (const { name, policy } of collections_to_create) {
 		collections_to_add[name] = new (class extends Collection {
@@ -82,7 +87,7 @@ function extend(t: TestAppType) {
 
 	return class extends t {
 		collections = {
-			...t.BaseCollections,
+			...TestApp.BaseCollections,
 			...collections_to_add,
 			numbers: new (class extends Collection {
 				fields = {

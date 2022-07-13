@@ -1,6 +1,7 @@
 import Router from "@koa/router";
-import { ItemFields } from "../../chip-types/collection-item-body";
-import { Collection, Errors, FieldTypes, Policies } from "../../main";
+import Collection from "../../chip-types/collection";
+import type { ItemFields } from "../../chip-types/collection-item-body";
+import { Errors, FieldTypes, Policies } from "../../main";
 import SecureHasher from "../../utils/secure-hasher";
 
 export default class Sessions extends Collection {

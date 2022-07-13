@@ -1,5 +1,5 @@
-import { App } from "../main";
-import { MessageData } from "./message";
+import type { App } from "../main";
+import type { MessageData } from "./message";
 
 export default abstract class Mailer {
 	app: App;

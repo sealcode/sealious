@@ -1,36 +1,41 @@
 import assert from "assert";
-import { withRunningApp } from "../../../test_utils/with-test-app";
+import {
+	TestAppConstructor,
+	withRunningApp,
+} from "../../../test_utils/with-test-app";
 import { assertThrowsAsync } from "../../../test_utils/assert-throws-async";
 import { Collection, FieldTypes, Field, App } from "../../../main";
-import { DerivingFn } from "./derived-value";
-import { TestAppType } from "../../../test_utils/test-app";
+import type { DerivingFn } from "./derived-value";
 import { sleep } from "../../../test_utils/sleep";
+import { TestApp } from "../../../test_utils/test-app";
 
-const extend = <T extends Field = FieldTypes.Text>(derived_value_params: {
-	deriving_fn: DerivingFn<T>;
-	fields: string[];
-}) => (t: TestAppType) => {
-	return class extends t {
-		collections = {
-			...t.BaseCollections,
-			people: new (class extends Collection {
-				name = "people";
-				fields = {
-					username: new FieldTypes.Text(),
-					surname: new FieldTypes.Text(),
-					name_and_surname: new FieldTypes.DerivedValue(
-						new FieldTypes.Text(),
-						// @ts-ignore
-						{
-							...derived_value_params,
-						}
-					),
-					age: new FieldTypes.Int(),
-				};
-			})(),
+const extend =
+	<T extends Field = FieldTypes.Text>(derived_value_params: {
+		deriving_fn: DerivingFn<T>;
+		fields: string[];
+	}) =>
+	(t: TestAppConstructor) => {
+		return class extends t {
+			collections = {
+				...TestApp.BaseCollections,
+				people: new (class extends Collection {
+					name = "people";
+					fields = {
+						username: new FieldTypes.Text(),
+						surname: new FieldTypes.Text(),
+						name_and_surname: new FieldTypes.DerivedValue(
+							new FieldTypes.Text(),
+							// @ts-ignore
+							{
+								...derived_value_params,
+							}
+						),
+						age: new FieldTypes.Int(),
+					};
+				})(),
+			};
 		};
 	};
-};
 
 describe("derived-value", () => {
 	it("properly reacts to pre:create handler", async () =>
@@ -144,7 +149,7 @@ describe("derived-value", () => {
 
 	it("throws when the value returned from deriving_fn is unnacceptable by target_field_type of derived-value", async () => {
 		const str = 555;
-		withRunningApp(
+		await withRunningApp(
 			extend<FieldTypes.Int>({
 				fields: ["username", "surname"],
 				deriving_fn: async (_: string, __: string) => str,
@@ -170,10 +175,10 @@ describe("derived-value", () => {
 
 		it("should init the base field with the given app", () =>
 			withRunningApp(
-				(app_class: TestAppType) => {
+				(app_class: TestAppConstructor) => {
 					return class extends app_class {
 						collections = {
-							...app_class.BaseCollections,
+							...TestApp.BaseCollections,
 							A: new (class extends Collection {
 								fields = {
 									simple: new FieldTypes.Text(),
@@ -209,7 +214,7 @@ describe("derived-value", () => {
 			(test_class) =>
 				class extends test_class {
 					collections = {
-						...test_class.BaseCollections,
+						...TestApp.BaseCollections,
 						products: new (class Products extends Collection {
 							fields: Record<string, Field> = {
 								name: new FieldTypes.Text(),

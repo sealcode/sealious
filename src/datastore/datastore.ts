@@ -1,7 +1,7 @@
 import { MongoClient, Db, Collection as MongoCollection } from "mongodb";
-import { App } from "../main";
-import Collection from "../chip-types/collection";
-import { QueryStage } from "./query";
+import type { App } from "../main";
+import type Collection from "../chip-types/collection";
+import type { QueryStage } from "./query";
 import asyncForEach from "../utils/async-foreach";
 import QueryStep from "./query-step";
 
@@ -84,9 +84,11 @@ export default class Datastore {
 						error: Error & { code?: number; message: string }
 					) => {
 						if (error && error.code === 85) {
-							const index_name = (error.message.match(
-								/name: "([^"]+)"/g
-							) as string[])[1]
+							const index_name = (
+								error.message.match(
+									/name: "([^"]+)"/g
+								) as string[]
+							)[1]
 								.replace('name: "', "")
 								.replace('"', "");
 							await db_collection.dropIndex(index_name);
@@ -242,10 +244,9 @@ function process_query(query: Record<string, unknown>) {
 				new_query[attribute_name] = value;
 			} else {
 				for (const i in value) {
-					new_query[attribute_name + "." + i] = (value as Record<
-						string,
-						any
-					>)[i];
+					new_query[attribute_name + "." + i] = (
+						value as Record<string, any>
+					)[i];
 				}
 			}
 		} else {

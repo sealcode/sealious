@@ -1,7 +1,7 @@
 import Field, { Depromisify } from "./field";
 
-import Context from "../context";
-import { App, Collection, ItemListResult } from "../main";
+import type Context from "../context";
+import type { App, Collection, ItemListResult } from "../main";
 
 /*
 

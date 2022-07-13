@@ -1,13 +1,16 @@
 import assert from "assert";
-import { withRunningApp } from "../../../test_utils/with-test-app";
+import {
+	TestAppConstructor,
+	withRunningApp,
+} from "../../../test_utils/with-test-app";
 import { assertThrowsAsync } from "../../../test_utils/assert-throws-async";
 import { Collection, FieldTypes } from "../../../main";
-import { TestAppType } from "../../../test_utils/test-app";
+import { TestApp } from "../../../test_utils/test-app";
 
-function extend(t: TestAppType) {
+function extend(t: TestAppConstructor) {
 	return class extends t {
 		collections = {
-			...t.BaseCollections,
+			...TestApp.BaseCollections,
 			seals: new (class extends Collection {
 				fields = {
 					name: new FieldTypes.Text(),

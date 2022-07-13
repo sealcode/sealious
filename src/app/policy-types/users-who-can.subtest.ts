@@ -1,15 +1,18 @@
 import assert from "assert";
-import { withRunningApp } from "../../test_utils/with-test-app";
+import {
+	TestAppConstructor,
+	withRunningApp,
+} from "../../test_utils/with-test-app";
 import { assertThrowsAsync } from "../../test_utils/assert-throws-async";
 import axios from "axios";
 import { Collection, FieldTypes, Policies } from "../../main";
-import { TestAppType } from "../../test_utils/test-app";
+import { TestApp } from "../../test_utils/test-app";
 
 const extend = (bricks_allowed: boolean) =>
-	function (t: TestAppType) {
+	function (t: TestAppConstructor) {
 		return class extends t {
 			collections = {
-				...t.BaseCollections,
+				...TestApp.BaseCollections,
 				bricks: new (class extends Collection {
 					fields = {
 						number: new FieldTypes.Int(),

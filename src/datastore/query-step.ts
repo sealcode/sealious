@@ -1,7 +1,8 @@
 import object_hash from "object-hash";
 import transformObject from "../utils/transform-object";
 import negate_stage from "./negate-stage";
-import QueryStage, { MatchBody } from "./query-stage";
+import type QueryStage from "./query-stage";
+import type { MatchBody } from "./query-stage";
 
 export default abstract class QueryStep {
 	body: any;

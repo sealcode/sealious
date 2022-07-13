@@ -1,12 +1,9 @@
+import { Field, Context, Policy, App, ExtractStorage } from "../../../main";
 import {
-	Field,
-	Context,
-	Policy,
+	ExtractParams,
+	ExtractOutput,
 	HybridField,
-	App,
-	ExtractStorage,
-} from "../../../main";
-import { ExtractParams, ExtractOutput } from "../../../chip-types/field";
+} from "../../../chip-types/field";
 
 type Params<T extends Field> = {
 	target_policies: { [key in "show" | "edit"]: Policy };

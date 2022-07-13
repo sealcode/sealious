@@ -1,4 +1,4 @@
-import { App } from "../main";
+import type { App } from "../main";
 import UUIDGenerator from "shortid";
 import fs, { ReadStream } from "fs";
 import { basename } from "path";

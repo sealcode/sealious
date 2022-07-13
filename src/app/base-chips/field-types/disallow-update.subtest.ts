@@ -7,9 +7,12 @@ import {
 } from "../../../main";
 
 import assert from "assert";
-import { withRunningApp } from "../../../test_utils/with-test-app";
+import {
+	TestAppConstructor,
+	withRunningApp,
+} from "../../../test_utils/with-test-app";
 import { assertThrowsAsync } from "../../../test_utils/assert-throws-async";
-import { TestAppType } from "../../../test_utils/test-app";
+import { TestApp } from "../../../test_utils/test-app";
 
 const url = "/api/v1/collections/constseals";
 
@@ -23,10 +26,10 @@ class NullOrFive extends Field {
 	}
 }
 
-function extend(t: TestAppType) {
+function extend(t: TestAppConstructor) {
 	return class extends t {
 		collections = {
-			...t.BaseCollections,
+			...TestApp.BaseCollections,
 			constseals: new (class extends Collection {
 				fields = {
 					age: new FieldTypes.DisallowUpdate(

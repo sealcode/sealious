@@ -1,5 +1,8 @@
-import { CollectionEvent, CollectionCallback } from "../chip-types/collection";
-import { App } from "../main";
+import type {
+	CollectionEvent,
+	CollectionCallback,
+} from "../chip-types/collection";
+import type { App } from "../main";
 
 export class EventDescription {
 	constructor(

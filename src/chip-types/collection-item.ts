@@ -1,5 +1,5 @@
-import Collection from "./collection";
-import Context from "../context";
+import type Collection from "./collection";
+import type Context from "../context";
 import {
 	DeveloperError,
 	BadContext,
@@ -7,12 +7,13 @@ import {
 	FieldsError,
 } from "../response/errors";
 import shortid from "shortid";
-import { AttachmentOptions, ItemListResult } from "./item-list";
+import type { AttachmentOptions, ItemListResult } from "./item-list";
 import CollectionItemBody, {
+	FieldNames,
 	ItemFields,
 	ItemFieldsOutput,
 } from "./collection-item-body";
-import { PolicyDecision } from "./policy";
+import type { PolicyDecision } from "./policy";
 import isEmpty from "../utils/is-empty";
 
 export type ItemMetadata = {
@@ -210,7 +211,7 @@ export default class CollectionItem<T extends Collection = any> {
 	}
 
 	/** sets a value */
-	set<FieldName extends keyof ItemFields<T>>(
+	set<FieldName extends FieldNames<T>>(
 		field_name: FieldName,
 		field_value: ItemFields<T>[FieldName]
 	): CollectionItem<T> {
@@ -219,8 +220,8 @@ export default class CollectionItem<T extends Collection = any> {
 	}
 
 	setMultiple(values: Partial<ItemFields<T>>): this {
-		for (const field_name in values) {
-			this.set(field_name, values[field_name]);
+		for (const [field_name, value] of Object.entries(values)) {
+			this.set(field_name, value);
 		}
 		return this;
 	}
@@ -231,7 +232,7 @@ export default class CollectionItem<T extends Collection = any> {
 		this.has_been_replaced = true;
 	}
 
-	get<FieldName extends keyof ItemFields<T>>(
+	get<FieldName extends FieldNames<T>>(
 		field_name: FieldName,
 		include_raw = false
 	): ItemFieldsOutput<T>[FieldName] {
@@ -252,7 +253,7 @@ export default class CollectionItem<T extends Collection = any> {
 	 * @param field_name name of field we want to get decoded
 	 * @param context
 	 */
-	async getDecoded<FieldName extends keyof ItemFields<T>>(
+	async getDecoded<FieldName extends FieldNames<T>>(
 		field_name: FieldName,
 		context: Context
 	): Promise<unknown> {
@@ -373,8 +374,8 @@ export default class CollectionItem<T extends Collection = any> {
 				field
 					.getAttachments(
 						context,
-						[this.get(field.name)],
-						attachment_options[field.name]
+						[this.get(field.name as FieldNames<T>)],
+						attachment_options[field.name as FieldNames<T>]
 					)
 					.then((attachmentsList) => {
 						if (!attachmentsList.empty) {
@@ -414,7 +415,7 @@ export default class CollectionItem<T extends Collection = any> {
 		return this.collection.getByID(context, this.id);
 	}
 
-	getAttachments<FieldName extends keyof ItemFields<T>>(
+	getAttachments<FieldName extends FieldNames<T>>(
 		field_name: FieldName
 	): CollectionItem[] {
 		if (

@@ -1,5 +1,6 @@
-import { SpecialFilter, Query } from "../../../main";
-import QueryStage from "../../../datastore/query-stage";
+import { Query } from "../../../main";
+import type QueryStage from "../../../datastore/query-stage";
+import SpecialFilter from "../../../chip-types/special-filter";
 
 export default class Matches extends SpecialFilter {
 	constructor(

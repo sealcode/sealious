@@ -1,6 +1,7 @@
 import assert from "assert";
 import Collection from "../chip-types/collection";
 import { FieldTypes } from "../main";
+import { TestApp } from "../test_utils/test-app";
 import { withRunningApp } from "../test_utils/with-test-app";
 
 describe("search", () => {
@@ -9,7 +10,7 @@ describe("search", () => {
 			(test_app) => {
 				return class extends test_app {
 					collections = {
-						...test_app.BaseCollections,
+						...TestApp.BaseCollections,
 						dogs: new (class extends Collection {
 							fields = {
 								name: new FieldTypes.Text({

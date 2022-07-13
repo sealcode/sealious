@@ -1,4 +1,4 @@
-import Context from "../../../context";
+import type Context from "../../../context";
 import { Field } from "../../../main";
 
 import me_synonyms from "../../../misc/me-synonyms";

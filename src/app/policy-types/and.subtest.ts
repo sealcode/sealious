@@ -2,11 +2,14 @@ import assert from "assert";
 import Bluebird from "bluebird";
 import { App, Collection, FieldTypes, Policies } from "../../main";
 
-import { withRunningApp } from "../../test_utils/with-test-app";
+import {
+	TestAppConstructor,
+	withRunningApp,
+} from "../../test_utils/with-test-app";
 import create_policies from "../../test_utils/policy-types/create-policies-with-complex-pipeline";
 import And from "./and";
 import { assertThrowsAsync } from "../../test_utils/assert-throws-async";
-import { TestAppType } from "../../test_utils/test-app";
+import { TestApp } from "../../test_utils/test-app";
 
 const [ComplexDenyPipeline, ComplexAllowPipeline] = create_policies.allowDeny();
 
@@ -32,7 +35,7 @@ const collections_to_create = [
 	},
 ];
 
-function extend(t: TestAppType) {
+function extend(t: TestAppConstructor) {
 	const collections: { [name: string]: Collection } = {};
 	for (const { name, policies } of collections_to_create) {
 		collections[name] = new (class extends Collection {
@@ -50,7 +53,7 @@ function extend(t: TestAppType) {
 
 	return class extends t {
 		collections = {
-			...t.BaseCollections,
+			...TestApp.BaseCollections,
 			...collections,
 			numbers: new (class extends Collection {
 				name = "numbers";

@@ -1,4 +1,4 @@
-import { LoggerLevel } from "./logger";
+import type { LoggerLevel } from "./logger";
 
 export type Environment = "dev" | "production";
 

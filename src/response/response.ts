@@ -1,4 +1,4 @@
-import SealiousError from "./errors";
+import type SealiousError from "./errors";
 
 class Response {
 	status: "error" | "success";

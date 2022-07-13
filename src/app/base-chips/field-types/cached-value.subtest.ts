@@ -3,20 +3,22 @@ import assert from "assert";
 import {
 	withStoppedApp,
 	withRunningApp,
+	TestAppConstructor,
 } from "../../../test_utils/with-test-app";
 import { assertThrowsAsync } from "../../../test_utils/assert-throws-async";
 import { getDateTime } from "../../../utils/get-datetime";
 import { App, Context, Collection, FieldTypes, Field } from "../../../main";
 import Bluebird from "bluebird";
-import { TestAppType } from "../../../test_utils/test-app";
-import ItemList, { ItemListResult } from "../../../chip-types/item-list";
-import { RefreshCondition } from "./cached-value";
+import type { ItemListResult } from "../../../chip-types/item-list";
+import type { RefreshCondition } from "./cached-value";
 import { EventDescription } from "../../delegate-listener";
-import MockRestApi, {
+import type MockRestApi from "../../../test_utils/rest-api";
+import type {
 	CollectionResponse,
 	ItemCreatedResponse,
 	ItemResponse,
 } from "../../../test_utils/rest-api";
+import { TestApp } from "../../../test_utils/test-app";
 
 const action_to_status: { [name: string]: string } = {
 	create: "created",
@@ -27,89 +29,96 @@ const action_to_status: { [name: string]: string } = {
 
 const MIN_VALUE = 0;
 
-const extend = (
-	is_status_field_desired: boolean,
-	clear_database_on_stop = true
-) => (t: TestAppType) => {
-	const account_fields: { [field_name: string]: Field } = {
-		username: new FieldTypes.Username(),
-		number: new FieldTypes.CachedValue(
-			new FieldTypes.Int({
-				min: MIN_VALUE,
-			}),
-			{
-				get_value: async () => {
-					return 0;
-				},
-				refresh_on: [],
+const extend =
+	(is_status_field_desired: boolean, clear_database_on_stop = true) =>
+	(t: TestAppConstructor) => {
+		const account_fields: { [field_name: string]: Field } = {
+			username: new FieldTypes.Username(),
+			number: new FieldTypes.CachedValue(
+				new FieldTypes.Int({
+					min: MIN_VALUE,
+				}),
+				{
+					get_value: async () => {
+						return 0;
+					},
+					refresh_on: [],
+					initial_value: 0,
+				}
+			),
+			date_time: new FieldTypes.CachedValue(new FieldTypes.DateTime(), {
+				get_value: async () => new Date("2018-01-01").getTime(),
+				refresh_on: make_refresh_on(),
 				initial_value: 0,
-			}
-		),
-		date_time: new FieldTypes.CachedValue(new FieldTypes.DateTime(), {
-			get_value: async () => new Date("2018-01-01").getTime(),
-			refresh_on: make_refresh_on(),
-			initial_value: 0,
-		}),
-	};
-	if (is_status_field_desired) {
-		account_fields.status = new FieldTypes.CachedValue(
-			new FieldTypes.Enum(Object.values(action_to_status)),
-			{
-				get_value: async (context: Context, resource_id: string) => {
-					context.app.Logger.debug3(
-						"STATUS FIELD",
-						`calculating value for ${resource_id}`
-					);
-					const {
-						items,
-					} = await context.app.collections.actions
-						.list(new context.app.SuperContext())
-						.filter({ account: resource_id })
-						.sort({ "_metadata.modified_at": "desc" })
-						.paginate({ items: 1 })
-						.fetch();
-					context.app.Logger.debug3(
-						"STATUS FIELD",
-						"New cached value is",
-						action_to_status[
+			}),
+		};
+		if (is_status_field_desired) {
+			account_fields.status = new FieldTypes.CachedValue(
+				new FieldTypes.Enum(Object.values(action_to_status)),
+				{
+					get_value: async (
+						context: Context,
+						resource_id: string
+					) => {
+						context.app.Logger.debug3(
+							"STATUS FIELD",
+							`calculating value for ${resource_id}`
+						);
+						const { items } = await context.app.collections.actions
+							.list(new context.app.SuperContext())
+							.filter({ account: resource_id })
+							.sort({ "_metadata.modified_at": "desc" })
+							.paginate({ items: 1 })
+							.fetch();
+						context.app.Logger.debug3(
+							"STATUS FIELD",
+							"New cached value is",
+							action_to_status[
+								items[0].get(
+									"name"
+								) as keyof typeof action_to_status
+							]
+						);
+						return action_to_status[
 							items[0].get(
 								"name"
 							) as keyof typeof action_to_status
-						]
-					);
-					return action_to_status[
-						items[0].get("name") as keyof typeof action_to_status
-					];
-				},
-				refresh_on: make_refresh_on(),
-				initial_value: "created",
-			}
-		);
-	}
-	const accounts = new (class extends Collection {
-		name = "accounts";
-		fields = {
-			...account_fields,
-		};
-	})();
+						];
+					},
+					refresh_on: make_refresh_on(),
+					initial_value: "created",
+				}
+			);
+		}
+		const accounts = new (class extends Collection {
+			name = "accounts";
+			fields = {
+				...account_fields,
+			};
+		})();
 
-	const actions = new (class extends Collection {
-		name = "actions";
-		fields = {
-			name: new FieldTypes.Enum(["create", "open", "suspend", "close"]),
-			account: new FieldTypes.SingleReference("accounts"),
-		};
-	})();
+		const actions = new (class extends Collection {
+			name = "actions";
+			fields = {
+				name: new FieldTypes.Enum([
+					"create",
+					"open",
+					"suspend",
+					"close",
+				]),
+				account: new FieldTypes.SingleReference("accounts"),
+			};
+		})();
 
-	return class extends t {
-		collections = {
-			...App.BaseCollections,
-			actions,
-			accounts,
+		return class extends t {
+			collections = {
+				...App.BaseCollections,
+				actions,
+				accounts,
+			};
+			clear_database_on_stop = clear_database_on_stop;
 		};
-		clear_database_on_stop = clear_database_on_stop;
 	};
-};
 
 describe("cached-value", () => {
 	async function add_account(
@@ -246,80 +255,87 @@ describe("cached-value", () => {
 				new Date("2018-01-01"),
 				"yyyy-mm-dd hh:mm:ss"
 			);
-			const actual_datetime = ((await rest_api.get(
-				`/api/v1/collections/accounts/${id}?format[date_time]=human_readable`
-			)) as CollectionResponse).items[0].date_time as string;
+			const actual_datetime = (
+				(await rest_api.get(
+					`/api/v1/collections/accounts/${id}?format[date_time]=human_readable`
+				)) as CollectionResponse
+			).items[0].date_time as string;
 
 			assert.strictEqual(actual_datetime, expected_datetime);
 		}));
 
 	it("Properly responds to recursive edits", async () =>
-		withStoppedApp(extend(true), async ({ app, app_class }) => {
-			await assertThrowsAsync(
-				async () => {
-					const HappyNumbers = class HappyNumbers extends Collection {
-						fields = {
-							number: new FieldTypes.Int(),
-							double_number: new FieldTypes.CachedValue(
-								new FieldTypes.Int(),
-								{
-									get_value: async (
-										context: Context,
-										number_id: string
-									) => {
-										const response = await app.collections[
-											"happy-numbers"
-										]
-											.list(context)
-											.ids([number_id])
-											.fetch();
-										return (
-											(response.items[0].get(
-												"number"
-											) as number) * 2
-										);
-									},
-									refresh_on: [
-										{
-											event: new EventDescription(
-												"happy-numbers",
-												"after:create"
-											),
-											resource_id_getter: async (
-												_,
-												item
-											) => [item.id],
+		withStoppedApp(
+			extend(true),
+			async ({ app, app_class, base_url, uniq_id, env, port }) => {
+				await assertThrowsAsync(
+					async () => {
+						const HappyNumbers = class HappyNumbers extends Collection {
+							fields = {
+								number: new FieldTypes.Int(),
+								double_number: new FieldTypes.CachedValue(
+									new FieldTypes.Int(),
+									{
+										get_value: async (
+											context: Context,
+											number_id: string
+										) => {
+											const response =
+												// @ts-ignore
+												await app.collections[
+													"happy-numbers"
+												]
+													.list(context)
+													.ids([number_id])
+													.fetch();
+											return (
+												(response.items[0].get(
+													"number"
+												) as number) * 2
+											);
 										},
-									],
-									initial_value: 0,
-								}
-							),
+										refresh_on: [
+											{
+												event: new EventDescription(
+													"happy-numbers",
+													"after:create"
+												),
+												resource_id_getter: async (
+													_,
+													item
+												) => [item.id],
+											},
+										],
+										initial_value: 0,
+									}
+								),
+							};
 						};
-					};
 
-					const new_app = new (class extends app_class {
-						collections = {
-							...super.collections,
-							"happy-numbers": new HappyNumbers(),
-						};
-					})();
-					await new_app.start();
-				},
-				(e) => {
-					assert.strictEqual(
-						e.message,
-						`In the happy-numbers collection definition you've tried to create the double_number cached-value field that refers to the collection itself. Consider using 'derived-value' field type to avoid problems with endless recurrence.`
-					);
-				}
-			);
-		}));
+						const new_app = new (class extends app_class {
+							collections = {
+								...super.collections,
+								"happy-numbers": new HappyNumbers(),
+							};
+						})(uniq_id, env, port, base_url);
+						await new_app.start();
+					},
+					(e) => {
+						assert.strictEqual(
+							e.message,
+							`In the happy-numbers collection definition you've tried to create the double_number cached-value field that refers to the collection itself. Consider using 'derived-value' field type to avoid problems with endless recurrence.`
+						);
+					}
+				);
+			}
+		));
 
 	it("should pass friendship scenario", async () => {
 		return withRunningApp(
 			(test_app_type) => {
 				return class extends test_app_type {
 					collections = {
-						...test_app_type.BaseCollections,
+						...TestApp.BaseCollections,
 						people: new (class extends Collection {
 							fields = {
 								name: new FieldTypes.Text(),
@@ -346,14 +362,16 @@ describe("cached-value", () => {
 											context,
 											item_id
 										) {
-											const is_liked_by = (await context.app.collections[
-												"who-likes-who"
-											]
-												.suList()
-												.filter({
-													likes_this_person: item_id,
-												})
-												.fetch()) as ItemListResult<any>;
+											const is_liked_by =
+												(await context.app.collections[
+													"who-likes-who"
+												]
+													.suList()
+													.filter({
+														likes_this_person:
+															item_id,
+													})
+													.fetch()) as ItemListResult<any>;
 											return is_liked_by.items.length;
 										},
 										initial_value: 0,
@@ -366,9 +384,8 @@ describe("cached-value", () => {
 								this_person: new FieldTypes.SingleReference(
 									"people"
 								),
-								likes_this_person: new FieldTypes.SingleReference(
-									"people"
-								),
+								likes_this_person:
+									new FieldTypes.SingleReference("people"),
 							};
 						})(),
 					};
@@ -434,9 +451,10 @@ describe("cached-value", () => {
 											context,
 											item_id
 										) {
-											const job = await context.app.collections[
-												"jobs"
-											].getByID(context, item_id);
+											const job =
+												await context.app.collections[
+													"jobs"
+												].getByID(context, item_id);
 											return job.id;
 										},
 										initial_value: null,

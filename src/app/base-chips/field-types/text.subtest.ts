@@ -1,16 +1,19 @@
 import assert from "assert";
 import axios from "axios";
-import { withRunningApp } from "../../../test_utils/with-test-app";
+import {
+	TestAppConstructor,
+	withRunningApp,
+} from "../../../test_utils/with-test-app";
 import { Collection, FieldTypes } from "../../../main";
-import { TestAppType } from "../../../test_utils/test-app";
+import { TestApp } from "../../../test_utils/test-app";
 
 const extend = (
 	text_params: ConstructorParameters<typeof FieldTypes.Text>[0] = {}
 ) =>
-	function (t: TestAppType) {
+	function (t: TestAppConstructor) {
 		return class extends t {
 			collections = {
-				...t.BaseCollections,
+				...TestApp.BaseCollections,
 				surnames: new (class extends Collection {
 					fields = {
 						surname: new FieldTypes.Text(text_params),

@@ -1,5 +1,6 @@
 import * as assert from "assert";
-import { SpecialFilter, Query } from "../../../main";
+import { Query } from "../../../main";
+import SpecialFilter from "../../../chip-types/special-filter";
 
 type Params = {
 	referencing_collection: string;

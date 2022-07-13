@@ -1,4 +1,5 @@
-import { HybridField, Field, ExtractOutput, App } from "../../../main";
+import type { Field, ExtractOutput, App } from "../../../main";
+import { HybridField } from "../../../chip-types/field";
 /*
 
 todo: make the deriving_fn more type-safe by reading the types of the fields?

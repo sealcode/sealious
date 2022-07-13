@@ -1,21 +1,44 @@
 import { v4 as uuid } from "uuid";
 import getPort from "get-port";
-import { Environment } from "../app/config";
-import { App } from "../main";
-import mailcatcher from "./mailcatcher";
+import type { Environment } from "../app/config";
 import MockRestApi from "./rest-api";
-import { get_test_app, TestAppType } from "./test-app";
 import MailcatcherAPI from "./mailcatcher";
+import { TestApp } from "./test-app";
 
-type TestCallback = (params: CallbackParams) => Promise<any>;
+export type TestAppConstructor<T extends TestApp = TestApp> = new (
+	uniq_id: string,
+	env: Environment,
+	port: number,
+	base_url: string
+) => T;
 
-type extendFn = null | ((app_class: TestAppType) => TestAppType);
+type CallbackParams<FinalTestAppType extends TestApp> = {
+	app: FinalTestAppType;
+	base_url: string;
+	smtp_api_url: string;
+	rest_api: MockRestApi;
+	port: number;
+	mail_api: MailcatcherAPI;
+	app_class: TestAppConstructor<TestApp>;
+	uniq_id: string;
+	env: Environment;
+};
+
+type TestCallback<FinalTestAppType extends TestApp> = (
+	params: CallbackParams<FinalTestAppType>
+) => Promise<any>;
+
+type extendFn<FinalTestAppType extends TestApp> =
+	| null
+	| ((
+			app_class: TestAppConstructor<TestApp>
+	  ) => TestAppConstructor<FinalTestAppType>);
 
 const test_collections: { [collection: string]: string } = {};
 
-export async function withStoppedApp(
-	extend_fn: extendFn,
-	cb: TestCallback,
+export async function withStoppedApp<FinalTestAppType extends TestApp>(
+	extend_fn: extendFn<FinalTestAppType>,
+	cb: TestCallback<FinalTestAppType>,
 	test_collection?: string // tests with the same collection get assigned the same db id
 ): Promise<any> {
 	await withTestApp(
@@ -27,9 +50,9 @@ export async function withStoppedApp(
 	);
 }
 
-export async function withRunningApp(
-	extend_fn: extendFn,
-	cb: TestCallback,
+export async function withRunningApp<FinalTestAppType extends TestApp>(
+	extend_fn: extendFn<FinalTestAppType>,
+	cb: TestCallback<FinalTestAppType>,
 	test_collection?: string // tests with the same collection get assigned the same db id
 ): Promise<any> {
 	await withTestApp(
@@ -54,23 +77,11 @@ function getAppID(test_collection?: string) {
 	return uniq_id;
 }
 
-type CallbackParams = {
-	app: App;
-	base_url: string;
-	smtp_api_url: string;
-	rest_api: MockRestApi;
-	port: number;
-
-	mail_api: MailcatcherAPI;
-
-	app_class: TestAppType;
-};
-
-export async function withTestApp(
+export async function withTestApp<FinalTestAppType extends TestApp>(
 	auto_start: boolean,
 	env: Environment,
-	extend_fn: extendFn,
-	fn: (params: CallbackParams) => Promise<unknown>,
+	extend_fn: extendFn<FinalTestAppType>,
+	fn: (params: CallbackParams<FinalTestAppType>) => Promise<unknown>,
 	test_collection?: string
 ) {
 	const port = await getPort();
@@ -79,39 +90,31 @@ export async function withTestApp(
 		process.env.SEALIOUS_SMTP_HOST || "127.0.0.1"
 	}:1088`;
 
-	const TestApp = get_test_app({
-		env,
-		port,
-		base_url,
-		uniq_id: getAppID(test_collection),
-	});
-	let modified_app_class;
-	if (extend_fn) {
-		modified_app_class = extend_fn(TestApp);
-	} else {
-		modified_app_class = TestApp;
-	}
+	const constructor = extend_fn ? extend_fn(TestApp) : TestApp;
+	const uniq_id = getAppID(test_collection);
+	const test_app = new constructor(uniq_id, env, port, base_url);
 
-	const app = new modified_app_class();
 	if (auto_start) {
-		await app.start();
+		await test_app.start();
 	}
 	try {
 		await fn({
-			app: app as App,
+			app: test_app as FinalTestAppType,
 			port,
-			app_class: modified_app_class,
+			app_class: constructor,
+			env,
 			base_url,
+			uniq_id,
 			smtp_api_url,
-			mail_api: new MailcatcherAPI(smtp_api_url, app),
+			mail_api: new MailcatcherAPI(smtp_api_url, test_app),
 			rest_api: new MockRestApi(base_url),
 		});
 	} catch (e) {
 		console.error(e);
 		throw e;
 	} finally {
-		if (app.status !== "stopped") {
-			await app.stop();
+		if (test_app.status !== "stopped") {
+			await test_app.stop();
 		}
 	}
 }

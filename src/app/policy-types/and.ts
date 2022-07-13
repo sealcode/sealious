@@ -1,6 +1,6 @@
 import Bluebird from "bluebird";
 import { And as AndQuery } from "../../datastore/query";
-import { Context, CollectionItem } from "../../main";
+import type { Context, CollectionItem } from "../../main";
 import Policy, { ReducingPolicy } from "../../chip-types/policy";
 
 export default class And extends ReducingPolicy {

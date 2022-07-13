@@ -1,14 +1,17 @@
 import assert from "assert";
 import axios from "axios";
 import { assertThrowsAsync } from "../../../test_utils/assert-throws-async";
-import { withRunningApp } from "../../../test_utils/with-test-app";
+import {
+	TestAppConstructor,
+	withRunningApp,
+} from "../../../test_utils/with-test-app";
 import { Collection, FieldTypes, Policies } from "../../../main";
-import { TestAppType } from "../../../test_utils/test-app";
+import { TestApp } from "../../../test_utils/test-app";
 
-function extend(t: TestAppType) {
+function extend(t: TestAppConstructor) {
 	return class extends t {
 		collections = {
-			...t.BaseCollections,
+			...TestApp.BaseCollections,
 			"forbidden-collection": new (class extends Collection {
 				fields = {
 					any: new FieldTypes.SettableBy(
@@ -29,7 +32,7 @@ function extend(t: TestAppType) {
 	};
 }
 
-describe("settable-by", async () => {
+describe("settable-by", () => {
 	it("should not allow any value when rejected by access strategy", async () =>
 		withRunningApp(extend, async ({ app, base_url }) => {
 			await assertThrowsAsync(

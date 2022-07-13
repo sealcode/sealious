@@ -1,5 +1,5 @@
 import Mailer from "./mailer";
-import { MessageData } from "./message";
+import type { MessageData } from "./message";
 
 export default class LoggerMailer extends Mailer {
 	async verify() {

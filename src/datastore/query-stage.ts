@@ -1,4 +1,4 @@
-import { ComplexLookupBody, SimpleLookupBody } from "./query-step";
+import type { ComplexLookupBody, SimpleLookupBody } from "./query-step";
 
 export type MatchBody = Partial<{
 	$not: MatchBody;

@@ -1,7 +1,7 @@
-import Context from "../context";
-import Query from "../datastore/query";
+import type Context from "../context";
+import type Query from "../datastore/query";
 import { AllowAll } from "../datastore/allow-all";
-import { CollectionItem } from "../main";
+import type { CollectionItem } from "../main";
 
 export type PolicyDefinition = [PolicyClass, any] | Policy | PolicyClass;
 

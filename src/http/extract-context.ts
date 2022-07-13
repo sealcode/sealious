@@ -1,5 +1,4 @@
-import { Middleware } from "@koa/router";
-import App from "../app/app";
+import type { Middleware } from "@koa/router";
 import Context from "../context";
 
 export default function extract_context(): Middleware {

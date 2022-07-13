@@ -1,5 +1,5 @@
-import { Middleware } from "@koa/router";
-import Policy from "../chip-types/policy";
+import type { Middleware } from "@koa/router";
+import type Policy from "../chip-types/policy";
 
 export default function MatchPolicy(policy: Policy): Middleware {
 	return async function (ctx, next) {

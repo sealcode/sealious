@@ -1,5 +1,5 @@
 import Policy from "../../chip-types/policy";
-import { Context } from "../../main";
+import type { Context } from "../../main";
 import { AllowAll } from "../../datastore/allow-all";
 import DenyAll from "../../datastore/deny-all";
 

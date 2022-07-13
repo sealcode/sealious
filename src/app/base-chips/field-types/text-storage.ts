@@ -1,5 +1,5 @@
 import { Field, Context } from "../../../main";
-import { QueryStage } from "../../../datastore/query";
+import type { QueryStage } from "../../../datastore/query";
 import escape from "escape-html";
 
 type TextStorageFormat = { original: string; safe: string };
@@ -46,10 +46,12 @@ export default abstract class TextStorage extends Field {
 				$match: {
 					$or: [
 						{
-							[`${await this.getValuePath()}.original`]: filter_in_query,
+							[`${await this.getValuePath()}.original`]:
+								filter_in_query,
 						},
 						{
-							[`${await this.getValuePath()}.safe`]: filter_in_query,
+							[`${await this.getValuePath()}.safe`]:
+								filter_in_query,
 						},
 					],
 				},

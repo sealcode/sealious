@@ -1,5 +1,6 @@
 import Query from "./query";
-import QueryStage, { MatchBody } from "./query-stage";
+import type QueryStage from "./query-stage";
+import type { MatchBody } from "./query-stage";
 import QueryStep, { Lookup, Match } from "./query-step";
 
 export default class Or extends Query {

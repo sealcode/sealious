@@ -1,8 +1,9 @@
-import Collection from "./collection";
-import Context from "../context";
-import { ActionName } from "../action";
-import { App } from "../main";
-import QueryStage, { MatchBody } from "../datastore/query-stage";
+import type Collection from "./collection";
+import type Context from "../context";
+import type { ActionName } from "../action";
+import type { App } from "../main";
+import type QueryStage from "../datastore/query-stage";
+import type { MatchBody } from "../datastore/query-stage";
 import { ItemListResult } from "./item-list";
 import { BadSubjectAction } from "../response/errors";
 import isEmpty from "../utils/is-empty";
@@ -269,6 +270,8 @@ export default abstract class Field {
 		return [{ $match }];
 	}
 }
+
+export type RequiredField = Field & { required: true };
 
 export { default as HybridField } from "./field-hybrid";
 export * from "./field-hybrid";

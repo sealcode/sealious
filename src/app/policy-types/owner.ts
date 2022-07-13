@@ -1,6 +1,6 @@
 import { Policy, Context, Query, CollectionItem } from "../../main";
 import DenyAll from "../../datastore/deny-all";
-import { ItemMetadata } from "../../chip-types/collection-item";
+import type { ItemMetadata } from "../../chip-types/collection-item";
 
 export default class Owner extends Policy {
 	static type_name = "owner";
@@ -20,9 +20,11 @@ export default class Owner extends Policy {
 		if (
 			context.user_id &&
 			context.user_id ===
-				((response as unknown) as {
-					_metadata: ItemMetadata;
-				})._metadata.created_by
+				(
+					response as unknown as {
+						_metadata: ItemMetadata;
+					}
+				)._metadata.created_by
 		) {
 			return Policy.allow(context.app.i18n("policy_owner_allow"));
 		} else {

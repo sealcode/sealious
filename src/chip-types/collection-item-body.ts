@@ -1,13 +1,26 @@
-import Collection from "./collection";
-import { Context, ExtractInput } from "../main";
-import { ExtractOutput } from "./field";
+import type Collection from "./collection";
+import type { Context, ExtractInput } from "../main";
+import type { ExtractOutput, RequiredField } from "./field";
 
-export type ItemFields<T extends Collection> = {
-	[field in keyof T["fields"]]: ExtractInput<T["fields"][field]>;
+export type FieldNames<T extends Collection> = keyof T["fields"] & string;
+
+export type RequiredItemFields<T extends Collection> = {
+	[FieldName in FieldNames<T> as T["fields"][FieldName] extends RequiredField
+		? FieldName
+		: never]: ExtractInput<T["fields"][FieldName]>;
 };
 
+export type NonrequiredItemFields<T extends Collection> = {
+	[FieldName in FieldNames<T> as T["fields"][FieldName] extends RequiredField
+		? never
+		: FieldName]: ExtractInput<T["fields"][FieldName]>;
+};
+
+export type ItemFields<T extends Collection> = RequiredItemFields<T> &
+	Partial<NonrequiredItemFields<T>>;
+
 export type ItemFieldsOutput<T extends Collection> = {
-	[field in keyof T["fields"]]: ExtractOutput<T["fields"][field]>;
+	[field in FieldNames<T>]: ExtractOutput<T["fields"][field]>;
 };
 
 export default class CollectionItemBody<T extends Collection = any> {
@@ -22,8 +35,8 @@ export default class CollectionItemBody<T extends Collection = any> {
 		public encoded: Partial<ItemFields<T>> = {}
 	) {
 		for (const field_name in raw_input) {
-			if (!encoded[field_name]) {
-				this.changed_fields.add(field_name);
+			if (!encoded[field_name as FieldNames<T>]) {
+				this.changed_fields.add(field_name as FieldNames<T>);
 			}
 		}
 	}
@@ -79,14 +92,14 @@ export default class CollectionItemBody<T extends Collection = any> {
 			}
 
 			if (to_encode === undefined) {
-				encoded[field_name] = null;
+				encoded[field_name as FieldNames<T>] = null;
 				continue;
 			}
 			promises.push(
 				this.collection.fields[field_name as string]
 					.encode(context, to_encode)
 					.then((value) => {
-						encoded[field_name] = value;
+						encoded[field_name as FieldNames<T>] = value;
 					})
 			);
 		}
@@ -115,7 +128,7 @@ export default class CollectionItemBody<T extends Collection = any> {
 				this.collection.fields?.[field_name]
 					.decode(
 						context,
-						this.encoded[field_name],
+						this.encoded[field_name as FieldNames<T>],
 						null,
 						format?.[field_name]
 					)
@@ -182,7 +195,7 @@ export default class CollectionItemBody<T extends Collection = any> {
 		const fields_to_check = new Set(this.changed_fields.values());
 		if (replace_mode) {
 			for (const field of this.collection.getRequiredFields()) {
-				fields_to_check.add(field.name);
+				fields_to_check.add(field.name as FieldNames<T>);
 			}
 		}
 
@@ -196,7 +209,7 @@ export default class CollectionItemBody<T extends Collection = any> {
 					.checkValue(
 						context,
 						this.raw_input[field_name],
-						original_body.encoded[field_name]
+						original_body.encoded[field_name as FieldNames<T>]
 					)
 					.then(async (result) => {
 						if (!result.valid) {

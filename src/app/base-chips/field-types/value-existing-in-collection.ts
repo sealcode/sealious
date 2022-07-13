@@ -1,5 +1,5 @@
 import Field from "../../../chip-types/field";
-import { Context, App } from "../../../main";
+import type { Context, App } from "../../../main";
 
 export default class ValueExistingInCollection extends Field {
 	typeName = "value-existing-in-collection";

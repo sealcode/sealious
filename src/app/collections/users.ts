@@ -1,8 +1,7 @@
 import Router from "@koa/router";
-import Policy from "../../chip-types/policy";
+import type Policy from "../../chip-types/policy";
 import {
 	Collection,
-	App,
 	FieldTypes,
 	Policies,
 	Context,

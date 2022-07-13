@@ -1,9 +1,9 @@
-import { ActionName } from "../../action";
-import Collection from "../../chip-types/collection";
+import type { ActionName } from "../../action";
+import type Collection from "../../chip-types/collection";
 import Policy from "../../chip-types/policy";
 import { AllowAll } from "../../datastore/allow-all";
 import DenyAll from "../../datastore/deny-all";
-import QueryStage from "../../datastore/query-stage";
+import type QueryStage from "../../datastore/query-stage";
 import {
 	App,
 	CollectionItem,
@@ -41,7 +41,9 @@ export default class SameAsForResourceInField extends Policy {
 		const field = this.getField(context);
 		return field instanceof FieldTypes.SingleReference
 			? field.getTargetCollection(context)
-			: (field as FieldTypes.ReverseSingleReference).getReferencingCollection();
+			: (
+					field as FieldTypes.ReverseSingleReference
+			  ).getReferencingCollection();
 	}
 
 	getReferencedPolicy(context: Context): Policy {

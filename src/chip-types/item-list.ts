@@ -1,5 +1,5 @@
 import CollectionItem from "./collection-item";
-import Collection from "./collection";
+import type Collection from "./collection";
 import { Context, Query } from "../main";
 import {
 	BadContext,
@@ -7,9 +7,9 @@ import {
 	BadSubjectAction,
 	ValidationError,
 } from "../response/errors";
-import QueryStage from "../datastore/query-stage";
+import type QueryStage from "../datastore/query-stage";
 import sealious_to_mongo_sort_param from "../utils/mongo-sorts";
-import { ItemFields } from "./collection-item-body";
+import type { FieldNames, ItemFields } from "./collection-item-body";
 
 type FilterT<T extends Collection> = Partial<ItemFields<T>>;
 
@@ -28,11 +28,9 @@ type SortParams<T extends Collection> = Partial<
 	}
 >;
 
-type FormatParam<T extends Collection> = Partial<
-	{
-		[key in keyof T["fields"]]: any;
-	}
->;
+type FormatParam<T extends Collection> = Partial<{
+	[key in keyof T["fields"]]: any;
+}>;
 
 type AllInOneParams<T extends Collection> = {
 	search: Parameters<ItemList<T>["search"]>[0];
@@ -47,11 +45,9 @@ type AllInOneParams<T extends Collection> = {
  * resource can point to another one and that one can also have
  * attachments
  */
-export type AttachmentOptions<T extends Collection> = Partial<
-	{
-		[key in keyof T["fields"]]: any;
-	}
->;
+export type AttachmentOptions<T extends Collection> = Partial<{
+	[key in keyof ItemFields<T>]: any;
+}>;
 
 export default class ItemList<T extends Collection> {
 	public fields_with_attachments_fetched: string[] = [];
@@ -92,11 +88,11 @@ export default class ItemList<T extends Collection> {
 			return this;
 		}
 		this._filter = filter;
-		for (const field_name in filter) {
+		for (const [field_name, filter_value] of Object.entries(filter)) {
 			this.context.app.Logger.debug3(
 				"ITEM",
 				"Setting filter for field:",
-				{ [field_name]: filter[field_name] }
+				{ [field_name]: filter_value }
 			);
 			if (!this.collection.fields[field_name]) {
 				throw new Error(
@@ -104,7 +100,7 @@ export default class ItemList<T extends Collection> {
 				);
 			}
 			const promise = this.collection.fields[field_name]
-				.getAggregationStages(this.context, filter[field_name])
+				.getAggregationStages(this.context, filter_value)
 				.then((stages) => {
 					this.aggregation_stages.push(...stages);
 					this.context.app.Logger.debug3(
@@ -212,14 +208,17 @@ export default class ItemList<T extends Collection> {
 			attachment_options
 		);
 		//can be called multiple times
-		for (const field_name of Object.keys(attachment_options)) {
-			const field = this.collection.fields[field_name];
-			if (!field) {
+		for (const [field_name] of Object.entries(attachment_options)) {
+			if (!this.collection.fields[field_name]) {
+				field_name;
 				throw new NotFound(
 					`Given field ${field_name} is not declared in collection!`
 				);
 			}
-			this.fields_with_attachments_fetched.push(field_name);
+
+			this.fields_with_attachments_fetched.push(
+				field_name as unknown as FieldNames<T>
+			);
 		}
 		this._attachments_options = attachment_options;
 		return this;
@@ -229,16 +228,18 @@ export default class ItemList<T extends Collection> {
 		const promises: Promise<any>[] = [];
 		let attachments: { [id: string]: CollectionItem<T> } = {};
 		for (const field_name of this.fields_with_attachments_fetched) {
+			const collection = this.collection;
 			this.context.app.Logger.debug2(
 				"ATTACH",
 				`Loading attachments for ${field_name}`
 			);
+
 			promises.push(
-				this.collection.fields[field_name]
+				collection.fields[field_name]
 					.getAttachments(
 						this.context,
 						items.map((item) => item.get(field_name) as unknown),
-						this._attachments_options[field_name]
+						this._attachments_options[field_name as FieldNames<T>]
 					)
 					.then((attachmentsList) => {
 						attachments = {

@@ -4,11 +4,11 @@ import Policy, {
 	PolicyDecision,
 } from "../../chip-types/policy";
 
-import Context from "../../context";
+import type Context from "../../context";
 
 import { AllowAll } from "../../datastore/allow-all";
 import { default as QueryOr } from "../../datastore/query-or";
-import { CollectionItem } from "../../main";
+import type { CollectionItem } from "../../main";
 
 export default class Or extends ReducingPolicy {
 	static type_name = "or";

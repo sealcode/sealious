@@ -3,6 +3,7 @@ import File from "./file";
 import FileField from "../app/base-chips/field-types/file";
 import { Collection, SuperContext } from "../main";
 import { withRunningApp } from "../test_utils/with-test-app";
+import { TestApp } from "../test_utils/test-utils";
 
 describe("file", () => {
 	it("should return hello world file", () => {
@@ -10,7 +11,7 @@ describe("file", () => {
 			(test_app_type) => {
 				return class extends test_app_type {
 					collections = {
-						...test_app_type.BaseCollections,
+						...TestApp.BaseCollections,
 						with_file: new (class extends Collection {
 							fields = {
 								file: new FileField(),

@@ -1,7 +1,5 @@
-import error_to_boom from "./error-to-boom";
-import { App } from "../main";
 import SealiousError from "../response/errors";
-import { Middleware } from "@koa/router";
+import type { Middleware } from "@koa/router";
 
 const error_code_map: { [type: string]: number } = {
 	validation: 403,

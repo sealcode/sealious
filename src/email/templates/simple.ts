@@ -2,7 +2,7 @@ import Message from "./../message";
 import path from "path";
 import mjml2html from "mjml";
 import assert from "assert";
-import { App } from "../../main";
+import type { App } from "../../main";
 
 export type Button = { text: string; href: string };
 

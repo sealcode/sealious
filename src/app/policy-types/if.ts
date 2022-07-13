@@ -4,10 +4,10 @@ import {
 	Policy,
 	SpecialFilter,
 	Context,
-	Queries,
 	CollectionItem,
+	Queries,
 } from "../../main";
-import { PolicyDefinition } from "../../chip-types/policy";
+import type { PolicyDefinition } from "../../chip-types/policy";
 
 export default class If extends Policy {
 	static type_name = "if";

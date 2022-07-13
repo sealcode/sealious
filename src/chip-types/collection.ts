@@ -1,19 +1,19 @@
 import Router from "@koa/router";
 import Emittery from "emittery";
-import { ActionName } from "../action";
-import App from "../app/app";
-import { EventDescription } from "../app/delegate-listener";
+import type { ActionName } from "../action";
+import type App from "../app/app";
+import type { EventDescription } from "../app/delegate-listener";
 import Public from "../app/policy-types/public";
-import Context from "../context";
+import type Context from "../context";
 import parseBody from "../http/parse-body";
-import { BadContext, FieldsError, NotFound } from "../response/errors";
-import CalculatedField from "./calculated-field";
-import CollectionItem from "./collection-item";
+import { BadContext, NotFound } from "../response/errors";
+import type CalculatedField from "./calculated-field";
+import CollectionItem, { ItemMetadata } from "./collection-item";
 import CollectionItemBody, { ItemFields } from "./collection-item-body";
-import Field from "./field";
+import type Field from "./field";
 import ItemList from "./item-list";
-import Policy from "./policy";
-import SpecialFilter from "./special-filter";
+import type Policy from "./policy";
+import type SpecialFilter from "./special-filter";
 
 export type CollectionEvent =
 	| "before:create"
@@ -81,7 +81,7 @@ export default abstract class Collection {
 
 	async create(
 		context: Context,
-		data: Partial<ItemFields<this>>
+		data: ItemFields<this>
 	): Promise<CollectionItem<this>> {
 		return this.make(data).save(context);
 	}
@@ -119,14 +119,19 @@ export default abstract class Collection {
 		const results = (await context.app.Datastore.aggregate(this.name, [
 			{ $match: { id } },
 			...(await policy.getRestrictingQuery(context)).toPipeline(),
-		])) as ItemFields<this>[];
+		])) as Record<string, unknown>[];
 		if (!results.length) {
 			throw new NotFound(`${this.name}: id ${id} not found`);
 		}
 		const ret = new CollectionItem(
 			this,
-			new CollectionItemBody(this, {}, {}, results[0]),
-			results[0]._metadata,
+			new CollectionItemBody(
+				this,
+				{},
+				{},
+				results[0] as unknown as ItemFields<this>
+			),
+			results[0]._metadata as ItemMetadata,
 			id
 		);
 		await ret.decode(context);
@@ -206,15 +211,21 @@ export default abstract class Collection {
 		return new ItemList<this>(this, context);
 	}
 
-	createFromDB(document: ItemFields<this>): CollectionItem<this> {
+	createFromDB(document: Record<string, unknown>): CollectionItem<this> {
 		const id = document?.id;
 		delete document.id;
 		delete document._id;
+
 		return new CollectionItem<this>(
 			this,
-			new CollectionItemBody(this, {}, {}, document),
-			document._metadata,
-			id
+			new CollectionItemBody(
+				this,
+				{},
+				{},
+				document as unknown as ItemFields<this>
+			),
+			document._metadata as ItemMetadata,
+			id as string
 		);
 	}
 

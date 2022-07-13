@@ -1,4 +1,4 @@
-import QueryStage from "./query-stage";
+import type QueryStage from "./query-stage";
 import {
 	ComplexLookupBodyInput,
 	default as QueryStep,

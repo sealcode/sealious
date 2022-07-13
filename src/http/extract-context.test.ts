@@ -1,7 +1,7 @@
 import assert from "assert";
 import { withRunningApp } from "../test_utils/with-test-app";
 import { assertThrowsAsync } from "../test_utils/assert-throws-async";
-import { AxiosError } from "axios";
+import type { AxiosError } from "axios";
 
 describe("Extract context", () => {
 	it("Behaves correctly when the session cookie is missing", async () =>

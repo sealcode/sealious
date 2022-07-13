@@ -1,8 +1,5 @@
 import { Field, Context, File } from "../../../main";
-import { FileDBEntry } from "../../../data-structures/file";
-
-type FileOutput = string | File;
-type FileFormat = "internal" | "url";
+import type { FileDBEntry } from "../../../data-structures/file";
 
 export type FileStorageFormat = FileDBEntry;
 

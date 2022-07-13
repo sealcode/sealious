@@ -1,16 +1,19 @@
 import * as assert from "assert";
 
-import { withRunningApp } from "../../../test_utils/with-test-app";
+import {
+	TestAppConstructor,
+	withRunningApp,
+} from "../../../test_utils/with-test-app";
 import { Collection, FieldTypes } from "../../../main";
 import Matches from "./matches";
-import { TestAppType } from "../../../test_utils/test-app";
-import { SerializedItemBody } from "../../../chip-types/collection-item";
-import MockRestApi from "../../../test_utils/rest-api";
+import type { SerializedItemBody } from "../../../chip-types/collection-item";
+import type MockRestApi from "../../../test_utils/rest-api";
+import { TestApp } from "../../../test_utils/test-app";
 
-function extend(t: TestAppType) {
+function extend(t: TestAppConstructor) {
 	return class extends t {
 		collections = {
-			...t.BaseCollections,
+			...TestApp.BaseCollections,
 			numbers: new (class extends Collection {
 				fields = {
 					number: new FieldTypes.Int(),

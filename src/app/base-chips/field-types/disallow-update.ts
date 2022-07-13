@@ -1,4 +1,5 @@
-import { HybridField, Field, Context, SuperContext } from "../../../main";
+import { Field, Context } from "../../../main";
+import { HybridField } from "../../../chip-types/field";
 
 export default class DisallowUpdate<T extends Field> extends HybridField<T> {
 	typeName = "disallow-update";
