@@ -23,9 +23,8 @@ const SecureHasher = {
 		return `${iterations}.${key_length}.${salt}.${key.toString("hex")}`;
 	},
 	async matches(value: crypto.BinaryLike, hash_with_params: string) {
-		const [iterations, key_length, salt, hash] = hash_with_params.split(
-			"."
-		);
+		const [iterations, key_length, salt, hash] =
+			hash_with_params.split(".");
 
 		const key = await pbkdf2(
 			value,

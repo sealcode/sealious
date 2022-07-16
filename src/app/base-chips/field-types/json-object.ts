@@ -43,9 +43,8 @@ export default class JsonObject extends Field {
 		);
 		for (let prop_path of Object.keys(flattened_filter)) {
 			const filter_entry = flattened_filter[prop_path];
-			flattened_filter[prop_path] = getQueryWithProperOperator(
-				filter_entry
-			);
+			flattened_filter[prop_path] =
+				getQueryWithProperOperator(filter_entry);
 		}
 		return [{ $match: flattened_filter }];
 	}
