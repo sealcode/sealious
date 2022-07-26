@@ -359,7 +359,7 @@ void app.start().then(async () => {
 lang=typescript
 import { EmailTemplates } from "sealious";
 
-const message = await SimpleTemplate(ctx.$app, {
+const message = await EmailTemplates.Simple(ctx.$app, {
   text: "Click this link to finish registration:",
   subject: "Rejestracja w zmagazynu.pl",
   to: ctx.$body.email as string,
