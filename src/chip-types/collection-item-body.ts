@@ -1,6 +1,6 @@
 import type Collection from "./collection";
 import type { Context, ExtractInput } from "../main";
-import type { ExtractOutput, RequiredField } from "./field";
+import type { FieldOutput, RequiredField } from "./field";
 
 export type FieldNames<T extends Collection> = keyof T["fields"] & string;
 
@@ -20,7 +20,7 @@ export type ItemFields<T extends Collection> = RequiredItemFields<T> &
 	Partial<NonrequiredItemFields<T>>;
 
 export type ItemFieldsOutput<T extends Collection> = {
-	[field in FieldNames<T>]: ExtractOutput<T["fields"][field]>;
+	[field in FieldNames<T>]: FieldOutput<T["fields"][field]>;
 };
 
 export default class CollectionItemBody<T extends Collection = any> {

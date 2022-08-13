@@ -1,20 +1,20 @@
 import { Field, Context, Policy, App, ExtractStorage } from "../../../main";
 import {
 	ExtractParams,
-	ExtractOutput,
+	FieldOutput,
 	HybridField,
 } from "../../../chip-types/field";
 
 type Params<T extends Field> = {
 	target_policies: { [key in "show" | "edit"]: Policy };
-	value_when_not_allowed: ExtractOutput<T>;
+	value_when_not_allowed: FieldOutput<T>;
 };
 
 export default class ControlAccess<T extends Field> extends HybridField<T> {
 	typeName = "control-access";
 	edit_strategy: Policy;
 	show_strategy: Policy;
-	value_when_not_allowed: ExtractOutput<T>;
+	value_when_not_allowed: FieldOutput<T>;
 	app: App;
 
 	constructor(base_field: T, params: Params<T>) {
@@ -42,7 +42,7 @@ export default class ControlAccess<T extends Field> extends HybridField<T> {
 	async decode(
 		context: Context,
 		value_in_db: ExtractStorage<T>,
-		old_value: ExtractOutput<T>,
+		old_value: FieldOutput<T>,
 		format_params: ExtractParams<T>
 	) {
 		if (!context.is_super) {

@@ -1,4 +1,4 @@
-import type { Field, ExtractOutput, App } from "../../../main";
+import type { Field, FieldOutput, App } from "../../../main";
 import { HybridField } from "../../../chip-types/field";
 /*
 
@@ -8,7 +8,7 @@ todo: make the deriving_fn more type-safe by reading the types of the fields?
 
 export type DerivingFn<T extends Field> = (
 	...args: any[]
-) => Promise<ExtractOutput<T>>;
+) => Promise<FieldOutput<T>>;
 
 export default class DerivedValue<T extends Field> extends HybridField<T> {
 	typeName = "derived-value";

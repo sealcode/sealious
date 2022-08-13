@@ -14,9 +14,7 @@ export type ExtractParams<F extends Field> = Parameters<F["setParams"]>[0];
 
 export type ExtractInput<F extends Field> = Parameters<F["encode"]>[1];
 
-export type ExtractOutput<F extends Field> = Depromisify<
-	ReturnType<F["decode"]>
->;
+export type FieldOutput<F extends Field> = Depromisify<ReturnType<F["decode"]>>;
 
 export type ExtractStorage<F extends Field> = Depromisify<
 	ReturnType<F["encode"]>
