@@ -1,7 +1,7 @@
 import Router from "@koa/router";
 import Emittery from "emittery";
 import type { ActionName } from "../action";
-import type App from "../app/app";
+import type { App } from "../app/app";
 import type { EventDescription } from "../app/delegate-listener";
 import Public from "../app/policy-types/public";
 import type Context from "../context";

@@ -33,7 +33,7 @@ export type AppEvents = "starting" | "started" | "stopping" | "stopped";
 export type Translation = string | ((...params: any[]) => string);
 
 /** The heart of your, well app. It all starts with  `new App(...)` */
-abstract class App {
+export abstract class App {
 	/** The current status of the app */
 	status: "stopped" | "running" | "starting" | "stopping";
 	emitter = new Emittery();
@@ -276,5 +276,3 @@ abstract class App {
 		}
 	}
 }
-
-export default App;

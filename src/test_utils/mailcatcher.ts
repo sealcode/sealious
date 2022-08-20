@@ -2,7 +2,7 @@
 
 import axios from "axios";
 
-import type App from "../app/app";
+import type { App } from "../app/app";
 import asyncForEach from "../utils/async-foreach";
 
 export type MailcatcherMessage = {

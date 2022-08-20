@@ -1,4 +1,4 @@
-import type App from "./app/app";
+import type { App } from "./app/app";
 import type { CollectionItem } from "./main";
 
 export default class Context {

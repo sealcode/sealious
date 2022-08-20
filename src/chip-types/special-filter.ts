@@ -1,4 +1,4 @@
-import type App from "../app/app";
+import type { App } from "../app/app";
 import type Query from "../datastore/query";
 import type { QueryStage } from "../datastore/query";
 

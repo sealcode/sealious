@@ -4,7 +4,7 @@ export * as Policies from "./app/policy-types/policy-types";
 export { default as Collection } from "./chip-types/collection";
 export { default as Field, FieldOutput } from "./chip-types/field";
 export * as FieldTypes from "./app/base-chips/field-types/field-types";
-export { default as App } from "./app/app";
+export * from "./app/app";
 export * as SpecialFilters from "./app/base-chips/special_filters/special-filters";
 export { default as Collections } from "./app/collections/collections";
 export { default as Config } from "./app/config";

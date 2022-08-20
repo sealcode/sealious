@@ -1,4 +1,4 @@
-import type App from "../app/app";
+import type { App } from "../app/app";
 import type Context from "../context";
 import type { CollectionItem } from "../main";
 import type Collection from "./collection";
