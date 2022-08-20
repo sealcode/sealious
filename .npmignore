@@ -24,3 +24,5 @@ coverage.html
 .ash_history
 node_modules*
 .nyc_output
+.log
+.idea
