@@ -27,3 +27,4 @@ node_modules*
 .log
 .idea
 src
+!lib/src
