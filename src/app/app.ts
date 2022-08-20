@@ -30,6 +30,8 @@ const default_config = locreq("default_config.json") as Config;
 
 export type AppEvents = "starting" | "started" | "stopping" | "stopped";
 
+export type Translation = string | ((...params: any[]) => string);
+
 /** The heart of your, well app. It all starts with  `new App(...)` */
 abstract class App {
 	/** The current status of the app */
@@ -41,6 +43,8 @@ abstract class App {
 
 	/** The manifest assigned to this app. Stores things like the app name, domain, logo*/
 	abstract manifest: ManifestData;
+
+	strings: Record<string, Translation> = {};
 
 	/** The function that's used to generate translated versions of phrases */
 	i18n: (phrase_id: string, params?: unknown[]) => string;
@@ -254,6 +258,22 @@ abstract class App {
 		);
 
 		router.get("/assets/logo", logo);
+	}
+
+	getString(
+		key: string,
+		params: any[],
+		default_translation: Translation
+	): string {
+		let value = this.strings[key];
+		if (!value && value !== "") {
+			value = default_translation;
+		}
+		if (typeof value == "string") {
+			return value;
+		} else {
+			return value(...params);
+		}
 	}
 }
 
