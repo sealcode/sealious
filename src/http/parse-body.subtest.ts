@@ -2,11 +2,14 @@ import assert from "assert";
 import {
 	TestAppConstructor,
 	withRunningApp,
+	withStoppedApp,
 } from "../test_utils/with-test-app";
 import Field from "../chip-types/field";
 import { Collection, FieldTypes } from "../main";
 import asyncRequest from "../test_utils/async-request";
 import { TestApp } from "../test_utils/test-utils";
+import axios from "axios";
+import parseBody from "./parse-body";
 
 function extend(t: TestAppConstructor<TestApp>) {
 	class ArrayOfObjects extends Field {
@@ -49,7 +52,7 @@ function extend(t: TestAppConstructor<TestApp>) {
 	};
 }
 
-describe("get-request-body", () => {
+describe("parseBody", () => {
 	it("handles complex data sent as multipart/form-data", async () => {
 		await withRunningApp(extend, async ({ port }) => {
 			// PNG file is empty but it doesnt matter for the test
@@ -75,6 +78,29 @@ describe("get-request-body", () => {
 			};
 			assert.strict.deepStrictEqual(body, [["Foo", { Bar: "baz" }]]);
 			assert.deepStrictEqual(source?.filename, "test.png");
+		});
+	});
+
+	it("includes the url query params as parts of body, if they don't overlap", async () => {
+		await withStoppedApp(extend, async (test) => {
+			test.app.HTTPServer.router.post(
+				"/echo-data",
+				parseBody(),
+				async (ctx) => {
+					ctx.body = ctx.$body;
+				}
+			);
+
+			await test.app.start();
+			const response = await test.rest_api.post(
+				"/echo-data?token=abc&json_data=ignore",
+				{
+					json_data: "123",
+				}
+			);
+			assert.strictEqual(response.json_data, "123");
+			assert.strictEqual(response.token, "abc");
+			await test.app.stop();
 		});
 	});
 });

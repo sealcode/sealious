@@ -40,6 +40,14 @@ export default function parseBody(): Middleware {
 			}
 		}
 
+		for (const [key, value] of Object.entries(ctx.query)) {
+			// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+			if (ctx.request.body[key] === undefined) {
+				// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+				ctx.request.body[key] = value;
+			}
+		}
+
 		await Promise.all(promises);
 		ctx.$app.Logger.info("REQUEST", "Parsed body", ctx.request.body);
 		ctx.$body = ctx.request.body;
