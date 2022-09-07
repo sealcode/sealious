@@ -2,7 +2,6 @@ import Router from "@koa/router";
 import Emittery from "emittery";
 import type { ActionName } from "../action";
 import type { App } from "../app/app";
-import type { EventDescription } from "../app/event-description";
 import Public from "../app/policy-types/public";
 import type Context from "../context";
 import parseBody from "../http/parse-body";
@@ -26,7 +25,7 @@ export type CollectionEvent =
 export type CollectionCallback = ([context, item, event]: [
 	Context,
 	CollectionItem,
-	EventDescription
+	CollectionEvent
 ]) => Promise<void>;
 
 export type CollectionValidationResult = { error: string; fields: string[] }[];

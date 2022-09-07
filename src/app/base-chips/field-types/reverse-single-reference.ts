@@ -1,7 +1,7 @@
 import { Field, Context } from "../../../main";
 import ItemList, { AttachmentOptions } from "../../../chip-types/item-list";
 import { CachedValue } from "./field-types";
-import { EventDescription } from "../../event-description";
+import { CollectionRefreshCondition } from "../../event-description";
 
 class ListOfIDs extends Field {
 	typeName: "list-of-ids";
@@ -23,12 +23,10 @@ export default class ReverseSingleReference extends CachedValue<ListOfIDs> {
 	}) {
 		super(new ListOfIDs(), {
 			refresh_on: [
-				{
-					event: new EventDescription(
-						params.referencing_collection,
-						"after:create"
-					),
-					resource_id_getter: async (_, item) => {
+				new CollectionRefreshCondition(
+					params.referencing_collection,
+					"after:create",
+					async ([, item]) => {
 						const ret = [
 							item.get(params.referencing_field) as string,
 						];
@@ -38,14 +36,12 @@ export default class ReverseSingleReference extends CachedValue<ListOfIDs> {
 							{ ret, item }
 						);
 						return ret;
-					},
-				},
-				{
-					event: new EventDescription(
-						params.referencing_collection,
-						"after:remove"
-					),
-					resource_id_getter: async (_, item) => {
+					}
+				),
+				new CollectionRefreshCondition(
+					params.referencing_collection,
+					"after:remove",
+					async ([, item]) => {
 						const deleted_id = item.id;
 						const affected = await this.app.Datastore.find(
 							this.collection.name,
@@ -62,14 +58,12 @@ export default class ReverseSingleReference extends CachedValue<ListOfIDs> {
 							{ ret }
 						);
 						return ret;
-					},
-				},
-				{
-					event: new EventDescription(
-						params.referencing_collection,
-						"after:edit"
-					),
-					resource_id_getter: async (_, item) => {
+					}
+				),
+				new CollectionRefreshCondition(
+					params.referencing_collection,
+					"after:edit",
+					async ([, item]) => {
 						if (
 							!item.body.changed_fields.has(
 								this.referencing_field
@@ -107,8 +101,8 @@ export default class ReverseSingleReference extends CachedValue<ListOfIDs> {
 							{ affected_ids }
 						);
 						return affected_ids;
-					},
-				},
+					}
+				),
 			],
 			get_value: async (context: Context, resource_id: string) => {
 				context.app.Logger.debug2(

@@ -10,8 +10,6 @@ import { getDateTime } from "../../../utils/get-datetime";
 import { App, Context, Collection, FieldTypes, Field } from "../../../main";
 import Bluebird from "bluebird";
 import type { ItemListResult } from "../../../chip-types/item-list";
-import type { RefreshCondition } from "./cached-value";
-import { EventDescription } from "../../event-description";
 import type MockRestApi from "../../../test_utils/rest-api";
 import type {
 	CollectionResponse,
@@ -19,6 +17,7 @@ import type {
 	ItemResponse,
 } from "../../../test_utils/rest-api";
 import { TestApp } from "../../../test_utils/test-app";
+import { CollectionRefreshCondition } from "../../event-description";
 
 const action_to_status: { [name: string]: string } = {
 	create: "created",
@@ -295,16 +294,11 @@ describe("cached-value", () => {
 											);
 										},
 										refresh_on: [
-											{
-												event: new EventDescription(
-													"happy-numbers",
-													"after:create"
-												),
-												resource_id_getter: async (
-													_,
-													item
-												) => [item.id],
-											},
+											new CollectionRefreshCondition(
+												"happy-numbers",
+												"after:create",
+												async ([, item]) => [item.id]
+											),
 										],
 										initial_value: 0,
 									}

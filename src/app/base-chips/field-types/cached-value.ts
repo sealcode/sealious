@@ -1,18 +1,12 @@
-import type { App, Field, Context, CollectionItem } from "../../../main";
+import type { App, Field, Context } from "../../../main";
 import HybridField from "../../../chip-types/field-hybrid";
 import ItemList from "../../../chip-types/item-list";
-import type { EventDescription } from "../../event-description";
 import { BadContext } from "../../../response/errors";
 import isEmpty from "../../../utils/is-empty";
-
-export type RefreshCondition = {
-	event: EventDescription;
-	resource_id_getter: (
-		context: Context,
-		item: CollectionItem,
-		event: EventDescription
-	) => Promise<string[]>;
-};
+import {
+	CollectionRefreshCondition,
+	RefreshCondition,
+} from "../../event-description";
 
 type GetValue<T extends Field> = (
 	context: Context,
@@ -42,27 +36,31 @@ export default class CachedValue<T extends Field> extends HybridField<T> {
 		this.initial_value = params.initial_value;
 	}
 
-	async init(app: App) {
+	async init(app: App): Promise<void> {
 		await super.init(app);
 		await this.virtual_field.init(app);
 		this.checkForPossibleRecursiveEdits();
 
-		const create_action = this.refresh_on.find(({ event }) =>
-			event.event_name.includes("create")
-		);
+		const create_action = this.refresh_on.find((condition) => {
+			return (
+				condition instanceof CollectionRefreshCondition &&
+				condition.event_names.some((name) => name.includes("create"))
+			);
+		});
 
-		if (create_action) {
+		if (
+			create_action &&
+			create_action instanceof CollectionRefreshCondition
+		) {
 			app.on("started", () =>
 				this.refresh_outdated_cache_values(create_action)
 			);
 		}
 
-		for (let { event, resource_id_getter } of this.refresh_on) {
-			event.attachTo(app, async ([context, item, event]) => {
-				const cache_resource_ids = await resource_id_getter(
-					context,
-					item,
-					event
+		for (const condition of this.refresh_on) {
+			condition.attachTo(app, async (arg) => {
+				const cache_resource_ids = await condition.resource_id_getter(
+					arg
 				);
 
 				if (!Array.isArray(cache_resource_ids)) {
@@ -77,6 +75,7 @@ export default class CachedValue<T extends Field> extends HybridField<T> {
 					cache_resource_ids,
 				});
 				const promises = [];
+				const context = arg[0];
 				for (const cache_resource_id of cache_resource_ids) {
 					promises.push(
 						this.get_value(context, cache_resource_id).then(
@@ -95,9 +94,11 @@ export default class CachedValue<T extends Field> extends HybridField<T> {
 		}
 	}
 
-	checkForPossibleRecursiveEdits() {
+	checkForPossibleRecursiveEdits(): void {
 		const doesAnyMatches = this.refresh_on.some(
-			({ event }) => event.collection_name === this.collection.name
+			(condition) =>
+				condition instanceof CollectionRefreshCondition &&
+				condition.collection_name === this.collection.name
 		);
 		if (doesAnyMatches) {
 			throw new Error(
@@ -110,8 +111,10 @@ export default class CachedValue<T extends Field> extends HybridField<T> {
 		}
 	}
 
-	private async refresh_outdated_cache_values(condition: RefreshCondition) {
-		const referenced_collection_name = condition.event.collection_name;
+	private async refresh_outdated_cache_values(
+		condition: CollectionRefreshCondition
+	) {
+		const referenced_collection_name = condition.collection_name;
 		const response = await new ItemList(
 			this.app.collections[referenced_collection_name],
 			new this.app.SuperContext()
@@ -151,7 +154,7 @@ export default class CachedValue<T extends Field> extends HybridField<T> {
 		}
 
 		const context = new this.app.SuperContext();
-		for (let resource of outdated_resources) {
+		for (const resource of outdated_resources) {
 			const value = await this.get_value(context, resource.id);
 			const cache_value = await this.encode(context, value);
 			this.app.Logger.debug3(
