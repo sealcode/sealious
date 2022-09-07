@@ -1,9 +1,9 @@
 # Cached value field
 
-This field is useful when a certain property of the item is expensive to
-calculate ut changes rarely, or when it depends on fields from other resources,
-but needs to be stored in the database and not calculated on-the-fly so it can
-be efficiently filtered by.
+This field is useful when a certain property of the item is expensive
+to calculate but changes rarely, or when it depends on fields from
+other resources, but needs to be stored in the database and not
+calculated on-the-fly so it can be efficiently filtered by.
 
 ## Constructor
 
@@ -20,13 +20,28 @@ will be determined by `cache_settings`. `cache_settings` is an object with the
 following keys:
 
 -   `refresh_on`: an array of `RefreshCondition` objects (described below)
--   `get_value`: a function that calculates a new value for this field, based on the received event (see `RefreshCondition`). The function takes `context` and `event` as arguments and has to return data that is sotrable within `child_field`.
--   `initial_value`: the value this field should have right when it's created for a new resource.
+
+- `get_value`: a function that calculates a new value for this field,
+    based on the received event (see `RefreshCondition`). The function
+    takes `context` and `event` as arguments and has to return data
+    that is sotrable within `child_field`.
+
+- `initial_value`: the value this field should have right when it's
+    created for a new resource.
 
 `RefreshCondition` has the following structure:
 
--   `event`: instance of Sealious.EventDescription. Example: `new Sealious.EventDescription("users", "after:create")` will make the refresh condition react every time a new user is created.
--   `resource_id_getter`: a function that is called when the `event` is triggered. The function has to return the ID (as `string` or a `Promise<string>`) of the resource whose cached_value needs to be recalculated. The function is given `context`, `item` (the item that triggered the event) and `item_id` (that points to the item which is this new value will be added to)
+- `event`: instance of Sealious.EventDescription. Example: `new
+    Sealious.EventDescription("users", "after:create")` will make the
+    refresh condition react every time a new user is created.
+
+- `resource_id_getter`: a function that is called when the `event` is
+    triggered. The function has to return the ID (as `string` or a
+    `Promise<string>`) of the resource whose cached_value needs to be
+    recalculated. The function is given `context`, `item` (the item
+    that triggered the event) and `item_id` (that points to the item
+    which is this new value will be added to)
+
 
 ## Example
 
