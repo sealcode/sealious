@@ -11,7 +11,7 @@ import { App, Context, Collection, FieldTypes, Field } from "../../../main";
 import Bluebird from "bluebird";
 import type { ItemListResult } from "../../../chip-types/item-list";
 import type { RefreshCondition } from "./cached-value";
-import { EventDescription } from "../../delegate-listener";
+import { EventDescription } from "../../event-description";
 import type MockRestApi from "../../../test_utils/rest-api";
 import type {
 	CollectionResponse,

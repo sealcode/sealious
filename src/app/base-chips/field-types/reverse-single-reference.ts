@@ -1,7 +1,7 @@
 import { Field, Context } from "../../../main";
 import ItemList, { AttachmentOptions } from "../../../chip-types/item-list";
 import { CachedValue } from "./field-types";
-import { EventDescription } from "../../delegate-listener";
+import { EventDescription } from "../../event-description";
 
 class ListOfIDs extends Field {
 	typeName: "list-of-ids";

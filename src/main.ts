@@ -9,7 +9,7 @@ export * as SpecialFilters from "./app/base-chips/special_filters/special-filter
 export { default as Collections } from "./app/collections/collections";
 export { default as Config } from "./app/config";
 export { default as ConfigManager } from "./app/config-manager";
-export { EventDescription } from "./app/delegate-listener";
+export { EventDescription } from "./app/event-description";
 export { default as Logger } from "./app/logger";
 export { default as Manifest } from "./app/manifest";
 export { default as MetadataFactory } from "./app/metadata";
