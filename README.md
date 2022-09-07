@@ -6,7 +6,34 @@ database schema and policies.
 
 All development is handled on [Sealcode's Phabricator](https://hub.sealcode.org/source/sealious/). A [read-only mirror is stored on Github](https://github.com/sealcode/sealious).
 
-## Example
+## Quick links
+
+### Examples
+
+It's best to learn by example. Here are some applications written with the
+current version of Sealious:
+
+-   [Sealious Playground](https://hub.sealcode.org/diffusion/PLAY/) - simple
+    TODO app written in Sealious and Hotwire. Contains docker setup for mongo,
+    linting, typescript etc. Good starting point for a new app.
+
+### References
+
+-   [Creating collections](https://hub.sealcode.org/source/sealious/browse/dev/src/chip-types/creating-collections.remarkup)
+-   [List of all endpoints automatically created by
+    Sealious](https://hub.sealcode.org/source/sealious/browse/dev/endpoints.remarkup)
+-   [List of Built-in field
+    types](https://hub.sealcode.org/source/sealious/browse/dev/src/app/base-chips/field-types/field-types.remarkup)
+-   [List of build-in Policies](https://hub.sealcode.org/source/sealious/browse/dev/src/app/policy-types/policy-types.remarkup)
+-   [ORM style accessors to database](https://hub.sealcode.org/source/sealious/browse/dev/orm.remarkup)
+-   [Theory and practice behind Context](https://hub.sealcode.org/source/sealious/browse/dev/context.remarkup)
+-   [Creating custom
+    field-types](https://hub.sealcode.org/source/sealious/browse/dev/src/app/base-chips/field-types/creating-field-types.remarkup)
+-   [Creating custom Policy
+    types](https://hub.sealcode.org/source/sealious/browse/dev/src/app/policy-types/creating-policy-types.remarkup)
+-   [How User Roles work in Sealious](https://hub.sealcode.org/source/sealious/browse/dev/roles.remarkup)
+
+## Example app
 
 Install sealious with `npm install --save sealious`. Then, in your index.ts:
 
@@ -77,31 +104,6 @@ const tasks = app.collections.tasks.list(new Context(app)).fetch()
 To learn more about the ORM methods, see [./orm.remarkup doc file](https://hub.sealcode.org/source/sealious/browse/dev/orm.remarkup).
 
 ## Learning Resources
-
-### Examples
-
-It's best to learn by example. Here are some applications written with the
-current version of Sealious:
-
--   [Sealious Playground](https://hub.sealcode.org/diffusion/PLAY/) - simple
-    TODO app written in Sealious and Hotwire. Contains docker setup for mongo,
-    linting, typescript etc. Good starting point for a new app.
-
-### References
-
--   [Creating collections](https://hub.sealcode.org/source/sealious/browse/dev/src/chip-types/creating-collections.remarkup)
--   [List of all endpoints automatically created by
-    Sealious](https://hub.sealcode.org/source/sealious/browse/dev/endpoints.remarkup)
--   [List of Built-in field
-    types](https://hub.sealcode.org/source/sealious/browse/dev/src/app/base-chips/field-types/field-types.remarkup)
--   [List of build-in Policies](https://hub.sealcode.org/source/sealious/browse/dev/src/app/policy-types/policy-types.remarkup)
--   [ORM style accessors to database](https://hub.sealcode.org/source/sealious/browse/dev/orm.remarkup)
--   [Theory and practice behind Context](https://hub.sealcode.org/source/sealious/browse/dev/context.remarkup)
--   [Creating custom
-    field-types](https://hub.sealcode.org/source/sealious/browse/dev/src/app/base-chips/field-types/creating-field-types.remarkup)
--   [Creating custom Policy
-    types](https://hub.sealcode.org/source/sealious/browse/dev/src/app/policy-types/creating-policy-types.remarkup)
--   [How User Roles work in Sealious](https://hub.sealcode.org/source/sealious/browse/dev/roles.remarkup)
 
 ### FAQ
 
