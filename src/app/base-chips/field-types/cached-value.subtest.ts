@@ -7,7 +7,14 @@ import {
 } from "../../../test_utils/with-test-app";
 import { assertThrowsAsync } from "../../../test_utils/assert-throws-async";
 import { getDateTime } from "../../../utils/get-datetime";
-import { App, Context, Collection, FieldTypes, Field } from "../../../main";
+import {
+	App,
+	Context,
+	Collection,
+	FieldTypes,
+	Field,
+	SuperContext,
+} from "../../../main";
 import Bluebird from "bluebird";
 import type { ItemListResult } from "../../../chip-types/item-list";
 import type MockRestApi from "../../../test_utils/rest-api";
@@ -17,7 +24,14 @@ import type {
 	ItemResponse,
 } from "../../../test_utils/rest-api";
 import { TestApp } from "../../../test_utils/test-app";
-import { CollectionRefreshCondition } from "../../event-description";
+import {
+	ClockEventDescription,
+	CollectionRefreshCondition,
+	RefreshCondition,
+} from "../../event-description";
+import CachedValue from "./cached-value";
+import Int from "./int";
+import { sleep } from "../../../test_utils/sleep";
 
 const action_to_status: { [name: string]: string } = {
 	create: "created",
@@ -337,20 +351,15 @@ describe("cached-value", () => {
 									new FieldTypes.Int({ min: 0 }),
 									{
 										refresh_on: [
-											{
-												event: new EventDescription(
-													"who-likes-who",
-													"after:create"
-												),
-												resource_id_getter: async (
-													_,
-													item
-												) => [
+											new CollectionRefreshCondition(
+												"who-likes-who",
+												"after:create",
+												async ([, item]) => [
 													item.get(
 														"likes_this_person"
 													) as string,
-												],
-											},
+												]
+											),
 										],
 										get_value: async function (
 											context,
@@ -403,11 +412,13 @@ describe("cached-value", () => {
 					}
 				);
 				const response = await rest_api.get(
-					`/api/v1/collections/people/${alice.id}`
+					`/api/v1/collections/people/${alice.id as string}`
 				);
 				assert.strictEqual(response.items[0].popularity, 1);
 				await rest_api.delete(
-					`/api/v1/collections/who-likes-who/${friendship.id}`
+					`/api/v1/collections/who-likes-who/${
+						friendship.id as string
+					}`
 				);
 			}
 		);
@@ -430,16 +441,11 @@ describe("cached-value", () => {
 									new FieldTypes.SingleReference("jobs"),
 									{
 										refresh_on: [
-											{
-												event: new EventDescription(
-													"jobs",
-													"after:edit"
-												),
-												resource_id_getter: async (
-													_,
-													item
-												) => [item.id],
-											},
+											new CollectionRefreshCondition(
+												"jobs",
+												"after:edit",
+												async ([, item]) => [item.id]
+											),
 										],
 										get_value: async function (
 											context,
@@ -486,16 +492,13 @@ describe("cached-value", () => {
 									new FieldTypes.SingleReference("jobs"),
 									{
 										refresh_on: [
-											{
-												event: new EventDescription(
-													"jobs",
-													"after:create"
-												),
-												resource_id_getter: async (
-													_,
-													item
-												) => [item.get("hasjob")],
-											},
+											new CollectionRefreshCondition(
+												"jobs",
+												"after:create",
+												async ([, item]) => [
+													item.get("hasjob"),
+												]
+											),
 										],
 										get_value: async function (
 											context,
@@ -528,22 +531,74 @@ describe("cached-value", () => {
 				assert.strictEqual(hasjob_after.get("job"), job.id);
 			}
 		));
+
+	it("handles clock-based tasks", () =>
+		withStoppedApp(
+			(app_class) => {
+				const count = (function* () {
+					yield 1;
+					while (true) {
+						yield 2;
+					}
+				})();
+				return class extends app_class {
+					collections = {
+						...App.BaseCollections,
+						tick_tock: new (class TickTock extends Collection {
+							fields = {
+								seconds: new CachedValue(new Int(), {
+									initial_value: 0,
+									refresh_on: [
+										new ClockEventDescription(
+											"* * * * * *",
+											async ([context]) => {
+												const { items } =
+													await context.app.collections.tick_tock
+														.list(context)
+														.fetch();
+												return items.map((i) => i.id);
+											},
+											(app: App) =>
+												new SuperContext(
+													app,
+													Date.now()
+												)
+										),
+									],
+									get_value: async (item) => {
+										return count.next().value;
+									},
+								}),
+							};
+						})(),
+					};
+				};
+			},
+			async (test) => {
+				await test.app.start();
+				await test.app.collections.tick_tock.suCreate({});
+				await sleep(3000);
+				const {
+					items: [item],
+				} = await test.app.collections.tick_tock.suList().fetch();
+				assert.strictEqual(item.get("seconds"), 2);
+				await test.app.stop();
+			}
+		));
 });
 
 function make_refresh_on(): RefreshCondition[] {
 	return [
-		{
-			event: new EventDescription("actions", "after:create"),
-			resource_id_getter: async (_, item) => [
-				item.get("account") as string,
-			],
-		},
-		{
-			event: new EventDescription("actions", "after:edit"),
-			resource_id_getter: async (_, resource) => [
-				resource.get("account") as string,
-			],
-		},
+		new CollectionRefreshCondition(
+			"actions",
+			"after:create",
+			async ([, item]) => [item.get("account") as string]
+		),
+		new CollectionRefreshCondition(
+			"actions",
+			"after:edit",
+			async ([, resource]) => [resource.get("account") as string]
+		),
 	];
 }
 

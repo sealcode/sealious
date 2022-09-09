@@ -5,6 +5,9 @@ to calculate but changes rarely, or when it depends on fields from
 other resources, but needs to be stored in the database and not
 calculated on-the-fly so it can be efficiently filtered by.
 
+The new value can be calculated either on some collection event, or on
+a cron-like clock basis.
+
 ## Constructor
 
 The basic synnopsis is:
@@ -19,7 +22,7 @@ the field created by above constructor would have the structure of given
 will be determined by `cache_settings`. `cache_settings` is an object with the
 following keys:
 
--   `refresh_on`: an array of `RefreshCondition` objects (described below)
+- `refresh_on`: an array of `RefreshCondition` objects (described below)
 
 - `get_value`: a function that calculates a new value for this field,
     based on the received event (see `RefreshCondition`). The function
@@ -56,45 +59,81 @@ deleting `who-likes-who`, but the below code is only for demonstrative purposes.
 ```
 lang=typescript
 const app = new (class extends App {
-    config = {
-        /*...*/
-    };
-    manifest = {
-        /*...*/
-    };
-    collections = {
-        ...App.BaseCollections,
-        people: new (class extends Collection {
-            fields = {
-                name: new FieldTypes.Text(),
-                popularity: new FieldTypes.CachedValue(new FieldTypes.Int({ min: 0 }), {
-                    refresh_on: [
-                        {
-                            event: new EventDescription("who-likes-who", "after:create"),
-                            resource_id_getter: async (_, item) => [
-                                item.get("likes_this_person") as string,
-                            ],
-                        },
-                    ],
-                    get_value: async function (context, item_id) {
-                        const is_liked_by = (await context.app.collections["who-likes-who"]
-                            .suList()
-                            .filter({
-                                likes_this_person: item_id,
-                            })
-                            .fetch()) as ItemListResult<any>;
-                        return is_liked_by.items.length;
-                    },
-                    initial_value: 0,
-                }),
-            };
-        })(),
-        "who-likes-who": new (class extends Collection {
-            fields = {
-                this_person: new FieldTypes.SingleReference("people"),
-                likes_this_person: new FieldTypes.SingleReference("people"),
-            };
-        })(),
-    };
+  config = {
+    /*...*/
+  };
+  manifest = {
+    /*...*/
+  };
+  collections = {
+    ...App.BaseCollections,
+    people: new (class extends Collection {
+      fields = {
+        name: new FieldTypes.Text(),
+        popularity: new FieldTypes.CachedValue(new FieldTypes.Int({ min: 0 }), {
+          refresh_on: [
+            new CollectionRefreshCondition(
+              "who-likes-who",
+              "after:create",
+              ([, item]) => [item.get("likes_this_person") as string]
+            ),
+          ],
+          get_value: async function (context, item_id) {
+            const is_liked_by = (await context.app.collections["who-likes-who"]
+              .suList()
+              .filter({
+                likes_this_person: item_id,
+              })
+              .fetch()) as ItemListResult<any>;
+            return is_liked_by.items.length;
+          },
+          initial_value: 0,
+        }),
+      };
+    })(),
+    "who-likes-who": new (class extends Collection {
+      fields = {
+        this_person: new FieldTypes.SingleReference("people"),
+        likes_this_person: new FieldTypes.SingleReference("people"),
+      };
+    })(),
+  };
 })();
+```
+
+
+Instead of `CollectionRefreshCondition`, you can use
+`ClockEventDescription` to make the value refresh on some interval.
+
+```
+lang=typescript
+
+class TheApp extends App {
+  collections = {
+    ...App.BaseCollections,
+    tick_tock: new (class TickTock extends Collection {
+      fields = {
+        seconds: new CachedValue(new Int(), {
+          initial_value: 0,
+          refresh_on: [
+            new ClockEventDescription(
+              "* * * * * *",
+              async ([context]) => {
+                const { items } = await context.app.collections.tick_tock
+                  .list(context)
+                  .fetch();
+                return items.map((i) => i.id);
+              },
+              (app: App) => new SuperContext(app, Date.now())
+            ),
+          ],
+          get_value: async (item) => {
+            return count.next().value;
+          },
+        }),
+      };
+    })(),
+  };
+}
+
 ```

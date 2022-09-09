@@ -59,17 +59,23 @@ export class ClockEventDescription extends RefreshCondition<[Context]> {
 	constructor(
 		public cron_description: string,
 		public resource_id_getter: ResourceIDGetter<[Context]>,
-		public make_context: () => Context
+		public make_context: (app: App) => Context
 	) {
 		super(resource_id_getter);
 	}
 
-	attachTo(_: App, callback: RefreshConditionCallback<[Context]>): void {
-		new cron.CronJob({
-			cronTime: this.cron_description,
-			onTick: () => {
-				return callback([this.make_context()]);
+	attachTo(app: App, callback: RefreshConditionCallback<[Context]>): void {
+		const job = new cron.CronJob(
+			this.cron_description,
+			() => {
+				app.Logger.debug("CRON", "TICK" + this.cron_description);
+				void callback([this.make_context(app)]);
 			},
+			null,
+			true
+		);
+		app.on("stopping", () => {
+			job.stop();
 		});
 	}
 }
