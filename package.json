@@ -59,7 +59,7 @@
 		"cron": "^2.1.0",
 		"deepmerge": "^4.2.2",
 		"dot-prop": "^5.2.0",
-		"emittery": "github:sindresorhus/emittery#7db46441",
+		"emittery": "0.8.1",
 		"escape-html": "^1.0.3",
 		"get-port": "^5.1.1",
 		"koa": "^2.13.0",
