@@ -53,7 +53,14 @@ export default class SameAsForResourceInField extends Policy {
 	}
 
 	getField(context: Context): Field {
-		return this.getCollection(context.app).fields[this.field];
+		const collection = this.getCollection(context.app);
+		const ret = collection.fields[this.field];
+		if (!ret) {
+			throw new Error(
+				`Cannot find field '${this.field}' in collection '${collection.name}'. Perhaps it's a typo?`
+			);
+		}
+		return ret;
 	}
 
 	async _getRestrictingQuery(context: Context) {
