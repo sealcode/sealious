@@ -27,7 +27,9 @@ export abstract class FileStorage extends Field {
 		if (file === null) {
 			return null;
 		}
-		await file.save();
+		if (!file.id) {
+			await file.save();
+		}
 		return file.toDBEntry();
 	}
 }
