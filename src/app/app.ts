@@ -36,7 +36,7 @@ export type Translation = string | ((...params: any[]) => string);
 export abstract class App {
 	/** The current status of the app */
 	status: "stopped" | "running" | "starting" | "stopping";
-	emitter = new Emittery();
+	private emitter = new Emittery();
 
 	/** The base collections including users, registration intents, etc */
 	static BaseCollections = BaseCollections;

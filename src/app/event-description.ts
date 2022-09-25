@@ -50,6 +50,11 @@ export class CollectionRefreshCondition extends RefreshCondition<CollectionRefre
 		callback: RefreshConditionCallback<CollectionRefreshConditionArgs>
 	): void {
 		for (const event_name of this.event_names) {
+			if (!app.collections[this.collection_name]) {
+				throw new Error(
+					`Collection '${this.collection_name}' not found, perhaps a typo?`
+				);
+			}
 			app.collections[this.collection_name].on(event_name, callback);
 		}
 	}
