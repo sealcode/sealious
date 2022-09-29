@@ -30,6 +30,7 @@ export class TestApp extends App {
 			app: { version: "0.0.0-test" },
 			logger: {
 				level: (process.env.SEALIOUS_DEBUG || "none") as LoggerLevel,
+				// level: "debug3",
 			},
 			"www-server": {
 				port,

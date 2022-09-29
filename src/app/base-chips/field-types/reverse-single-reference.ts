@@ -1,11 +1,11 @@
-import { Field, Context } from "../../../main";
+import { Field, Context, CollectionItem } from "../../../main";
 import ItemList, { AttachmentOptions } from "../../../chip-types/item-list";
 import { CachedValue } from "./field-types";
 import { CollectionRefreshCondition } from "../../event-description";
 
 class ListOfIDs extends Field {
 	typeName: "list-of-ids";
-	async isProperValue(context: Context, _: any) {
+	async isProperValue(context: Context) {
 		return context.is_super
 			? Field.valid()
 			: Field.invalid(context.app.i18n("read_only_field"));
@@ -104,23 +104,23 @@ export default class ReverseSingleReference extends CachedValue<ListOfIDs> {
 					}
 				),
 			],
-			get_value: async (context: Context, resource_id: string) => {
+			get_value: async (context: Context, item: CollectionItem) => {
 				context.app.Logger.debug2(
 					"REVERSE SINGLE REFERENCE",
 					"get_value",
-					{ affected_id: resource_id }
+					{ affected_id: item.id }
 				);
 				const list = await new ItemList(
 					this.getReferencingCollection(),
 					context
 				)
-					.filter({ [this.referencing_field]: resource_id })
+					.filter({ [this.referencing_field]: item.id })
 					.fetch();
 				const ret = list.items.map((item) => item.id);
 				context.app.Logger.debug2(
 					"REVERSE SINGLE REFERENCE",
 					"get_value",
-					{ affected_id: resource_id, ret }
+					{ affected_id: item.id, ret }
 				);
 				return ret;
 			},

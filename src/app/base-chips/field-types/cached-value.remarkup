@@ -26,8 +26,9 @@ following keys:
 
 - `get_value`: a function that calculates a new value for this field,
     based on the received event (see `RefreshCondition`). The function
-    takes `context` and `event` as arguments and has to return data
-    that is sotrable within `child_field`.
+    takes `context` (`Context`) and `item` (`CollectionItem`) as
+    arguments and has to return data that is storaable within
+    `child_field`.
 
 - `initial_value`: the value this field should have right when it's
     created for a new resource.
@@ -78,11 +79,11 @@ const app = new (class extends App {
               ([, item]) => [item.get("likes_this_person") as string]
             ),
           ],
-          get_value: async function (context, item_id) {
+          get_value: async function (context, item) {
             const is_liked_by = (await context.app.collections["who-likes-who"]
               .suList()
               .filter({
-                likes_this_person: item_id,
+                likes_this_person: item.id,
               })
               .fetch()) as ItemListResult<any>;
             return is_liked_by.items.length;
@@ -127,7 +128,7 @@ class TheApp extends App {
               (app: App) => new SuperContext(app, Date.now())
             ),
           ],
-          get_value: async (item) => {
+          get_value: async (context, item) => {
             return count.next().value;
           },
         }),

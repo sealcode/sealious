@@ -4,6 +4,7 @@ import type {
 	Context,
 	ValidationResult,
 	Collection,
+	CollectionItem,
 } from "../../../main";
 import ItemList from "../../../chip-types/item-list";
 import { BadContext } from "../../../response/errors";
@@ -18,7 +19,7 @@ import DerivedValue from "./derived-value";
 
 type GetValue<T extends Field> = (
 	context: Context,
-	resource_id: string
+	item: CollectionItem
 ) => Promise<Parameters<T["encode"]>[1]>;
 
 type CachedValueSettings<T extends Field> = {
@@ -63,7 +64,7 @@ export default class CachedValue<T extends Field> extends HybridField<T> {
 			create_action instanceof CollectionRefreshCondition
 		) {
 			app.on("started", () =>
-				this.refresh_outdated_cache_values(create_action)
+				this.refresh_outdated_cache_values(app, create_action)
 			);
 		}
 
@@ -86,17 +87,19 @@ export default class CachedValue<T extends Field> extends HybridField<T> {
 				});
 				const promises = [];
 				const context = arg[0];
-				for (const cache_resource_id of cache_resource_ids) {
+				const { items } = await this.collection
+					.list(context)
+					.ids(cache_resource_ids)
+					.fetch();
+				for (const item of items) {
 					promises.push(
-						this.get_value(context, cache_resource_id).then(
-							async (value) => {
-								const item = await context.app.collections[
-									this.collection.name
-								].suGetByID(cache_resource_id);
-								item.set(this.name, value);
-								await item.save(new app.SuperContext());
-							}
-						)
+						this.get_value(context, item).then(async (value) => {
+							const su_item = await context.app.collections[
+								this.collection.name
+							].suGetByID(item.id);
+							su_item.set(this.name, value);
+							await su_item.save(new app.SuperContext());
+						})
 					);
 				}
 				await Promise.all(promises);
@@ -122,9 +125,14 @@ export default class CachedValue<T extends Field> extends HybridField<T> {
 	}
 
 	private async refresh_outdated_cache_values(
+		app: App,
 		condition: CollectionRefreshCondition
 	) {
 		const referenced_collection_name = condition.collection_name;
+		app.Logger.debug3(
+			"CACHED VALUE",
+			`Finding resources without cached value for field ${this.collection.name}.${this.name}. For this, we're looking for items from ${referenced_collection_name} and we'll be looking at them newest-to-oldest.`
+		);
 		const response = await new ItemList(
 			this.app.collections[referenced_collection_name],
 			new this.app.SuperContext()
@@ -138,8 +146,11 @@ export default class CachedValue<T extends Field> extends HybridField<T> {
 		}
 
 		const last_modified_timestamp = response.items[0]._metadata.modified_at;
-
-		const outdated_resources = await this.app.Datastore.aggregate(
+		app.Logger.debug3(
+			"CACHED VALUE",
+			`Continuing searching for resources without cached value for field ${this.collection.name}.${this.name}. Now, we find resources that are potentially outdated.`
+		);
+		const outdated_resource_bodies = await this.app.Datastore.aggregate(
 			this.collection.name,
 			[
 				{
@@ -157,24 +168,32 @@ export default class CachedValue<T extends Field> extends HybridField<T> {
 			]
 		);
 
-		this.app.Logger.debug3("CACHED", "Outdated items", outdated_resources);
+		this.app.Logger.debug3(
+			"CACHED",
+			"Outdated items",
+			outdated_resource_bodies
+		);
 
-		if (!outdated_resources) {
+		if (!outdated_resource_bodies) {
 			return;
 		}
 
-		const context = new this.app.SuperContext();
-		for (const resource of outdated_resources) {
-			const value = await this.get_value(context, resource.id);
-			const cache_value = await this.encode(context, value);
+		const su_context = new this.app.SuperContext();
+		const { items } = await this.collection
+			.suList()
+			.ids(outdated_resource_bodies.map((b: { id: string }) => b.id))
+			.fetch();
+		for (const item of items) {
+			const value = await this.get_value(su_context, item);
+			const cache_value = await this.encode(su_context, value);
 			this.app.Logger.debug3(
 				"CACHED",
-				`New value for item ${resource.id}.${this.name}`,
+				`New value for item ${item.id}.${this.name}`,
 				value
 			);
 			await this.app.Datastore.update(
 				this.collection.name,
-				{ id: resource.id },
+				{ id: item.id },
 				{ $set: { [this.name]: cache_value } }
 			);
 		}

@@ -14,6 +14,7 @@ import {
 	FieldTypes,
 	Field,
 	SuperContext,
+	CollectionItem,
 } from "../../../main";
 import Bluebird from "bluebird";
 import type { ItemListResult } from "../../../chip-types/item-list";
@@ -71,15 +72,15 @@ const extend =
 				{
 					get_value: async (
 						context: Context,
-						resource_id: string
+						item: CollectionItem
 					) => {
 						context.app.Logger.debug3(
 							"STATUS FIELD",
-							`calculating value for ${resource_id}`
+							`calculating value for ${item.id}`
 						);
 						const { items } = await context.app.collections.actions
 							.list(new context.app.SuperContext())
-							.filter({ account: resource_id })
+							.filter({ account: item.id })
 							.sort({ "_metadata.modified_at": "desc" })
 							.paginate({ items: 1 })
 							.fetch();
@@ -291,7 +292,7 @@ describe("cached-value", () => {
 									{
 										get_value: async (
 											context: Context,
-											number_id: string
+											number: CollectionItem
 										) => {
 											const response =
 												// @ts-ignore
@@ -299,7 +300,7 @@ describe("cached-value", () => {
 													"happy-numbers"
 												]
 													.list(context)
-													.ids([number_id])
+													.ids([number.id])
 													.fetch();
 											return (
 												(response.items[0].get(
@@ -363,7 +364,7 @@ describe("cached-value", () => {
 										],
 										get_value: async function (
 											context,
-											item_id
+											item
 										) {
 											const is_liked_by =
 												(await context.app.collections[
@@ -372,7 +373,7 @@ describe("cached-value", () => {
 													.suList()
 													.filter({
 														likes_this_person:
-															item_id,
+															item.id,
 													})
 													.fetch()) as ItemListResult<any>;
 											return is_liked_by.items.length;
@@ -449,12 +450,12 @@ describe("cached-value", () => {
 										],
 										get_value: async function (
 											context,
-											item_id
+											item
 										) {
 											const job =
 												await context.app.collections[
 													"jobs"
-												].getByID(context, item_id);
+												].getByID(context, item.id);
 											return job.id;
 										},
 										initial_value: null,
@@ -502,13 +503,13 @@ describe("cached-value", () => {
 										],
 										get_value: async function (
 											context,
-											item_id
+											item
 										) {
 											const {
 												items: [job],
 											} = await context.app.collections.jobs
 												.suList()
-												.filter({ hasjob: item_id })
+												.filter({ hasjob: item.id })
 												.fetch();
 											return job.id;
 										},
@@ -591,13 +592,8 @@ function make_refresh_on(): RefreshCondition[] {
 	return [
 		new CollectionRefreshCondition(
 			"actions",
-			"after:create",
-			async ([, item]) => [item.get("account") as string]
-		),
-		new CollectionRefreshCondition(
-			"actions",
-			"after:edit",
-			async ([, resource]) => [resource.get("account") as string]
+			["after:create", "after:edit"],
+			async ([, action]) => [action.get("account") as string]
 		),
 	];
 }
