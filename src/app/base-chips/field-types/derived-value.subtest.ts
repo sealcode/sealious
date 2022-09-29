@@ -42,7 +42,7 @@ describe("derived-value", () => {
 		withRunningApp(
 			extend({
 				fields: ["username", "surname"],
-				deriving_fn: async (_, username: string, surname: string) =>
+				deriving_fn: async (_, __, username: string, surname: string) =>
 					`${username} ${surname}`,
 			}),
 			async ({ rest_api }) => {
@@ -62,7 +62,7 @@ describe("derived-value", () => {
 		withRunningApp(
 			extend({
 				fields: ["username", "surname"],
-				deriving_fn: async (_, username: string, surname: string) =>
+				deriving_fn: async (_, __, username: string, surname: string) =>
 					`${username} ${surname}`,
 			}),
 			async ({ rest_api }) => {
@@ -115,7 +115,7 @@ describe("derived-value", () => {
 		withRunningApp(
 			extend({
 				fields: ["username", "surname"],
-				deriving_fn: async (_, username: string, surname: string) =>
+				deriving_fn: async (_, __, username: string, surname: string) =>
 					`${username} ${surname}`,
 			}),
 			async ({ rest_api }) => {
@@ -152,7 +152,7 @@ describe("derived-value", () => {
 		await withRunningApp(
 			extend<FieldTypes.Int>({
 				fields: ["username", "surname"],
-				deriving_fn: async (_, __: string, ___: string) => str,
+				deriving_fn: async (_, __, ___: string, ____: string) => str,
 			}),
 			async ({ app, rest_api }) => {
 				await assertThrowsAsync(
@@ -186,7 +186,11 @@ describe("derived-value", () => {
 										new FieldTypes.SingleReference("A"),
 										{
 											fields: ["simple"],
-											deriving_fn: async (_, simple) => {
+											deriving_fn: async (
+												_,
+												__,
+												simple
+											) => {
 												return "any_id"; // this isn't a proper ID, and the SingleReference should detect that by being able to access the `this.app` instance and reading the database. If any other error than "bad id" will be thrown, it means that the base field is not initiated properly
 											},
 										}
@@ -224,6 +228,7 @@ describe("derived-value", () => {
 										fields: ["name"],
 										deriving_fn: async (
 											_,
+											__,
 											name: string
 										) => {
 											await sleep(0);

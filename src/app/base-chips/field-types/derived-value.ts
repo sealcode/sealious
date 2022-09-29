@@ -1,4 +1,10 @@
-import type { Field, FieldOutput, App, Collection } from "../../../main";
+import type {
+	Field,
+	FieldOutput,
+	App,
+	Collection,
+	Context,
+} from "../../../main";
 import { HybridField } from "../../../chip-types/field";
 /*
 
@@ -7,6 +13,7 @@ todo: make the deriving_fn more type-safe by reading the types of the fields?
 */
 
 export type DerivingFn<T extends Field> = (
+	context: Context,
 	resource_id: string,
 	...args: any[]
 ) => Promise<FieldOutput<T>>;
@@ -84,6 +91,7 @@ export default class DerivedValue<T extends Field> extends HybridField<T> {
 				derived_fn_args
 			);
 			const derived_value = await this.deriving_fn(
+				context,
 				item.id,
 				...derived_fn_args
 			);
@@ -106,6 +114,7 @@ export default class DerivedValue<T extends Field> extends HybridField<T> {
 				item.get(field_name, true)
 			);
 			const derived_value = await this.deriving_fn(
+				context,
 				item.id,
 				...derived_fn_args
 			);
