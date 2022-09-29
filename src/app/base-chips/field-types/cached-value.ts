@@ -14,6 +14,7 @@ import {
 	CollectionRefreshCondition,
 	RefreshCondition,
 } from "../../event-description";
+import DerivedValue from "./derived-value";
 
 type GetValue<T extends Field> = (
 	context: Context,
@@ -24,6 +25,7 @@ type CachedValueSettings<T extends Field> = {
 	refresh_on: RefreshCondition[];
 	get_value: GetValue<T>;
 	initial_value: Parameters<T["encode"]>[1];
+	derive_from?: string[];
 };
 
 export default class CachedValue<T extends Field> extends HybridField<T> {
@@ -34,6 +36,7 @@ export default class CachedValue<T extends Field> extends HybridField<T> {
 	get_value: GetValue<T>;
 	hasDefaultValue: () => true;
 	private initial_value: Parameters<T["encode"]>[1];
+	private virtual_derived: DerivedValue<T> | null;
 
 	constructor(base_field: T, params: CachedValueSettings<T>) {
 		super(base_field);
