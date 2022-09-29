@@ -1,4 +1,4 @@
-import type { Field, FieldOutput, App } from "../../../main";
+import type { Field, FieldOutput, App, Collection } from "../../../main";
 import { HybridField } from "../../../chip-types/field";
 /*
 
@@ -46,8 +46,15 @@ export default class DerivedValue<T extends Field> extends HybridField<T> {
 		}
 	}
 
-	async init(app: App) {
-		super.init(app);
+	async init(app: App, collection: Collection): Promise<void> {
+		await super.init(app, collection);
+		for (const field of this.fields) {
+			if (!collection.fields[field]) {
+				throw new Error(
+					`Collection '${collection.name}' does not have a field named '${field}', which was passed to DerivedValue`
+				);
+			}
+		}
 		const not_matching_fields = this.fields.filter(
 			(field) => !Object.keys(this.collection.fields).includes(field)
 		);

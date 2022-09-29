@@ -60,7 +60,7 @@ export default abstract class Collection {
 		for (const [field_name, field] of Object.entries(this.fields)) {
 			field.setCollection(this);
 			field.setName(field_name);
-			promises.push(field.init(this.app));
+			promises.push(field.init(this.app, this));
 		}
 		await Promise.all(promises);
 	}

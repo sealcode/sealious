@@ -206,8 +206,9 @@ export default abstract class Field {
 
 	/** Runs when the app is being started. Hooks can be set up within
 	 * this function */
-	async init(app: App): Promise<void> {
+	async init(app: App, collection: Collection): Promise<void> {
 		this.app = app;
+		this.collection = collection;
 	}
 
 	async getAttachments(

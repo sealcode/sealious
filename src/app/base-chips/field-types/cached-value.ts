@@ -1,8 +1,15 @@
-import type { App, Field, Context } from "../../../main";
-import HybridField from "../../../chip-types/field-hybrid";
+import type {
+	App,
+	Field,
+	Context,
+	ValidationResult,
+	Collection,
+} from "../../../main";
 import ItemList from "../../../chip-types/item-list";
 import { BadContext } from "../../../response/errors";
 import isEmpty from "../../../utils/is-empty";
+import HybridField from "../../../chip-types/field-hybrid";
+
 import {
 	CollectionRefreshCondition,
 	RefreshCondition,
@@ -36,9 +43,9 @@ export default class CachedValue<T extends Field> extends HybridField<T> {
 		this.initial_value = params.initial_value;
 	}
 
-	async init(app: App): Promise<void> {
-		await super.init(app);
-		await this.virtual_field.init(app);
+	async init(app: App, collection: Collection): Promise<void> {
+		await super.init(app, collection);
+		await this.virtual_field.init(app, collection);
 		this.checkForPossibleRecursiveEdits();
 
 		const create_action = this.refresh_on.find((condition) => {
@@ -58,7 +65,7 @@ export default class CachedValue<T extends Field> extends HybridField<T> {
 		}
 
 		for (const condition of this.refresh_on) {
-			condition.attachTo(app, async (arg) => {
+			condition.attachTo(app, this.collection, async (arg) => {
 				const cache_resource_ids = await condition.resource_id_getter(
 					arg
 				);
@@ -194,14 +201,14 @@ export default class CachedValue<T extends Field> extends HybridField<T> {
 		context: Context,
 		new_value: Parameters<T["checkValue"]>[1],
 		old_value: Parameters<T["checkValue"]>[2]
-	) {
+	): Promise<ValidationResult> {
 		if (!isEmpty(new_value) && !context.is_super) {
 			throw new BadContext("This is a read-only field");
 		}
 		return this.virtual_field.checkValue(context, new_value, old_value);
 	}
 
-	async getValuePath() {
+	async getValuePath(): Promise<string> {
 		return `${this.name}.value`;
 	}
 }

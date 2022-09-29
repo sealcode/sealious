@@ -74,8 +74,8 @@ export default abstract class HybridField<T extends Field> extends Field {
 		);
 	}
 
-	async init(app: App) {
-		await super.init(app);
-		await this.virtual_field.init(app);
+	async init(app: App, collection: Collection) {
+		await super.init(app, collection);
+		await this.virtual_field.init(app, collection);
 	}
 }

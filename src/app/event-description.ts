@@ -2,7 +2,7 @@ import type {
 	CollectionEvent,
 	CollectionCallback,
 } from "../chip-types/collection";
-import type { App } from "../main";
+import type { App, Collection } from "../main";
 import type Context from "../context";
 import * as cron from "cron";
 
@@ -25,6 +25,7 @@ export abstract class RefreshCondition<
 
 	abstract attachTo(
 		app: App,
+		collection: Collection, // refresh conditions are always used in some kind of automatically refreshing field types. This stores the collection to which that refreshing field belongs to
 		callback: RefreshConditionCallback<CallbackArguments>
 	): void;
 }
@@ -47,6 +48,7 @@ export class CollectionRefreshCondition extends RefreshCondition<CollectionRefre
 
 	attachTo(
 		app: App,
+		_: unknown,
 		callback: RefreshConditionCallback<CollectionRefreshConditionArgs>
 	): void {
 		for (const event_name of this.event_names) {
@@ -69,7 +71,11 @@ export class ClockEventDescription extends RefreshCondition<[Context]> {
 		super(resource_id_getter);
 	}
 
-	attachTo(app: App, callback: RefreshConditionCallback<[Context]>): void {
+	attachTo(
+		app: App,
+		_: Collection,
+		callback: RefreshConditionCallback<[Context]>
+	): void {
 		const job = new cron.CronJob(
 			this.cron_description,
 			() => {
