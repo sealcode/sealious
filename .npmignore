@@ -29,3 +29,4 @@ node_modules*
 src
 !lib/src
 !@types/src
+*.subtest.js
