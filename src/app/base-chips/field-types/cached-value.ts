@@ -37,19 +37,26 @@ export default class CachedValue<T extends Field> extends HybridField<T> {
 	get_value: GetValue<T>;
 	hasDefaultValue: () => true;
 	private initial_value: Parameters<T["encode"]>[1];
-	private virtual_derived: DerivedValue<T> | null;
+	private virtual_derived: DerivedValue<T> | null = null; // sometimes it's necessary to have a field react to both the changes in local fields, as well as changes in cron/another collection
 
-	constructor(base_field: T, params: CachedValueSettings<T>) {
+	constructor(base_field: T, public params: CachedValueSettings<T>) {
 		super(base_field);
 		super.setParams(params);
 		this.refresh_on = params.refresh_on;
 		this.get_value = params.get_value;
 		this.initial_value = params.initial_value;
+		if (params.derive_from) {
+			this.virtual_derived = new DerivedValue(base_field, {
+				fields: params.derive_from,
+				deriving_fn: params.get_value,
+			});
+		}
 	}
 
 	async init(app: App, collection: Collection): Promise<void> {
 		await super.init(app, collection);
 		await this.virtual_field.init(app, collection);
+		await this.virtual_derived?.init(app, collection);
 		this.checkForPossibleRecursiveEdits();
 
 		const create_action = this.refresh_on.find((condition) => {
@@ -222,15 +229,34 @@ export default class CachedValue<T extends Field> extends HybridField<T> {
 	async isProperValue(
 		context: Context,
 		new_value: Parameters<T["checkValue"]>[1],
-		old_value: Parameters<T["checkValue"]>[2]
+		old_value: Parameters<T["checkValue"]>[2],
+		new_value_blessing_token: symbol | null
 	): Promise<ValidationResult> {
+		if (this.virtual_derived) {
+			return this.virtual_derived.isProperValue(
+				context,
+				new_value,
+				old_value,
+				new_value_blessing_token
+			);
+		}
 		if (!isEmpty(new_value) && !context.is_super) {
 			throw new BadContext("This is a read-only field");
 		}
-		return this.virtual_field.checkValue(context, new_value, old_value);
+		return this.virtual_field.checkValue(
+			context,
+			new_value,
+			old_value,
+			new_value_blessing_token
+		);
 	}
 
 	async getValuePath(): Promise<string> {
 		return `${this.name}.value`;
+	}
+
+	setName(name: string): void {
+		super.setName(name);
+		this.virtual_derived?.setName(name);
 	}
 }

@@ -213,9 +213,10 @@ export default class CollectionItem<T extends Collection = any> {
 	/** sets a value */
 	set<FieldName extends FieldNames<T>>(
 		field_name: FieldName,
-		field_value: ItemFields<T>[FieldName]
+		field_value: ItemFields<T>[FieldName],
+		blessed_symbol?: symbol
 	): CollectionItem<T> {
-		this.body.set(field_name, field_value);
+		this.body.set(field_name, field_value, blessed_symbol);
 		return this;
 	}
 
@@ -445,5 +446,11 @@ export default class CollectionItem<T extends Collection = any> {
 
 	setParentList(list: ItemListResult<T>) {
 		this.parent_list = list;
+	}
+
+	getBlessing<FieldName extends FieldNames<T>>(
+		field_name: FieldName
+	): symbol | null {
+		return this.body.getBlessing(field_name);
 	}
 }

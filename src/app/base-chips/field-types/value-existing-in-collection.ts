@@ -25,7 +25,12 @@ export default class ValueExistingInCollection extends Field {
 	) {
 		const field = this.getField(context.app);
 		const collection = field.collection;
-		const result = await field.checkValue(context, new_value, old_value);
+		const result = await field.checkValue(
+			context,
+			new_value,
+			old_value,
+			null
+		);
 		if (!result.valid) {
 			return result;
 		}

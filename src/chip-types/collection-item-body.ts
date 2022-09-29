@@ -27,6 +27,7 @@ export default class CollectionItemBody<T extends Collection = any> {
 	changed_fields: Set<keyof ItemFields<T>> = new Set();
 	is_decoded = false;
 	is_encoded = false;
+	blessings: Partial<Record<keyof ItemFields<T>, symbol | null>> = {};
 
 	constructor(
 		public collection: T,
@@ -43,12 +44,15 @@ export default class CollectionItemBody<T extends Collection = any> {
 
 	set<FieldName extends keyof ItemFields<T>>(
 		field_name: FieldName,
-		field_value: ItemFields<T>[FieldName]
-	) {
+		field_value: ItemFields<T>[FieldName],
+		blessing_symbol: symbol | null = null // those symbols can be used as a proof that a value came from e.g. an internal callback, and not from user input
+	): this {
 		this.raw_input[field_name] = field_value;
 		this.is_decoded = false;
 		this.is_encoded = false;
 		this.changed_fields.add(field_name);
+		this.blessings[field_name] = blessing_symbol;
+		return this;
 	}
 
 	clearChangedFields() {
@@ -209,7 +213,8 @@ export default class CollectionItemBody<T extends Collection = any> {
 					.checkValue(
 						context,
 						this.raw_input[field_name],
-						original_body.encoded[field_name as FieldNames<T>]
+						original_body.encoded[field_name as FieldNames<T>],
+						this.blessings[field_name] || null
 					)
 					.then(async (result) => {
 						if (!result.valid) {
@@ -225,7 +230,13 @@ export default class CollectionItemBody<T extends Collection = any> {
 		return { valid, errors };
 	}
 
-	static empty<T extends Collection>(collection: T) {
+	static empty<T extends Collection>(collection: T): CollectionItemBody<T> {
 		return new CollectionItemBody<T>(collection, {}, {}, {});
+	}
+
+	getBlessing<FieldName extends keyof ItemFields<T>>(
+		field_name: FieldName
+	): symbol | null {
+		return this.blessings[field_name] || null;
 	}
 }

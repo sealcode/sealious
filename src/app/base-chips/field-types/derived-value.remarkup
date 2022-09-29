@@ -10,7 +10,7 @@ new FieldTypes.DerivedValue(
     new FieldTypes.Text(),
     {
         fields: ["username", "surname"], // refresh when these fields are changed
-        deriving_fn: async (context: Context, item_id: string, username: string, surname: string) => // calculate new value based on those fields
+        deriving_fn: async (context: Context, item: CollectionItem, username: string, surname: string) => // calculate new value based on those fields
             `${username} ${surname}`,
     }
 );

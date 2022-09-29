@@ -6,7 +6,9 @@ import type {
 	CollectionItem,
 	Context,
 } from "../../../main";
-import { HybridField } from "../../../chip-types/field";
+import { HybridField, ValidationResult } from "../../../chip-types/field";
+import isEmpty from "../../../utils/is-empty";
+import { BadContext } from "../../../response/errors";
 /*
 
 todo: make the deriving_fn more type-safe by reading the types of the fields?
@@ -24,6 +26,7 @@ export default class DerivedValue<T extends Field> extends HybridField<T> {
 
 	fields: string[];
 	deriving_fn: DerivingFn<T>;
+	private blessed_symbol = Symbol();
 
 	constructor(
 		base_field: T,
@@ -96,7 +99,7 @@ export default class DerivedValue<T extends Field> extends HybridField<T> {
 				item,
 				...derived_fn_args
 			);
-			item.set(this.name, derived_value);
+			item.set(this.name, derived_value, this.blessed_symbol);
 		});
 
 		this.collection.on("before:edit", async ([context, item]) => {
@@ -110,9 +113,10 @@ export default class DerivedValue<T extends Field> extends HybridField<T> {
 			context.app.Logger.debug("DERIVED VALUE", "Handling before:edit", {
 				item_body: item.body,
 			});
-			await item.decode(context);
-			const derived_fn_args = this.fields.map((field_name) =>
-				item.get(field_name, true)
+			const derived_fn_args = await Promise.all(
+				this.fields.map((field_name) =>
+					item.getDecoded(field_name, context)
+				)
 			);
 			const derived_value = await this.deriving_fn(
 				context,
@@ -122,7 +126,28 @@ export default class DerivedValue<T extends Field> extends HybridField<T> {
 			context.app.Logger.debug2("DERIVED VALUE", "Setting new value", {
 				[this.name]: derived_value,
 			});
-			item.set(this.name, derived_value);
+			item.set(this.name, derived_value, this.blessed_symbol);
 		});
+	}
+
+	async isProperValue(
+		context: Context,
+		new_value: Parameters<T["checkValue"]>[1],
+		old_value: Parameters<T["checkValue"]>[2],
+		new_value_blessing_token: symbol | null
+	): Promise<ValidationResult> {
+		if (
+			!isEmpty(new_value) &&
+			!context.is_super &&
+			!(new_value_blessing_token == this.blessed_symbol)
+		) {
+			throw new BadContext("This is a read-only field");
+		}
+		return this.virtual_field.checkValue(
+			context,
+			new_value,
+			old_value,
+			new_value_blessing_token
+		);
 	}
 }

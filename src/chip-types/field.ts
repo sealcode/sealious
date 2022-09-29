@@ -125,20 +125,27 @@ export default abstract class Field {
 	protected abstract isProperValue(
 		context: Context,
 		new_value: unknown,
-		old_value: unknown
+		old_value: unknown,
+		new_value_blessing_token: symbol | null
 	): Promise<ValidationResult>;
 
 	public async checkValue(
 		context: Context,
 		new_value: unknown,
-		old_value: unknown
+		old_value: unknown,
+		new_value_blessing_token: symbol | null
 	): Promise<ValidationResult> {
 		if (isEmpty(new_value) && this.required) {
 			return Field.invalid(`Missing value for field '${this.name}'.`);
 		} else if (isEmpty(new_value)) {
 			return Field.valid();
 		} else {
-			return this.isProperValue(context, new_value, old_value);
+			return this.isProperValue(
+				context,
+				new_value,
+				old_value,
+				new_value_blessing_token
+			);
 		}
 	}
 

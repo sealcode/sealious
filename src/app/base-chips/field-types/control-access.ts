@@ -27,7 +27,8 @@ export default class ControlAccess<T extends Field> extends HybridField<T> {
 	async isProperValue(
 		context: Context,
 		new_value: Parameters<T["checkValue"]>[1],
-		old_value: Parameters<T["checkValue"]>[2]
+		old_value: Parameters<T["checkValue"]>[2],
+		new_value_blessing_token: symbol | null
 	) {
 		if (!context.is_super) {
 			const result = await this.edit_strategy.check(context);
@@ -36,7 +37,12 @@ export default class ControlAccess<T extends Field> extends HybridField<T> {
 			}
 		}
 
-		return this.virtual_field.checkValue(context, new_value, old_value);
+		return this.virtual_field.checkValue(
+			context,
+			new_value,
+			old_value,
+			new_value_blessing_token
+		);
 	}
 
 	async decode(

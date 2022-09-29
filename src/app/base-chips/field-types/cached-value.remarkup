@@ -33,6 +33,10 @@ following keys:
 - `initial_value`: the value this field should have right when it's
     created for a new resource.
 
+- `derive_from`: optional. A list of strings. If you put any field
+  names in this array, any change to any of those given fields will
+  trigger `get_value` reevaluation.
+
 `RefreshCondition` has the following structure:
 
 - `event`: instance of Sealious.EventDescription. Example: `new
@@ -137,4 +141,56 @@ class TheApp extends App {
   };
 }
 
+```
+
+## Example with `derived_from`
+
+By using `derived_from`, you can combine the benefits of CachedValue
+and DerivedValue. The below example creates an `is_hot` field that
+returns true either if given product is cheap (price of that product
+is below 100), or if the product has any comments:
+
+```
+lang=ts
+class TheApp extends App {
+  collections = {
+    ...App.BaseCollections,
+    comments: new (class extends Collection {
+      fields = {
+        text: new FieldTypes.Text(),
+        product: new FieldTypes.SingleReference("products"),
+      };
+    })(),
+    products: new (class extends Collection {
+      fields = {
+        name: new FieldTypes.Text(),
+        price: new FieldTypes.Float(),
+        // a product is considered hot if it's cheap or has at least one comment
+        is_hot: new FieldTypes.CachedValue(new FieldTypes.Boolean(), {
+          refresh_on: [
+            new CollectionRefreshCondition(
+              "comments",
+              ["after:create", "after:edit", "after:remove"],
+              async ([, item]) => [item.get("product") as string]
+            ),
+          ],
+          get_value: async (context, item) => {
+            const price = await item.getDecoded("price", context);
+            const comments_count = (
+              await context.app.collections["comments"]
+                .suList()
+                .filter({
+                  product: item.id,
+                })
+                .fetch()
+            ).items.length;
+            return (price as number) < 100 || comments_count > 0;
+          },
+          initial_value: false,
+          derive_from: ["price"],
+        }),
+      };
+    })(),
+  };
+}
 ```
