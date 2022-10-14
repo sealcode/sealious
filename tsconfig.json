@@ -15,7 +15,8 @@
 		"declarationDir": "@types",
 		"resolveJsonModule": true,
 		"sourceMap": true,
-		"importsNotUsedAsValues": "error"
+		"importsNotUsedAsValues": "error",
+		"skipLibCheck": true
 	},
 	"include": ["src/**/*"]
 }
