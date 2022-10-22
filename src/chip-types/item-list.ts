@@ -147,12 +147,22 @@ export default class ItemList<T extends Collection> {
 		return this;
 	}
 
+	static parsePaginationParams(
+		params: Partial<PaginationParams>
+	): Partial<PaginationParams> {
+		return Object.fromEntries(
+			Object.entries(params).map(([key, value]) => [
+				key,
+				typeof value === "string" ? parseInt(value) : value,
+			])
+		);
+	}
+
 	paginate(pagination_params?: Partial<PaginationParams>): ItemList<T> {
-		if (!pagination_params) {
-			return this;
+		if (pagination_params) {
+			this.pagination = ItemList.parsePaginationParams(pagination_params);
+			this.is_paginated = true;
 		}
-		this.pagination = pagination_params;
-		this.is_paginated = true;
 		return this;
 	}
 

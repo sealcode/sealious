@@ -40,4 +40,21 @@ describe("ItemList", () => {
 				strictEqual(asc[1].get("name"), "newer");
 			}
 		));
+
+	it("properly parses params in HTTP GET", () =>
+		withRunningApp(
+			(test_app) =>
+				class extends test_app {
+					collections = {
+						...App.BaseCollections,
+						entries: new Entries(),
+					};
+				},
+			async ({ rest_api }) => {
+				// shouldn't throw
+				await rest_api.get(
+					"/api/v1/collections/entries?pagination[items]=10"
+				);
+			}
+		));
 });
