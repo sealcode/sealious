@@ -189,11 +189,12 @@ export abstract class App {
 	 * @internal
 	 */
 	async removeAllData(): Promise<void> {
-		await Promise.all(
-			Object.keys(this.collections).map((collection_name) =>
+		await Promise.all([
+			...Object.keys(this.collections).map((collection_name) =>
 				this.Datastore.remove(collection_name, {}, "just_one" && false)
-			)
-		);
+			),
+			this.Metadata.clear(),
+		]);
 	}
 
 	/** Allows to listen for basic app status change events */
