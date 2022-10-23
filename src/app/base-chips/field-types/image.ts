@@ -47,10 +47,14 @@ export default class Image extends FileStorage {
 	async decode(
 		context: Context,
 		db_value: FileStorageFormat | null,
-		__: any
+		_: unknown,
+		format: unknown
 	) {
 		if (db_value === undefined || db_value === null) {
 			return null;
+		}
+		if (format === "file") {
+			return File.fromID(context.app, db_value.id);
 		}
 		return db_value;
 	}

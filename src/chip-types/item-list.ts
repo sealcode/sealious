@@ -131,7 +131,7 @@ export default class ItemList<T extends Collection> {
 		return format as FormatParam<T>;
 	}
 
-	// this method should only be used when dealing with user input. Otherwise use the `format` method, as it's type safe and any issues shoyuld arise during the build process
+	// this method should only be used when dealing with user input. Otherwise use the `format` method, as it's type safe and any issues should arise during the build process
 	safeFormat(format: unknown): this {
 		this.validateFormatParam(format);
 		return this.format(format as FormatParam<T>);
