@@ -1,13 +1,13 @@
 module.exports = {
-	password_reset_email_subject: (app_name: any) =>
+	password_reset_email_subject: (app_name: string) =>
 		`[${app_name}] Password reset request`,
 	password_reset_email_text: ([app_name, username]: [string, string]) =>
 		`Hello, ${username}. Someone requested a password reset on your account on ${app_name}. If it was you, use the link below to change the password. Otherwise, ignore this message.`,
 	password_reset_cta: () => "Change password",
-	password_reset_input_cta: (email_address: any) =>
+	password_reset_input_cta: (email_address: string) =>
 		`Enter the new password for ${email_address}`,
 	reveal_password: () => "Reveal password",
-	registration_intent_email_subject: (app_name: any) =>
+	registration_intent_email_subject: (app_name: string) =>
 		`Finish creating your ${app_name} account`,
 	registration_intent_email_text: () =>
 		`To finish setting up your account, click the following link:`,
@@ -15,7 +15,8 @@ module.exports = {
 	registration_intent_form_description: () =>
 		`Please fill in the details of your account`,
 	password: () => `password`,
-	invalid_boolean: (value: any) => `Value '${value}' is not boolean format.`,
+	invalid_boolean: (value: string) =>
+		`Value '${value}' is not boolean format.`,
 	invalid_context: () =>
 		`Provided value is not an instance of Sealious.Context.`,
 	invalid_update: () => `You cannot change a previously set value.`,
@@ -35,12 +36,15 @@ module.exports = {
 		`Password must have at least ${length} characters.`,
 	invalid_float: (value: number) =>
 		`Value '${value}' is not a float number format.`,
-	invalid_existing_value: (collection: string, field: string, value: any) =>
-		`No ${collection} with ${field} set to ${value}.`,
+	invalid_existing_value: (
+		collection: string,
+		field: string,
+		value: string
+	) => `No ${collection} with ${field} set to ${value}.`,
 	invalid_username: (value: string) =>
 		`'${value}' is a reserved keyword. Please pick another username.`,
 	username_taken: () => `Username already taken.`,
-	invalid_text: (value: any, value_type: any) =>
+	invalid_text: (value: string, value_type: string) =>
 		`Type of ${value} is ${value_type}, not string.`,
 	too_short_text: (value: string, length: number) =>
 		`Text '${value}' is too short, minimum length is ${length} chars.`,
@@ -49,7 +53,7 @@ module.exports = {
 	invalid_enum: (allowed_values: string) =>
 		`Allowed values: ${allowed_values}`,
 	invalid_file_id: () => `File of given ID does not exist.`,
-	invalid_json_value: (value: any) =>
+	invalid_json_value: (value: string) =>
 		`Value ${value} cannot be represented as JSON object.`,
 	invalid_json_object: () => `Value is not an object.`,
 	read_only_field: () => `This is a read-only field.`,
@@ -58,7 +62,7 @@ module.exports = {
 	invalid_datetime: (value: number | string) =>
 		`Value '${value}' is not datetime format. Only timestamps are accepted.`,
 	invalid_color: () => `Couldn't parse the color.`,
-	invalid_integer: (value: any) =>
+	invalid_integer: (value: string) =>
 		`Value '${value}' is not a int number format.`,
 	too_small_integer: (value: string, min: number) =>
 		`Value ${value} should be larger than or equal to ${min}.`,
@@ -94,4 +98,12 @@ module.exports = {
 	policy_user_referenced_in_field_deny: (field: string) =>
 		`You are not the user mentioned in field ${field}.`,
 	policy_noone_deny: () => `Noone is allowed.`,
+	not_allowed_domain: (domain: string, domains: string[]) =>
+		`Domain ${domain} is not allowed here. Allowed domains are: [${domains.join(
+			", "
+		)}]`,
+	not_allowed_protocol: (protocol: string, protocols: string[]) =>
+		`Procotol ${protocol} is not accepted by this field. Allowed protocols are: [${protocols.join(
+			", "
+		)}]`,
 };

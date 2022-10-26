@@ -1,0 +1,35 @@
+# Url
+
+This field will store only valid urls. On top of that you can restrict urlto be certain domains or protocols
+
+## Constructor params
+
+```
+lang=typescript
+new FieldTypes.Url({ 
+    allowed_origins: ["https://www.youtube.com"], // will accept only youtube links
+    allowed_protocols: ["https"] // will accept only https links
+})
+```
+
+## Example
+
+```
+lang=typescript
+const app = new (class extends App {
+    config = {
+        /*...*/
+    };
+    manifest = {
+        /*...*/
+    };
+    collections = {
+        ...App.BaseCollections,
+        url: new (class extends Collection {
+		fields = {
+			url: new FieldTypes.Url(params),
+		};
+	})()
+    };
+})();
+```

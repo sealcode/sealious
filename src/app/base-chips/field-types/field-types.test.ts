@@ -11,4 +11,5 @@ describe("field types", () => {
 	require("./derived-value.subtest");
 	require("./disallow-update.subtest");
 	require("./boolean.subtest");
+	require("./url.subtest");
 });

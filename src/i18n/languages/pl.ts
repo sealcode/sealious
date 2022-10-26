@@ -9,7 +9,7 @@ function characters_plural_form(n: number) {
 }
 
 module.exports = {
-	password_reset_email_subject: (app_name: any) =>
+	password_reset_email_subject: (app_name: string) =>
 		`Reset hasła w ${app_name}`,
 	password_reset_email_text: (app_name: string, username: string) =>
 		`Witaj ${username}, ktoś użył opcji 'reset hasła' na Twoim koncie w ${app_name}. Jeżeli to byłeś Ty, kliknij w poniższy przycisk, aby dokonać zmiany hasła. W przeciwnym wypadku zignoruj tę wiadomość.`,
@@ -24,7 +24,7 @@ module.exports = {
 	registration_intent_cta: () => `Założ konto`,
 	registration_intent_form_description: () => `Uzupełnij dane o Twoim koncie`,
 	password: () => "hasło",
-	invalid_boolean: (value: any) =>
+	invalid_boolean: (value: string) =>
 		`Wartość '${value}' nie jest w formacie zerojedynkowym.`,
 	invalid_context: () =>
 		`Dostarczona wartość nie jest instancją Sealious.Context.`,
@@ -69,7 +69,7 @@ module.exports = {
 	invalid_enum: (allowed_values: string) =>
 		`Dozwolone wartości: ${allowed_values}`,
 	invalid_file_id: () => `Plik o podanym ID nie istnieje.`,
-	invalid_json_value: (value: any) =>
+	invalid_json_value: (value: string) =>
 		`Wartość '${value}' nie może być przedstawiona jako obiekt JSON`,
 	invalid_json_object: () => `Wartość nie jest obiektem.`,
 	read_only_field: () => `Pole jest przeznaczone tylko do odczytu.`,
@@ -78,7 +78,7 @@ module.exports = {
 	invalid_datetime: (value: number | string) =>
 		`Wartość '${value}' nie jest w formacie daty. Tylko znaczniki czasu są akceptowalne.`,
 	invalid_color: () => `Nie udało się się zinterpretować koloru.`,
-	invalid_integer: (value: any) =>
+	invalid_integer: (value: string) =>
 		`Wartość '${value}' nie jest w formacie liczby całkowitej.`,
 	too_small_integer: (value: number, min: number) =>
 		`Wartość '${value}' powinna być większa lub równa ${min}.`,
@@ -115,4 +115,12 @@ module.exports = {
 	policy_user_referenced_in_field_deny: (field: string) =>
 		`Nie jesteś użytkownikiem wspomnianym w polu '${field}'.`,
 	policy_noone_deny: () => `Nikt nie jest uprawniony.`,
+	not_allowed_domain: (domain: string, domains: string[]) =>
+		`Domena ${domain} nie może być dodana do tej kolekcji. Dozwolone domeny: [${domains.join(
+			", "
+		)}]`,
+	not_allowed_protocol: (protocol: string, protocols: string[]) =>
+		`Protokół ${protocol} nie jest akceptowany przez to pole. Dozwolone protokoły: [${protocols.join(
+			", "
+		)}]`,
 };
