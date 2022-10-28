@@ -281,7 +281,12 @@ export default class CollectionItem<T extends Collection = any> {
 	}
 
 	async remove(context: Context) {
-		context.app.Logger.debug("ITEM", "remove", this.id);
+		context.app.Logger.debug(
+			"ITEM",
+			"remove",
+			this.collection.name,
+			this.id
+		);
 		if (this.save_mode === "insert") {
 			throw new Error("This item does not yet exist in the database");
 		}
