@@ -108,7 +108,7 @@ export default class CollectionItemBody<T extends Collection = any> {
 			);
 		}
 		await Promise.all(promises);
-		this.encoded = encoded;
+		this.encoded = { ...this.encoded, ...encoded };
 		this.is_encoded = true;
 		context.app.Logger.debug2("ITEM BODY", "encode result", this.encoded);
 		return this.encoded as ItemFields<T>;

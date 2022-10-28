@@ -1,10 +1,11 @@
 import assert from "assert";
 import { TestAppConstructor, withRunningApp } from "../../../test_utils/with-test-app";
 import { assertThrowsAsync } from "../../../test_utils/assert-throws-async";
-import { Collection, FieldTypes, Field, App } from "../../../main";
+import { Collection, FieldTypes, Field, App, Policies, CollectionItem } from "../../../main";
 import type { DerivingFn } from "./derived-value";
 import { sleep } from "../../../test_utils/sleep";
 import { TestApp } from "../../../test_utils/test-app";
+import CollectionItemBody from "../../../chip-types/collection-item-body";
 
 const extend =
 	<T extends Field = FieldTypes.Text>(derived_value_params: {
@@ -219,6 +220,49 @@ describe("derived-value", () => {
 				});
 				product.setMultiple({ name: "bbb" });
 				await product.save(new app.SuperContext());
+			}
+		));
+
+	it("keeps other fields unchanged", async () =>
+		withRunningApp(
+			(test_app) =>
+				class extends test_app {
+					collections = {
+						...App.BaseCollections,
+						entries: new (class extends Collection {
+							fields = {
+								title: new FieldTypes.Text(),
+
+								promoted_until: new FieldTypes.ControlAccess(
+									new FieldTypes.Date(),
+									{
+										target_policies: {
+											show: new Policies.Public(),
+											edit: new Policies.Super(),
+										},
+										value_when_not_allowed: "",
+									}
+								),
+								is_promoted: new FieldTypes.DerivedValue(new FieldTypes.Boolean(), {
+									deriving_fn: async () => false,
+									fields: ["promoted_until"],
+								}),
+							};
+						})(),
+					};
+				},
+			async ({ app }) => {
+				const entry = await app.collections.entries.suCreate({
+					title: "title",
+				});
+				await entry.save(new app.SuperContext());
+				const newEntry = await app.collections.entries.suGetByID(entry.id);
+				newEntry.set("promoted_until", "2022-12-21");
+				await newEntry.save(new app.SuperContext());
+				const {
+					items: [newestEntry],
+				} = await app.collections.entries.suList().fetch();
+				assert.strictEqual(newestEntry.get("title"), "title");
 			}
 		));
 });
