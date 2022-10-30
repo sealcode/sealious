@@ -65,7 +65,7 @@ export default class SingleReference extends Field {
 		return decision;
 	}
 
-	async filterToQuery(context: Context, filter: Filter) {
+	async getMatchQueryValue(context: Context, filter: Filter) {
 		// treating filter as a query here
 		context.app.Logger.debug3("SINGLE REFERENCE", "FiltertoQuery", {
 			context,
@@ -92,8 +92,9 @@ export default class SingleReference extends Field {
 		const temp_field_name = `${
 			this.getTargetCollection(context).name
 		}-lookup${Math.floor(Math.random() * Math.pow(10, 7))}`;
-		if (!filter_value || Object.keys(filter_value as Filter).length === 0)
+		if (!filter_value || Object.keys(filter_value as Filter).length === 0) {
 			return [];
+		}
 		if (typeof filter_value === "string") {
 			return [{ $match: { [await this.getValuePath()]: filter_value } }];
 		}
@@ -111,21 +112,33 @@ export default class SingleReference extends Field {
 		if (typeof filter_value !== "object") {
 			throw new ValidationError("Invalid filter value");
 		}
+
+		const match_pipeline_entries_promises = [];
 		for (const field_name in filter_value) {
 			const field = this.getTargetCollection(context).fields[field_name];
-			if (!field)
+			if (!field) {
 				return Promise.reject(
 					"Unknown field in filter for '" +
 						this.getTargetCollection(context).name +
 						"': " +
 						field_name
 				);
-			filter[field_name] = field.filterToQuery(
-				context,
-				(filter_value as { [field_name: string]: any })[field_name]
+			}
+			match_pipeline_entries_promises.push(
+				field
+					.getMatchQuery(
+						context,
+						(filter_value as { [field_name: string]: any })[
+							field_name
+						]
+					)
+					.then((query) => ({ $match: query }))
 			);
 		}
 		filter = await Bluebird.props(filter);
+		const match_pipeline_entries = await Promise.all(
+			match_pipeline_entries_promises
+		);
 
 		const ret = [
 			{
@@ -141,6 +154,7 @@ export default class SingleReference extends Field {
 							},
 						},
 						{ $match: filter },
+						...match_pipeline_entries,
 						{ $count: "count" },
 					],
 					as: temp_field_name,

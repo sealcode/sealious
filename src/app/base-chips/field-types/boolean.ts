@@ -48,7 +48,7 @@ export default class Boolean extends Field {
 		throw new Error("invalid value");
 	}
 
-	async filterToQuery(context: Context, filter: "" | null | InputType) {
+	async getMatchQueryValue(context: Context, filter: "" | null | InputType) {
 		if (filter === "") {
 			return { $exists: false };
 		} else if (filter === null) {

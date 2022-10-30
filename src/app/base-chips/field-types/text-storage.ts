@@ -39,12 +39,12 @@ export default abstract class TextStorage extends Field {
 		};
 	}
 
-	async getAggregationStages(
-		_: Context,
+	async getMatchQueryValue(
+		context: Context,
 		filter_value: string | { regex: string | RegExp } | string[]
-	) {
+	): Promise<any> {
 		if (!filter_value) {
-			return [];
+			return;
 		}
 
 		let filter_in_query;
@@ -60,38 +60,33 @@ export default abstract class TextStorage extends Field {
 				$options: "i",
 			};
 
-			return [
-				{
-					$match: this.makeOriginalOrSafeQuery(
-						value_path,
-						filter_in_query
-					),
-				} as QueryStage,
-			];
+			return this.makeOriginalOrSafeQuery(value_path, filter_in_query);
 		} else if (typeof filter_value === "string") {
 			filter_in_query = filter_value;
-			return [
-				{
-					$match: this.makeOriginalOrSafeQuery(
-						value_path,
-						filter_in_query
-					),
-				} as QueryStage,
-			];
+			return this.makeOriginalOrSafeQuery(value_path, filter_in_query);
 		} else if (is(filter_value, predicates.array(predicates.string))) {
 			// array
-			return [
-				{
-					$match: {
-						$or: filter_value.map((value) =>
-							this.makeOriginalOrSafeQuery(value_path, value)
-						),
-					},
-				},
-			];
+			return {
+				$or: filter_value.map((value) =>
+					this.makeOriginalOrSafeQuery(value_path, value)
+				),
+			};
 		} else {
 			throw new Error("Invalid field value");
 		}
+	}
+
+	async getMatchQuery(context: Context, filter: any): Promise<any> {
+		return this.getMatchQueryValue(context, filter); // without wrapping it in a field path, as the default method in Field does
+	}
+
+	async getAggregationStages(
+		context: Context,
+		filter_value: string | { regex: string | RegExp } | string[]
+	) {
+		return [
+			{ $match: await this.getMatchQueryValue(context, filter_value) },
+		];
 	}
 
 	async decode(

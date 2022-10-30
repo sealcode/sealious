@@ -69,8 +69,8 @@ export default class ValueExistingInCollection extends Field {
 		return this.getField(args[0].app).decode(...args);
 	}
 
-	filterToQuery(...args: Parameters<Field["filterToQuery"]>) {
-		return this.getField(args[0].app).filterToQuery(...args);
+	getMatchQueryValue(...args: Parameters<Field["getMatchQueryValue"]>) {
+		return this.getField(args[0].app).getMatchQueryValue(...args);
 	}
 
 	getAggregationStages(...args: Parameters<Field["getAggregationStages"]>) {

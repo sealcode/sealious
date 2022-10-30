@@ -13,7 +13,7 @@ export type Depromisify<T> = T extends Promise<infer V> ? V : T;
 export type ExtractParams<F extends Field> = Parameters<F["setParams"]>[0];
 
 export type ExtractFilterParams<F extends Field> = Parameters<
-	F["filterToQuery"]
+	F["getMatchQueryValue"]
 >[1];
 
 export type ExtractInput<F extends Field> = Parameters<F["encode"]>[1];
@@ -174,8 +174,17 @@ export default abstract class Field {
 	}
 
 	/** Generates a mongo query based on the filter value */
-	async filterToQuery(context: Context, filter: any): Promise<any> {
+	async getMatchQueryValue(context: Context, filter: any): Promise<any> {
 		return this.encode(context, filter);
+	}
+
+	async getMatchQuery(context: Context, filter: any): Promise<any> {
+		return {
+			[await this.getValuePath()]: await this.getMatchQueryValue(
+				context,
+				filter
+			),
+		};
 	}
 
 	/** Whether or not the db should create a fulltext index on this field */
@@ -265,17 +274,12 @@ export default abstract class Field {
 				},
 			};
 		} else {
-			const [value_path, filter_value] = await Promise.all([
-				this.getValuePath(),
-				this.filterToQuery(context, field_filter),
-			]);
+			$match = await this.getMatchQuery(context, field_filter);
+
 			context.app.Logger.debug3("FIELD", "getAggregationStages", {
 				value_path,
-				filter_value,
+				$match,
 			});
-			$match = {
-				[value_path]: filter_value,
-			};
 		}
 		return [{ $match }];
 	}

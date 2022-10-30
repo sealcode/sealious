@@ -21,7 +21,7 @@ export default class Float extends Field {
 		}
 	}
 
-	async filterToQuery(
+	async getMatchQueryValue(
 		_: Context,
 		field_filter: number | string | ComparatorObject<number>
 	) {

@@ -61,7 +61,7 @@ export abstract class IntStorage<
 		this.min = params.min;
 	}
 
-	async filterToQuery(
+	async getMatchQueryValue(
 		_: Context,
 		field_filter: number | string | ComparatorObject<number>
 	) {

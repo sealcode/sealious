@@ -3,6 +3,8 @@ import axios from "axios";
 import { TestAppConstructor, withRunningApp } from "../../../test_utils/with-test-app";
 import { Collection, FieldTypes } from "../../../main";
 import { TestApp } from "../../../test_utils/test-app";
+import SingleReference from "./single-reference";
+import ReverseSingleReference from "./reverse-single-reference";
 
 const extend = (text_params: ConstructorParameters<typeof FieldTypes.Text>[0] = {}) =>
 	function (t: TestAppConstructor) {
@@ -12,6 +14,12 @@ const extend = (text_params: ConstructorParameters<typeof FieldTypes.Text>[0] = 
 				surnames: new (class extends Collection {
 					fields = {
 						surname: new FieldTypes.Text(text_params),
+					};
+				})(),
+				people: new (class extends Collection {
+					fields = {
+						pesel: new FieldTypes.Text(),
+						surname: new FieldTypes.SingleReference("surnames"),
 					};
 				})(),
 			};
@@ -110,5 +118,25 @@ describe("text", () => {
 				.filter({ surname: ["Johnson", "Smith"] })
 				.fetch();
 			assert.strictEqual(surname.get("surname"), "Smith");
+		}));
+
+	it("should allow to filter value by array over a single-reference field", async () =>
+		withRunningApp(extend({ min_length: 3, max_length: 9 }), async ({ app }) => {
+			const surname = await app.collections.surnames.suCreate({ surname: "Smith" });
+			const surname2 = await app.collections.surnames.suCreate({ surname: "Secondary" });
+			const person = await app.collections.people.suCreate({
+				pesel: "123123123",
+				surname: surname.id,
+			});
+			const person2 = await app.collections.people.suCreate({
+				pesel: "456456456",
+				surname: surname2.id,
+			});
+			const { items: single_match } = await app.collections.people
+				.suList()
+				.filter({ surname: { surname: ["Smith"] } })
+				.fetch();
+			assert.strictEqual(single_match.length, 1);
+			assert.strictEqual(single_match[0].get("surname"), surname.id);
 		}));
 });

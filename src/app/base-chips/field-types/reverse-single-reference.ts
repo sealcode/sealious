@@ -134,7 +134,7 @@ export default class ReverseSingleReference extends CachedValue<ListOfIDs> {
 		return this.app.collections[this.referencing_collection];
 	}
 
-	async filterToQuery(context: Context, field_filter: any) {
+	async getMatchQueryValue(context: Context, field_filter: any) {
 		if (typeof field_filter !== "object") {
 			return {
 				$eq: field_filter,

@@ -1,8 +1,5 @@
 import assert from "assert";
-import {
-	TestAppConstructor,
-	withRunningApp,
-} from "../../../test_utils/with-test-app";
+import { TestAppConstructor, withRunningApp } from "../../../test_utils/with-test-app";
 import { assertThrowsAsync } from "../../../test_utils/assert-throws-async";
 import { App, Collection, FieldTypes, Policies } from "../../../main";
 
@@ -93,8 +90,7 @@ describe("boolean", () => {
 						(error) => {
 							assert.equal(error.response.status, 403);
 							assert.deepEqual(
-								error.response.data.data.field_messages.is_old
-									.message,
+								error.response.data.data.field_messages.is_old.message,
 								error_message
 							);
 						}
@@ -105,14 +101,14 @@ describe("boolean", () => {
 
 	it("lets filter by literal false value", () =>
 		withRunningApp(extend, async ({ app }) => {
-			await app.collections.boolseals.create(new app.SuperContext(), {
+			await app.collections.boolseals.suCreate({
 				is_old: true,
 			});
-			await app.collections.boolseals.create(new app.SuperContext(), {
+			await app.collections.boolseals.suCreate({
 				is_old: false,
 			});
 			const { items: seals } = await app.collections.boolseals
-				.list(new app.SuperContext())
+				.suList()
 				.filter({ is_old: false })
 				.fetch();
 			assert.strictEqual(seals.length, 1);

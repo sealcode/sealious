@@ -1,8 +1,5 @@
 import assert from "assert";
-import {
-	TestAppConstructor,
-	withRunningApp,
-} from "../../../test_utils/with-test-app";
+import { TestAppConstructor, withRunningApp } from "../../../test_utils/with-test-app";
 import { assertThrowsAsync } from "../../../test_utils/assert-throws-async";
 import { Collection, FieldTypes } from "../../../main";
 import type { SerializedItemBody } from "../../../chip-types/collection-item";
@@ -24,10 +21,7 @@ describe("single_reference", () => {
 				name = "A";
 				fields = {
 					reference_to_b: new FieldTypes.SingleReference("B"),
-					filtered_reference_to_b: new FieldTypes.SingleReference(
-						"B",
-						{ number: 1 }
-					),
+					filtered_reference_to_b: new FieldTypes.SingleReference("B", { number: 1 }),
 				};
 			})();
 			const B = new (class extends Collection {
@@ -53,8 +47,7 @@ describe("single_reference", () => {
 						}),
 					(e) =>
 						assert.equal(
-							e.response.data.data.field_messages.reference_to_b
-								.message,
+							e.response.data.data.field_messages.reference_to_b.message,
 							app.i18n("invalid_single_reference", ["B"])
 						)
 				);
@@ -78,8 +71,7 @@ describe("single_reference", () => {
 						}),
 					(e) =>
 						assert.equal(
-							e.response.data.data.field_messages
-								.filtered_reference_to_b.message,
+							e.response.data.data.field_messages.filtered_reference_to_b.message,
 							app.i18n("invalid_single_reference", ["B"])
 						)
 				);
@@ -102,11 +94,7 @@ describe("single_reference", () => {
 					`${A}?filter[reference_to_b][number]=3&attachments[reference_to_b]=true`
 				);
 				assert.equal(response.items.length, 1);
-				assert.equal(
-					response.attachments[response.items[0].reference_to_b]
-						.number,
-					3
-				);
+				assert.equal(response.attachments[response.items[0].reference_to_b].number, 3);
 			}));
 
 		it("should be filterable by referenced collection field of referenced collection field", async () =>
@@ -144,21 +132,15 @@ describe("single_reference", () => {
 					let c_ids = [];
 					let b_ids = [];
 					for (let number of [1, 2, 3]) {
-						const { id } = await rest_api.post(
-							"/api/v1/collections/C",
-							{
-								number,
-							}
-						);
+						const { id } = await rest_api.post("/api/v1/collections/C", {
+							number,
+						});
 						c_ids.push(id);
 					}
 					for (let c_id of c_ids) {
-						const { id } = await rest_api.post(
-							"/api/v1/collections/B",
-							{
-								reference_to_c: c_id,
-							}
-						);
+						const { id } = await rest_api.post("/api/v1/collections/B", {
+							reference_to_c: c_id,
+						});
 						b_ids.push(id);
 					}
 					for (let b_id of b_ids) {
@@ -174,9 +156,7 @@ describe("single_reference", () => {
 					assert.equal(response.items.length, 1);
 					assert.equal(
 						response.attachments[
-							response.attachments[
-								response.items[0].reference_to_b
-							].reference_to_c
+							response.attachments[response.items[0].reference_to_b].reference_to_c
 						].number,
 						3
 					);
@@ -235,9 +215,7 @@ describe("single_reference", () => {
 				const {
 					items: [hoover, nelly, maksiu, cycle],
 					attachments,
-				} = await rest_api.get(
-					`${Seals}?attachments[best_friend]=true`
-				);
+				} = await rest_api.get(`${Seals}?attachments[best_friend]=true`);
 
 				assert.equal(hoover.name, "Hoover");
 				assert.equal(nelly.name, "Nelly");
@@ -378,9 +356,7 @@ describe("single_reference", () => {
 					items: [seal],
 					attachments,
 					fields_with_attachments,
-				} = await rest_api.get(
-					`${Seals}/${items.maksiu.id}?attachments[water_area]=true`
-				);
+				} = await rest_api.get(`${Seals}/${items.maksiu.id}?attachments[water_area]=true`);
 				assert.equal(seal.name, items.maksiu.name);
 				assert.deepEqual(fields_with_attachments, ["water_area"]);
 				assert.deepEqual(attachments, {
@@ -400,18 +376,13 @@ describe("single_reference", () => {
 
 				for (let field_prop of Object.keys(scenarios)) {
 					await assertThrowsAsync(
-						() =>
-							rest_api.get(
-								`${Seals}?attachments${field_prop}=true`
-							),
+						() => rest_api.get(`${Seals}?attachments${field_prop}=true`),
 						(e) => {
 							assert.equal(e.response.status, 404);
 							assert.equal(
 								e.response.data.message,
 								`Given field ${
-									scenarios[
-										field_prop as keyof typeof scenarios
-									]
+									scenarios[field_prop as keyof typeof scenarios]
 								} is not declared in collection!`
 							);
 						}
@@ -449,10 +420,7 @@ describe("single_reference", () => {
 
 				assert.equal(seals.length, 3);
 
-				assert.deepEqual(fields_with_attachments, [
-					"water_area",
-					"favourite_meal",
-				]);
+				assert.deepEqual(fields_with_attachments, ["water_area", "favourite_meal"]);
 				assert.deepEqual(attachments, {
 					[items.cool_sea.id]: items.cool_sea,
 					[items.warm_sea.id]: items.warm_sea,

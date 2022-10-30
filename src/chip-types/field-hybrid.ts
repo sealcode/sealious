@@ -36,8 +36,8 @@ export default abstract class HybridField<T extends Field> extends Field {
 		return this.virtual_field.encode(context, value, old_value);
 	}
 
-	async filterToQuery(context: Context, filter: any) {
-		return this.virtual_field.filterToQuery(context, filter);
+	async getMatchQueryValue(context: Context, filter: any) {
+		return this.virtual_field.getMatchQueryValue(context, filter);
 	}
 
 	async isProperValue(

@@ -20,7 +20,7 @@ export default class SecretToken extends Field {
 		return context.is_super ? value : "it's a secret to everybody";
 	}
 
-	async filterToQuery(context: Context, filter: unknown) {
+	async getMatchQueryValue(context: Context, filter: unknown) {
 		if (context.is_super) {
 			return { $eq: filter };
 		} else {

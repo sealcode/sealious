@@ -38,7 +38,7 @@ export default class DateField extends Field {
 		// value is already confirmed to be properly formatted
 		return dateStrToDayInt(date_str);
 	}
-	async filterToQuery(
+	async getMatchQueryValue(
 		_: Context,
 		field_filter: string | ComparatorObject<string>
 	) {
