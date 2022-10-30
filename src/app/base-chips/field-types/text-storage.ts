@@ -1,6 +1,7 @@
 import { Field, Context } from "../../../main";
 import type { QueryStage } from "../../../datastore/query";
 import escape from "escape-html";
+import { hasShape, is, predicates } from "@sealcode/ts-predicates";
 
 type TextStorageFormat = { original: string; safe: string };
 type TextFormatParam = keyof TextStorageFormat;
@@ -22,41 +23,75 @@ export default abstract class TextStorage extends Field {
 		return ret;
 	}
 
+	private makeOriginalOrSafeQuery(
+		value_path: string,
+		text_value: string | { $regex: string; $options: string }
+	) {
+		return {
+			$or: [
+				{
+					[`${value_path}.original`]: text_value,
+				},
+				{
+					[`${value_path}.safe`]: text_value,
+				},
+			],
+		};
+	}
+
 	async getAggregationStages(
 		_: Context,
-		filter_value: string | { regex: string | RegExp }
+		filter_value: string | { regex: string | RegExp } | string[]
 	) {
 		if (!filter_value) {
 			return [];
 		}
 
-		let filter_in_query: Object | string;
+		let filter_in_query;
 
-		if (typeof filter_value !== "string" && filter_value?.regex) {
-			const regex_options = "i";
-			filter_in_query = {
+		const value_path = await this.getValuePath();
+		if (
+			is(filter_value, predicates.object) &&
+			hasShape({ regex: predicates.string }, filter_value) &&
+			filter_value?.regex
+		) {
+			filter_in_query = <const>{
 				$regex: filter_value.regex,
-				$options: regex_options,
+				$options: "i",
 			};
-		} else {
+
+			return [
+				{
+					$match: this.makeOriginalOrSafeQuery(
+						value_path,
+						filter_in_query
+					),
+				} as QueryStage,
+			];
+		} else if (typeof filter_value === "string") {
 			filter_in_query = filter_value;
-		}
-		return [
-			{
-				$match: {
-					$or: [
-						{
-							[`${await this.getValuePath()}.original`]:
-								filter_in_query,
-						},
-						{
-							[`${await this.getValuePath()}.safe`]:
-								filter_in_query,
-						},
-					],
+			return [
+				{
+					$match: this.makeOriginalOrSafeQuery(
+						value_path,
+						filter_in_query
+					),
+				} as QueryStage,
+			];
+		} else if (is(filter_value, predicates.array(predicates.string))) {
+			// array
+			return [
+				{
+					$match: {
+						$or: filter_value.map((value) =>
+							this.makeOriginalOrSafeQuery(value_path, value)
+						),
+					},
 				},
-			} as QueryStage,
-		];
+			];
+		} else {
+			throw new Error("Invalid field value");
+		}
 	}
 
 	async decode(

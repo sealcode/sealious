@@ -1,6 +1,6 @@
 import CollectionItem from "./collection-item";
 import type Collection from "./collection";
-import { Context, Query } from "../main";
+import { Context, ExtractFilterParams, Query } from "../main";
 import {
 	BadContext,
 	NotFound,
@@ -11,7 +11,9 @@ import type QueryStage from "../datastore/query-stage";
 import sealious_to_mongo_sort_param from "../utils/mongo-sorts";
 import type { FieldNames, ItemFields } from "./collection-item-body";
 
-type FilterT<T extends Collection> = Partial<ItemFields<T>>;
+type FilterT<T extends Collection> = Partial<{
+	[FieldName in FieldNames<T>]: ExtractFilterParams<T["fields"][FieldName]>;
+}>;
 
 type PaginationParams = {
 	page: number;

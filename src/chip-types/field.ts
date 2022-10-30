@@ -12,6 +12,10 @@ export type Depromisify<T> = T extends Promise<infer V> ? V : T;
 
 export type ExtractParams<F extends Field> = Parameters<F["setParams"]>[0];
 
+export type ExtractFilterParams<F extends Field> = Parameters<
+	F["filterToQuery"]
+>[1];
+
 export type ExtractInput<F extends Field> = Parameters<F["encode"]>[1];
 
 export type FieldOutput<F extends Field> = Depromisify<ReturnType<F["decode"]>>;
