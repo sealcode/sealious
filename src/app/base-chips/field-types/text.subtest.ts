@@ -139,4 +139,16 @@ describe("text", () => {
 			assert.strictEqual(single_match.length, 1);
 			assert.strictEqual(single_match[0].get("surname"), surname.id);
 		}));
+
+	it("allows to filter by a simple value", async () =>
+		withRunningApp(extend({ min_length: 3, max_length: 9 }), async ({ app }) => {
+			const surname = await app.collections.surnames.suCreate({ surname: "Smith" });
+			const surname2 = await app.collections.surnames.suCreate({ surname: "Secondary" });
+			const { items: single_match } = await app.collections.surnames
+				.suList()
+				.filter({ surname: "Smith" })
+				.fetch();
+			assert.strictEqual(single_match.length, 1);
+			assert.strictEqual(single_match[0].get("surname"), "Smith");
+		}));
 });

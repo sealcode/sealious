@@ -84,7 +84,7 @@ describe("single_reference", () => {
 			}));
 
 		it("should be filterable by referenced collection fields", async () =>
-			withRunningApp(extend, async ({ rest_api }) => {
+			withRunningApp(extend, async ({ app, rest_api }) => {
 				for (let number of [1, 2, 3]) {
 					const item = await rest_api.post(B, { number });
 					await rest_api.post(A, { reference_to_b: item.id });

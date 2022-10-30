@@ -1,20 +1,10 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import assert from "assert";
 import Bluebird from "bluebird";
-import {
-	App,
-	Collection,
-	Collections,
-	Field,
-	FieldTypes,
-	Policies,
-} from "../../../main";
+import { App, Collection, Collections, Field, FieldTypes, Policies } from "../../../main";
 import type { CollectionResponse } from "../../../test_utils/rest-api";
 import { TestApp } from "../../../test_utils/test-app";
-import {
-	TestAppConstructor,
-	withRunningApp,
-} from "../../../test_utils/with-test-app";
+import { TestAppConstructor, withRunningApp } from "../../../test_utils/with-test-app";
 
 const extend = (with_reverse = true, clear_database = true) =>
 	function (t: TestAppConstructor) {
@@ -185,12 +175,14 @@ describe("reverse-single-reference", () => {
 				"/api/v1/collections/B?filter[references_in_a][pairity]=non-existant"
 			)) as CollectionResponse;
 			assert.strictEqual(results.length, 0);
+
 			results = (
 				(await rest_api.get(
 					"/api/v1/collections/B?filter[references_in_a][pairity]=odd"
 				)) as CollectionResponse
 			).items;
 			assert.strictEqual(results.length, 3);
+
 			results = (
 				(await rest_api.get(
 					"/api/v1/collections/B?filter[references_in_a][pairity]=even&filter[number]=3"
@@ -230,25 +222,19 @@ describe("reverse-single-reference", () => {
 						"user-organization": new (class extends Collection {
 							fields = {
 								organization: FieldTypes.Required(
-									new FieldTypes.SingleReference(
-										"organizations"
-									)
+									new FieldTypes.SingleReference("organizations")
 								),
-								user: FieldTypes.Required(
-									new FieldTypes.SingleReference("users")
-								),
+								user: FieldTypes.Required(new FieldTypes.SingleReference("users")),
 							};
 						})(),
 						users: new (class extends Collections.users {
 							fields = {
 								...App.BaseCollections.users.fields,
 								description: new FieldTypes.Text(),
-								organizations:
-									new FieldTypes.ReverseSingleReference({
-										referencing_collection:
-											"user-organization",
-										referencing_field: "user",
-									}),
+								organizations: new FieldTypes.ReverseSingleReference({
+									referencing_collection: "user-organization",
+									referencing_field: "user",
+								}),
 							};
 							policies = {
 								create: new Policies.Public(),
@@ -264,12 +250,9 @@ describe("reverse-single-reference", () => {
 					password: "user1user1",
 					email: "user1@example.com",
 				});
-				const org = await rest_api.post(
-					"/api/v1/collections/organizations",
-					{
-						name: "org",
-					}
-				);
+				const org = await rest_api.post("/api/v1/collections/organizations", {
+					name: "org",
+				});
 				await rest_api.post("/api/v1/collections/user-organization", {
 					user: user.id,
 					organization: org.id,
@@ -279,10 +262,7 @@ describe("reverse-single-reference", () => {
 				);
 				const rel_id = response.items[0].organizations[0];
 				const org_id = response.attachments[rel_id].organization;
-				assert.strictEqual(
-					response?.attachments?.[org_id]?.name,
-					"org"
-				);
+				assert.strictEqual(response?.attachments?.[org_id]?.name, "org");
 				const db_response = await app.collections.users
 					.suList()
 					.attach({

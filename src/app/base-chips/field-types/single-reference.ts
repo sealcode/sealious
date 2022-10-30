@@ -128,9 +128,8 @@ export default class SingleReference extends Field {
 				field
 					.getMatchQuery(
 						context,
-						(filter_value as { [field_name: string]: any })[
-							field_name
-						]
+						filter_value[field_name as keyof typeof filter_value],
+						await field.getValuePath()
 					)
 					.then((query) => ({ $match: query }))
 			);

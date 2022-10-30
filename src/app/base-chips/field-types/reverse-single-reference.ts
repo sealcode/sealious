@@ -157,6 +157,15 @@ export default class ReverseSingleReference extends CachedValue<ListOfIDs> {
 		};
 	}
 
+	async getMatchQuery(context: Context, filter: any) {
+		return {
+			[await this.getValuePath()]: await this.getMatchQueryValue(
+				context,
+				filter
+			),
+		};
+	}
+
 	async getAttachments(
 		context: Context,
 		target_id_lists: string[][],

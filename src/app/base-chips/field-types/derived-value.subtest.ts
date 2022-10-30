@@ -1,7 +1,15 @@
 import assert from "assert";
 import { TestAppConstructor, withRunningApp } from "../../../test_utils/with-test-app";
 import { assertThrowsAsync } from "../../../test_utils/assert-throws-async";
-import { Collection, FieldTypes, Field, App, Policies, CollectionItem } from "../../../main";
+import {
+	Collection,
+	FieldTypes,
+	Field,
+	App,
+	Policies,
+	CollectionItem,
+	Context,
+} from "../../../main";
 import type { DerivingFn } from "./derived-value";
 import { sleep } from "../../../test_utils/sleep";
 import { TestApp } from "../../../test_utils/test-app";
@@ -263,6 +271,43 @@ describe("derived-value", () => {
 					items: [newestEntry],
 				} = await app.collections.entries.suList().fetch();
 				assert.strictEqual(newestEntry.get("title"), "title");
+			}
+		));
+
+	it("allows filtering by a simple value", async () =>
+		withRunningApp(
+			(test_app) =>
+				class extends test_app {
+					collections = {
+						...App.BaseCollections,
+						entries: new (class extends Collection {
+							fields = {
+								name: new FieldTypes.Text(),
+								surname: new FieldTypes.Text(),
+								full_name: new FieldTypes.DerivedValue(new FieldTypes.Text(), {
+									deriving_fn: async (_, __, name: string, surname: string) =>
+										name + " " + surname,
+									fields: ["name", "surname"],
+								}),
+							};
+						})(),
+					};
+				},
+			async ({ app }) => {
+				await app.collections.entries.suCreate({
+					name: "Ala",
+					surname: "Makota",
+				});
+				await app.collections.entries.suCreate({
+					name: "Artur",
+					surname: "Makonia",
+				});
+				const { items } = await app.collections.entries
+					.suList()
+					.filter({ full_name: "Ala Makota" })
+					.fetch();
+				assert.strictEqual(items.length, 1);
+				assert.strictEqual(items[0].get("full_name"), "Ala Makota");
 			}
 		));
 });

@@ -40,6 +40,14 @@ export default abstract class HybridField<T extends Field> extends Field {
 		return this.virtual_field.getMatchQueryValue(context, filter);
 	}
 
+	async getMatchQuery(context: Context, filter: any) {
+		return this.virtual_field.getMatchQuery(
+			context,
+			filter,
+			await this.getValuePath()
+		);
+	}
+
 	async isProperValue(
 		context: Context,
 		new_value: Parameters<T["checkValue"]>[1],

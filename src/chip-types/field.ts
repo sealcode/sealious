@@ -178,12 +178,13 @@ export default abstract class Field {
 		return this.encode(context, filter);
 	}
 
-	async getMatchQuery(context: Context, filter: any): Promise<any> {
+	async getMatchQuery(
+		context: Context,
+		filter: any,
+		value_path: string
+	): Promise<any> {
 		return {
-			[await this.getValuePath()]: await this.getMatchQueryValue(
-				context,
-				filter
-			),
+			[value_path]: await this.getMatchQueryValue(context, filter),
 		};
 	}
 
@@ -274,11 +275,16 @@ export default abstract class Field {
 				},
 			};
 		} else {
-			$match = await this.getMatchQuery(context, field_filter);
+			$match = await this.getMatchQuery(
+				context,
+				field_filter,
+				await this.getValuePath()
+			);
 
 			context.app.Logger.debug3("FIELD", "getAggregationStages", {
 				value_path,
 				$match,
+				field_type: this.typeName,
 			});
 		}
 		return [{ $match }];
