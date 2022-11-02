@@ -151,4 +151,15 @@ describe("text", () => {
 			assert.strictEqual(single_match.length, 1);
 			assert.strictEqual(single_match[0].get("surname"), "Smith");
 		}));
+
+	it("allows to filter by an empty value", async () =>
+		withRunningApp(extend(), async ({ app }) => {
+			const surname = await app.collections.surnames.suCreate({ surname: "" });
+			const { items: single_match } = await app.collections.surnames
+				.suList()
+				.filter({ surname: "" })
+				.fetch();
+			assert.strictEqual(single_match.length, 1);
+			assert.strictEqual(single_match[0].get("surname"), "");
+		}));
 });

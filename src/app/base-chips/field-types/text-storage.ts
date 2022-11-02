@@ -43,7 +43,7 @@ export default abstract class TextStorage extends Field {
 		context: Context,
 		filter_value: string | { regex: string | RegExp } | string[]
 	): Promise<any> {
-		if (!filter_value) {
+		if (!filter_value && !filter_value == "") {
 			return;
 		}
 
