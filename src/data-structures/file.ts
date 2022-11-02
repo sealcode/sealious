@@ -60,7 +60,11 @@ export default class File {
 	static async fromID(app: App, id: string) {
 		const matches = await app.Datastore.find("files", { id });
 		const file_data = matches[0] as FileDBEntry;
+		if (!file_data) {
+			throw new Error(`Unknown file id: '${id}'`);
+		}
 		const ret = new FileFromDB(app);
+
 		ret.filename = file_data.filename;
 		ret.id = id;
 		return ret;

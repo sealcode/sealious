@@ -1,5 +1,11 @@
 import { Field, Context, File } from "../../../main";
 import type { FileDBEntry } from "../../../data-structures/file";
+import {
+	hasField,
+	hasFieldOfType,
+	is,
+	predicates,
+} from "@sealcode/ts-predicates";
 
 export type FileStorageFormat = FileDBEntry;
 
@@ -11,6 +17,14 @@ export abstract class FileStorage extends Field {
 			return Field.valid();
 		}
 		if (value === null || value instanceof File) {
+			return Field.valid();
+		}
+		if (
+			is(value, predicates.object) &&
+			hasFieldOfType(value, "id", predicates.string) &&
+			hasFieldOfType(value, "filename", predicates.string) &&
+			hasField(value, "data")
+		) {
 			return Field.valid();
 		}
 
