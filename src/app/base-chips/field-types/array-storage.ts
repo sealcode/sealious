@@ -53,7 +53,11 @@ export abstract class ArrayStorage<T extends string | number> extends Field {
 				predicates.array(this.value_predicate)
 			)
 		) {
-			return { [value_path]: { $all: filter.all } };
+			if (filter.all.length == 0) {
+				return {};
+			} else {
+				return { [value_path]: { $all: filter.all } };
+			}
 		} else if (
 			hasFieldOfType(
 				filter,

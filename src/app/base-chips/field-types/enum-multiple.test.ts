@@ -93,6 +93,16 @@ describe("Fields > EnumMultiple", () => {
 					})
 					.fetch();
 				assert.strictEqual(eggs_or_salt.length, 2);
+
+				const { items: any_ingredient } = await app.collections.cakes
+					.suList()
+					.filter({
+						ingredients: {
+							all: [], // important
+						},
+					})
+					.fetch();
+				assert.strictEqual(any_ingredient.length, 4);
 			}
 		));
 });
