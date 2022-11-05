@@ -1,3 +1,4 @@
+import { is, predicates } from "@sealcode/ts-predicates";
 import locreq_curry from "locreq";
 const locreq = locreq_curry(__dirname);
 import Field from "../../../chip-types/field";
@@ -17,6 +18,9 @@ export default class Image extends FileStorage {
 		const result = await super.isProperValue(context, input);
 		if (!result.valid) {
 			return result;
+		}
+		if (is(input, predicates.array(predicates.instanceOf(File)))) {
+			input = input[0];
 		}
 		if (input.getMimeType().indexOf("image/") !== 0) {
 			return Field.invalid(context.app.i18n("invalid_image"));

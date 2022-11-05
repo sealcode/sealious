@@ -26,33 +26,44 @@ export default function parseBody(): Middleware {
 		const promises: Promise<void>[] = [];
 		if (ctx.request.files) {
 			for (const file_name in ctx.request.files) {
-				const file = ctx.request.files[file_name];
-				if (Array.isArray(file)) {
-					throw new ValidationError(
-						"Multiple files within one field are not supported"
-					);
+				let files = ctx.request.files[file_name];
+
+				if (!Array.isArray(files)) {
+					if (
+						files.type === "application/json" &&
+						files.name === "blob"
+					) {
+						promises.push(
+							fs
+								.readFile(files.path, "utf-8")
+								.then((json_str) =>
+									setDeep(
+										ctx.request.body,
+										file_name,
+										JSON.parse(json_str)
+									)
+								)
+						);
+						continue;
+					} else {
+						files = [files];
+					}
 				}
-				if (file.type === "application/json" && file.name === "blob") {
-					promises.push(
-						fs.readFile(file.path, "utf-8").then((string) => {
-							setDeep(
-								ctx.request.body,
-								file_name,
-								JSON.parse(string)
-							);
-						})
-					);
-				} else if (file.name) {
-					promises.push(
-						File.fromPath(
+				const file_promises = files.map(async (file) => {
+					const extracted_filename = file.name;
+					if (extracted_filename) {
+						return File.fromPath(
 							ctx.$app,
 							file.path,
-							file.name || undefined
-						).then((sealious_file) => {
-							setDeep(ctx.request.body, file_name, sealious_file);
-						})
-					);
-				}
+							extracted_filename
+						);
+					}
+				});
+				promises.push(
+					Promise.all(file_promises).then((sealious_files) => {
+						setDeep(ctx.request.body, file_name, sealious_files);
+					})
+				);
 			}
 		}
 

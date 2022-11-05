@@ -1,14 +1,9 @@
 import assert from "assert";
-import {
-	TestAppConstructor,
-	withRunningApp,
-	withStoppedApp,
-} from "../test_utils/with-test-app";
+import { TestAppConstructor, withRunningApp, withStoppedApp } from "../test_utils/with-test-app";
 import Field from "../chip-types/field";
 import { Collection, FieldTypes } from "../main";
 import asyncRequest from "../test_utils/async-request";
 import { TestApp } from "../test_utils/test-utils";
-import axios from "axios";
 import parseBody from "./parse-body";
 
 function extend(t: TestAppConstructor<TestApp>) {
@@ -69,10 +64,7 @@ describe("parseBody", () => {
 						"multipart/form-data; boundary=----------------------------4ebf00fbcf09",
 				},
 			};
-			const { body, source } = (await asyncRequest(
-				options,
-				form_data
-			)) as {
+			const { body, source } = (await asyncRequest(options, form_data)) as {
 				source: Record<string, unknown>;
 				body: Array<Record<string, unknown>>;
 			};
@@ -83,21 +75,14 @@ describe("parseBody", () => {
 
 	it("includes the url query params as parts of body, if they don't overlap", async () => {
 		await withStoppedApp(extend, async (test) => {
-			test.app.HTTPServer.router.post(
-				"/echo-data",
-				parseBody(),
-				async (ctx) => {
-					ctx.body = ctx.$body;
-				}
-			);
+			test.app.HTTPServer.router.post("/echo-data", parseBody(), async (ctx) => {
+				ctx.body = ctx.$body;
+			});
 
 			await test.app.start();
-			const response = await test.rest_api.post(
-				"/echo-data?token=abc&json_data=ignore",
-				{
-					json_data: "123",
-				}
-			);
+			const response = await test.rest_api.post("/echo-data?token=abc&json_data=ignore", {
+				json_data: "123",
+			});
 			assert.strictEqual(response.json_data, "123");
 			assert.strictEqual(response.token, "abc");
 			await test.app.stop();
