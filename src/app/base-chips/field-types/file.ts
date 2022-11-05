@@ -16,8 +16,13 @@ export abstract class FileStorage extends Field {
 		if (typeof value === "string") {
 			return Field.valid();
 		}
-		if (is(value, predicates.array(predicates.instanceOf(File)))) {
-			value = value[0];
+		if (Array.isArray(value)) {
+			if (value.length !== 1) {
+				throw new Error(
+					"If you use array for this field, it can only have one file element"
+				);
+			}
+			value = value[0] as File;
 		}
 		if (value === null || value instanceof File) {
 			return Field.valid();
@@ -45,8 +50,13 @@ export abstract class FileStorage extends Field {
 		if (file === null) {
 			return null;
 		}
-		if (is(file, predicates.array(predicates.instanceOf(File)))) {
-			file = file[0];
+		if (Array.isArray(file)) {
+			if (file.length !== 1) {
+				throw new Error(
+					"If you use array for this field, it can only have one file element"
+				);
+			}
+			file = file[0] as File;
 		}
 		if (!file.id) {
 			await file.save();

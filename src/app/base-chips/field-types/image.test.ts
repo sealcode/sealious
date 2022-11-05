@@ -35,4 +35,35 @@ describe("FieldTypes.Image", () => {
 				assert(item.get("image") instanceof File);
 			}
 		));
+
+	it("handles an array with a single file as input", async () =>
+		withRunningApp(
+			(app) =>
+				class extends app {
+					collections = {
+						...App.BaseCollections,
+						images: new (class extends Collection {
+							fields = { image: new Image() };
+						})(),
+					};
+				},
+			async ({ app }) => {
+				await app.collections.images.create(new app.SuperContext(), {
+					image: [
+						await File.fromPath(
+							app,
+							locreq.resolve("src/assets/logo.png")
+						),
+					],
+				});
+				const {
+					items: [item],
+				} = await app.collections.images
+					.list(new app.SuperContext())
+					.format({ image: "file" })
+					.fetch();
+
+				assert(item.get("image") instanceof File);
+			}
+		));
 });

@@ -19,8 +19,13 @@ export default class Image extends FileStorage {
 		if (!result.valid) {
 			return result;
 		}
-		if (is(input, predicates.array(predicates.instanceOf(File)))) {
-			input = input[0];
+		if (Array.isArray(input)) {
+			if (input.length !== 1) {
+				throw new Error(
+					"If you use array for this field, it can only have one file element"
+				);
+			}
+			input = input[0] as File;
 		}
 		if (input.getMimeType().indexOf("image/") !== 0) {
 			return Field.invalid(context.app.i18n("invalid_image"));
