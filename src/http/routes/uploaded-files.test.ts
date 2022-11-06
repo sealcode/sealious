@@ -33,10 +33,22 @@ describe("uploaded_files", () => {
 							"multipart/form-data; boundary=----------------------------4ebf00fbcf09",
 					},
 				};
-				const data = (await asyncRequest(options, form_data)) as Record<
-					"file" | "id",
-					string
-				>;
+				const { id } = (await asyncRequest(
+					options,
+					form_data
+				)) as Record<"file" | "id", string>;
+
+				const {
+					items: [data],
+				} = (await asyncRequest({
+					method: "GET",
+					hostname: "localhost",
+					port: port,
+					path:
+						"/api/v1/collections/with_file/" +
+						id +
+						"?format[file]=url",
+				})) as Record<string, { file: string }[]>;
 				const url_regex = new RegExp(
 					/\/api\/v1\/uploaded-files\/\S*\/test.txt/
 				);

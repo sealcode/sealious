@@ -39,10 +39,13 @@ describe("file", () => {
 					}
 				);
 
-				const item = await app.collections.with_file.getByID(
-					context,
-					response.id
-				);
+				const {
+					items: [item],
+				} = await app.collections.with_file
+					.list(context)
+					.ids([response.id])
+					.format({ file: "url" })
+					.fetch();
 
 				const api_response = await rest_api.get(
 					item.get("file") as string
@@ -100,10 +103,13 @@ describe("file", () => {
 					file,
 					person: person.id,
 				});
-				const item = await app.collections.photos.getByID(
-					context,
-					response.id
-				);
+				const {
+					items: [item],
+				} = await app.collections.photos
+					.list(context)
+					.ids([response.id])
+					.format({ file: "url" })
+					.fetch();
 
 				await rest_api.get(item.get("file") as string);
 			}
