@@ -22,7 +22,7 @@ export default class Text extends TextStorage {
 
 	/** Depends on the provided params
 	 * @internal */
-	hasIndex() {
+	async hasIndex() {
 		if (this.params.full_text_search) {
 			return { original: "text" as "text" };
 		} else {

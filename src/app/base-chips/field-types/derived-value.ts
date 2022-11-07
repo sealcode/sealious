@@ -9,6 +9,7 @@ import type {
 import { HybridField, ValidationResult } from "../../../chip-types/field";
 import isEmpty from "../../../utils/is-empty";
 import { BadContext } from "../../../response/errors";
+import { is, predicates } from "@sealcode/ts-predicates";
 /*
 
 todo: make the deriving_fn more type-safe by reading the types of the fields?
@@ -149,5 +150,9 @@ export default class DerivedValue<T extends Field> extends HybridField<T> {
 			old_value,
 			new_value_blessing_token
 		);
+	}
+
+	async hasIndex() {
+		return await this.virtual_field.hasIndex();
 	}
 }

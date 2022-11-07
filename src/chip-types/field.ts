@@ -108,10 +108,9 @@ export default abstract class Field {
 
 	/** Whether or not this field should have a dedicated index in the
 	 * database */
-	hasIndex():
-		| boolean
-		| "text"
-		| { [subfield_name: string]: boolean | "text" } {
+	async hasIndex(): Promise<
+		boolean | "text" | { [subfield_name: string]: boolean | "text" }
+	> {
 		return false;
 	}
 

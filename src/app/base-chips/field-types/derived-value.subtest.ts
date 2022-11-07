@@ -310,4 +310,41 @@ describe("derived-value", () => {
 				assert.strictEqual(items[0].get("full_name"), "Ala Makota");
 			}
 		));
+
+	it("allows fulltext search", async () =>
+		withRunningApp(
+			(test_app) =>
+				class extends test_app {
+					collections = {
+						...App.BaseCollections,
+						entries: new (class extends Collection {
+							fields = {
+								name: new FieldTypes.Text(),
+								surname: new FieldTypes.Text(),
+								full_name: new FieldTypes.DerivedValue(
+									new FieldTypes.Text({ full_text_search: true }),
+									{
+										deriving_fn: async (_, __, name: string, surname: string) =>
+											name + " " + surname,
+										fields: ["name", "surname"],
+									}
+								),
+							};
+						})(),
+					};
+				},
+			async ({ app }) => {
+				await app.collections.entries.suCreate({
+					name: "Ala",
+					surname: "Makota",
+				});
+				await app.collections.entries.suCreate({
+					name: "Artur",
+					surname: "Makonia",
+				});
+				const { items } = await app.collections.entries.suList().search("makonia").fetch();
+				assert.strictEqual(items.length, 1);
+				assert.strictEqual(items[0].get("full_name"), "Artur Makonia");
+			}
+		));
 });

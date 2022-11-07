@@ -108,7 +108,7 @@ export default class ItemList<T extends Collection> {
 					this.context.app.Logger.debug3(
 						"ITEM",
 						"Adding aggregation stage for field",
-						{ [field_name]: stages }
+						JSON.stringify({ [field_name]: stages })
 					);
 				});
 			this.await_before_fetch.push(promise);

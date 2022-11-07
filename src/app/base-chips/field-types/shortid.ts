@@ -4,7 +4,7 @@ import shortid from "shortid";
 
 export default class ShortID extends Field {
 	typeName = "shortid";
-	hasIndex = () => true;
+	hasIndex = async () => true;
 
 	async isProperValue() {
 		return Field.valid();

@@ -11,7 +11,7 @@ type Filter = Record<string, any>;
 
 export default class SingleReference extends Field {
 	typeName = "single-reference";
-	hasIndex = () => true;
+	hasIndex = async () => true;
 	target_collection: string;
 	filter: Filter;
 

@@ -52,7 +52,7 @@ export default class Datastore {
 		const indexes: { [field: string]: number }[] = [];
 		const text_index: { [field: string]: "text" } = {};
 		for (const field_name in collection.fields) {
-			const index_answer = collection.fields[field_name].hasIndex();
+			const index_answer = await collection.fields[field_name].hasIndex();
 			if (index_answer === false) {
 				continue;
 			}
