@@ -31,3 +31,4 @@ export { default as Required } from "./required";
 export { default as Url } from "./url";
 export * from "./array-storage";
 export * from "./enum-multiple";
+export * from "./uuid";
