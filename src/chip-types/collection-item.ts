@@ -171,7 +171,7 @@ export default class CollectionItem<T extends Collection = any> {
 			});
 			await this.collection.emit("before:edit", [context, this]);
 			await this.throwIfInvalid("edit", context, this.has_been_replaced);
-			const encoded = await this.body.encode(context);
+			const encoded = await this.body.encode(context, true);
 			await context.app.Datastore.update(
 				this.collection.name,
 				{ id: this.id },

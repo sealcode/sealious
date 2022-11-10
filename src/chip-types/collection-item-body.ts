@@ -75,13 +75,16 @@ export default class CollectionItemBody<T extends Collection = any> {
 	}
 
 	/** Returns encoded values for every field */
-	async encode(context: Context): Promise<ItemFields<T>> {
+	async encode(
+		context: Context,
+		only_changed = false
+	): Promise<ItemFields<T>> {
 		context.app.Logger.debug3(
 			"ITEM BODY",
 			"encode",
 			this.changed_fields.values()
 		);
-		const encoded: Partial<ItemFields<T>> = {};
+		const new_encoded: Partial<ItemFields<T>> = {};
 		const promises = [];
 		for (const field_name of this.changed_fields.values()) {
 			const to_encode = this.raw_input[field_name];
@@ -96,22 +99,24 @@ export default class CollectionItemBody<T extends Collection = any> {
 			}
 
 			if (to_encode === undefined) {
-				encoded[field_name as FieldNames<T>] = null;
+				new_encoded[field_name as FieldNames<T>] = null;
 				continue;
 			}
 			promises.push(
 				this.collection.fields[field_name as string]
 					.encode(context, to_encode)
 					.then((value) => {
-						encoded[field_name as FieldNames<T>] = value;
+						new_encoded[field_name as FieldNames<T>] = value;
 					})
 			);
 		}
 		await Promise.all(promises);
-		this.encoded = { ...this.encoded, ...encoded };
+		this.encoded = { ...this.encoded, ...new_encoded };
 		this.is_encoded = true;
 		context.app.Logger.debug2("ITEM BODY", "encode result", this.encoded);
-		return this.encoded as ItemFields<T>;
+		return only_changed
+			? (new_encoded as ItemFields<T>)
+			: (this.encoded as ItemFields<T>);
 	}
 
 	async decode(
