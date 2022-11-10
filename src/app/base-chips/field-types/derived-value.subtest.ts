@@ -347,4 +347,43 @@ describe("derived-value", () => {
 				assert.strictEqual(items[0].get("full_name"), "Artur Makonia");
 			}
 		));
+
+	it("lets you enter a value to a field that was null before", async () =>
+		withRunningApp(
+			(test_app) =>
+				class extends test_app {
+					collections = {
+						...App.BaseCollections,
+						entries: new (class extends Collection {
+							fields = {
+								name: new FieldTypes.Text(),
+								surname: new FieldTypes.Text(),
+								full_name: new FieldTypes.DerivedValue(
+									new FieldTypes.Text({ full_text_search: true }),
+									{
+										deriving_fn: async (_, __, name: string, surname: string) =>
+											name + " " + surname,
+										fields: ["name", "surname"],
+									}
+								),
+								spirit_animal: new FieldTypes.Text(),
+							};
+						})(),
+					};
+				},
+			async ({ app }) => {
+				let ala = await app.collections.entries.suCreate({
+					name: "Ala",
+					surname: "Makota",
+				});
+
+				ala = await app.collections.entries.suGetByID(ala.id);
+				ala.set("surname", "Lubikota");
+				ala.set("spirit_animal", "kot");
+				await ala.save(new app.SuperContext());
+				ala = await app.collections.entries.suGetByID(ala.id);
+				assert.strictEqual(ala.get("spirit_animal"), "kot");
+				assert.strictEqual(ala.get("full_name"), "Ala Lubikota");
+			}
+		));
 });

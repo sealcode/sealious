@@ -164,6 +164,7 @@ export default class CollectionItem<T extends Collection = any> {
 			this.save_mode = "update";
 			await this.collection.emit("after:create", [context, this]);
 		} else {
+			// save mode is "edit"
 			this._metadata.modified_at = Date.now();
 			context.app.Logger.debug3("ITEM", "updating an existing item", {
 				metadata: this._metadata,
