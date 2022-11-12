@@ -142,6 +142,14 @@ export default abstract class Collection {
 	}
 
 	async removeByID(context: Context, id: string): Promise<void> {
+		const item =
+			this.emitter.listenerCount("before:remove") ||
+			this.emitter.listenerCount("after:remove")
+				? await this.getByID(context, id)
+				: null;
+		if (this.emitter.listenerCount("before:remove")) {
+			this.emit("before:remove", [context, item]);
+		}
 		const result = await this.getPolicy("delete").check(context, () =>
 			this.getByID(context, id)
 		);
@@ -149,6 +157,9 @@ export default abstract class Collection {
 			throw new BadContext(result?.reason as string);
 		}
 		await context.app.Datastore.remove(this.name, { id: id }, true);
+		if (this.emitter.listenerCount("after:remove")) {
+			this.emit("after:remove", [context, item]);
+		}
 	}
 
 	/** Get a policy for given action, an inherited policy, or the default

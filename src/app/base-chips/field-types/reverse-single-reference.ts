@@ -42,6 +42,10 @@ export default class ReverseSingleReference extends CachedValue<ListOfIDs> {
 					params.referencing_collection,
 					"after:remove",
 					async ([, item]) => {
+						this.app.Logger.debug3(
+							"REVERSE SINGLE REFERENCE",
+							"handling the after:remove event"
+						);
 						const deleted_id = item.id;
 						const affected = await this.app.Datastore.find(
 							this.collection.name,

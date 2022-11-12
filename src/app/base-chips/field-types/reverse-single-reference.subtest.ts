@@ -98,20 +98,39 @@ describe("reverse-single-reference", () => {
 	});
 
 	it("updates the cached value when an old reference is deleted", async () =>
-		withRunningApp(extend(true), async ({ app, rest_api }) => {
-			await createResources(app);
-			const { items } = (await rest_api.get(
-				"/api/v1/collections/B?filter[number]=2"
-			)) as CollectionResponse<{ references_in_a: string }>;
-			const referencing_id = items[0].references_in_a[0];
-			await rest_api.delete(`/api/v1/collections/A/${referencing_id}`);
-			const {
-				items: [new_result2],
-			} = (await rest_api.get(
-				"/api/v1/collections/B?filter[number]=2"
-			)) as CollectionResponse<{ references_in_a: string }>;
-			assert.strictEqual(new_result2.references_in_a.length, 1);
-		}));
+		withRunningApp(
+			(t) =>
+				class extends t {
+					collections = {
+						...TestApp.BaseCollections,
+						dogs: new (class extends Collection {
+							fields = {
+								name: new FieldTypes.Text(),
+								photos: new FieldTypes.ReverseSingleReference({
+									referencing_collection: "dog_photos",
+									referencing_field: "dog",
+								}),
+							};
+						})(),
+						dog_photos: new (class extends Collection {
+							fields = {
+								dog: new FieldTypes.SingleReference("dogs"),
+								photo: new FieldTypes.Image(),
+							};
+						})(),
+					};
+				},
+			async ({ app, rest_api }) => {
+				const dog = await app.collections.dogs.suCreate({ name: "Nora" });
+				const first_photo = await app.collections.dog_photos.suCreate({ dog: dog.id });
+				await app.collections.dog_photos.suCreate({ dog: dog.id });
+				await first_photo.remove(new app.SuperContext());
+				const {
+					items: [dog_new],
+				} = await app.collections.dogs.suList().attach({ photos: true }).fetch();
+				assert.strictEqual(dog_new.getAttachments("photos").length, 1);
+			}
+		));
 
 	it("updates the cached value when an old reference is edited to a new one", async () =>
 		withRunningApp(extend(true), async ({ rest_api, app }) => {

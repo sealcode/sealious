@@ -6,6 +6,7 @@ import {
 	TestAppConstructor,
 	withRunningApp,
 	withStoppedApp,
+	withTestApp,
 } from "../test_utils/with-test-app";
 import Collection from "./collection";
 
@@ -132,5 +133,31 @@ describe("types", () => {
 				);
 			}
 		);
+	});
+});
+
+describe("collection", () => {
+	describe("removeByID", () => {
+		it("calls after:remove", async () =>
+			withRunningApp(
+				(t) =>
+					class extends t {
+						collections = {
+							...App.BaseCollections,
+							test: new (class extends Collection {
+								fields = {};
+							})(),
+						};
+					},
+				async ({ app }) => {
+					let called = false;
+					app.collections.test.on("after:remove", async () => {
+						called = true;
+					});
+					const item = await app.collections.test.suCreate({});
+					await app.collections.test.suRemoveByID(item.id);
+					assert.strictEqual(called, true);
+				}
+			));
 	});
 });
