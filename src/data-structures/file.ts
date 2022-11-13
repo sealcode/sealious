@@ -54,7 +54,9 @@ export default class File {
 		if (this.filename === undefined) {
 			throw new Error("filename not set!");
 		}
-		return `/api/v1/uploaded-files/${this.id}/${this.filename}`;
+		return `/api/v1/uploaded-files/${this.id}/${encodeURIComponent(
+			this.filename
+		)}`;
 	}
 
 	static async fromID(app: App, id: string) {

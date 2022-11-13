@@ -4,7 +4,10 @@ const uploaded_files = new Router();
 uploaded_files.get("/:id/:filename", async (ctx) => {
 	const file = await File.fromID(ctx.$app, ctx.params.id);
 	ctx.body = file.getStream();
-	ctx.set("Content-Disposition", `attachment; filename="${file.filename}"`);
+	ctx.set(
+		"Content-Disposition",
+		`attachment; filename*=utf-8''="${encodeURIComponent(file.filename)}"`
+	);
 });
 
 export default uploaded_files;
