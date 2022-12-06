@@ -8,7 +8,7 @@ export class EnumMultiple<Values extends string> extends ArrayStorage<Values> {
 	constructor(
 		public allowed_values: Values[] | ((context: Context) => Values[])
 	) {
-		super(allowed_values, predicates.string);
+		super(predicates.string);
 	}
 
 	async getAllowedValues(context: Context): Promise<Values[]> {

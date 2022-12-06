@@ -1,4 +1,4 @@
-import Field, { Depromisify } from "./field";
+import Field, { Depromisify, GetInputType } from "./field";
 
 import type Context from "../context";
 import type { App, Collection, ItemListResult } from "../main";
@@ -10,7 +10,9 @@ uncustomized methods should be taken from that given field type
 
 */
 
-export default abstract class HybridField<T extends Field> extends Field {
+export default abstract class HybridField<T extends Field> extends Field<
+	GetInputType<T>
+> {
 	virtual_field: T;
 
 	constructor(base_field: T) {

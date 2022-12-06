@@ -14,7 +14,10 @@ export default class Email extends Field {
 		}
 	}
 
-	async decode(_: Context, storage_value: string): Promise<string> {
+	async decode(
+		_: Context,
+		storage_value: string | null
+	): Promise<string | null> {
 		return storage_value;
 	}
 }

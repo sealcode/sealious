@@ -1,19 +1,10 @@
 import assert from "assert";
 import { TestAppConstructor, withRunningApp } from "../../../test_utils/with-test-app";
 import { assertThrowsAsync } from "../../../test_utils/assert-throws-async";
-import {
-	Collection,
-	FieldTypes,
-	Field,
-	App,
-	Policies,
-	CollectionItem,
-	Context,
-} from "../../../main";
+import { Collection, FieldTypes, Field, App, Policies } from "../../../main";
 import type { DerivingFn } from "./derived-value";
 import { sleep } from "../../../test_utils/sleep";
 import { TestApp } from "../../../test_utils/test-app";
-import CollectionItemBody from "../../../chip-types/collection-item-body";
 
 const extend =
 	<T extends Field = FieldTypes.Text>(derived_value_params: {
@@ -164,7 +155,7 @@ describe("derived-value", () => {
 										new FieldTypes.SingleReference("A"),
 										{
 											fields: ["simple"],
-											deriving_fn: async (_, __, simple) => {
+											deriving_fn: async (_, __, _simple) => {
 												return "any_id"; // this isn't a proper ID, and the SingleReference should detect that by being able to access the `this.app` instance and reading the database. If any other error than "bad id" will be thrown, it means that the base field is not initiated properly
 											},
 										}

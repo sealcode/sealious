@@ -10,7 +10,9 @@ type Params<T extends Field> = {
 	value_when_not_allowed: FieldOutput<T>;
 };
 
-export default class ControlAccess<T extends Field> extends HybridField<T> {
+export default class ControlAccess<
+	T extends Field<any>
+> extends HybridField<T> {
 	typeName = "control-access";
 	edit_strategy: Policy;
 	show_strategy: Policy;

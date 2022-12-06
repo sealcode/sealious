@@ -5,6 +5,7 @@ import type {
 	ValidationResult,
 	Collection,
 	CollectionItem,
+	GetInputType,
 } from "../../../main";
 import ItemList from "../../../chip-types/item-list";
 import { BadContext } from "../../../response/errors";
@@ -20,12 +21,12 @@ import DerivedValue from "./derived-value";
 type GetValue<T extends Field> = (
 	context: Context,
 	item: CollectionItem
-) => Promise<Parameters<T["encode"]>[1]>;
+) => Promise<Parameters<T["decode"]>[1]>;
 
 type CachedValueSettings<T extends Field> = {
 	refresh_on: RefreshCondition[];
 	get_value: GetValue<T>;
-	initial_value: Parameters<T["encode"]>[1];
+	initial_value: GetInputType<T>;
 	derive_from?: string[];
 };
 
@@ -36,7 +37,7 @@ export default class CachedValue<T extends Field> extends HybridField<T> {
 	refresh_on: RefreshCondition[];
 	get_value: GetValue<T>;
 	hasDefaultValue: () => true;
-	private initial_value: Parameters<T["encode"]>[1];
+	private initial_value: GetInputType<T>;
 	private virtual_derived: DerivedValue<T> | null = null; // sometimes it's necessary to have a field react to both the changes in local fields, as well as changes in cron/another collection
 
 	constructor(base_field: T, public params: CachedValueSettings<T>) {
@@ -210,7 +211,7 @@ export default class CachedValue<T extends Field> extends HybridField<T> {
 		return this.initial_value;
 	}
 
-	async encode(context: Context, new_value: any) {
+	async encode(context: Context, new_value: GetInputType<T>) {
 		const encoded_value = await super.encode(context, new_value);
 		const ret = { timestamp: Date.now(), value: encoded_value };
 		context.app.Logger.debug3("CACHED VALUE", "Encode", { new_value, ret });

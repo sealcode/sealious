@@ -9,10 +9,11 @@ import {
 } from "../response/errors";
 import type QueryStage from "../datastore/query-stage";
 import sealious_to_mongo_sort_param from "../utils/mongo-sorts";
-import type { FieldNames, ItemFields } from "./collection-item-body";
 
 type FilterT<T extends Collection> = Partial<{
-	[FieldName in FieldNames<T>]: ExtractFilterParams<T["fields"][FieldName]>;
+	[FieldName in keyof T["fields"]]: ExtractFilterParams<
+		T["fields"][FieldName]
+	>;
 }>;
 
 type PaginationParams = {
@@ -48,7 +49,7 @@ type AllInOneParams<T extends Collection> = {
  * attachments
  */
 export type AttachmentOptions<T extends Collection> = Partial<{
-	[key in keyof ItemFields<T>]: any;
+	[key in keyof T["fields"]]: any;
 }>;
 
 export default class ItemList<T extends Collection> {
@@ -229,7 +230,7 @@ export default class ItemList<T extends Collection> {
 			}
 
 			this.fields_with_attachments_fetched.push(
-				field_name as unknown as FieldNames<T>
+				field_name as unknown as keyof T["fields"] & string
 			);
 		}
 		this._attachments_options = attachment_options;
@@ -250,8 +251,12 @@ export default class ItemList<T extends Collection> {
 				collection.fields[field_name]
 					.getAttachments(
 						this.context,
-						items.map((item) => item.get(field_name) as unknown),
-						this._attachments_options[field_name as FieldNames<T>]
+						items.map(
+							(item) => item.get(field_name as any) as unknown
+						),
+						this._attachments_options[
+							field_name as keyof T["fields"]
+						]
 					)
 					.then((attachmentsList) => {
 						attachments = {

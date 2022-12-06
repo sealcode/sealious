@@ -6,6 +6,7 @@ import {
 	Policies,
 	Context,
 	ActionName,
+	Field,
 } from "../../main";
 import { BadContext } from "../../response/errors";
 import SecureHasher from "../../utils/secure-hasher";
@@ -14,6 +15,9 @@ export default class Users extends Collection {
 	fields = {
 		username: new FieldTypes.Username(),
 		password: new FieldTypes.Password(),
+	} as {
+		username: Field;
+		password: Field;
 	};
 
 	defaultPolicy: Policy = new Policies.Themselves();

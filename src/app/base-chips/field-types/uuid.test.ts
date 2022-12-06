@@ -1,12 +1,6 @@
 import assert from "assert";
-import {
-	TestAppConstructor,
-	withRunningApp,
-} from "../../../test_utils/with-test-app";
-import { assertThrowsAsync } from "../../../test_utils/assert-throws-async";
+import { withRunningApp } from "../../../test_utils/with-test-app";
 import { App, Collection, FieldTypes, Policies } from "../../../main";
-
-const URL = "/api/v1/collections/boolseals";
 
 describe("boolean", () => {
 	it("lets filter by literal false value", () =>
@@ -31,7 +25,7 @@ describe("boolean", () => {
 				await app.collections.items.suCreate({});
 				const { items: items } = await app.collections.items
 					.suList()
-					.filter({ uuid: item.get("uuid") })
+					.filter({ uuid: item.get("uuid") as string })
 					.fetch();
 				assert.strictEqual(items.length, 1);
 			}

@@ -1,184 +1,25 @@
 import type Collection from "./collection";
-import type { Context, ExtractInput } from "../main";
+import type { FieldsetEncoded, FieldsetInput, FieldsetOutput } from "../main";
 import type { FieldOutput, RequiredField } from "./field";
+import { Fieldset } from "./fieldset";
+import type { CollectionOutput } from "./collection";
 
 export type FieldNames<T extends Collection> = keyof T["fields"] & string;
-
-export type RequiredItemFields<T extends Collection> = {
-	[FieldName in FieldNames<T> as T["fields"][FieldName] extends RequiredField
-		? FieldName
-		: never]: ExtractInput<T["fields"][FieldName]>;
-};
-
-export type NonrequiredItemFields<T extends Collection> = {
-	[FieldName in FieldNames<T> as T["fields"][FieldName] extends RequiredField
-		? never
-		: FieldName]: ExtractInput<T["fields"][FieldName]>;
-};
-
-export type ItemFields<T extends Collection> = RequiredItemFields<T> &
-	Partial<NonrequiredItemFields<T>>;
 
 export type ItemFieldsOutput<T extends Collection> = {
 	[field in FieldNames<T>]: FieldOutput<T["fields"][field]>;
 };
 
-export default class CollectionItemBody<T extends Collection = any> {
-	changed_fields: Set<keyof ItemFields<T>> = new Set();
-	is_decoded = false;
-	is_encoded = false;
-	blessings: Partial<Record<keyof ItemFields<T>, symbol | null>> = {};
-
+export default class CollectionItemBody<
+	T extends Collection = any
+> extends Fieldset<T["fields"]> {
 	constructor(
 		public collection: T,
-		public raw_input: Partial<ItemFields<T>> = {},
-		public decoded: Partial<ItemFields<T>> = {},
-		public encoded: Partial<ItemFields<T>> = {}
+		public raw_input: Partial<FieldsetInput<T["fields"]>> = {},
+		public decoded: Partial<FieldsetOutput<T["fields"]>> = {},
+		public encoded: Partial<FieldsetEncoded<T["fields"]>> = {}
 	) {
-		for (const field_name in raw_input) {
-			if (!encoded[field_name as FieldNames<T>]) {
-				this.changed_fields.add(field_name as FieldNames<T>);
-			}
-		}
-	}
-
-	set<FieldName extends keyof ItemFields<T>>(
-		field_name: FieldName,
-		field_value: ItemFields<T>[FieldName],
-		blessing_symbol: symbol | null = null // those symbols can be used as a proof that a value came from e.g. an internal callback, and not from user input
-	): this {
-		this.raw_input[field_name] = field_value;
-		this.is_decoded = false;
-		this.is_encoded = false;
-		this.changed_fields.add(field_name);
-		this.blessings[field_name] = blessing_symbol;
-		return this;
-	}
-
-	clearChangedFields() {
-		this.changed_fields.clear();
-	}
-
-	getDecoded<FieldName extends keyof ItemFields<T>>(field_name: FieldName) {
-		if (!this.is_decoded) {
-			throw new Error("Decode first!");
-		}
-		return this.decoded[field_name];
-	}
-
-	getInput<FieldName extends keyof ItemFields<T>>(field_name: FieldName) {
-		return this.raw_input[field_name];
-	}
-
-	getEncoded<FieldName extends keyof ItemFields<T>>(field_name: FieldName) {
-		return this.encoded[field_name];
-	}
-
-	/** Returns encoded values for every field */
-	async encode(
-		context: Context,
-		only_changed = false
-	): Promise<ItemFields<T>> {
-		context.app.Logger.debug3(
-			"ITEM BODY",
-			"encode",
-			this.changed_fields.values()
-		);
-		const new_encoded: Partial<ItemFields<T>> = {};
-		const promises = [];
-		for (const field_name of this.changed_fields.values()) {
-			const to_encode = this.raw_input[field_name];
-			context.app.Logger.debug3("ITEM BODY", "encoding value", {
-				[field_name]: this.raw_input[field_name],
-				is_the_value_empty:
-					to_encode === undefined || to_encode === null,
-			});
-			if (!this.collection.fields[field_name as string]) {
-				// field does not exist in this collection
-				continue;
-			}
-
-			if (to_encode === undefined) {
-				new_encoded[field_name as FieldNames<T>] = null;
-				continue;
-			}
-			promises.push(
-				this.collection.fields[field_name as string]
-					.encode(context, to_encode)
-					.then((value) => {
-						new_encoded[field_name as FieldNames<T>] = value;
-					})
-			);
-		}
-		await Promise.all(promises);
-		this.encoded = { ...this.encoded, ...new_encoded };
-		this.is_encoded = true;
-		context.app.Logger.debug2("ITEM BODY", "encode result", this.encoded);
-		return only_changed
-			? (new_encoded as ItemFields<T>)
-			: (this.encoded as ItemFields<T>);
-	}
-
-	async decode(
-		context: Context,
-		format: { [field_name: string]: any } = {}
-	): Promise<CollectionItemBody<T>> {
-		if (this.is_decoded) return this;
-		context.app.Logger.debug3("ITEM BODY", "Decoding item", {
-			format,
-			body: this.encoded,
-		});
-		const promises: Promise<any>[] = [];
-		for (const field_name in this.encoded) {
-			if (!this.collection.fields?.[field_name]) {
-				continue;
-			}
-			promises.push(
-				this.collection.fields?.[field_name]
-					.decode(
-						context,
-						this.encoded[field_name as FieldNames<T>],
-						null,
-						format?.[field_name]
-					)
-					.then((decoded_value) => {
-						this.decoded = {
-							...this.decoded,
-							[field_name]: decoded_value,
-						};
-						context.app.Logger.debug3(
-							"ITEM BODY",
-							"Decoded value",
-							{
-								[field_name]: decoded_value,
-							}
-						);
-					})
-			);
-		}
-		await Promise.all(promises);
-		this.is_decoded = true;
-		return this;
-	}
-
-	static fromDB(
-		collection: Collection,
-		database_entry: { [field_name: string]: any }
-	) {
-		delete database_entry._id; //the mongo ID
-		return new CollectionItemBody<typeof collection>(
-			collection,
-			{},
-			{},
-			database_entry
-		);
-	}
-
-	static fromDecoded<T extends Collection>(
-		collection: T,
-		decoded: Partial<ItemFields<T>>
-	) {
-		return new CollectionItemBody<T>(collection, {}, decoded, {});
+		super(collection.fields, raw_input, decoded, encoded);
 	}
 
 	copy(): CollectionItemBody<T> {
@@ -190,58 +31,14 @@ export default class CollectionItemBody<T extends Collection = any> {
 		);
 	}
 
-	async validate(
-		context: Context,
-		original_body: CollectionItemBody,
-		replace_mode: boolean //if true, meaning that if a field has no value, it should be deleted
-	): Promise<{
-		valid: boolean;
-		errors: { [f in keyof ItemFields<T>]?: { message: string } };
-	}> {
-		const promises = [];
-		const errors: { [f in keyof ItemFields<T>]?: { message: string } } = {};
-		let valid = true;
-		const fields_to_check = new Set(this.changed_fields.values());
-		if (replace_mode) {
-			for (const field of this.collection.getRequiredFields()) {
-				fields_to_check.add(field.name as FieldNames<T>);
-			}
-		}
-
-		for (const field_name of fields_to_check) {
-			if (!this.collection.fields[field_name as string]) {
-				// field does not exist
-				continue;
-			}
-			promises.push(
-				this.collection.fields[field_name as string]
-					.checkValue(
-						context,
-						this.raw_input[field_name],
-						original_body.encoded[field_name as FieldNames<T>],
-						this.blessings[field_name] || null
-					)
-					.then(async (result) => {
-						if (!result.valid) {
-							valid = false;
-							errors[field_name] = {
-								message: result.reason as string,
-							};
-						}
-					})
-			);
-		}
-		await Promise.all(promises);
-		return { valid, errors };
+	static empty<C extends Collection>(collection: C): CollectionItemBody<C> {
+		return new CollectionItemBody<C>(collection, {}, {}, {});
 	}
 
-	static empty<T extends Collection>(collection: T): CollectionItemBody<T> {
-		return new CollectionItemBody<T>(collection, {}, {}, {});
-	}
-
-	getBlessing<FieldName extends keyof ItemFields<T>>(
-		field_name: FieldName
-	): symbol | null {
-		return this.blessings[field_name] || null;
+	static fromDecoded<C extends Collection>(
+		collection: C,
+		decoded: Partial<CollectionOutput<C>>
+	) {
+		return new CollectionItemBody<C>(collection, {}, decoded, {});
 	}
 }

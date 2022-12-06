@@ -9,7 +9,6 @@ import type {
 import { HybridField, ValidationResult } from "../../../chip-types/field";
 import isEmpty from "../../../utils/is-empty";
 import { BadContext } from "../../../response/errors";
-import { is, predicates } from "@sealcode/ts-predicates";
 /*
 
 todo: make the deriving_fn more type-safe by reading the types of the fields?

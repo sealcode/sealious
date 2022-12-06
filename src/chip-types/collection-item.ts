@@ -1,4 +1,4 @@
-import type Collection from "./collection";
+import Collection, { Fieldnames } from "./collection";
 import type Context from "../context";
 import {
 	DeveloperError,
@@ -8,13 +8,10 @@ import {
 } from "../response/errors";
 import shortid from "shortid";
 import type { AttachmentOptions, ItemListResult } from "./item-list";
-import CollectionItemBody, {
-	FieldNames,
-	ItemFields,
-	ItemFieldsOutput,
-} from "./collection-item-body";
 import type { PolicyDecision } from "./policy";
 import isEmpty from "../utils/is-empty";
+import type { Fieldset, FieldsetInput, FieldsetOutput } from "./fieldset";
+import CollectionItemBody from "./collection-item-body";
 
 export type ItemMetadata = {
 	modified_at: number;
@@ -48,7 +45,7 @@ export default class CollectionItem<T extends Collection = any> {
 		id?: string,
 		attachments?: Record<string, CollectionItem>
 	) {
-		collection.app.Logger.debug3("ITEM", "Creating an item from body", {
+		collection.app.Logger.debug3("ITEM", "Creating an item from fieldset", {
 			body,
 		});
 		this.id = shortid();
@@ -189,7 +186,7 @@ export default class CollectionItem<T extends Collection = any> {
 	async gatherDefaultValues(context: Context) {
 		context.app.Logger.debug2("ITEM", "Gathering default values");
 		const promises = [];
-		for (const field_name of Object.keys(this.collection.fields)) {
+		for (const field_name of Collection.getFieldnames(this.collection)) {
 			if (
 				isEmpty(this.body.getInput(field_name)) &&
 				isEmpty(this.body.getEncoded(field_name)) &&
@@ -212,42 +209,42 @@ export default class CollectionItem<T extends Collection = any> {
 	}
 
 	/** sets a value */
-	set<FieldName extends FieldNames<T>>(
+	set<FieldName extends Fieldnames<T>>(
 		field_name: FieldName,
-		field_value: ItemFields<T>[FieldName],
+		field_value: FieldsetInput<T["fields"]>[FieldName],
 		blessed_symbol?: symbol
 	): CollectionItem<T> {
 		this.body.set(field_name, field_value, blessed_symbol);
 		return this;
 	}
 
-	setMultiple(values: Partial<ItemFields<T>>): this {
+	setMultiple(values: Partial<FieldsetInput<T["fields"]>>): this {
 		for (const [field_name, value] of Object.entries(values)) {
-			this.set(field_name, value);
+			this.set(field_name as Fieldnames<T>, value as any);
 		}
 		return this;
 	}
 
-	replace(values: Partial<ItemFields<T>>) {
+	replace(values: Partial<FieldsetInput<T["fields"]>>) {
 		this.body = CollectionItemBody.empty<T>(this.collection);
 		this.setMultiple(values);
 		this.has_been_replaced = true;
 	}
 
-	get<FieldName extends FieldNames<T>>(
+	get<FieldName extends Fieldnames<T>>(
 		field_name: FieldName,
 		include_raw = false
-	): ItemFieldsOutput<T>[FieldName] {
+	): FieldsetOutput<T["fields"]>[FieldName] {
 		if (include_raw) {
 			if (this.body.raw_input[field_name]) {
-				return this.body.raw_input[
-					field_name
-				] as ItemFieldsOutput<T>[FieldName];
+				return this.body.raw_input[field_name] as FieldsetOutput<
+					T["fields"]
+				>[FieldName];
 			}
 		}
-		return this.body.getDecoded(
-			field_name
-		) as ItemFieldsOutput<T>[FieldName];
+		return this.body.getDecoded(field_name) as FieldsetOutput<
+			T["fields"]
+		>[FieldName];
 	}
 
 	/**
@@ -255,7 +252,7 @@ export default class CollectionItem<T extends Collection = any> {
 	 * @param field_name name of field we want to get decoded
 	 * @param context
 	 */
-	async getDecoded<FieldName extends FieldNames<T>>(
+	async getDecoded<FieldName extends Fieldnames<T>>(
 		field_name: FieldName,
 		context: Context
 	): Promise<unknown> {
@@ -273,7 +270,7 @@ export default class CollectionItem<T extends Collection = any> {
 
 	async getDecodedBody(
 		context: Context,
-		format: Parameters<CollectionItemBody["decode"]>[1]
+		format: Parameters<Fieldset<T["fields"]>["decode"]>[1]
 	) {
 		if (!this.body.is_decoded) {
 			await this.body.decode(context, format);
@@ -331,10 +328,10 @@ export default class CollectionItem<T extends Collection = any> {
 		return this;
 	}
 
-	serializeBody(): { id: string } & ItemFields<T> {
+	serializeBody(): { id: string } & FieldsetOutput<T["fields"]> {
 		return { id: this.id, ...this.body.decoded } as {
 			id: string;
-		} & ItemFields<T>;
+		} & FieldsetOutput<T["fields"]>;
 	}
 
 	async safeLoadAttachments(context: Context, attachment_options: unknown) {
@@ -376,8 +373,12 @@ export default class CollectionItem<T extends Collection = any> {
 				field
 					.getAttachments(
 						context,
-						[this.get(field.name as FieldNames<T>)],
-						attachment_options[field.name as FieldNames<T>]
+						[
+							this.get(
+								field.name as Fieldnames<typeof this.collection>
+							),
+						],
+						attachment_options[field.name as keyof T["fields"]]
 					)
 					.then((attachmentsList) => {
 						if (!attachmentsList.empty) {
@@ -400,13 +401,13 @@ export default class CollectionItem<T extends Collection = any> {
 		data: { id: string; _metadata: ItemMetadata },
 		attachments: { [id: string]: any }
 	) {
-		const body = CollectionItemBody.fromDecoded<T>(
+		const fieldset = CollectionItemBody.fromDecoded<T>(
 			collection,
-			data as Partial<ItemFields<T>>
+			data as Partial<FieldsetOutput<T["fields"]>>
 		);
 		return new CollectionItem<T>(
 			collection,
-			body,
+			fieldset,
 			data._metadata,
 			(data as { id: string }).id,
 			attachments
@@ -417,7 +418,7 @@ export default class CollectionItem<T extends Collection = any> {
 		return this.collection.getByID(context, this.id);
 	}
 
-	getAttachments<FieldName extends FieldNames<T>>(
+	getAttachments<FieldName extends keyof T["fields"]>(
 		field_name: FieldName
 	): CollectionItem[] {
 		if (
@@ -449,7 +450,7 @@ export default class CollectionItem<T extends Collection = any> {
 		this.parent_list = list;
 	}
 
-	getBlessing<FieldName extends FieldNames<T>>(
+	getBlessing<FieldName extends keyof T["fields"]>(
 		field_name: FieldName
 	): symbol | null {
 		return this.body.getBlessing(field_name);

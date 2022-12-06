@@ -11,6 +11,7 @@ import SingleReference from "../app/base-chips/field-types/single-reference";
 import Text from "../app/base-chips/field-types/text";
 import SameAsForResourceInField from "../app/policy-types/same-as-for-resource-in-field";
 import Public from "../app/policy-types/public";
+import type { CollectionInput } from "../chip-types/collection";
 
 describe("file", () => {
 	it("should return hello world file", () => {
@@ -92,6 +93,7 @@ describe("file", () => {
 					password: "useruser",
 				});
 				const context = new Context(app, Date.now(), user.id);
+				type input = CollectionInput<typeof app.collections.people>;
 				const person = await app.collections.people.create(context, {
 					name: "Ben",
 				});

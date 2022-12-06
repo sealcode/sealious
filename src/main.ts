@@ -15,7 +15,7 @@ export { default as Manifest } from "./app/manifest";
 export { default as MetadataFactory } from "./app/metadata";
 export { default as CalculatedField } from "./chip-types/calculated-field";
 export { default as CollectionItem } from "./chip-types/collection-item";
-export * from "./chip-types/collection-item-body";
+export * from "./chip-types/fieldset";
 export * from "./chip-types/field";
 export { default as ItemList, ItemListResult } from "./chip-types/item-list";
 export { default as SpecialFilter } from "./chip-types/special-filter";

@@ -1,7 +1,6 @@
 import Router from "@koa/router";
-import Collection from "../../chip-types/collection";
-import type { ItemFields } from "../../chip-types/collection-item-body";
-import { Errors, FieldTypes, Policies } from "../../main";
+import Collection, { Fieldnames } from "../../chip-types/collection";
+import { Errors, FieldsetInput, FieldTypes, Policies } from "../../main";
 import SecureHasher from "../../utils/secure-hasher";
 
 export default class Sessions extends Collection {
@@ -67,10 +66,10 @@ export default class Sessions extends Collection {
 		if (!is_valid) {
 			throw new Errors.InvalidCredentials("Incorrect password!");
 		}
-		const session = this.make({
+		const session = (this as Sessions).make({
 			user: user.id,
 			"session-id": null,
-		} as ItemFields<this>);
+		} as FieldsetInput<Sessions["fields"]>);
 		await session.save(new this.app.SuperContext());
 		const session_id = session.get("session-id");
 		return session_id as string;

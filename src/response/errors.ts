@@ -1,4 +1,3 @@
-import type { ItemFields } from "../chip-types/collection-item-body";
 import type { Collection } from "../main";
 
 export type ErrorParams = {
@@ -150,7 +149,7 @@ export class FieldDoesNotSupportAttachments extends SealiousError {
 
 export class FieldsError<C extends Collection> extends SealiousError<{
 	collection: C;
-	field_messages: { [field in keyof ItemFields<C>]: { message: string } };
+	field_messages: { [field in keyof C["fields"]]: { message: string } };
 	other_messages: string[];
 }> {
 	constructor(
@@ -176,12 +175,15 @@ export class FieldsError<C extends Collection> extends SealiousError<{
 		return Object.keys(this.field_messages).length > 0;
 	}
 
-	getSimpleMessages(): Partial<{ [field in keyof ItemFields<C>]: string }> {
+	getSimpleMessages(): Partial<Record<keyof C["fields"], string>> {
 		return Object.fromEntries(
 			Object.entries(
 				this.data.field_messages as Record<string, { message: string }>
-			).map(([field_name, { message }]) => [field_name, message])
-		) as Partial<{ [field in keyof ItemFields<C>]: string }>;
+			).map(([field_name, { message }]) => [
+				field_name as keyof C["fields"],
+				message,
+			])
+		) as Partial<Record<keyof C["fields"], string>>;
 	}
 
 	static isFieldsError<C extends Collection>(
@@ -191,7 +193,7 @@ export class FieldsError<C extends Collection> extends SealiousError<{
 		return e instanceof FieldsError && e.data.collection == collection.name;
 	}
 
-	getErrorForField(field_name: keyof ItemFields<C>): string {
+	getErrorForField(field_name: keyof C["fields"]): string {
 		return this.data.field_messages?.[field_name]?.message || "";
 	}
 }

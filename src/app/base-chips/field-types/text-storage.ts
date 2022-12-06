@@ -6,7 +6,7 @@ import { hasShape, is, predicates } from "@sealcode/ts-predicates";
 type TextStorageFormat = { original: string; safe: string };
 type TextFormatParam = keyof TextStorageFormat;
 
-export default abstract class TextStorage extends Field {
+export default abstract class TextStorage extends Field<string | null> {
 	async encode(context: Context, input: string | null) {
 		context.app.Logger.debug2("TEXT FIELD", "encode", {
 			name: this.name,

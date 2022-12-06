@@ -1,5 +1,4 @@
 import {
-	hasField,
 	hasFieldOfType,
 	is,
 	Predicate,
@@ -7,13 +6,12 @@ import {
 } from "@sealcode/ts-predicates";
 import { Field, Context } from "../../../main";
 
-export abstract class ArrayStorage<T extends string | number> extends Field {
+export abstract class ArrayStorage<
+	T extends string | number | Record<string, unknown>
+> extends Field {
 	typeName = "enum-multiple";
 
-	constructor(
-		public allowed_values: T[] | ((context: Context) => T[]),
-		public value_predicate: Predicate
-	) {
+	constructor(public value_predicate: Predicate) {
 		super();
 	}
 

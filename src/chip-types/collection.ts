@@ -8,8 +8,13 @@ import parseBody from "../http/parse-body";
 import { BadContext, NotFound } from "../response/errors";
 import type CalculatedField from "./calculated-field";
 import CollectionItem, { ItemMetadata } from "./collection-item";
-import CollectionItemBody, { ItemFields } from "./collection-item-body";
+import CollectionItemBody from "./collection-item-body";
 import type Field from "./field";
+import type {
+	FieldsetEncoded,
+	FieldsetInput,
+	FieldsetOutput,
+} from "./fieldset";
 import ItemList from "./item-list";
 import type Policy from "./policy";
 import type SpecialFilter from "./special-filter";
@@ -30,10 +35,23 @@ export type CollectionCallback = ([context, item, event]: [
 
 export type CollectionValidationResult = { error: string; fields: string[] }[];
 
+export type CollectionOutput<T extends Collection> = FieldsetOutput<
+	T["fields"]
+>;
+
+export type CollectionInput<T extends Collection> = FieldsetInput<T["fields"]>;
+
+export type CollectionEncoded<T extends Collection> = FieldsetEncoded<
+	T["fields"]
+>;
+
+export type Fieldnames<T extends Collection> = keyof CollectionInput<T> &
+	string;
+
 /** Creates a collection. All collections are automatically served via
  * the REST API, with permissions set by the Policies */
 export default abstract class Collection {
-	abstract fields: { [fieldName: string]: Field };
+	abstract fields: Record<string, Field<any>>;
 	private emitter = new Emittery();
 
 	/** the name of the collection, will be used as part of the URI in
@@ -65,7 +83,7 @@ export default abstract class Collection {
 		await Promise.all(promises);
 	}
 
-	async suCreate(data: ItemFields<this>): Promise<CollectionItem<this>> {
+	async suCreate(data: CollectionInput<this>): Promise<CollectionItem<this>> {
 		return this.create(new this.app.SuperContext(), data);
 	}
 
@@ -80,7 +98,7 @@ export default abstract class Collection {
 
 	async create(
 		context: Context,
-		data: ItemFields<this>
+		data: CollectionInput<this>
 	): Promise<CollectionItem<this>> {
 		return this.make(data).save(context);
 	}
@@ -92,11 +110,11 @@ export default abstract class Collection {
 		context: Context,
 		data: Record<string, unknown>
 	): Promise<CollectionItem<this>> {
-		return this.make(data as Partial<ItemFields<this>>).save(context);
+		return this.make(data as Partial<CollectionInput<this>>).save(context);
 	}
 
 	/** Makes a new item object that can be saved later */
-	make(input?: Partial<ItemFields<this>>): CollectionItem<this> {
+	make(input?: Partial<CollectionInput<this>>): CollectionItem<this> {
 		return new CollectionItem<this>(
 			this,
 			new CollectionItemBody(this, input, {}, {})
@@ -128,7 +146,7 @@ export default abstract class Collection {
 				this,
 				{},
 				{},
-				results[0] as unknown as ItemFields<this>
+				results[0] as unknown as FieldsetEncoded<this["fields"]>
 			),
 			results[0]._metadata as ItemMetadata,
 			id
@@ -232,7 +250,7 @@ export default abstract class Collection {
 				this,
 				{},
 				{},
-				document as unknown as ItemFields<this>
+				document as unknown as FieldsetEncoded<this["fields"]>
 			),
 			document._metadata as ItemMetadata,
 			id as string
@@ -324,13 +342,21 @@ export default abstract class Collection {
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		context: Context,
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars
-		new_body: CollectionItemBody,
+		new_body: CollectionItemBody<any>,
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars
-		old_body: CollectionItemBody,
+		old_body: CollectionItemBody<any>,
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		action: "create" | "edit"
 	): Promise<CollectionValidationResult> {
 		// empty function, meant to be overwritten in order to implement custom validation logic
 		return [];
+	}
+
+	static getFieldnames<C extends Collection>(
+		collection: C
+	): Array<keyof FieldsetInput<C["fields"]> & string> {
+		return Object.keys(collection.fields) as Array<
+			keyof FieldsetInput<C["fields"]> & string
+		>;
 	}
 }

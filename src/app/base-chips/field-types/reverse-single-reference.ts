@@ -3,7 +3,7 @@ import ItemList, { AttachmentOptions } from "../../../chip-types/item-list";
 import { CachedValue } from "./field-types";
 import { CollectionRefreshCondition } from "../../event-description";
 
-class ListOfIDs extends Field {
+class ListOfIDs extends Field<[]> {
 	typeName: "list-of-ids";
 	async isProperValue(context: Context) {
 		return context.is_super

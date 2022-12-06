@@ -1,8 +1,14 @@
 import assert from "assert";
-import { App, Collection, Context, FieldTypes, SuperContext } from "../main";
+import {
+	App,
+	Collection,
+	Context,
+	Fieldset,
+	FieldTypes,
+	SuperContext,
+} from "../main";
 import { assertThrowsAsync } from "../test_utils/assert-throws-async";
 import { withRunningApp } from "../test_utils/with-test-app";
-import type CollectionItemBody from "./collection-item-body";
 
 describe("CollectionItem", () => {
 	it("first inserts, then updates on successive .save() calls", async () =>
@@ -124,10 +130,7 @@ describe("CollectionItem", () => {
 							fields = {
 								color: new FieldTypes.Color(),
 							};
-							async validate(
-								_: Context,
-								body: CollectionItemBody
-							) {
+							async validate(_: Context, body: Fieldset<any>) {
 								if (
 									(body.getInput("color") as string).includes(
 										"green"

@@ -17,6 +17,9 @@ export type ExtractFilterParams<F extends Field> = Parameters<
 >[1];
 
 export type ExtractInput<F extends Field> = Parameters<F["encode"]>[1];
+export type GetInputType<F extends Field> = F extends Field<infer R>
+	? R
+	: never;
 
 export type FieldOutput<F extends Field> = Depromisify<ReturnType<F["decode"]>>;
 
@@ -56,7 +59,7 @@ export type ValidationResult = {
  * * {@link SingleReference}
  * * {@link Text}
  */
-export default abstract class Field {
+export default abstract class Field<InputType = unknown> {
 	/** the name of the field */
 	name: string;
 	/** the app that the field exists in
@@ -81,9 +84,9 @@ export default abstract class Field {
 		this.collection = collection;
 	}
 
-	setRequired(required: boolean) {
+	setRequired(required: boolean): RequiredField<InputType> {
 		this.required = required;
-		return this;
+		return this as RequiredField<InputType>;
 	}
 
 	/** Sets the name @internal */
@@ -154,7 +157,7 @@ export default abstract class Field {
 
 	/** Decides how to store the given value in the database, based on
 	 * the context and previous value of the field */
-	async encode(_: Context, value: any | null, __?: any): Promise<any> {
+	async encode(_: Context, value: InputType | null, __?: any): Promise<any> {
 		return value as any;
 	}
 
@@ -200,9 +203,7 @@ export default abstract class Field {
 
 	/** The default value that will be assigned to the field if no
 	 * value is given */
-	async getDefaultValue(
-		_: Context
-	): Promise<Parameters<this["encode"]>[1] | null> {
+	async getDefaultValue(_: Context): Promise<InputType | null> {
 		return null;
 	}
 
@@ -290,7 +291,7 @@ export default abstract class Field {
 	}
 }
 
-export type RequiredField = Field & { required: true };
+export type RequiredField<InputType> = Field<InputType> & { required: true };
 
 export { default as HybridField } from "./field-hybrid";
 export * from "./field-hybrid";

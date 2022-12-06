@@ -120,7 +120,7 @@ describe("reverse-single-reference", () => {
 						})(),
 					};
 				},
-			async ({ app, rest_api }) => {
+			async ({ app }) => {
 				const dog = await app.collections.dogs.suCreate({ name: "Nora" });
 				const first_photo = await app.collections.dog_photos.suCreate({ dog: dog.id });
 				await app.collections.dog_photos.suCreate({ dog: dog.id });
