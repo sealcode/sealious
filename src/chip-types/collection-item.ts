@@ -148,7 +148,7 @@ export default class CollectionItem<T extends Collection = any> {
 			};
 			await this.collection.emit("before:create", [context, this]);
 			await this.throwIfInvalid("create", context, true);
-			const encoded = await this.body.encode(context);
+			const encoded = await this.body.encode(context, {});
 			context.app.Logger.debug3("ITEM", "creating a new item", {
 				metadata: this._metadata,
 			});
@@ -168,7 +168,12 @@ export default class CollectionItem<T extends Collection = any> {
 			});
 			await this.collection.emit("before:edit", [context, this]);
 			await this.throwIfInvalid("edit", context, this.has_been_replaced);
-			const encoded = await this.body.encode(context, true);
+			await this.original_body.decode(context);
+			const encoded = await this.body.encode(
+				context,
+				this.original_body.decoded,
+				true
+			);
 			await context.app.Datastore.update(
 				this.collection.name,
 				{ id: this.id },
@@ -180,6 +185,9 @@ export default class CollectionItem<T extends Collection = any> {
 			await this.collection.emit("after:edit", [context, this]);
 		}
 		this.body.clearChangedFields();
+		this.original_body = this.body;
+		this.body = this.body.copy();
+		await this.decode(context);
 		return this;
 	}
 

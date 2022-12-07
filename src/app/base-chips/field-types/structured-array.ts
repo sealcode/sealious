@@ -1,24 +1,54 @@
-import { is, predicates } from "@sealcode/ts-predicates";
+import { hasShape, is, predicates } from "@sealcode/ts-predicates";
 import type { ValidationResult } from "../../../chip-types/field";
 import type Field from "../../../chip-types/field";
-import type context from "../../../context";
+import { Context, Fieldset, FieldsetInput } from "../../../main";
 import { ArrayStorage } from "./array-storage";
 
 export class StructuredArray<
 	Subfields extends Record<string, Field>
-> extends ArrayStorage<Record<string, unknown>> {
-	constructor(public subfields: Record<string, Field>) {
+> extends ArrayStorage<FieldsetInput<Subfields>> {
+	typeName = "structured-array";
+	constructor(public subfields: Subfields) {
 		super(predicates.object);
 	}
 
-	async isProperValue(
-		context: context,
-		new_value: unknown,
-		old_value: unknown,
-		new_value_blessing_token: symbol | null
-	): Promise<ValidationResult> {
-		if (!is(new_value, predicates.object)) {
-			return { valid: false, reason: `${new_value} is not an object` };
+	async isProperElement(
+		context: Context,
+		element: unknown,
+		index: number
+	): Promise<{ valid: boolean; reason: string }> {
+		const orig_result = await super.isProperElement(
+			context,
+			element,
+			index
+		);
+		if (!orig_result.valid) {
+			return orig_result;
+		}
+
+		const obj = element as FieldsetInput<Subfields>;
+		const fieldset = new Fieldset(this.subfields);
+		fieldset.setMultiple(obj as any);
+
+		const result = await fieldset.validate(
+			context,
+			new Fieldset(this.subfields),
+			true
+		);
+		if (result.valid) {
+			return { valid: true, reason: "no validation errors" };
+		} else {
+			return {
+				valid: false,
+				reason: JSON.stringify(
+					Object.fromEntries(
+						Object.entries(result.errors).map(([key, value]) => [
+							`[${index}]${key}`,
+							value,
+						])
+					)
+				),
+			};
 		}
 	}
 }

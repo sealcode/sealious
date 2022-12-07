@@ -96,6 +96,7 @@ export class Fieldset<Fields extends Record<string, Field>> {
 	/** Returns encoded values for every field */
 	async encode(
 		context: Context,
+		original_body: FieldsetInput<Fields> = {} as FieldsetInput<Fields>,
 		only_changed = false
 	): Promise<Partial<FieldsetOutput<Fields>>> {
 		context.app.Logger.debug3(
@@ -125,7 +126,11 @@ export class Fieldset<Fields extends Record<string, Field>> {
 			}
 			promises.push(
 				this.fields[field_name as string]
-					.encode(context, to_encode)
+					.encode(
+						context,
+						to_encode,
+						original_body[field_name as keyof FieldsetInput<Fields>]
+					)
 					.then((value) => {
 						new_encoded[field_name as keyof typeof new_encoded] =
 							value;
@@ -244,5 +249,12 @@ export class Fieldset<Fields extends Record<string, Field>> {
 		field_name: FieldName
 	): symbol | null {
 		return this.blessings[field_name] || null;
+	}
+
+	setMultiple(values: Partial<FieldsetInput<Fields>>): this {
+		for (const [field_name, value] of Object.entries(values)) {
+			this.set(field_name as any, value as any);
+		}
+		return this;
 	}
 }
