@@ -147,3 +147,34 @@ assert.deepStrictEqual(invoice.get("entries"), [
 	{ title: "pineapple", price: 3.3 },
 ]);
 ```
+
+### Combine atomic actions with other edits in the array
+
+You can submit a new version of the array and then run the action on that new
+version, in one step. This is useful if you want to for example have a form where the user can edit some entries within the array and then submit an action that edits the array, before the other edits are saved. This way the action will be performed on the newest version of the user's input:
+
+```
+lang=ts
+const invoice = await app.collections.invoices.suCreate({
+	entries: [
+		{ title: "pen", price: 1.1 },
+		{ title: "apple", price: 2.2 },
+	],
+});
+invoice.set("entries", {
+	insert: {
+		value: { title: "pineapple", price: 3.3 },
+		index: 1,
+	},
+	data: [
+		{ title: "Pen", price: 100 },
+		{ title: "Apple", price: 200 },
+	],
+});
+await invoice.save(new app.SuperContext());
+assert.deepStrictEqual(invoice.get("entries"), [
+	{ title: "Pen", price: 100 },
+	{ title: "pineapple", price: 3.3 },
+	{ title: "Apple", price: 200 },
+]);
+```

@@ -8,11 +8,18 @@ import {
 import type { ActionName } from "../../../action";
 import { Field, Context, ValidationResult } from "../../../main";
 
-export type ArrayStorageInput<ContentType extends any> =
-	| ContentType[]
+export type ArrayStorageAction<ContentType> = (
 	| { remove: number }
 	| { swap: [number, number] }
-	| { insert: { value: ContentType; index?: number } };
+	| {
+			insert: { value: ContentType; index?: number };
+	  }
+	| {}
+) & { data?: ContentType[] };
+
+export type ArrayStorageInput<ContentType> =
+	| ContentType[]
+	| ArrayStorageAction<ContentType>;
 
 export abstract class ArrayStorage<
 	T extends string | number | Record<string, unknown>
@@ -37,100 +44,9 @@ export abstract class ArrayStorage<
 		}
 	}
 
-	async isProperValue(
-		context: Context,
-		new_value: unknown,
-		old_value: T[] | undefined,
-		new_value_blessing_token: symbol | null
-	): Promise<ValidationResult> {
-		if (
-			is(new_value, predicates.object) &&
-			(hasShape({ remove: predicates.number }, new_value) ||
-				hasShape(
-					{ swap: predicates.array(predicates.number) },
-					new_value
-				) ||
-				hasShape({ insert: predicates.object }, new_value))
-		) {
-			if (old_value === undefined) {
-				return {
-					valid: false,
-					reason: "The value is an array action description, but this array field does not yet have a value",
-				};
-			} else {
-				if (
-					hasFieldOfType(
-						new_value,
-						"swap",
-						predicates.array(predicates.number)
-					)
-				) {
-					if (new_value.swap.length != 2) {
-						return {
-							valid: false,
-							reason: "swap action parameter should be a list of two numbers",
-						};
-					}
-					if (
-						new_value.swap.some(
-							(index) => index >= old_value.length || index < 0
-						)
-					) {
-						return {
-							valid: false,
-							reason: "swap action parameter out of range",
-						};
-					}
-					return {
-						valid: true,
-						reason: "swap action parameters ok",
-					};
-				}
-
-				if (hasFieldOfType(new_value, "insert", predicates.object)) {
-					if (
-						!hasShape(
-							{
-								value: this.value_predicate,
-								index: predicates.maybe(predicates.number),
-							},
-							new_value.insert
-						)
-					) {
-						return {
-							valid: false,
-							reason: "Wrong shape of the insert action",
-						};
-					}
-					const validation_result = await this.isProperElement(
-						context,
-						new_value.insert.value,
-						new_value.insert.index == undefined
-							? old_value.length
-							: new_value.insert.index
-					);
-					if (!validation_result.valid) {
-						return {
-							valid: false,
-							reason: validation_result.reason,
-						};
-					}
-				}
-
-				return {
-					valid: true,
-					reason: "The value is an array action description",
-				};
-			}
-		}
-		if (!is(new_value, predicates.array(this.value_predicate))) {
-			return {
-				valid: false,
-				reason: `${new_value} is not an array of objects`,
-			};
-		}
+	async validateElements(context: Context, elements: unknown[]) {
 		const results = await Promise.all(
-			new_value.map((value, index) =>
+			elements.map((value, index) =>
 				this.isProperElement(context, value, index)
 			)
 		);
@@ -143,6 +59,111 @@ export abstract class ArrayStorage<
 					.join(", ")}`,
 			};
 		}
+		return { valid: true, reason: "elements valid" };
+	}
+
+	async isProperValue(
+		context: Context,
+		new_value: unknown,
+		old_value: T[] | undefined,
+		new_value_blessing_token: symbol | null
+	): Promise<ValidationResult> {
+		if (is(new_value, predicates.object) && !Array.isArray(new_value)) {
+			if (old_value === undefined) {
+				return {
+					valid: false,
+					reason: "The value is an array action description, but this array field does not yet have a value",
+				};
+			}
+			if (
+				hasFieldOfType(
+					new_value,
+					"swap",
+					predicates.array(predicates.number)
+				)
+			) {
+				if (new_value.swap.length != 2) {
+					return {
+						valid: false,
+						reason: "swap action parameter should be a list of two numbers",
+					};
+				}
+				if (
+					new_value.swap.some(
+						(index) => index >= old_value.length || index < 0
+					)
+				) {
+					return {
+						valid: false,
+						reason: "swap action parameter out of range",
+					};
+				}
+				return {
+					valid: true,
+					reason: "swap action parameters ok",
+				};
+			}
+
+			if (hasFieldOfType(new_value, "insert", predicates.object)) {
+				if (
+					!hasShape(
+						{
+							value: this.value_predicate,
+							index: predicates.maybe(predicates.number),
+						},
+						new_value.insert
+					)
+				) {
+					return {
+						valid: false,
+						reason: "Wrong shape of the insert action",
+					};
+				}
+				const validation_result = await this.isProperElement(
+					context,
+					new_value.insert.value,
+					new_value.insert.index == undefined
+						? old_value.length
+						: new_value.insert.index
+				);
+				if (!validation_result.valid) {
+					return {
+						valid: false,
+						reason: validation_result.reason,
+					};
+				}
+			}
+			if (hasFieldOfType(new_value, "data", predicates.any)) {
+				if (!is(new_value.data, predicates.array(predicates.object))) {
+					return {
+						valid: false,
+						reason: ".data should be an array of objects",
+					};
+				}
+				const result = await this.validateElements(
+					context,
+					new_value.data
+				);
+				if (!result.valid) {
+					return result;
+				}
+			}
+
+			return {
+				valid: true,
+				reason: "The value is an array action description",
+			};
+		}
+		if (!is(new_value, predicates.array(this.value_predicate))) {
+			return {
+				valid: false,
+				reason: `${new_value} is not an array of objects`,
+			};
+		}
+		const result = await this.validateElements(context, new_value);
+		if (!result.valid) {
+			return result;
+		}
 		return { valid: true, reason: `Proper form` };
 	}
 
@@ -152,8 +173,10 @@ export abstract class ArrayStorage<
 		old_value: T[]
 	): Promise<T[]> {
 		if (!Array.isArray(value)) {
+			const value_to_modify = value.data ? value.data : old_value;
+			let result = value_to_modify;
 			if (hasFieldOfType(value, "remove", predicates.number)) {
-				old_value = old_value.filter((_, i) => {
+				result = result.filter((_, i) => {
 					return i !== value.remove;
 				});
 			}
@@ -164,9 +187,9 @@ export abstract class ArrayStorage<
 					predicates.array(predicates.number)
 				)
 			) {
-				const temp = old_value[value.swap[0]];
-				old_value[value.swap[0]] = old_value[value.swap[1]];
-				old_value[value.swap[1]] = temp;
+				const temp = result[value.swap[0]];
+				result[value.swap[0]] = result[value.swap[1]];
+				result[value.swap[1]] = temp;
 			}
 			if (
 				hasFieldOfType(value, "insert", predicates.object) &&
@@ -180,15 +203,15 @@ export abstract class ArrayStorage<
 			) {
 				const n =
 					value.insert.index === undefined
-						? old_value.length
+						? result.length
 						: value.insert.index;
-				old_value = [
-					...old_value.slice(0, n),
+				result = [
+					...result.slice(0, n),
 					value.insert.value,
-					...old_value.slice(n),
+					...result.slice(n),
 				];
 			}
-			return old_value;
+			return result;
 		}
 		return value;
 	}

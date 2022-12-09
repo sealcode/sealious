@@ -167,4 +167,87 @@ describe("structured-array", () => {
 				]);
 			}
 		));
+
+	it("handles actions with data property preset", async () =>
+		// this is helpful when handling form input, some fields are changed but
+		// not yet saved and then the users pressed "remove this row"
+		withRunningApp(
+			(testapp) =>
+				class extends testapp {
+					collections = {
+						...App.BaseCollections,
+						invoices: new (class extends Collection {
+							fields = {
+								entries: new StructuredArray({
+									title: new FieldTypes.Text(),
+									price: new FieldTypes.Float(),
+								}),
+							};
+						})(),
+					};
+				},
+			async ({ app }) => {
+				const invoice = await app.collections.invoices.suCreate({
+					entries: [
+						{ title: "pen", price: 1.1 },
+						{ title: "apple", price: 2.2 },
+					],
+				});
+				invoice.set("entries", {
+					insert: {
+						value: { title: "pineapple", price: 3.3 },
+						index: 1,
+					},
+					data: [
+						{ title: "Pen", price: 100 },
+						{ title: "Apple", price: 200 },
+					],
+				});
+				await invoice.save(new app.SuperContext());
+				assert.deepStrictEqual(invoice.get("entries"), [
+					{ title: "Pen", price: 100 },
+					{ title: "pineapple", price: 3.3 },
+					{ title: "Apple", price: 200 },
+				]);
+			}
+		));
+
+	it("just updates the array if the action is empty", async () =>
+		// this is helpful when handling form input, some fields are changed but
+		// not yet saved and then the users pressed "remove this row"
+		withRunningApp(
+			(testapp) =>
+				class extends testapp {
+					collections = {
+						...App.BaseCollections,
+						invoices: new (class extends Collection {
+							fields = {
+								entries: new StructuredArray({
+									title: new FieldTypes.Text(),
+									price: new FieldTypes.Float(),
+								}),
+							};
+						})(),
+					};
+				},
+			async ({ app }) => {
+				const invoice = await app.collections.invoices.suCreate({
+					entries: [
+						{ title: "pen", price: 1.1 },
+						{ title: "apple", price: 2.2 },
+					],
+				});
+				invoice.set("entries", {
+					data: [
+						{ title: "Pen", price: 100 },
+						{ title: "Apple", price: 200 },
+					],
+				});
+				await invoice.save(new app.SuperContext());
+				assert.deepStrictEqual(invoice.get("entries"), [
+					{ title: "Pen", price: 100 },
+					{ title: "Apple", price: 200 },
+				]);
+			}
+		));
 });
