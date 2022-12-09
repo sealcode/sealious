@@ -32,3 +32,4 @@ export { default as Url } from "./url";
 export * from "./array-storage";
 export * from "./enum-multiple";
 export * from "./uuid";
+export * from "./structured-array";
