@@ -1,12 +1,16 @@
 import {
 	hasFieldOfType,
-	hasShape,
 	is,
 	Predicate,
 	predicates,
 } from "@sealcode/ts-predicates";
+import type { InputType } from "zlib";
 import type { ActionName } from "../../../action";
 import { Field, Context, ValidationResult } from "../../../main";
+import { Insert } from "./array-actions/insert";
+import { Remove } from "./array-actions/remove";
+import { Replace } from "./array-actions/replace";
+import { Swap } from "./array-actions/swap";
 
 export type ArrayStorageAction<ContentType> = (
 	| { remove: number }
@@ -28,14 +32,16 @@ export abstract class ArrayStorage<
 		super();
 	}
 
+	abstract getEmptyElement(context: Context): Promise<T>;
+
 	isOldValueSensitive(_: ActionName): boolean {
 		return true;
 	}
 
 	async isProperElement(
-		context: Context,
+		_context: Context,
 		element: unknown,
-		index: number
+		_index: number
 	): Promise<{ valid: boolean; reason: string }> {
 		if (is(element, this.value_predicate)) {
 			return { valid: true, reason: "Matches predicate" };
@@ -66,7 +72,7 @@ export abstract class ArrayStorage<
 		context: Context,
 		new_value: unknown,
 		old_value: T[] | undefined,
-		new_value_blessing_token: symbol | null
+		_new_value_blessing_token: symbol | null
 	): Promise<ValidationResult> {
 		if (is(new_value, predicates.object) && !Array.isArray(new_value)) {
 			if (old_value === undefined) {
@@ -75,63 +81,29 @@ export abstract class ArrayStorage<
 					reason: "The value is an array action description, but this array field does not yet have a value",
 				};
 			}
-			if (
-				hasFieldOfType(
-					new_value,
-					"swap",
-					predicates.array(predicates.number)
-				)
-			) {
-				if (new_value.swap.length != 2) {
-					return {
-						valid: false,
-						reason: "swap action parameter should be a list of two numbers",
-					};
-				}
-				if (
-					new_value.swap.some(
-						(index) => index >= old_value.length || index < 0
-					)
-				) {
-					return {
-						valid: false,
-						reason: "swap action parameter out of range",
-					};
-				}
-				return {
-					valid: true,
-					reason: "swap action parameters ok",
-				};
-			}
-
-			if (hasFieldOfType(new_value, "insert", predicates.object)) {
-				if (
-					!hasShape(
-						{
-							value: this.value_predicate,
-							index: predicates.maybe(predicates.number),
-						},
-						new_value.insert
-					)
-				) {
-					return {
-						valid: false,
-						reason: "Wrong shape of the insert action",
-					};
-				}
-				const validation_result = await this.isProperElement(
-					context,
-					new_value.insert.value,
-					new_value.insert.index == undefined
-						? old_value.length
-						: new_value.insert.index
+			let found_matching_action = false;
+			for (const Action of [Remove, Swap, Insert, Replace]) {
+				const action = new Action(
+					this.value_predicate,
+					this.isProperElement.bind(this)
 				);
-				if (!validation_result.valid) {
-					return {
-						valid: false,
-						reason: validation_result.reason,
-					};
+				const result = await action.validate(
+					context,
+					new_value,
+					old_value || []
+				);
+				if (result.valid) {
+					found_matching_action = true;
+					break;
 				}
+			}
+			if (!found_matching_action) {
+				return {
+					valid: false,
+					reason: `No action matches the description: ${JSON.stringify(
+						new_value
+					)}`,
+				};
 			}
 			if (hasFieldOfType(new_value, "data", predicates.any)) {
 				if (!is(new_value.data, predicates.array(predicates.object))) {
@@ -168,48 +140,36 @@ export abstract class ArrayStorage<
 	}
 
 	async encode(
-		_: Context,
-		value: ArrayStorageInput<T>,
+		context: Context,
+		value: ArrayStorageInput<T> | null,
 		old_value: T[]
 	): Promise<T[]> {
+		if (value === null) {
+			return [];
+		}
 		if (!Array.isArray(value)) {
 			const value_to_modify = value.data ? value.data : old_value;
 			let result = value_to_modify;
-			if (hasFieldOfType(value, "remove", predicates.number)) {
-				result = result.filter((_, i) => {
-					return i !== value.remove;
-				});
-			}
-			if (
-				hasFieldOfType(
+			const empty_element = await this.getEmptyElement(context);
+			for (const Action of [Remove, Swap, Insert, Replace]) {
+				const action = new Action(
+					this.value_predicate,
+					this.isProperElement.bind(this)
+				);
+				const parsed_action = await action.parse(
+					context,
 					value,
-					"swap",
-					predicates.array(predicates.number)
-				)
-			) {
-				const temp = result[value.swap[0]];
-				result[value.swap[0]] = result[value.swap[1]];
-				result[value.swap[1]] = temp;
-			}
-			if (
-				hasFieldOfType(value, "insert", predicates.object) &&
-				hasShape(
-					{
-						value: this.value_predicate,
-						index: predicates.maybe(predicates.number),
-					},
-					value.insert
-				)
-			) {
-				const n =
-					value.insert.index === undefined
-						? result.length
-						: value.insert.index;
-				result = [
-					...result.slice(0, n),
-					value.insert.value,
-					...result.slice(n),
-				];
+					result,
+					empty_element
+				);
+				if (parsed_action) {
+					result = await action.run(
+						context,
+						parsed_action as any,
+						result,
+						empty_element
+					);
+				}
 			}
 			return result;
 		}
@@ -217,7 +177,7 @@ export abstract class ArrayStorage<
 	}
 
 	async getMatchQuery(
-		context: Context,
+		_context: Context,
 		filter:
 			| T
 			| {

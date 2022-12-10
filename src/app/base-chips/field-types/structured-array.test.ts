@@ -213,8 +213,6 @@ describe("structured-array", () => {
 		));
 
 	it("just updates the array if the action is empty", async () =>
-		// this is helpful when handling form input, some fields are changed but
-		// not yet saved and then the users pressed "remove this row"
 		withRunningApp(
 			(testapp) =>
 				class extends testapp {

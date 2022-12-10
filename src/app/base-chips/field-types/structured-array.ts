@@ -12,6 +12,10 @@ export class StructuredArray<
 		super(predicates.object);
 	}
 
+	async getEmptyElement() {
+		return {} as FieldsetInput<Subfields>;
+	}
+
 	async isProperElement(
 		context: Context,
 		element: unknown,

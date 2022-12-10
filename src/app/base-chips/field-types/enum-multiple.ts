@@ -11,6 +11,10 @@ export class EnumMultiple<Values extends string> extends ArrayStorage<Values> {
 		super(predicates.string);
 	}
 
+	async getEmptyElement(context: Context): Promise<Values> {
+		return (await this.getAllowedValues(context))[0];
+	}
+
 	async getAllowedValues(context: Context): Promise<Values[]> {
 		if (typeof this.allowed_values === "function") {
 			return this.allowed_values(context);

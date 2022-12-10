@@ -26,7 +26,7 @@
 	},
 	"dependencies": {
 		"@koa/router": "^10.0.0",
-		"@sealcode/ts-predicates": "^0.4.1",
+		"@sealcode/ts-predicates": "^0.4.3",
 		"@types/bluebird": "^3.5.30",
 		"@types/boom": "^7.3.0",
 		"@types/clone": "^0.1.30",
