@@ -21,7 +21,9 @@ export abstract class ArrayAction<
 			reason: string;
 		}>
 	) {}
+
 	abstract InputShape: Shape;
+
 	async validate<T>(
 		context: Context,
 		action: unknown,

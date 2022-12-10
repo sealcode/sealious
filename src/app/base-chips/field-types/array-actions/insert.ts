@@ -7,7 +7,7 @@ const InsertInputShape = {
 		index: predicates.maybe(
 			predicates.or(predicates.number, predicates.string)
 		),
-		value: predicates.any,
+		value: predicates.maybe(predicates.any),
 	}),
 };
 const InsertParsedShape = {

@@ -248,4 +248,34 @@ describe("structured-array", () => {
 				]);
 			}
 		));
+
+	it("Handles insert action where indexes are strings and array is currently empty", async () =>
+		withRunningApp(
+			(testapp) =>
+				class extends testapp {
+					collections = {
+						...App.BaseCollections,
+						invoices: new (class extends Collection {
+							fields = {
+								entries: new StructuredArray({
+									title: new FieldTypes.Text(),
+									price: new FieldTypes.Float(),
+								}),
+							};
+						})(),
+					};
+				},
+			async ({ app }) => {
+				const invoice = await app.collections.invoices.suCreate({
+					entries: [],
+				});
+				invoice.set("entries", {
+					insert: {
+						index: "0",
+					},
+				});
+				await invoice.save(new app.SuperContext());
+				assert.deepStrictEqual(invoice.get("entries"), [{}]);
+			}
+		));
 });

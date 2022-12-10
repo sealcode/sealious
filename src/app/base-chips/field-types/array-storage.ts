@@ -16,7 +16,7 @@ export type ArrayStorageAction<ContentType> = (
 	| { remove: number }
 	| { swap: [number, number] }
 	| {
-			insert: { value: ContentType; index?: number };
+			insert: { value?: ContentType; index?: number | string };
 	  }
 	| {}
 ) & { data?: ContentType[] };
