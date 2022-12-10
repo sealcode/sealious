@@ -1,4 +1,4 @@
-import { ShapeToType } from "@sealcode/ts-predicates";
+import type { ShapeToType } from "@sealcode/ts-predicates";
 import type Context from "../../../../context";
 import { ArrayAction } from "./array-action";
 
