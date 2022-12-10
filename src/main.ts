@@ -1,7 +1,10 @@
 export { ActionName } from "./action";
 export { default as Policy, PolicyClass } from "./chip-types/policy";
 export * as Policies from "./app/policy-types/policy-types";
-export { default as Collection } from "./chip-types/collection";
+export {
+	default as Collection,
+	CollectionInput,
+} from "./chip-types/collection";
 export { default as Field, FieldOutput } from "./chip-types/field";
 export * as FieldTypes from "./app/base-chips/field-types/field-types";
 export { App, Translation, AppEvents } from "./app/app";
