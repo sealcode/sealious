@@ -4,6 +4,7 @@ import type Collection from "../chip-types/collection";
 import type { QueryStage } from "./query";
 import asyncForEach from "../utils/async-foreach";
 import QueryStep from "./query-step";
+import { sleep } from "../test_utils/sleep";
 
 export type OutputOptions = Partial<{
 	skip: number;
@@ -135,6 +136,11 @@ export default class Datastore {
 		_ = {},
 		output_options: OutputOptions = {}
 	): Promise<Record<string, any>[]> {
+		// useful for demonstration purposes
+		const artificial_delay = parseInt(process.env.SEALIOUS_DB_DELAY || "0");
+		if (artificial_delay) {
+			await sleep(artificial_delay);
+		}
 		const cursor = this.db.collection(collection_name).aggregate(pipeline);
 
 		if (pipeline.find((element) => element instanceof QueryStep)) {
