@@ -25,3 +25,5 @@ docs
 /.log/
 .idea
 /hint-report/
+lib-integrated
+/lib-instrumented/

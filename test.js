@@ -33,21 +33,11 @@ const mocha_files = ["lib/src/**/*.test.js"];
 
 let command = [mocha, ...mocha_options, ...mocha_files];
 
-if (args.cover) {
-	const nyc = [bin_dir + "nyc", "-all"];
-	if (args["cover-html"]) {
-		nyc.push("--reporter", "lcov");
-	} else {
-		nyc.push("--reporter", "clover");
-	}
-	command = [...nyc, ...command];
-}
-
 if (args.debug) {
 	command = ["node", "inspect", ...command];
 }
 
-/* console.log("spawning mocha...", command); */
+console.log("spawning mocha...", command.join(" "));
 
 const proc = spawn(command[0], command.slice(1), {
 	stdio: "inherit",
