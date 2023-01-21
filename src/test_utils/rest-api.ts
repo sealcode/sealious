@@ -60,4 +60,10 @@ export default class MockRestApi {
 			.slice(0, -1);
 		return { headers: { Cookie: `sealious-session=${session_id}` } };
 	}
+	static async getWithFullUrl(
+		url: string,
+		options?: Parameters<typeof axios.get>[1]
+	) {
+		return await axios.get(`${url}`, options);
+	}
 }
