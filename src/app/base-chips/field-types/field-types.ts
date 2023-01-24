@@ -29,6 +29,7 @@ export { default as ValueExistingInCollection } from "./value-existing-in-collec
 export { default as FileID } from "./file-id";
 export { default as Required } from "./required";
 export { default as Url } from "./url";
+export { default as Money } from "./money";
 export * from "./array-storage";
 export * from "./enum-multiple";
 export * from "./uuid";

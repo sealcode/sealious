@@ -12,4 +12,5 @@ describe("field types", () => {
 	require("./disallow-update.subtest");
 	require("./boolean.subtest");
 	require("./url.subtest");
+	require("./money.subtest");
 });
