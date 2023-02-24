@@ -1,12 +1,11 @@
 import assert from "assert";
 import Int from "../app/base-chips/field-types/int";
-import { App, FieldTypes, Policies } from "../main";
+import { App, Context, FieldTypes, Policies } from "../main";
+import { assertThrowsAsync } from "../test_utils/assert-throws-async";
 import type { TestApp } from "../test_utils/test-app";
 import {
 	TestAppConstructor,
 	withRunningApp,
-	withStoppedApp,
-	withTestApp,
 } from "../test_utils/with-test-app";
 import Collection from "./collection";
 
@@ -159,5 +158,89 @@ describe("collection", () => {
 					assert.strictEqual(called, true);
 				}
 			));
+	});
+	describe("getByID", () => {
+		it("throws an ugly error by default", async () => {
+			return withRunningApp(
+				(t) =>
+					extend(t, {
+						create: new Policies.Public(),
+						show: new Policies.Owner(),
+					}),
+				async ({ app }) => {
+					const collection = "coins";
+					const item = await app.collections[collection].suCreate({
+						value: 1,
+					});
+
+					const guest = await app.collections.users.suCreate({
+						password: "12345678",
+						username: "Adam",
+					});
+
+					const guestContext = new Context(
+						app,
+						new Date().getTime(),
+						guest.id
+					);
+					await assertThrowsAsync(
+						async () => {
+							await app.collections.coins.getByID(
+								guestContext,
+								item.id
+							);
+						},
+						async (e) => {
+							assert.strictEqual(
+								e.message,
+								`${collection}: id ${item.id} not found`
+							);
+						}
+					);
+				}
+			);
+		});
+	});
+
+	it("throws an nice error when ordered to", async () => {
+		return withRunningApp(
+			(t) =>
+				extend(t, {
+					create: new Policies.Public(),
+					show: new Policies.Owner(),
+				}),
+			async ({ app }) => {
+				const collection = "coins";
+				const item = await app.collections[collection].suCreate({
+					value: 1,
+				});
+
+				const guest = await app.collections.users.suCreate({
+					password: "12345678",
+					username: "Adam",
+				});
+
+				const guestContext = new Context(
+					app,
+					new Date().getTime(),
+					guest.id
+				);
+				await assertThrowsAsync(
+					async () => {
+						await app.collections.coins.getByID(
+							guestContext,
+							item.id,
+							true
+						);
+					},
+					async (e) => {
+						assert.strictEqual(
+							e.message,
+							guestContext.app.i18n("policy_owner_deny")
+						);
+					}
+				);
+			}
+		);
 	});
 });

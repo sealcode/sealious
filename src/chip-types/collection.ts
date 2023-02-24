@@ -125,30 +125,71 @@ export default abstract class Collection {
 		return this.getByID(new this.app.SuperContext(), id);
 	}
 
-	async getByID(context: Context, id: string): Promise<CollectionItem<this>> {
+	async getByID(
+		context: Context,
+		id: string,
+		give_descriptive_errors = false
+	): Promise<CollectionItem<this>> {
 		const policy = this.getPolicy("show");
 		if (!(await policy.isItemSensitive(context))) {
-			const result = await policy.check(context);
-			if (!result?.allowed) {
-				throw new BadContext(result?.reason as string);
+			const checkResult = await policy.check(context);
+			if (!checkResult?.allowed) {
+				throw new BadContext(checkResult?.reason as string);
 			}
 		}
-		const results = (await context.app.Datastore.aggregate(this.name, [
-			{ $match: { id } },
-			...(await policy.getRestrictingQuery(context)).toPipeline(),
-		])) as Record<string, unknown>[];
-		if (!results.length) {
-			throw new NotFound(`${this.name}: id ${id} not found`);
+		const restrictedListResult = (await context.app.Datastore.aggregate(
+			this.name,
+			[
+				{ $match: { id } },
+				...(await policy.getRestrictingQuery(context)).toPipeline(),
+			]
+		)) as Record<string, unknown>[];
+
+		if (!restrictedListResult.length) {
+			if (!give_descriptive_errors) {
+				throw new NotFound(`${this.name}: id ${id} not found`);
+			}
+
+			const unrestrictedListResult =
+				(await context.app.Datastore.aggregate(this.name, [
+					{ $match: { id } },
+				])) as Record<string, unknown>[];
+
+			if (!unrestrictedListResult.length) {
+				throw new NotFound(`${this.name}: id ${id} not found`);
+			}
+
+			const checkResult = await policy.checkerFunction(
+				context,
+				async () =>
+					new CollectionItem(
+						this,
+						new CollectionItemBody(
+							this,
+							{},
+							{},
+							unrestrictedListResult[0] as unknown as FieldsetEncoded<
+								this["fields"]
+							>
+						),
+						unrestrictedListResult[0]._metadata as ItemMetadata,
+						id
+					)
+			);
+			throw new BadContext(checkResult?.reason as string);
 		}
+
 		const ret = new CollectionItem(
 			this,
 			new CollectionItemBody(
 				this,
 				{},
 				{},
-				results[0] as unknown as FieldsetEncoded<this["fields"]>
+				restrictedListResult[0] as unknown as FieldsetEncoded<
+					this["fields"]
+				>
 			),
-			results[0]._metadata as ItemMetadata,
+			restrictedListResult[0]._metadata as ItemMetadata,
 			id
 		);
 		await ret.decode(context);
@@ -166,7 +207,7 @@ export default abstract class Collection {
 				? await this.getByID(context, id)
 				: null;
 		if (this.emitter.listenerCount("before:remove")) {
-			this.emit("before:remove", [context, item]);
+			void this.emit("before:remove", [context, item]);
 		}
 		const result = await this.getPolicy("delete").check(context, () =>
 			this.getByID(context, id)
@@ -176,7 +217,7 @@ export default abstract class Collection {
 		}
 		await context.app.Datastore.remove(this.name, { id: id }, true);
 		if (this.emitter.listenerCount("after:remove")) {
-			this.emit("after:remove", [context, item]);
+			void this.emit("after:remove", [context, item]);
 		}
 	}
 
