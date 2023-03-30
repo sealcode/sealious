@@ -6,4 +6,5 @@ describe("policy-types", () => {
 	require("./users-who-can.subtest");
 	require("./user-referenced-in-field.subtest");
 	require("./if.subtest");
+	require("./owner.subtest");
 });
