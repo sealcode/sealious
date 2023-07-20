@@ -1,6 +1,12 @@
 import Router from "@koa/router";
 import Collection, { Fieldnames } from "../../chip-types/collection";
-import { Errors, FieldsetInput, FieldTypes, Policies } from "../../main";
+import {
+	Context,
+	Errors,
+	FieldsetInput,
+	FieldTypes,
+	Policies,
+} from "../../main";
 import SecureHasher from "../../utils/secure-hasher";
 
 export default class Sessions extends Collection {
@@ -73,5 +79,27 @@ export default class Sessions extends Collection {
 		await session.save(new this.app.SuperContext());
 		const session_id = session.get("session-id");
 		return session_id as string;
+	}
+
+	async logout(context: Context, session_id: string): Promise<void> {
+		const {
+			items: [session],
+		} = await this.app.collections.sessions
+			.list(context)
+			.filter({ "session-id": session_id })
+			.fetch();
+		if (!session) {
+			throw new Error(
+				"Logout error: Wrong session ID or you don't have access to that session"
+			);
+		}
+		try {
+			await session.delete(context);
+		} catch (e) {
+			console.error(e);
+			throw new Error(
+				"Logout: Could not delete the session. Do you have the right permisions?"
+			);
+		}
 	}
 }

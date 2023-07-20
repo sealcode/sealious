@@ -275,6 +275,19 @@ router.post("/login", Middlewares.parseBody(), async (ctx) => {
 });
 ```
 
+#### How to log out a user?
+
+Create an endpoint where you call the `sessions.logout` function:
+
+```
+lang=ts
+router.get("/logout", async (ctx) => {
+	const session_id = ctx.cookies.get("sealious-session");
+	ctx.$app.collections.sessions.logout(ctx.$context, session_id);
+	ctx.status = 303; // more standards- and hotwire-friendly
+});
+```
+
 #### How to set up a default value to a field?
 
 It's possible, but currently not pretty. This will be fixed in the future.

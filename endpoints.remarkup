@@ -16,12 +16,11 @@ module](https://github.com/ljharb/qs) for more details.
 
 ### Register:
 
-`POST /api/v1/collections/registration-intents`
-
-params: email
-
-Starts user registration flow. THe user needs to confirm the email first, and
-then is redirected to a form that lets them choose their username.
+We used to have and endpoint that started the registration flow,
+including sending an email with the confirmation link, but it has been
+removed, giving way to more customization of the registration
+workflow. You now have to create the registration endpoint yourself,
+using `app.collection.users.create`.
 
 ### Log in:
 
