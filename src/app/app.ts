@@ -138,6 +138,8 @@ export abstract class App {
 	 * connects to the database and starts the app, serving the REST
 	 * API */
 	async start(): Promise<void> {
+		console.log("random change");
+
 		this.ConfigManager.setRoot(this.config);
 
 		const promises = [];
