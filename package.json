@@ -71,7 +71,7 @@
 		"locreq": "^2.0.2",
 		"mime": "^2.4.6",
 		"mjml": "^4.2.0",
-		"mongodb": "^3.6.2",
+		"mongodb": "^3.7.4",
 		"nodemailer": "^6.4.6",
 		"object-hash": "^2.0.3",
 		"pretty-ms": "^7.0.0",
