@@ -431,4 +431,41 @@ describe("single_reference", () => {
 				});
 			}));
 	});
+
+	it("allows filtering by just the id of the referenced resource", () =>
+		withRunningApp(
+			(test_app) => {
+				const A = new (class extends Collection {
+					name = "A";
+					fields = {
+						reference_to_b: new FieldTypes.SingleReference("B"),
+					};
+				})();
+				const B = new (class extends Collection {
+					name = "B";
+					fields = { number: new FieldTypes.Int() };
+				})();
+
+				return class extends test_app {
+					collections = {
+						...TestApp.BaseCollections,
+						A,
+						B,
+					};
+				};
+			},
+			async ({ app }) => {
+				const b = await app.collections.B.suCreate({ number: 2 });
+				await app.collections.A.suCreate({ reference_to_b: b.id });
+				const { items } = await app.collections.A.suList()
+					.filter({ reference_to_b: b.id })
+					.fetch();
+				assert.strictEqual(items.length, 1);
+				const { items: items2 } = await app.collections.A.suList()
+					.filter({ reference_to_b: b.id + "some random garbage" })
+					.fetch();
+
+				assert.strictEqual(items2.length, 0);
+			}
+		));
 });

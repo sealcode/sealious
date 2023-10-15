@@ -3,7 +3,8 @@ import { Field, Context } from "../../../main";
 import ItemList, { AttachmentOptions } from "../../../chip-types/item-list";
 import { ValidationError } from "../../../response/errors";
 
-type Filter = Record<string, any>;
+type InnerFilter = Record<string, any>;
+type SearchFilter = InnerFilter | string;
 
 /** A reference to other item, in the same or other collection. Can point at items from only one, specified collection. Items with field of this type can be filtered by fields of the items it points at. Examples below.
  *
@@ -13,9 +14,9 @@ export default class SingleReference extends Field {
 	typeName = "single-reference";
 	hasIndex = async () => true;
 	target_collection: string;
-	filter: Filter;
+	filter: InnerFilter;
 
-	constructor(target_collection: string, filter?: Filter) {
+	constructor(target_collection: string, filter?: InnerFilter) {
 		super();
 		this.target_collection = target_collection;
 		this.filter = filter || {};
@@ -65,7 +66,7 @@ export default class SingleReference extends Field {
 		return decision;
 	}
 
-	async getMatchQueryValue(context: Context, filter: Filter) {
+	async getMatchQueryValue(context: Context, filter: SearchFilter) {
 		// treating filter as a query here
 		context.app.Logger.debug3("SINGLE REFERENCE", "FiltertoQuery", {
 			context,
@@ -92,7 +93,10 @@ export default class SingleReference extends Field {
 		const temp_field_name = `${
 			this.getTargetCollection(context).name
 		}-lookup${Math.floor(Math.random() * Math.pow(10, 7))}`;
-		if (!filter_value || Object.keys(filter_value as Filter).length === 0) {
+		if (
+			!filter_value ||
+			Object.keys(filter_value as SearchFilter).length === 0
+		) {
 			return [];
 		}
 		if (typeof filter_value === "string") {
