@@ -47,8 +47,6 @@ Makefile
 hint-report
 lib-instrumented
 npm.sh
-lib/src/test_utils
-@types/src/test_utils
 docker-compose.yml
 docker-entrypoint.sh
 *.tgz
