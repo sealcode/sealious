@@ -31,6 +31,14 @@ export default class Datastore {
 			useNewUrlParser: true,
 			useUnifiedTopology: true,
 			connectTimeoutMS: 1000,
+			serverSelectionTimeoutMS: 2000,
+		}).catch((error: Error) => {
+			if (error?.name === "MongoServerSelectionError") {
+				const err = `MongoDB was not found at the following address: ${url}. Please make sure database is running.`;
+				console.log(err);
+				throw Error(err);
+			}
+			throw error;
 		});
 
 		if (!this.client) {
@@ -63,7 +71,7 @@ export default class Datastore {
 				indexes.push({ [field_name]: 1 });
 			} else if (typeof index_answer === "object") {
 				for (const [subfield, index] of Object.entries(index_answer)) {
-					const key = `${field_name}.${subfield as string}`;
+					const key = `${field_name}.${subfield}`;
 					if (index === "text") {
 						text_index[key] = "text";
 					} else if (index) {
