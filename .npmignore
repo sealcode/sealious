@@ -50,3 +50,5 @@ npm.sh
 docker-compose.yml
 docker-entrypoint.sh
 *.tgz
+**/*.remarkup
+**/*.md
