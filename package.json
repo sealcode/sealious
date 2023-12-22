@@ -26,7 +26,7 @@
 		"url": "https://github.com/Sealious/Sealious/issues"
 	},
 	"dependencies": {
-		"@koa/router": "^10.0.0",
+		"@koa/router": "^12.0.1",
 		"@sealcode/ts-predicates": "^0.4.3",
 		"@types/bluebird": "^3.5.30",
 		"@types/boom": "^7.3.0",
@@ -35,7 +35,6 @@
 		"@types/color-hash": "^1.0.0",
 		"@types/escape-html": "^1.0.0",
 		"@types/koa": "^2.11.6",
-		"@types/koa__router": "*",
 		"@types/koa-mount": "^4.0.0",
 		"@types/koa-qs": "^2.0.0",
 		"@types/koa-send": "^4.1.2",
@@ -83,6 +82,7 @@
 	},
 	"devDependencies": {
 		"@types/cron": "^2.0.0",
+		"@types/koa__router": "^12.0.4",
 		"@typescript-eslint/eslint-plugin": "^3.6.0",
 		"@typescript-eslint/parser": "^3.6.0",
 		"eslint": "^7.4.0",
