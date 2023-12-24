@@ -39,6 +39,25 @@ item.set("done", true);
 await item.remove(context);
 ```
 
+## Upserting
+
+You can use the upsert method to add or update an existing item in the
+database based on some identifying field:
+
+```
+lang=typescript
+await app.collections.patrons.upsert(
+	new app.SuperContext(),
+	"email",
+	[
+		{
+			email: "adam@example.com",
+			end_date: "2024-12-24",
+		},
+	]
+);
+```
+
 ## Listing items
 
 To query a collection, first create an `ItemList`:

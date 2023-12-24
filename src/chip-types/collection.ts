@@ -400,4 +400,34 @@ export default abstract class Collection {
 			keyof FieldsetInput<C["fields"]> & string
 		>;
 	}
+
+	async upsert<
+		C extends Collection,
+		IdentityField extends keyof CollectionInput<C>
+	>(
+		context: Context,
+		identify_by: IdentityField,
+		entries: ({ [key in IdentityField]: unknown } & CollectionInput<C>)[]
+	): Promise<void> {
+		await Promise.all(
+			entries.map(async (entry) => {
+				const {
+					items: [item],
+				} = await context.app.collections[this.name]
+					.list(context)
+					.filter({ [identify_by]: entry[identify_by] })
+					.paginate({ items: 1 })
+					.fetch();
+				if (item) {
+					item.setMultiple(entry);
+					return item.save(context);
+				} else {
+					return context.app.collections[this.name].create(
+						context,
+						entry
+					);
+				}
+			})
+		);
+	}
 }

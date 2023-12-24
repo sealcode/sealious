@@ -243,4 +243,70 @@ describe("collection", () => {
 			}
 		);
 	});
+
+	describe("upsert", () => {
+		it("creates new items and updates the old ones", () =>
+			withRunningApp(
+				(t) =>
+					class extends t {
+						collections = {
+							...App.BaseCollections,
+							patrons: new (class extends Collection {
+								fields = {
+									email: new FieldTypes.Email(),
+									amount_monthly: new FieldTypes.Float(),
+									end_date: new FieldTypes.Date(),
+								};
+							})(),
+						};
+					},
+
+				async ({ app }) => {
+					await app.collections.patrons.upsert(
+						new app.SuperContext(),
+						"email",
+						[
+							{
+								email: "adam@example.com",
+								amount_monthly: 3,
+								end_date: "2023-12-24",
+							},
+							{
+								email: "eve@example.com",
+								amount_monthly: 7,
+								end_date: "2024-10-13",
+							},
+						]
+					);
+					await app.collections.patrons.upsert(
+						new app.SuperContext(),
+						"email",
+						[
+							{
+								email: "adam@example.com",
+								end_date: "2024-12-24", // one year later
+							},
+						]
+					);
+					const { items: patrons } = await app.collections.patrons
+						.suList()
+						.sort({ email: "asc" })
+						.fetch();
+					assert.strictEqual(patrons.length, 2);
+					assert.strictEqual(
+						patrons[0].get("email"),
+						"adam@example.com"
+					);
+					assert.strictEqual(
+						patrons[0].get("end_date"),
+						"2024-12-24"
+					);
+					assert.strictEqual(
+						patrons[1].get("email"),
+						"eve@example.com"
+					);
+					assert.strictEqual(patrons[1].get("amount_monthly"), 7);
+				}
+			));
+	});
 });
