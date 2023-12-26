@@ -32,6 +32,7 @@ current version of Sealious:
 -   [Creating custom Policy
     types](https://hub.sealcode.org/source/sealious/browse/dev/src/app/policy-types/creating-policy-types.remarkup)
 -   [How User Roles work in Sealious](https://hub.sealcode.org/source/sealious/browse/dev/roles.remarkup)
+-   [Handling long-running processes](https://hub.sealcode.org/source/sealious/browse/dev/src/data-structures/long-running-process.remarkup)
 
 ## Example app
 

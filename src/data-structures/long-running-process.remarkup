@@ -1,0 +1,33 @@
+# Long Running Processes
+
+A `LongRunningProcess` is a data structure that helps you inform users about the
+progress of execution of a function that might take a significant amount of
+time, like a migration, or importing some data, etc.
+
+It does not help you resume function execution after your app has been
+unexpectedly restarted. This data structure is only meant to help display the
+progress of the function's execution.
+
+See below for an example of how to use it.
+
+```
+lang=typescript
+const context = new app.Context();
+const lrp = new LongRunningProcess(
+  context,
+  async (lrp: LongRunningProcess) => {
+    await lrp.info("3", 0);
+    await sleep(200);
+    await lrp.info("2", 0.5);
+    await sleep(200);
+    await lrp.info("1", 1);
+    await sleep(200);
+  },
+  [],
+);
+
+lrp.on("info", ({message})=>console.log(message))
+
+const lrp_id = await lrp.getID();
+await lrp.waitForFinished();
+```

@@ -1,5 +1,5 @@
 import Router from "@koa/router";
-import Collection, { Fieldnames } from "../../chip-types/collection";
+import Collection from "../../chip-types/collection";
 import {
 	Context,
 	Errors,

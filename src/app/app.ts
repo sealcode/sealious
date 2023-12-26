@@ -25,6 +25,8 @@ import extractContext from "../http/extract-context";
 import logo from "../http/routes/logo";
 import uploaded_files from "../http/routes/uploaded-files";
 import fs from "fs";
+import type LongRunningProcesses from "./collections/long-running-processes";
+import type LongRunningProcessEvents from "./collections/long-running-process-events";
 
 const default_config = locreq("default_config.json") as Config;
 
@@ -74,6 +76,8 @@ export abstract class App {
 	abstract collections: {
 		users: Users;
 		sessions: Sessions;
+		long_running_processes: LongRunningProcesses;
+		long_running_process_events: LongRunningProcessEvents;
 		[name: string]: Collection;
 	};
 
