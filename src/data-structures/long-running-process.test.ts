@@ -30,11 +30,12 @@ describe("long running process", () => {
 				const lrp_id = await lrp.getID();
 				await lrp.waitForFinished();
 				assert.strictEqual(info_count, 3);
-				const { events, latestEvent, state } =
+				const { events, latestEvent, state, progress } =
 					await LongRunningProcess.getByID(context, lrp_id);
 				assert.strictEqual(events.length, 3);
 				assert.strictEqual(latestEvent.message, "1");
 				assert.strictEqual(state, "finished");
+				assert.strictEqual(progress, 1);
 			}
 		);
 	});

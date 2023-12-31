@@ -108,6 +108,7 @@ export class LongRunningProcess<
 		events: LongRunningProcessEvent[];
 		latestEvent: LongRunningProcessEvent;
 		state: LPRState;
+		progress: number;
 	}> {
 		const {
 			items: [lrp_item],
@@ -125,13 +126,16 @@ export class LongRunningProcess<
 				type: e.get("type"),
 				message: e.get("message"),
 				timestamp: e.get("timestamp"),
+				progress: e.get("progress"),
 			}))
 			.sort((e1, e2) => (e1.timestamp > e2.timestamp ? 1 : -1));
+		const latestEvent = events[events.length - 1];
 		return {
 			emitter: this.registry[lrp_item.id] || null,
 			events,
-			latestEvent: events[events.length - 1],
+			latestEvent,
 			state: lrp_item.get("state") as LPRState,
+			progress: latestEvent.progress,
 		};
 	}
 }
