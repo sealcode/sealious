@@ -40,7 +40,7 @@ export class LongRunningProcess<
 		this.itemPromise
 			.then(() => this.isFinishedPromise)
 			.then(() => {
-				this.finished();
+				this.setState("finished");
 			});
 	}
 
@@ -63,11 +63,18 @@ export class LongRunningProcess<
 		this.emit("info", { message, progress });
 	}
 
-	finished() {
-		this.getID().then((id) => {
+	async setState(state: "finished" | "error") {
+		this.getID().then(async (id) => {
 			delete LongRunningProcess.registry[id];
-			this.status = "finished";
-			this.emit("finished");
+			const item =
+				await this.context.app.collections.long_running_processes.getByID(
+					this.context,
+					id
+				);
+			item.set("state", state);
+			await item.save(this.context);
+			this.status = state;
+			this.emit(state);
 		});
 	}
 
