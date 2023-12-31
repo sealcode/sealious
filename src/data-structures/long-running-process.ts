@@ -9,11 +9,13 @@ type LongRunningProcessEvent = {
 	timestamp: number;
 };
 
+export type LPRState = "running" | "error" | "finished";
+
 export class LongRunningProcess<
 	Args extends Array<unknown> = [],
 	ReturnType extends unknown = unknown
 > extends EventEmitter {
-	public status: "ready" | "running" | "finished" | "error" = "ready";
+	public status: "ready" | LPRState = "ready";
 	protected itemPromise: Promise<CollectionItem<LongRunningProcesses>>;
 	protected isFinishedPromise: Promise<ReturnType>;
 	protected static registry: Record<string, LongRunningProcess | undefined> =
@@ -26,21 +28,34 @@ export class LongRunningProcess<
 			...rest: Args
 		) => Promise<ReturnType>,
 		args: Args,
-		name: string = "Long running process"
+		name: string = "Long running process",
+		owner_id: string | null = context.user_id
 	) {
 		super();
+		if (owner_id == null && !context.is_super) {
+			throw new Error(
+				"While creating a LongRunningProcess, you can do it either in 'super' access control mode, or in 'user' access control mode. If you want the process to only be available with a supercontext, use SuperContext for the LRP constructor. Otherwise use a regular context with a logged in user or provide the owner id as an argument"
+			);
+		}
+		const item_body = {
+			started: Date.now(),
+			name,
+			owner: owner_id,
+		} as CollectionInput<LongRunningProcesses>;
+		if (owner_id == null) {
+			item_body.access_mode = "super";
+		} else {
+			item_body.access_mode = "user";
+		}
 		this.itemPromise =
-			context.app.collections.long_running_processes.suCreate({
-				started: Date.now(),
-				name,
-				owner: context.user_id,
-			});
+			context.app.collections.long_running_processes.suCreate(item_body);
 		this.getID().then((id) => (LongRunningProcess.registry[id] = this));
-		this.isFinishedPromise = callback(this, ...args);
-		this.itemPromise
-			.then(() => this.isFinishedPromise)
-			.then(() => {
-				this.setState("finished");
+		const callback_promise = callback(this, ...args);
+		this.isFinishedPromise = this.itemPromise
+			.then(async () => await callback_promise)
+			.then(async () => {
+				await this.setState("finished");
+				return callback_promise;
 			});
 	}
 
@@ -63,19 +78,18 @@ export class LongRunningProcess<
 		this.emit("info", { message, progress });
 	}
 
-	async setState(state: "finished" | "error") {
-		this.getID().then(async (id) => {
-			delete LongRunningProcess.registry[id];
-			const item =
-				await this.context.app.collections.long_running_processes.getByID(
-					this.context,
-					id
-				);
-			item.set("state", state);
-			await item.save(this.context);
-			this.status = state;
-			this.emit(state);
-		});
+	private async setState(state: "finished" | "error") {
+		const id = await this.getID();
+		delete LongRunningProcess.registry[id];
+		const item =
+			await this.context.app.collections.long_running_processes.getByID(
+				this.context,
+				id
+			);
+		item.set("state", state);
+		await item.save(this.context);
+		this.status = state;
+		this.emit(state);
 	}
 
 	async getID() {
@@ -93,14 +107,18 @@ export class LongRunningProcess<
 		emitter: LongRunningProcess | null; // it returns null if the LRP is finished, as there will be nothing more to emit;
 		events: LongRunningProcessEvent[];
 		latestEvent: LongRunningProcessEvent;
+		state: LPRState;
 	}> {
 		const {
 			items: [lrp_item],
 		} = await context.app.collections.long_running_processes
-			.suList()
+			.list(context)
 			.ids([id])
 			.attach({ events: true })
 			.fetch();
+		if (!lrp_item) {
+			throw new Error("No access or bad ID");
+		}
 		const events = lrp_item
 			.getAttachments("events")
 			.map((e) => ({
@@ -113,6 +131,7 @@ export class LongRunningProcess<
 			emitter: this.registry[lrp_item.id] || null,
 			events,
 			latestEvent: events[events.length - 1],
+			state: lrp_item.get("state") as LPRState,
 		};
 	}
 }

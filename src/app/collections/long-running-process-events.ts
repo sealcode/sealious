@@ -17,7 +17,7 @@ export default class LongRunningProcessEvents extends Collection {
 	policies = {
 		show: new Policies.SameAsForResourceInField({
 			action_name: "show",
-			collection_name: "long_running_processes",
+			collection_name: "long_running_process_events",
 			field: "process",
 		}),
 	};

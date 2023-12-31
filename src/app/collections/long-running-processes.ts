@@ -1,8 +1,14 @@
 import Collection from "../../chip-types/collection";
 import { FieldTypes, Policies } from "../../main";
+import Matches from "../base-chips/special_filters/matches";
 
 export default class LongRunningProcesses extends Collection {
 	name = "long_running_processes";
+	named_filters = {
+		access_mode_is_user: new Matches("long_running_processes", {
+			access_mode: "user",
+		}),
+	};
 
 	fields = {
 		started: new FieldTypes.DateTime(),
@@ -13,11 +19,13 @@ export default class LongRunningProcesses extends Collection {
 			referencing_collection: "long_running_process_events",
 		}),
 		state: new FieldTypes.Enum(["running", "finished", "error"]),
+		access_mode: new FieldTypes.Enum(["user", "super"]),
 	};
 
-	defaultPolicy = new Policies.Super();
-
-	policies = {
-		show: new Policies.UserReferencedInField("owner"),
-	};
+	defaultPolicy = new Policies.If(
+		"long_running_processes",
+		"access_mode_is_user",
+		new Policies.UserReferencedInField("owner"),
+		new Policies.Super()
+	);
 }
