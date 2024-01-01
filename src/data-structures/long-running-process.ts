@@ -62,12 +62,11 @@ export class LongRunningProcess<
 
 	async error(message: string) {
 		await this.setState("error");
+		await this.addEvent(message, "error");
+		this.emit("error", message);
 	}
 
-	async info(message: string, progress?: number) {
-		if (this.status == "finished") {
-			throw new Error("cannot send mor info, this LRP is finished");
-		}
+	async addEvent(message: string, type: "info" | "error", progress?: number) {
 		const event_body = {
 			process: await this.getID(),
 			type: "info",
@@ -80,6 +79,13 @@ export class LongRunningProcess<
 		await this.context.app.collections.long_running_process_events.suCreate(
 			event_body
 		);
+	}
+
+	async info(message: string, progress?: number) {
+		if (this.status == "finished") {
+			throw new Error("cannot send more info, this LRP is finished");
+		}
+		await this.addEvent(message, "info", progress);
 		this.emit("info", { message, progress });
 	}
 
