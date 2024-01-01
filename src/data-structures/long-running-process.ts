@@ -53,10 +53,15 @@ export class LongRunningProcess<
 		const callback_promise = callback(this, ...args);
 		this.isFinishedPromise = this.itemPromise
 			.then(async () => await callback_promise)
+			.catch((error) => this.error(error.message))
 			.then(async () => {
 				await this.setState("finished");
 				return callback_promise;
 			});
+	}
+
+	async error(message: string) {
+		await this.setState("error");
 	}
 
 	async info(message: string, progress?: number) {
