@@ -76,4 +76,32 @@ describe("long running process", () => {
 			}
 		);
 	});
+
+	it("handles errors properly", async () => {
+		await withRunningApp(
+			(t) => t,
+			async ({ app }) => {
+				const context = new app.SuperContext();
+				const lrp = new LongRunningProcess(
+					context,
+					async (lrp: LongRunningProcess) => {
+						await lrp.info("3", 0);
+						await sleep(100);
+						await lrp.info("2", 0.5);
+						throw new Error("NOOOO");
+					},
+					[]
+				);
+				let info_count = 0;
+				lrp.on("info", () => info_count++);
+				const lrp_id = await lrp.getID();
+				await lrp.waitForFinished();
+				assert.strictEqual(info_count, 2);
+				const { events, latestEvent, state, progress } =
+					await LongRunningProcess.getByID(context, lrp_id);
+				assert.strictEqual(state, "error");
+				assert.strictEqual(latestEvent.message, "NOOOO");
+			}
+		);
+	});
 });

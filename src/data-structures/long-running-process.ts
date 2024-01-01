@@ -12,21 +12,20 @@ type LongRunningProcessEvent = {
 export type LPRState = "running" | "error" | "finished";
 
 export class LongRunningProcess<
-	Args extends Array<unknown> = [],
-	ReturnType extends unknown = unknown
+	Args extends Array<unknown> = []
 > extends EventEmitter {
 	public status: "ready" | LPRState = "ready";
 	protected itemPromise: Promise<CollectionItem<LongRunningProcesses>>;
-	protected isFinishedPromise: Promise<ReturnType>;
+	protected isFinishedPromise: Promise<void>;
 	protected static registry: Record<string, LongRunningProcess | undefined> =
 		{};
 
 	constructor(
 		protected context: Context,
 		callback: (
-			process: LongRunningProcess<Args, ReturnType> | null,
+			process: LongRunningProcess<Args> | null,
 			...rest: Args
-		) => Promise<ReturnType>,
+		) => Promise<unknown>,
 		args: Args,
 		name: string = "Long running process",
 		owner_id: string | null = context.user_id
@@ -50,26 +49,27 @@ export class LongRunningProcess<
 		this.itemPromise =
 			context.app.collections.long_running_processes.suCreate(item_body);
 		this.getID().then((id) => (LongRunningProcess.registry[id] = this));
-		const callback_promise = callback(this, ...args);
-		this.isFinishedPromise = this.itemPromise
-			.then(async () => await callback_promise)
-			.catch((error) => this.error(error.message))
-			.then(async () => {
-				await this.setState("finished");
-				return callback_promise;
+		this.isFinishedPromise = callback(this, ...args)
+			.then(() => this.setState("finished"))
+			.catch((error) => {
+				this.context.app.Logger.error(
+					"LRP",
+					error.message.split("\n")[0],
+					error
+				);
+				return this.error(error.message);
 			});
 	}
 
 	async error(message: string) {
 		await this.setState("error");
 		await this.addEvent(message, "error");
-		this.emit("error", message);
 	}
 
 	async addEvent(message: string, type: "info" | "error", progress?: number) {
 		const event_body = {
 			process: await this.getID(),
-			type: "info",
+			type,
 			timestamp: Date.now(),
 			message: message,
 		} as CollectionInput<LongRunningProcessEvents>;
@@ -79,6 +79,13 @@ export class LongRunningProcess<
 		await this.context.app.collections.long_running_process_events.suCreate(
 			event_body
 		);
+	}
+
+	emit(...args: Parameters<EventEmitter["emit"]>) {
+		if (args[0] === "error") {
+			args[0] = "_error"; // otherwise Emitter screams;
+		}
+		return super.emit(...args);
 	}
 
 	async info(message: string, progress?: number) {
