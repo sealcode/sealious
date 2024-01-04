@@ -435,5 +435,56 @@ describe("collection", () => {
 					});
 				}
 			));
+
+		it("only sets the fields that hve changed, doesn't submit the fields whose value is same as before, even when they are encoded differently", async () =>
+			withRunningApp(
+				(t) =>
+					class extends t {
+						collections = {
+							...App.BaseCollections,
+							patrons: new (class extends Collection {
+								fields = {
+									email: new FieldTypes.Email(),
+									amount_monthly: new FieldTypes.Float(),
+									end_date: new FieldTypes.Date(),
+								};
+							})(),
+						};
+					},
+
+				async ({ app }) => {
+					await app.collections.patrons.upsert(
+						new app.SuperContext(),
+						"email",
+						[
+							{
+								email: "adam@example.com",
+								amount_monthly: 3,
+								end_date: "2023-12-24",
+							},
+						]
+					);
+					let changes;
+					app.collections.patrons.on(
+						"before:edit",
+						async function ([context, item]) {
+							changes = item.summarizeChanges(context);
+						}
+					);
+					await app.collections.patrons.upsert(
+						new app.SuperContext(),
+						"email",
+						[
+							{
+								email: "adam@example.com",
+								amount_monthly: "3",
+								end_date: "2023-12-24",
+							},
+						]
+					);
+
+					assert.deepStrictEqual(changes, undefined);
+				}
+			));
 	});
 });

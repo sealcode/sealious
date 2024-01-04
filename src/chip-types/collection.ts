@@ -423,7 +423,7 @@ export default abstract class Collection {
 					for (const key of Object.keys(
 						entry
 					) as (keyof typeof entry)[]) {
-						if (entry[key] !== item.get(key as string)) {
+						if (entry[key] != item.get(key as string)) {
 							has_changes = true;
 						} else {
 							delete entry[key];
