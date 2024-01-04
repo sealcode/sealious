@@ -464,19 +464,26 @@ export default class CollectionItem<T extends Collection = any> {
 		return this.body.getBlessing(field_name);
 	}
 
-	summarizeChanges(
+	async summarizeChanges(
 		context: Context
-	): Record<keyof T["fields"], { was: unknown; is: unknown }> {
+	): Promise<Record<keyof T["fields"], { was: unknown; is: unknown }>> {
+		if (!this.original_body.is_decoded) {
+			await this.original_body.decode(context);
+		}
 		const changed_keys = this.body.changed_fields;
 		const result = {} as Record<
 			keyof T["fields"],
 			{ was: unknown; is: unknown }
 		>;
 		for (const changed_key of changed_keys as Set<keyof T["fields"]>) {
-			result[changed_key] = {
-				was: this.original_body.getEncoded(changed_key),
-				is: this.body.getInput(changed_key as string),
-			};
+			const was = this.original_body.getDecoded(changed_key);
+			const is = this.body.getInput(changed_key as string);
+			if (was != is) {
+				result[changed_key] = {
+					was,
+					is,
+				};
+			}
 		}
 		return result;
 	}

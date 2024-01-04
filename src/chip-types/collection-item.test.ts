@@ -223,10 +223,44 @@ describe("CollectionItem", () => {
 
 					ala = await app.collections.entries.suGetByID(ala.id);
 					ala.set("spirit_animal", "kot");
-					const changes = ala.summarizeChanges(
+					const changes = await ala.summarizeChanges(
 						new app.SuperContext()
 					);
 					assert.deepStrictEqual(changes, {
+						spirit_animal: { was: null, is: "kot" },
+					});
+				}
+			));
+
+		it("skips fields with identical values", async () =>
+			withRunningApp(
+				(test_app) =>
+					class extends test_app {
+						collections = {
+							...App.BaseCollections,
+							entries: new (class extends Collection {
+								fields = {
+									name: new FieldTypes.Text(),
+									surname: new FieldTypes.Text(),
+									spirit_animal: new FieldTypes.Text(),
+								};
+							})(),
+						};
+					},
+				async ({ app }) => {
+					let ala = await app.collections.entries.suCreate({
+						name: "Ala",
+						surname: "Makota",
+					});
+
+					ala = await app.collections.entries.suGetByID(ala.id);
+					ala.set("spirit_animal", "kot");
+					ala.set("surname", "Makota");
+					const changes = await ala.summarizeChanges(
+						new app.SuperContext()
+					);
+					assert.deepStrictEqual(changes, {
+						// there should be no mention of surname change
 						spirit_animal: { was: null, is: "kot" },
 					});
 				}

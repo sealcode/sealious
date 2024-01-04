@@ -405,7 +405,7 @@ describe("collection", () => {
 					app.collections.patrons.on(
 						"before:edit",
 						async function ([context, item]) {
-							changes = item.summarizeChanges(context);
+							changes = await item.summarizeChanges(context);
 						}
 					);
 					await app.collections.patrons.upsert(
@@ -468,7 +468,7 @@ describe("collection", () => {
 					app.collections.patrons.on(
 						"before:edit",
 						async function ([context, item]) {
-							changes = item.summarizeChanges(context);
+							changes = await item.summarizeChanges(context);
 						}
 					);
 					await app.collections.patrons.upsert(
