@@ -419,8 +419,20 @@ export default abstract class Collection {
 					.paginate({ items: 1 })
 					.fetch();
 				if (item) {
-					item.setMultiple(entry);
-					return item.save(context);
+					let has_changes = false;
+					for (const key of Object.keys(
+						entry
+					) as (keyof typeof entry)[]) {
+						if (entry[key] !== item.get(key as string)) {
+							has_changes = true;
+						} else {
+							delete entry[key];
+						}
+					}
+					if (has_changes) {
+						item.setMultiple(entry);
+						await item.save(context);
+					}
 				} else {
 					return context.app.collections[this.name].create(
 						context,

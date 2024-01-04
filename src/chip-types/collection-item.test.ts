@@ -198,4 +198,38 @@ describe("CollectionItem", () => {
 				assert.strictEqual(ala.get("spirit_animal"), "kot");
 			}
 		));
+
+	describe("summarizeChanges", () => {
+		it("shows changes from raw input", async () =>
+			withRunningApp(
+				(test_app) =>
+					class extends test_app {
+						collections = {
+							...App.BaseCollections,
+							entries: new (class extends Collection {
+								fields = {
+									name: new FieldTypes.Text(),
+									surname: new FieldTypes.Text(),
+									spirit_animal: new FieldTypes.Text(),
+								};
+							})(),
+						};
+					},
+				async ({ app }) => {
+					let ala = await app.collections.entries.suCreate({
+						name: "Ala",
+						surname: "Makota",
+					});
+
+					ala = await app.collections.entries.suGetByID(ala.id);
+					ala.set("spirit_animal", "kot");
+					const changes = ala.summarizeChanges(
+						new app.SuperContext()
+					);
+					assert.deepStrictEqual(changes, {
+						spirit_animal: { was: null, is: "kot" },
+					});
+				}
+			));
+	});
 });

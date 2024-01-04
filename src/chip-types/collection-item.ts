@@ -463,4 +463,21 @@ export default class CollectionItem<T extends Collection = any> {
 	): symbol | null {
 		return this.body.getBlessing(field_name);
 	}
+
+	summarizeChanges(
+		context: Context
+	): Record<keyof T["fields"], { was: unknown; is: unknown }> {
+		const changed_keys = this.body.changed_fields;
+		const result = {} as Record<
+			keyof T["fields"],
+			{ was: unknown; is: unknown }
+		>;
+		for (const changed_key of changed_keys as Set<keyof T["fields"]>) {
+			result[changed_key] = {
+				was: this.original_body.getEncoded(changed_key),
+				is: this.body.getInput(changed_key as string),
+			};
+		}
+		return result;
+	}
 }
