@@ -444,17 +444,49 @@ export default class Patrons extends Collection {
 }
 ```
 
+### How to detect changes in particular fields?
+
+When `DerivedValue` / `CachedValue` / `ReverseSingleReference` aren't enough for
+the logic of the application, you can use custom logic based on events.
+
+```
+lang=ts
+export default class Patrons extends Collection {
+	fields = {
+		fullname: new FieldTypes.Text(),
+		email: new FieldTypes.Email(),
+		amount_monthly: new FieldTypes.Float(),
+	};
+	defaultPolicy = new Policies.Public();
+
+	async init(app: TheApp, collection_name: string) {
+		await super.init(app, collection_name);
+
+		this.on("after:edit", async ([context, item]) => {
+			const changes = await item.summarizeChanges(context);
+			// when `amount_monthly` changes from 10 to 12, this will be `{amount_monthly: {was: 10, is: 12}}`
+		});
+	}
+}
+
+
 ## Development
 
 To run test outside of docker, run:
 
 ```
+
 docker-compose up -d
 npm run test-cmd
+
 ```
 
 If you want to debug the tests, run:
 
 ```
+
 npm run test-cmd -- --debug
+
+```
+
 ```
