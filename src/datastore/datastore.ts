@@ -1,5 +1,5 @@
 import { MongoClient, Db, Collection as MongoCollection } from "mongodb";
-import type { App } from "../main";
+import type { App, Config } from "../main";
 import type Collection from "../chip-types/collection";
 import type { QueryStage } from "./query";
 import asyncForEach from "../utils/async-foreach";
@@ -19,13 +19,19 @@ export default class Datastore {
 		this.app = app;
 	}
 	async start(): Promise<void> {
-		const config = this.app.ConfigManager.get("datastore_mongo") as {
-			host: string;
-			port: number;
-			db_name: string;
-		};
+		const config = this.app.ConfigManager.get(
+			"datastore_mongo"
+		) as Config["datastore_mongo"];
 
-		const url = `mongodb://${config.host}:${config.port}/${config.db_name}`;
+		const url = `mongodb://${
+			config.username
+				? `${
+						config.username +
+						(config.password ? ":" + config.password : "") +
+						"@"
+				  }`
+				: ""
+		}${config.host}:${config.port}/${config.db_name}`;
 
 		this.client = await MongoClient.connect(url, {
 			useNewUrlParser: true,
