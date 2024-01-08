@@ -21,6 +21,7 @@ type Config = {
 		db_name: string;
 		username: string;
 		password: string;
+		authSource: string;
 	};
 	roles: string[];
 	password_hash: {

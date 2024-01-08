@@ -38,6 +38,7 @@ export default class Datastore {
 			useUnifiedTopology: true,
 			connectTimeoutMS: 1000,
 			serverSelectionTimeoutMS: 2000,
+			authSource: config.authSource || undefined,
 		}).catch((error: Error) => {
 			if (error?.name === "MongoServerSelectionError") {
 				const err = `MongoDB was not found at the following address: ${url}. Please make sure database is running.`;
