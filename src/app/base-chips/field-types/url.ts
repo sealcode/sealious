@@ -8,7 +8,7 @@ export type UrlParams = Partial<{
 }>;
 
 export default class Url extends Field {
-	typeName: "url";
+	typeName = "url";
 	params: UrlParams;
 
 	constructor(params: UrlParams = {}) {
