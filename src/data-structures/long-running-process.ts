@@ -153,7 +153,7 @@ export class LongRunningProcess<
 			events,
 			latestEvent,
 			state: lrp_item.get("state") as LPRState,
-			progress: latestEvent.progress,
+			progress: latestEvent?.progress || 0,
 		};
 	}
 }
