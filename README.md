@@ -468,25 +468,19 @@ export default class Patrons extends Collection {
 		});
 	}
 }
-
+```
 
 ## Development
 
 To run test outside of docker, run:
 
 ```
-
 docker-compose up -d
 npm run test-cmd
-
 ```
 
 If you want to debug the tests, run:
 
 ```
-
 npm run test-cmd -- --debug
-
-```
-
 ```
