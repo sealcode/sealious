@@ -1,4 +1,4 @@
-import { strictEqual } from "assert";
+import { strictEqual, deepStrictEqual } from "assert";
 import { App, Collection, FieldTypes } from "../main";
 import { sleep } from "../test_utils/sleep";
 import { withRunningApp } from "../test_utils/with-test-app";
@@ -6,6 +6,13 @@ import { withRunningApp } from "../test_utils/with-test-app";
 class Entries extends Collection {
 	fields = {
 		name: new FieldTypes.Text(),
+	};
+}
+
+class EntriesCSV extends Collection {
+	fields = {
+		name: new FieldTypes.Text(),
+		age: new FieldTypes.Int(),
 	};
 }
 
@@ -55,6 +62,31 @@ describe("ItemList", () => {
 				await rest_api.get(
 					"/api/v1/collections/entries?pagination[items]=10"
 				);
+			}
+		));
+	it("generate CSV string", () =>
+		withRunningApp(
+			(test_app) =>
+				class extends test_app {
+					collections = {
+						...App.BaseCollections,
+						entries: new EntriesCSV(),
+					};
+				},
+			async ({ app }) => {
+				await app.collections.entries.suCreate({
+					name: "older",
+					age: 15,
+				});
+				const csv = await app.collections.entries.suList().toCSV();
+				deepStrictEqual(csv.split("\n")[0].split(",").sort(), [
+					"age",
+					"name",
+				]);
+				deepStrictEqual(csv.split("\n")[1].split(",").sort(), [
+					"15",
+					"older",
+				]);
 			}
 		));
 });

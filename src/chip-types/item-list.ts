@@ -1,5 +1,5 @@
 import CollectionItem from "./collection-item";
-import type Collection from "./collection";
+import Collection from "./collection";
 import { Context, ExtractFilterParams, Query } from "../main";
 import {
 	BadContext,
@@ -9,6 +9,7 @@ import {
 } from "../response/errors";
 import type QueryStage from "../datastore/query-stage";
 import sealious_to_mongo_sort_param from "../utils/mongo-sorts";
+import { stringify as csvStringify } from "csv-stringify/sync";
 
 type FilterT<T extends Collection> = Partial<{
 	[FieldName in keyof T["fields"]]: ExtractFilterParams<
@@ -307,6 +308,19 @@ export default class ItemList<T extends Collection> {
 			this.fields_with_attachments_fetched,
 			attachments
 		);
+	}
+
+	async toCSV(): Promise<string> {
+		const result = await this.fetch();
+		const rows = [Collection.getFieldnames(this.collection)];
+		for (const item of result.items) {
+			const row = [];
+			for (const field of rows[0]) {
+				row.push(String(item.get(field as any)));
+			}
+			rows.push(row);
+		}
+		return csvStringify(rows);
 	}
 
 	public async getAggregationStages() {
