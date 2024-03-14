@@ -15,6 +15,7 @@ export { default as HTML } from "./html";
 export { default as Image } from "./image";
 export { default as Int } from "./int";
 export { default as JsonObject } from "./json-object";
+export { default as JDD } from "./jdd";
 export { default as Password } from "./password";
 export { default as ReverseSingleReference } from "./reverse-single-reference";
 export { default as SecretToken } from "./secret-token";
