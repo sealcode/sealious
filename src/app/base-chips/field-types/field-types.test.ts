@@ -13,4 +13,5 @@ describe("field types", () => {
 	require("./boolean.subtest");
 	require("./url.subtest");
 	require("./money.subtest");
+	require("./coordinates.subtest");
 });

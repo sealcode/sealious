@@ -32,6 +32,7 @@ export { default as Required } from "./required";
 export { default as Url } from "./url";
 export { default as Money } from "./money";
 export { default as Markdowns } from "./markdown";
+export { default as Coordinates } from "./coordinates";
 export * from "./array-storage";
 export * from "./enum-multiple";
 export * from "./uuid";
