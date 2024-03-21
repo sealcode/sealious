@@ -71,7 +71,7 @@ describe("jdd", () => {
 			assert.strictEqual(response_doc[0].component_name, "Test");
 			assert.strictEqual(response_doc[0].args.title, "Ipsum");
 			assert.strictEqual(
-				response_doc[0].args.title,
+				response_doc[0].args.content,
 				"**Duis ut diam quam nulla**.\n\nLectus mauris *ultrices* eros!"
 			);
 		}));
