@@ -1,4 +1,4 @@
-import type { Field, RequiredField } from "../../../main";
+import type { Field, RequiredField } from "../../../main.js";
 
 export default function Required<InputType>(
 	T: Field<InputType>

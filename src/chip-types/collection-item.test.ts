@@ -6,9 +6,9 @@ import {
 	Fieldset,
 	FieldTypes,
 	SuperContext,
-} from "../main";
-import { assertThrowsAsync } from "../test_utils/assert-throws-async";
-import { withRunningApp } from "../test_utils/with-test-app";
+} from "../main.js";
+import { assertThrowsAsync } from "../test_utils/assert-throws-async.js";
+import { withRunningApp } from "../test_utils/with-test-app.js";
 
 describe("CollectionItem", () => {
 	it("first inserts, then updates on successive .save() calls", async () =>

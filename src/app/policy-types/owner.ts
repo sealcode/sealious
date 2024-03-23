@@ -1,6 +1,6 @@
-import { Policy, Context, Query, CollectionItem } from "../../main";
-import DenyAll from "../../datastore/deny-all";
-import type { ItemMetadata } from "../../chip-types/collection-item";
+import { Policy, Context, Query, CollectionItem } from "../../main.js";
+import DenyAll from "../../datastore/deny-all.js";
+import type { ItemMetadata } from "../../chip-types/collection-item.js";
 
 export default class Owner extends Policy {
 	static type_name = "owner";

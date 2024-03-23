@@ -1,5 +1,5 @@
-import { Context, Policy } from "../../main";
-import { AllowAll } from "../../datastore/allow-all";
+import { Context, Policy } from "../../main.js";
+import { AllowAll } from "../../datastore/allow-all.js";
 
 export default class Public extends Policy {
 	static type_name = "public";

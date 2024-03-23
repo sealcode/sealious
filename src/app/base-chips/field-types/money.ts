@@ -1,5 +1,5 @@
-import type { Context } from "../../../main";
-import Float from "./float";
+import type { Context } from "../../../main.js";
+import Float from "./float.js";
 
 export default class Money extends Float {
 	typeName = "money";

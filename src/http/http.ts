@@ -4,8 +4,8 @@ import Router from "@koa/router";
 import type { Server } from "http";
 import mount from "koa-mount";
 import installQS from "koa-qs";
-import handleError from "./handle-error";
-import type { App } from "../main";
+import handleError from "./handle-error.js";
+import type { App } from "../main.js";
 
 export default class HttpServer {
 	name: "www-serer";

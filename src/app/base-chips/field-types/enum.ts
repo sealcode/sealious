@@ -1,4 +1,4 @@
-import { Field, Context, App } from "../../../main";
+import { Field, Context, App } from "../../../main.js";
 
 type Props<S> = S[] | ((app: App) => S[]);
 

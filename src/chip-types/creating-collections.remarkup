@@ -65,7 +65,7 @@ export default tasks;
 ```
 lang=typescript, name=index.ts
 
-import tasks from "./tasks";
+import tasks from "./tasks.js";
 
 const app = new (class extends App {
     config = {

@@ -1,5 +1,5 @@
 import assert from "assert";
-import { withRunningApp } from "../../test_utils/with-test-app";
+import { withRunningApp } from "../../test_utils/with-test-app.js";
 
 describe("/assets/logo route", () => {
 	it("returns the logo", async () =>

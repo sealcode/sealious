@@ -1,6 +1,6 @@
 import * as assert from "assert";
-import { Query } from "../../../main";
-import SpecialFilter from "../../../chip-types/special-filter";
+import { Query } from "../../../main.js";
+import SpecialFilter from "../../../chip-types/special-filter.js";
 
 type Params = {
 	referencing_collection: string;

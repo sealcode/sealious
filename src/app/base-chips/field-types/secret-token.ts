@@ -1,4 +1,4 @@
-import { Field, Context } from "../../../main";
+import { Field, Context } from "../../../main.js";
 
 import { v4 as uuid } from "uuid";
 

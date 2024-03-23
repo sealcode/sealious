@@ -1,7 +1,7 @@
-import LongRunningProcessEvents from "./long-running-process-events";
-import LongRunningProcesses from "./long-running-processes";
-import { default as Sessions } from "./sessions";
-import { default as Users } from "./users";
+import LongRunningProcessEvents from "./long-running-process-events.js";
+import LongRunningProcesses from "./long-running-processes.js";
+import { default as Sessions } from "./sessions.js";
+import { default as Users } from "./users.js";
 
 const Collections = {
 	users: Users,

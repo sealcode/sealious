@@ -1,4 +1,4 @@
-import Query, { And, Not, Or, QueryStage } from "./query";
+import Query, { And, Not, Or, QueryStage } from "./query.js";
 import * as assert from "assert";
 import QueryStep, {
 	SimpleLookupBody,
@@ -8,8 +8,8 @@ import QueryStep, {
 	SimpleLookupBodyInput,
 	ComplexLookup,
 	ComplexLookupBody,
-} from "./query-step";
-import DenyAll from "./deny-all";
+} from "./query-step.js";
+import DenyAll from "./deny-all.js";
 
 describe("Query", () => {
 	describe("Query general", () => {

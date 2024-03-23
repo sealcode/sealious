@@ -1,10 +1,11 @@
 import assert from "assert";
-import { Collection, File } from "../../../main";
-import { MockRestApi, withRunningApp } from "../../../test_utils/test-utils";
-import { App } from "../../app";
-import Image from "./image";
+import { Collection, File } from "../../../main.js";
+import { MockRestApi, withRunningApp } from "../../../test_utils/test-utils.js";
+import { App } from "../../app.js";
+import Image from "./image.js";
 import _locreq from "locreq";
-const locreq = _locreq(__dirname);
+import { module_dirname } from "../../../utils/module_filename.js";
+const locreq = _locreq(module_dirname(import.meta.url));
 
 describe("FieldTypes.Image", () => {
 	it("returns an instance of File when provided with the format 'file'", async () =>

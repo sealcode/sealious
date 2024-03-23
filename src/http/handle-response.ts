@@ -1,8 +1,8 @@
-import { App, Context, File } from "../main";
+import { App, Context, File } from "../main.js";
 import {
 	NewSession,
 	ResourceCreated,
-} from "../../common_lib/response/responses";
+} from "../../common_lib/response/responses.js";
 
 export default function (app: App, context: Context, h: any) {
 	const config = app.ConfigManager.get("www-server");

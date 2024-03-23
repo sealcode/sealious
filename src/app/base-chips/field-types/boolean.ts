@@ -1,4 +1,4 @@
-import { Field, Context } from "../../../main";
+import { Field, Context } from "../../../main.js";
 
 type InputType = boolean | "false" | "true" | "1" | "0" | 1 | 0;
 

@@ -1,9 +1,9 @@
-import { Field, Context, Errors } from "../../../main";
+import { Field, Context, Errors } from "../../../main.js";
 import humanComparatorToQuery, {
 	ComparatorObject,
 	HumanComparator,
 	DBComparator,
-} from "../../../utils/human-comparator-to-query";
+} from "../../../utils/human-comparator-to-query.js";
 
 const DAY = 1000 * 60 * 60 * 24;
 

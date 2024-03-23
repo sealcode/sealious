@@ -1,12 +1,12 @@
-import type Context from "../context";
+import type Context from "../context.js";
 import type {
 	ExtractInput,
 	ExtractStorage,
 	FieldOutput,
 	GetInputType,
 	RequiredField,
-} from "./field";
-import type Field from "./field";
+} from "./field.js";
+import type Field from "./field.js";
 
 export type FieldNames<T extends Record<string, Field>> = keyof T & string;
 

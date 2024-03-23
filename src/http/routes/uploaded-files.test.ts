@@ -1,9 +1,9 @@
 import assert from "assert";
-import FileField from "../../app/base-chips/field-types/file";
-import { Collection, File } from "../../main";
-import asyncRequest from "../../test_utils/async-request";
-import { TestApp } from "../../test_utils/test-app";
-import { withRunningApp } from "../../test_utils/with-test-app";
+import FileField from "../../app/base-chips/field-types/file.js";
+import { Collection, File } from "../../main.js";
+import asyncRequest from "../../test_utils/async-request.js";
+import { TestApp } from "../../test_utils/test-app.js";
+import { withRunningApp } from "../../test_utils/with-test-app.js";
 
 describe("uploaded_files", () => {
 	it("has a test", () => {

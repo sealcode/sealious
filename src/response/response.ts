@@ -1,6 +1,6 @@
-import type SealiousError from "./errors";
+import type SealiousError from "./errors.js";
 
-class Response {
+export class Response {
 	status: "error" | "success";
 	type: string;
 	status_message: string;
@@ -26,5 +26,3 @@ class Response {
 		};
 	}
 }
-
-module.exports = Response;

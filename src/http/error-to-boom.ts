@@ -1,5 +1,5 @@
 import Boom from "boom";
-import type SealiousError from "../response/errors";
+import type SealiousError from "../response/errors.js";
 
 const error_code_map = {
 	validation: 403,

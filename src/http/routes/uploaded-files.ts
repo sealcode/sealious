@@ -1,5 +1,5 @@
 import Router from "@koa/router";
-import File from "../../data-structures/file";
+import File from "../../data-structures/file.js";
 const uploaded_files = new Router();
 uploaded_files.get("/:id/:filename", async (ctx) => {
 	const file = await File.fromID(ctx.$app, ctx.params.id);

@@ -1,5 +1,5 @@
 import assert from "assert";
-import type { App } from "../app/app";
+import type { App } from "../app/app.js";
 
 export type MessageData = {
 	to: string;

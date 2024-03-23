@@ -4,7 +4,7 @@ import {
 	Shape,
 	ShapeToType,
 } from "@sealcode/ts-predicates";
-import type Context from "../../../../context";
+import type Context from "../../../../context.js";
 
 export abstract class ArrayAction<
 	InputShape extends Record<string, unknown>,

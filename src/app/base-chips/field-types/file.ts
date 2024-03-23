@@ -1,5 +1,5 @@
-import { Field, Context, File } from "../../../main";
-import type { FileDBEntry } from "../../../data-structures/file";
+import { Field, Context, File } from "../../../main.js";
+import type { FileDBEntry } from "../../../data-structures/file.js";
 import {
 	hasField,
 	hasFieldOfType,

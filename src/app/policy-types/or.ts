@@ -2,13 +2,13 @@ import Bluebird from "bluebird";
 import Policy, {
 	ReducingPolicy,
 	PolicyDecision,
-} from "../../chip-types/policy";
+} from "../../chip-types/policy.js";
 
-import type Context from "../../context";
+import type Context from "../../context.js";
 
-import { AllowAll } from "../../datastore/allow-all";
-import { default as QueryOr } from "../../datastore/query-or";
-import type { CollectionItem } from "../../main";
+import { AllowAll } from "../../datastore/allow-all.js";
+import { default as QueryOr } from "../../datastore/query-or.js";
+import type { CollectionItem } from "../../main.js";
 
 export default class Or extends ReducingPolicy {
 	static type_name = "or";

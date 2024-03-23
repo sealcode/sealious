@@ -1,12 +1,13 @@
-import type { App } from "../main";
-import UUIDGenerator from "shortid";
 import fs, { ReadStream } from "fs";
+import _locreq from "locreq";
 import { basename } from "path";
-import { getType } from "mime";
+import mime from "mime";
+import UUIDGenerator from "shortid";
 import { Readable } from "stream";
+import type { App } from "../main.js";
+import { module_dirname } from "../utils/module_filename.js";
 
-import locreq_curry from "locreq";
-const locreq = locreq_curry(__dirname);
+const locreq = _locreq(module_dirname(import.meta.url));
 
 export type FileDBEntry = {
 	filename: string;
@@ -36,7 +37,7 @@ export default class File {
 		if (!this.filename) {
 			throw new Error("Set filename first");
 		}
-		return getType(this.filename) || "unknown";
+		return mime.getType(this.filename) || "unknown";
 	}
 
 	getStream() {

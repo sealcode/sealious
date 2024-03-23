@@ -1,12 +1,12 @@
 import assert from "assert";
-import { Collection, FieldTypes } from "../../../main";
-import { assertThrowsAsync } from "../../../test_utils/assert-throws-async";
-import { TestApp } from "../../../test_utils/test-app";
+import { Collection, FieldTypes } from "../../../main.js";
+import { assertThrowsAsync } from "../../../test_utils/assert-throws-async.js";
+import { TestApp } from "../../../test_utils/test-app.js";
 import {
 	withRunningApp,
 	type TestAppConstructor,
-} from "../../../test_utils/with-test-app";
-import type { JDDocument } from "./jdd";
+} from "../../../test_utils/with-test-app.js";
+import type { JDDocument } from "./jdd.js";
 
 function extend(t: TestAppConstructor) {
 	return class extends t {

@@ -1,5 +1,5 @@
-import { Field, Context } from "../../../main";
-import { HybridField } from "../../../chip-types/field";
+import { Field, Context } from "../../../main.js";
+import { HybridField } from "../../../chip-types/field.js";
 
 export default class DisallowUpdate<T extends Field> extends HybridField<T> {
 	typeName = "disallow-update";

@@ -1,4 +1,4 @@
-import type * as Sealious from "../main";
+import type * as Sealious from "../main.js";
 import type { Socket } from "net";
 import type * as url from "url";
 // adding this so properties `$app` and `$context` of `ctx` are known

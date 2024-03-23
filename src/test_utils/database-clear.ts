@@ -1,4 +1,4 @@
-import type { App } from "../main";
+import type { App } from "../main.js";
 
 export async function databaseClear(app: App) {
 	if (app.Datastore.db) {

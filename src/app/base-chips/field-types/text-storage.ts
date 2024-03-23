@@ -1,5 +1,5 @@
-import { Field, Context } from "../../../main";
-import type { QueryStage } from "../../../datastore/query";
+import { Field, Context } from "../../../main.js";
+import type { QueryStage } from "../../../datastore/query.js";
 import escape from "escape-html";
 import { hasShape, is, predicates } from "@sealcode/ts-predicates";
 

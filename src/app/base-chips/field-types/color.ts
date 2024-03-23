@@ -1,4 +1,4 @@
-import { Context, Field } from "../../../main";
+import { Context, Field } from "../../../main.js";
 import ColorParser from "color"; //putting it here not to slow down `new Sealious.app()`
 
 export default class Color extends Field {

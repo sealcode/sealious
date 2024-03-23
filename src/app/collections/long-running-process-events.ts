@@ -1,5 +1,5 @@
-import Collection from "../../chip-types/collection";
-import { FieldTypes, Policies } from "../../main";
+import Collection from "../../chip-types/collection.js";
+import { FieldTypes, Policies } from "../../main.js";
 
 export default class LongRunningProcessEvents extends Collection {
 	name = "long_running_process_events";

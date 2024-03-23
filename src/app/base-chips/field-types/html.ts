@@ -1,4 +1,4 @@
-import Text from "./text";
+import Text from "./text.js";
 
 /** A field that stores text meant to be an HTML fragment. Unlike {@link Text}, html-like characters aren't escaped, but instead the content is subject to html sanitization to prevent XSS.
  *
@@ -10,7 +10,7 @@ export default class Html extends Text {
 		if (input === null) {
 			return null;
 		}
-		const sanitizeHtml = require("sanitize-html"); //putting it here not to slow down `new Sealious.app()`
+		const { default: sanitizeHtml } = await import("sanitize-html"); //putting it here not to slow down `new Sealious.app()`
 		return {
 			original: input,
 			safe: sanitizeHtml(input, {

@@ -1,16 +1,15 @@
 import type { Middleware } from "@koa/router";
 import { promises as fs } from "fs";
 import koaBody from "koa-body";
-import File from "../data-structures/file";
-import { ValidationError } from "../response/errors";
-import dotProp from "dot-prop";
+import File from "../data-structures/file.js";
+import { setProperty } from "dot-prop";
 
 function setDeep(
 	target: Record<string, unknown>,
 	complex_key: string,
 	value: unknown
 ) {
-	dotProp.set(
+	setProperty(
 		target,
 		complex_key.replaceAll("[", ".").replaceAll("]", ""),
 		value

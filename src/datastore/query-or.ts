@@ -1,7 +1,7 @@
-import Query from "./query";
-import type QueryStage from "./query-stage";
-import type { MatchBody } from "./query-stage";
-import QueryStep, { Lookup, Match } from "./query-step";
+import Query from "./query.js";
+import type QueryStage from "./query-stage.js";
+import type { MatchBody } from "./query-stage.js";
+import QueryStep, { Lookup, Match } from "./query-step.js";
 
 export default class Or extends Query {
 	lookup_steps: QueryStep[] = [];

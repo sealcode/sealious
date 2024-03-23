@@ -1,4 +1,4 @@
-import { CollectionItem, Context, Policy, Query } from "../../main";
+import { CollectionItem, Context, Policy, Query } from "../../main.js";
 
 export default class Themselves extends Policy {
 	static type_name = "themselves";

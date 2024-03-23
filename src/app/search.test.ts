@@ -1,8 +1,8 @@
 import assert from "assert";
-import Collection from "../chip-types/collection";
-import { FieldTypes } from "../main";
-import { TestApp } from "../test_utils/test-app";
-import { withRunningApp } from "../test_utils/with-test-app";
+import Collection from "../chip-types/collection.js";
+import { FieldTypes } from "../main.js";
+import { TestApp } from "../test_utils/test-app.js";
+import { withRunningApp } from "../test_utils/with-test-app.js";
 
 describe("search", () => {
 	it("Performs full-text-search", async () => {
@@ -28,9 +28,9 @@ describe("search", () => {
 				await app.collections.dogs.create(new app.Context(), {
 					name: "Greta",
 				});
-				const { items } = await rest_api.get(
+				const { items } = (await rest_api.get(
 					"/api/v1/collections/dogs?search=Greta"
-				);
+				)) as any;
 
 				assert.deepEqual(items.length, 1);
 

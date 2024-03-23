@@ -1,4 +1,4 @@
-module.exports = {
+export const translations = {
 	password_reset_email_subject: (app_name: string) =>
 		`[${app_name}] Password reset request`,
 	password_reset_email_text: ([app_name, username]: [string, string]) =>
@@ -107,3 +107,4 @@ module.exports = {
 			", "
 		)}]`,
 };
+export default translations;

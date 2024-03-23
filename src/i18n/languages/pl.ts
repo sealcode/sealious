@@ -8,7 +8,7 @@ function characters_plural_form(n: number) {
 	}
 }
 
-module.exports = {
+export const translations = {
 	password_reset_email_subject: (app_name: string) =>
 		`Reset hasła w ${app_name}`,
 	password_reset_email_text: (app_name: string, username: string) =>
@@ -124,3 +124,4 @@ module.exports = {
 			", "
 		)}]`,
 };
+export default translations;

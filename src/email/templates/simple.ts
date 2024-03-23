@@ -1,8 +1,8 @@
-import Message from "./../message";
+import Message from "./../message.js";
 import path from "path";
 import mjml2html from "mjml";
 import assert from "assert";
-import type { App } from "../../main";
+import type { App } from "../../main.js";
 
 export type Button = { text: string; href: string };
 

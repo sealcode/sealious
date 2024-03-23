@@ -1,4 +1,4 @@
-import { Context, Field } from "../../../main";
+import { Context, Field } from "../../../main.js";
 
 export default class ContextField extends Field {
 	typeName = "context";

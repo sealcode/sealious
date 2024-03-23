@@ -1,9 +1,11 @@
-import locreq_curry from "locreq";
-const locreq = locreq_curry(__dirname);
-import Field, { ValidationResult } from "../../../chip-types/field";
-import type { FileDBEntry, FileFromDB } from "../../../data-structures/file";
-import { Context, ExtractInput, File } from "../../../main";
-import FileField, { FileStorage, FileStorageFormat } from "./file";
+import Field, { ValidationResult } from "../../../chip-types/field.js";
+import type { FileDBEntry, FileFromDB } from "../../../data-structures/file.js";
+import { Context, ExtractInput, File } from "../../../main.js";
+import { module_dirname } from "../../../utils/module_filename.js";
+import FileField, { FileStorage, FileStorageFormat } from "./file.js";
+
+import _locreq from "locreq";
+const locreq = _locreq(module_dirname(import.meta.url));
 
 /** Like {@link FileField}, but meant for images. Has the capacity to format images and serve thumbnails and different sizes.
  *

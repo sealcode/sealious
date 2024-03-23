@@ -1,5 +1,5 @@
 import Router from "@koa/router";
-import type Policy from "../../chip-types/policy";
+import type Policy from "../../chip-types/policy.js";
 import {
 	Collection,
 	FieldTypes,
@@ -7,9 +7,9 @@ import {
 	Context,
 	ActionName,
 	Field,
-} from "../../main";
-import { BadContext } from "../../response/errors";
-import SecureHasher from "../../utils/secure-hasher";
+} from "../../main.js";
+import { BadContext } from "../../response/errors.js";
+import SecureHasher from "../../utils/secure-hasher.js";
 
 export default class Users extends Collection {
 	fields = {

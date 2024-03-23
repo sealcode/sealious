@@ -1,4 +1,4 @@
-import type { Collection } from "../main";
+import type { Collection } from "../main.js";
 
 export type ErrorParams = {
 	is_user_fault: boolean;

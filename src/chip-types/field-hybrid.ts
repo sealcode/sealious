@@ -1,7 +1,7 @@
-import Field, { Depromisify, GetInputType } from "./field";
+import Field, { Depromisify, GetInputType } from "./field.js";
 
-import type Context from "../context";
-import type { App, Collection, ItemListResult } from "../main";
+import type Context from "../context.js";
+import type { App, Collection, ItemListResult } from "../main.js";
 
 /*
 

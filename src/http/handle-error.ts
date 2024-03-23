@@ -1,4 +1,4 @@
-import SealiousError from "../response/errors";
+import SealiousError from "../response/errors.js";
 import type { Middleware } from "@koa/router";
 
 const error_code_map: { [type: string]: number } = {

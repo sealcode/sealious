@@ -1,5 +1,5 @@
-import Mailer from "./mailer";
-import type { MessageData } from "./message";
+import Mailer from "./mailer.js";
+import type { MessageData } from "./message.js";
 
 export default class LoggerMailer extends Mailer {
 	async verify() {

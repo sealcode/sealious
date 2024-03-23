@@ -1,5 +1,5 @@
-import Field from "../../../chip-types/field";
-import type { Context, App } from "../../../main";
+import Field from "../../../chip-types/field.js";
+import type { Context, App } from "../../../main.js";
 
 export default class ValueExistingInCollection extends Field {
 	typeName = "value-existing-in-collection";

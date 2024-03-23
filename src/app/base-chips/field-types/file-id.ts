@@ -1,4 +1,4 @@
-import { Field, Context } from "../../../main";
+import { Field, Context } from "../../../main.js";
 
 export default class FileID extends Field {
 	typeName = "file-id";

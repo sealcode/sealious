@@ -1,10 +1,11 @@
 /* eslint-disable */
 import locreq_curry from "locreq";
-const locreq = locreq_curry(__dirname);
-import { App, SMTPMailer } from "../main";
-import type { Environment } from "../app/config";
-import type { LoggerLevel } from "../app/logger";
-import LoggerMailer from "../email/logger-mailer";
+const locreq = locreq_curry(module_dirname(import.meta.url));
+import { App, SMTPMailer } from "../main.js";
+import type { Environment } from "../app/config.js";
+import type { LoggerLevel } from "../app/logger.js";
+import LoggerMailer from "../email/logger-mailer.js";
+import { module_dirname } from "../utils/module_filename.js";
 
 export class TestApp extends App {
 	clear_database_on_stop: boolean = true;

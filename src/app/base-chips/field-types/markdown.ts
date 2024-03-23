@@ -1,6 +1,6 @@
 import { Parser, HtmlRenderer } from "commonmark";
 
-import { Field, type Context, type ValidationResult } from "../../../main";
+import { Field, type Context, type ValidationResult } from "../../../main.js";
 
 const parser = new Parser();
 const renderer = new HtmlRenderer();

@@ -1,6 +1,6 @@
-import type { App } from "../app/app";
-import type Query from "../datastore/query";
-import type { QueryStage } from "../datastore/query";
+import type { App } from "../app/app.js";
+import type Query from "../datastore/query.js";
+import type { QueryStage } from "../datastore/query.js";
 
 export default abstract class SpecialFilter {
 	params: any;

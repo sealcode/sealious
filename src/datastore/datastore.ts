@@ -1,10 +1,10 @@
 import { MongoClient, Db, Collection as MongoCollection } from "mongodb";
-import type { App, Config } from "../main";
-import type Collection from "../chip-types/collection";
-import type { QueryStage } from "./query";
-import asyncForEach from "../utils/async-foreach";
-import QueryStep from "./query-step";
-import { sleep } from "../test_utils/sleep";
+import type { App, Config } from "../main.js";
+import type Collection from "../chip-types/collection.js";
+import type { QueryStage } from "./query.js";
+import asyncForEach from "../utils/async-foreach.js";
+import QueryStep from "./query-step.js";
+import { sleep } from "../test_utils/sleep.js";
 
 export type OutputOptions = Partial<{
 	skip: number;
@@ -34,8 +34,6 @@ export default class Datastore {
 		}${config.host}:${config.port}/${config.db_name}`;
 
 		this.client = await MongoClient.connect(url, {
-			useNewUrlParser: true,
-			useUnifiedTopology: true,
 			connectTimeoutMS: 1000,
 			serverSelectionTimeoutMS: 2000,
 			authSource: config.authSource || undefined,
@@ -204,7 +202,7 @@ export default class Datastore {
 		const result = await this.db
 			.collection(collection_name)
 			.insertOne(to_insert, options);
-		return result.ops[0];
+		return result;
 	}
 
 	update(collection_name: string, query: any, new_value: any) {

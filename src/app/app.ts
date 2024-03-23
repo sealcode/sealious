@@ -1,34 +1,37 @@
-import locreq_curry from "locreq";
-const locreq = locreq_curry(__dirname);
-import assert from "assert";
-import type Mailer from "../email/mailer";
-import Emittery from "emittery";
-import Datastore from "../datastore/datastore";
-import type Metadata from "./metadata";
-import type Config from "./config";
-import type { PartialConfig } from "./config";
-import Manifest, { ManifestData } from "./manifest";
-
-import BaseCollections from "./collections/base-collections";
-import Logger from "./logger";
-import ConfigManager from "./config-manager";
-import HttpServer from "../http/http";
-import Context, { SuperContext } from "../context";
-import type Collection from "../chip-types/collection";
-import { MetadataFactory, i18nFactory } from "../main";
-import type Users from "./collections/users";
-import type Sessions from "./collections/sessions";
-import LoggerMailer from "../email/logger-mailer";
 import Router from "@koa/router";
-import sessionRouter from "../http/routes/session";
-import extractContext from "../http/extract-context";
-import logo from "../http/routes/logo";
-import uploaded_files from "../http/routes/uploaded-files";
+import assert from "assert";
+import Emittery from "emittery";
 import fs from "fs";
-import type LongRunningProcesses from "./collections/long-running-processes";
-import type LongRunningProcessEvents from "./collections/long-running-process-events";
+import type Collection from "../chip-types/collection.js";
+import Context, { SuperContext } from "../context.js";
+import Datastore from "../datastore/datastore.js";
+import LoggerMailer from "../email/logger-mailer.js";
+import type Mailer from "../email/mailer.js";
+import extractContext from "../http/extract-context.js";
+import HttpServer from "../http/http.js";
+import logo from "../http/routes/logo.js";
+import sessionRouter from "../http/routes/session.js";
+import uploaded_files from "../http/routes/uploaded-files.js";
+import { i18nFactory, MetadataFactory } from "../main.js";
+import { module_dirname } from "../utils/module_filename.js";
+import BaseCollections from "./collections/base-collections.js";
+import type LongRunningProcessEvents from "./collections/long-running-process-events.js";
+import type LongRunningProcesses from "./collections/long-running-processes.js";
+import type Sessions from "./collections/sessions.js";
+import type Users from "./collections/users.js";
+import ConfigManager from "./config-manager.js";
+import type Config from "./config.js";
+import type { PartialConfig } from "./config.js";
+import Logger from "./logger.js";
+import Manifest, { ManifestData } from "./manifest.js";
+import type Metadata from "./metadata.js";
 
-const default_config = locreq("default_config.json") as Config;
+import _locreq from "locreq";
+const locreq = _locreq(module_dirname(import.meta.url));
+
+const default_config = JSON.parse(
+	await fs.promises.readFile(locreq.resolve("default_config.json"), "utf-8")
+) as Config;
 
 export type AppEvents = "starting" | "started" | "stopping" | "stopped";
 

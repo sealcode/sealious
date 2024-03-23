@@ -1,6 +1,6 @@
 import type { ShapeToType } from "@sealcode/ts-predicates";
-import type Context from "../../../../context";
-import { ArrayAction } from "./array-action";
+import type Context from "../../../../context.js";
+import { ArrayAction } from "./array-action.js";
 
 const ReplaceInputShape = {};
 const ReplaceParsedShape = {};

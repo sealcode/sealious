@@ -1,6 +1,6 @@
 import { v4 as uuid } from "uuid";
-import Field, { ValidationResult } from "../../../chip-types/field";
-import type Context from "../../../context";
+import Field, { ValidationResult } from "../../../chip-types/field.js";
+import type Context from "../../../context.js";
 
 export class Uuid extends Field {
 	typeName = "uuid";

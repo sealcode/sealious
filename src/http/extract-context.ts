@@ -1,5 +1,5 @@
 import type { Middleware } from "@koa/router";
-import Context from "../context";
+import Context from "../context.js";
 
 export default function extract_context(): Middleware {
 	return async function (ctx, next) {
@@ -41,5 +41,3 @@ export default function extract_context(): Middleware {
 		await next();
 	};
 }
-
-module.exports = extract_context;

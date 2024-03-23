@@ -1,9 +1,9 @@
-import type { ActionName } from "../../action";
-import type Collection from "../../chip-types/collection";
-import Policy from "../../chip-types/policy";
-import { AllowAll } from "../../datastore/allow-all";
-import DenyAll from "../../datastore/deny-all";
-import type QueryStage from "../../datastore/query-stage";
+import type { ActionName } from "../../action.js";
+import type Collection from "../../chip-types/collection.js";
+import Policy from "../../chip-types/policy.js";
+import { AllowAll } from "../../datastore/allow-all.js";
+import DenyAll from "../../datastore/deny-all.js";
+import type QueryStage from "../../datastore/query-stage.js";
 import {
 	App,
 	CollectionItem,
@@ -11,7 +11,7 @@ import {
 	Field,
 	FieldTypes,
 	Query,
-} from "../../main";
+} from "../../main.js";
 
 export default class SameAsForResourceInField extends Policy {
 	static type_name = "same-as-for-resource-in-field";

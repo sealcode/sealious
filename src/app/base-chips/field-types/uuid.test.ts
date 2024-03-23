@@ -1,6 +1,6 @@
 import assert from "assert";
-import { withRunningApp } from "../../../test_utils/with-test-app";
-import { App, Collection, FieldTypes, Policies } from "../../../main";
+import { withRunningApp } from "../../../test_utils/with-test-app.js";
+import { App, Collection, FieldTypes, Policies } from "../../../main.js";
 
 describe("boolean", () => {
 	it("lets filter by literal false value", () =>

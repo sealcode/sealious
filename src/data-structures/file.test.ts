@@ -1,17 +1,19 @@
-import _locreq from "locreq";
-const locreq = _locreq(__dirname);
 import assert from "assert";
-import File from "./file";
-import FileField from "../app/base-chips/field-types/file";
-import { Collection, Context, SuperContext } from "../main";
-import { withRunningApp } from "../test_utils/with-test-app";
-import { TestApp } from "../test_utils/test-utils";
-import ReverseSingleReference from "../app/base-chips/field-types/reverse-single-reference";
-import SingleReference from "../app/base-chips/field-types/single-reference";
-import Text from "../app/base-chips/field-types/text";
-import SameAsForResourceInField from "../app/policy-types/same-as-for-resource-in-field";
-import Public from "../app/policy-types/public";
-import type { CollectionInput } from "../chip-types/collection";
+import FileField from "../app/base-chips/field-types/file.js";
+import ReverseSingleReference from "../app/base-chips/field-types/reverse-single-reference.js";
+import SingleReference from "../app/base-chips/field-types/single-reference.js";
+import Text from "../app/base-chips/field-types/text.js";
+import Public from "../app/policy-types/public.js";
+import SameAsForResourceInField from "../app/policy-types/same-as-for-resource-in-field.js";
+import type { CollectionInput } from "../chip-types/collection.js";
+import { Collection, Context, SuperContext } from "../main.js";
+import { TestApp } from "../test_utils/test-utils.js";
+import { withRunningApp } from "../test_utils/with-test-app.js";
+import { module_dirname } from "../utils/module_filename.js";
+import File from "./file.js";
+
+import _locreq from "locreq";
+const locreq = _locreq(module_dirname(import.meta.url));
 
 describe("file", () => {
 	it("should return hello world file", () => {

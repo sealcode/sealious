@@ -1,13 +1,13 @@
 import Router from "@koa/router";
-import Collection from "../../chip-types/collection";
+import Collection from "../../chip-types/collection.js";
 import {
 	Context,
 	Errors,
 	FieldsetInput,
 	FieldTypes,
 	Policies,
-} from "../../main";
-import SecureHasher from "../../utils/secure-hasher";
+} from "../../main.js";
+import SecureHasher from "../../utils/secure-hasher.js";
 
 export default class Sessions extends Collection {
 	name = "sessions";

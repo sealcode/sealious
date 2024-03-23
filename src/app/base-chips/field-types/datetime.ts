@@ -1,7 +1,7 @@
-import { IntStorage } from "./int";
-import { Context, Field } from "../../../main";
+import { IntStorage } from "./int.js";
+import { Context, Field } from "../../../main.js";
 
-import { getDateTime } from "../../../utils/get-datetime";
+import { getDateTime } from "../../../utils/get-datetime.js";
 
 // cannot extends because that changes the output of `decode`. I should use composition here
 

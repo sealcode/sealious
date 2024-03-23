@@ -1,6 +1,6 @@
-import { Field, Context } from "../../../main";
+import { Field, Context } from "../../../main.js";
 
-import flattenObjectToDotNotation from "../../../utils/flatten-object-dot-notation";
+import flattenObjectToDotNotation from "../../../utils/flatten-object-dot-notation.js";
 
 export default class JsonObject extends Field {
 	typeName = "json-object";

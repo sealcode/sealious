@@ -1,13 +1,14 @@
+import { hasShape, predicates } from "@sealcode/ts-predicates";
 import assert from "assert";
-import Int from "../app/base-chips/field-types/int";
-import { App, Context, FieldTypes, Policies } from "../main";
-import { assertThrowsAsync } from "../test_utils/assert-throws-async";
-import type { TestApp } from "../test_utils/test-app";
+import Int from "../app/base-chips/field-types/int.js";
+import { App, Context, FieldTypes, Policies } from "../main.js";
+import { assertThrowsAsync } from "../test_utils/assert-throws-async.js";
+import type { TestApp } from "../test_utils/test-app.js";
 import {
 	TestAppConstructor,
 	withRunningApp,
-} from "../test_utils/with-test-app";
-import Collection from "./collection";
+} from "../test_utils/with-test-app.js";
+import Collection from "./collection.js";
 
 type Policies = Collection["policies"];
 
@@ -28,6 +29,21 @@ describe("collection router", () => {
 		withRunningApp(extend, async ({ rest_api }) => {
 			await rest_api.post("/api/v1/collections/coins", { value: 2 });
 			const response = await rest_api.get("/api/v1/collections/coins");
+			if (
+				!hasShape(
+					{
+						items: predicates.array(
+							predicates.shape({
+								id: predicates.string,
+								value: predicates.number,
+							})
+						),
+					},
+					response
+				)
+			) {
+				throw new Error("Wrong reponse shape");
+			}
 			assert.ok(response.items[0].id);
 			assert.strictEqual(response.items[0].value, 2);
 		}));

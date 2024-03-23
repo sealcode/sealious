@@ -1,9 +1,9 @@
 import { v4 as uuid } from "uuid";
 import getPort from "get-port";
-import type { Environment } from "../app/config";
-import MockRestApi from "./rest-api";
-import MailcatcherAPI from "./mailcatcher";
-import { TestApp } from "./test-app";
+import type { Environment } from "../app/config.js";
+import MockRestApi from "./rest-api.js";
+import MailcatcherAPI from "./mailcatcher.js";
+import { TestApp } from "./test-app.js";
 
 export type TestAppConstructor<T extends TestApp = TestApp> = new (
 	uniq_id: string,

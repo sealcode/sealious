@@ -1,23 +1,23 @@
 import Router from "@koa/router";
 import Emittery from "emittery";
-import type { ActionName } from "../action";
-import type { App } from "../app/app";
-import Public from "../app/policy-types/public";
-import type Context from "../context";
-import parseBody from "../http/parse-body";
-import { BadContext, NotFound } from "../response/errors";
-import type CalculatedField from "./calculated-field";
-import CollectionItem, { ItemMetadata } from "./collection-item";
-import CollectionItemBody from "./collection-item-body";
-import type Field from "./field";
+import type { ActionName } from "../action.js";
+import type { App } from "../app/app.js";
+import Public from "../app/policy-types/public.js";
+import type Context from "../context.js";
+import parseBody from "../http/parse-body.js";
+import { BadContext, NotFound } from "../response/errors.js";
+import type CalculatedField from "./calculated-field.js";
+import CollectionItem, { ItemMetadata } from "./collection-item.js";
+import CollectionItemBody from "./collection-item-body.js";
+import type Field from "./field.js";
 import type {
 	FieldsetEncoded,
 	FieldsetInput,
 	FieldsetOutput,
-} from "./fieldset";
-import ItemList from "./item-list";
-import type Policy from "./policy";
-import type SpecialFilter from "./special-filter";
+} from "./fieldset.js";
+import ItemList from "./item-list.js";
+import type Policy from "./policy.js";
+import type SpecialFilter from "./special-filter.js";
 
 export type CollectionEvent =
 	| "before:create"

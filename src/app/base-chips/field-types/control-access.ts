@@ -1,9 +1,9 @@
-import { Field, Context, Policy, App, ExtractStorage } from "../../../main";
+import { Field, Context, Policy, App, ExtractStorage } from "../../../main.js";
 import {
 	ExtractParams,
 	FieldOutput,
 	HybridField,
-} from "../../../chip-types/field";
+} from "../../../chip-types/field.js";
 
 type Params<T extends Field> = {
 	target_policies: { [key in "show" | "edit"]: Policy };

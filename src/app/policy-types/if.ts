@@ -6,8 +6,8 @@ import {
 	Context,
 	CollectionItem,
 	Queries,
-} from "../../main";
-import type { PolicyDefinition } from "../../chip-types/policy";
+} from "../../main.js";
+import type { PolicyDefinition } from "../../chip-types/policy.js";
 
 export default class If extends Policy {
 	static type_name = "if";

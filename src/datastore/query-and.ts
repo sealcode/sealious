@@ -1,7 +1,8 @@
-import Query, { QueryStage } from "./query";
-import QueryStep, { Match } from "./query-step";
-import Graph from "./graph";
-import { QueryTypes } from "../main";
+import { Query } from "./query-base.js";
+import QueryStep, { Match } from "./query-step.js";
+import Graph from "./graph.js";
+import { QueryTypes } from "../main.js";
+import type QueryStage from "./query-stage.js";
 
 export default class And extends Query {
 	graph: Graph;

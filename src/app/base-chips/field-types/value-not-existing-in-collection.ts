@@ -1,5 +1,5 @@
-import ValueExistingInCollection from "./value-existing-in-collection";
-import { Context, Field } from "../../../main";
+import ValueExistingInCollection from "./value-existing-in-collection.js";
+import { Context, Field } from "../../../main.js";
 
 export default class ValueNotExistingInCollection extends ValueExistingInCollection {
 	getTypeName = () => "value-not-existing-in-collection";

@@ -1,5 +1,5 @@
-import Router = require("@koa/router");
-import parseBody from "../parse-body";
+import Router from "@koa/router";
+import parseBody from "../parse-body.js";
 
 const sessionRouter = new Router();
 

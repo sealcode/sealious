@@ -1,4 +1,4 @@
-import type { MatchBody } from "./query-stage";
+import type { MatchBody } from "./query-stage.js";
 
 export default function negate_match(stage: MatchBody) {
 	const negated_stage: MatchBody = {};

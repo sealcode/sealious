@@ -1,7 +1,7 @@
 import Bluebird from "bluebird";
-import { Field, Context } from "../../../main";
-import ItemList, { AttachmentOptions } from "../../../chip-types/item-list";
-import { ValidationError } from "../../../response/errors";
+import { Field, Context } from "../../../main.js";
+import ItemList, { AttachmentOptions } from "../../../chip-types/item-list.js";
+import { ValidationError } from "../../../response/errors.js";
 
 type InnerFilter = Record<string, any>;
 type SearchFilter = InnerFilter | string;

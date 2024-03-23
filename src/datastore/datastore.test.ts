@@ -1,5 +1,5 @@
-import { withRunningApp } from "../test_utils/with-test-app";
-import { assertThrowsAsync } from "../test_utils/assert-throws-async";
+import { withRunningApp } from "../test_utils/with-test-app.js";
+import { assertThrowsAsync } from "../test_utils/assert-throws-async.js";
 import assert from "assert";
 
 describe("datastore", () => {

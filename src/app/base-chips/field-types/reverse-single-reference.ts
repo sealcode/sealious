@@ -1,7 +1,7 @@
-import { Field, Context, CollectionItem } from "../../../main";
-import ItemList, { AttachmentOptions } from "../../../chip-types/item-list";
-import { CachedValue } from "./field-types";
-import { CollectionRefreshCondition } from "../../event-description";
+import { Field, Context, CollectionItem } from "../../../main.js";
+import ItemList, { AttachmentOptions } from "../../../chip-types/item-list.js";
+import { CachedValue } from "./field-types.js";
+import { CollectionRefreshCondition } from "../../event-description.js";
 
 class ListOfIDs extends Field<[]> {
 	typeName = "list-of-ids";

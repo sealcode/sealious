@@ -1,5 +1,5 @@
-import { Field, Context } from "../../../main";
-import TextStorage from "./text-storage";
+import { Field, Context } from "../../../main.js";
+import TextStorage from "./text-storage.js";
 
 export type TextParams = Partial<{
 	full_text_search: boolean;

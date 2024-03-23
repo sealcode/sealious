@@ -1,5 +1,5 @@
-import type { App } from "./app/app";
-import type { CollectionItem } from "./main";
+import type { App } from "./app/app.js";
+import type { CollectionItem } from "./main.js";
 
 export default class Context {
 	timestamp: number;

@@ -1,7 +1,7 @@
-import { Context, Field, ValidationResult } from "../../../main";
-import Text from "./text";
-import JsonObject from "./json-object";
-import { StructuredArray } from "./structured-array";
+import { Context, Field, ValidationResult } from "../../../main.js";
+import Text from "./text.js";
+import JsonObject from "./json-object.js";
+import { StructuredArray } from "./structured-array.js";
 
 export type JDDocument = Array<{
 	component_name: string;

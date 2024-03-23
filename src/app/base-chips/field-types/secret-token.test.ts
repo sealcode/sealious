@@ -2,10 +2,10 @@ import assert from "assert";
 import {
 	TestAppConstructor,
 	withRunningApp,
-} from "../../../test_utils/with-test-app";
-import { assertThrowsAsync } from "../../../test_utils/assert-throws-async";
-import { App, Collection, FieldTypes, Policies } from "../../../main";
-import { sleep } from "../../../test_utils/sleep";
+} from "../../../test_utils/with-test-app.js";
+import { assertThrowsAsync } from "../../../test_utils/assert-throws-async.js";
+import { App, Collection, FieldTypes, Policies } from "../../../main.js";
+import { sleep } from "../../../test_utils/sleep.js";
 
 const URL = "/api/v1/collections/boolseals";
 

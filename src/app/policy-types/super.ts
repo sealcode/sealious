@@ -1,7 +1,7 @@
-import Policy from "../../chip-types/policy";
-import type Context from "../../context";
-import DenyAll from "../../datastore/deny-all";
-import { AllowAll } from "../../datastore/allow-all";
+import Policy from "../../chip-types/policy.js";
+import type Context from "../../context.js";
+import DenyAll from "../../datastore/deny-all.js";
+import { AllowAll } from "../../datastore/allow-all.js";
 
 export default class Super extends Policy {
 	static type_name = "super";

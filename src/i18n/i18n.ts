@@ -1,5 +1,5 @@
 import * as assert from "assert";
-import languages from "./languages/languages";
+import languages from "./languages/languages.js";
 
 export default (default_language: string) => {
 	assert.ok(default_language);

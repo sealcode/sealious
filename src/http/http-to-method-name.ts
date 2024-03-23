@@ -1,4 +1,4 @@
-import type { ActionName } from "../action";
+import type { ActionName } from "../action.js";
 
 const method_map: { [method: string]: ActionName } = {
 	GET: "show",

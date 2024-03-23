@@ -1,10 +1,10 @@
-import type { ValidationResult } from "../../../chip-types/field";
-import { Context, Errors, Field } from "../../../main";
+import type { ValidationResult } from "../../../chip-types/field.js";
+import { Context, Errors, Field } from "../../../main.js";
 import humanComparatorToQuery, {
 	ComparatorObject,
 	DBComparator,
 	HumanComparator,
-} from "../../../utils/human-comparator-to-query";
+} from "../../../utils/human-comparator-to-query.js";
 
 /** Stores a floating point number. DOes not take params. Does not allow range filtering. @todo: add range filtering */
 export default class Float extends Field {

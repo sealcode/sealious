@@ -1,12 +1,12 @@
 import assert from "assert";
-import Collection from "../../../chip-types/collection";
-import { FieldTypes } from "../../../main";
+import Collection from "../../../chip-types/collection.js";
+import { FieldTypes } from "../../../main.js";
 import {
 	assertThrowsAsync,
 	withRunningApp,
-} from "../../../test_utils/test-utils";
-import { App } from "../../app";
-import { StructuredArray } from "./structured-array";
+} from "../../../test_utils/test-utils.js";
+import { App } from "../../app.js";
+import { StructuredArray } from "./structured-array.js";
 
 describe("structured-array", () => {
 	it("accepts a simple valid value and rejects an invalid one", async () =>

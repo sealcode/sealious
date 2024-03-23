@@ -5,7 +5,7 @@ import {
 	Queries,
 	Collection,
 	CollectionItem,
-} from "../../../main";
+} from "../../../main.js";
 
 type StagesGetter = (
 	context: Context,

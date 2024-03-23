@@ -1,5 +1,5 @@
-import SealiousResponse from "./sealious-response";
-import Item from "./item";
+import SealiousResponse from "./sealious-response.js";
+import Item from "./item.js";
 
 export default class CollectionResponse extends SealiousResponse {
 	items: Item[];

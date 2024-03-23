@@ -9,7 +9,7 @@
 	console.log(item.reference_field.name) // 'Some cool name'
 */
 
-import Item from "../response/item";
+import Item from "../response/item.js";
 
 export function make(
 	attachments: { [id: string]: Item },

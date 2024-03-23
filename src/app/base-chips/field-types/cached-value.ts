@@ -6,17 +6,17 @@ import type {
 	Collection,
 	CollectionItem,
 	GetInputType,
-} from "../../../main";
-import ItemList from "../../../chip-types/item-list";
-import { BadContext } from "../../../response/errors";
-import isEmpty from "../../../utils/is-empty";
-import HybridField from "../../../chip-types/field-hybrid";
+} from "../../../main.js";
+import ItemList from "../../../chip-types/item-list.js";
+import { BadContext } from "../../../response/errors.js";
+import isEmpty from "../../../utils/is-empty.js";
+import HybridField from "../../../chip-types/field-hybrid.js";
 
 import {
 	CollectionRefreshCondition,
 	RefreshCondition,
-} from "../../event-description";
-import DerivedValue from "./derived-value";
+} from "../../event-description.js";
+import DerivedValue from "./derived-value.js";
 
 type GetValue<T extends Field> = (
 	context: Context,

@@ -1,8 +1,8 @@
-import type Context from "../../../context";
-import { Field } from "../../../main";
+import type Context from "../../../context.js";
+import { Field } from "../../../main.js";
 
-import me_synonyms from "../../../misc/me-synonyms";
-import TextStorage from "./text-storage";
+import me_synonyms from "../../../misc/me-synonyms.js";
+import TextStorage from "./text-storage.js";
 
 export default class Username extends TextStorage {
 	typeName = "username";

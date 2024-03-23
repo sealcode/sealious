@@ -1,5 +1,5 @@
 import assert from "assert";
-import { withRunningApp } from "../../test_utils/with-test-app";
+import { withRunningApp } from "../../test_utils/with-test-app.js";
 
 describe("request multiple ids", () => {
 	it("returns proper length and empty status for empty response", async () =>

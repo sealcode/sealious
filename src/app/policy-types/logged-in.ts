@@ -1,7 +1,7 @@
-import Policy from "../../chip-types/policy";
-import type { Context } from "../../main";
-import { AllowAll } from "../../datastore/allow-all";
-import DenyAll from "../../datastore/deny-all";
+import Policy from "../../chip-types/policy.js";
+import type { Context } from "../../main.js";
+import { AllowAll } from "../../datastore/allow-all.js";
+import DenyAll from "../../datastore/deny-all.js";
 
 export default class LoggedIn extends Policy {
 	static type_name = "logged-in";

@@ -1,7 +1,7 @@
 import { strictEqual, deepStrictEqual } from "assert";
-import { App, Collection, FieldTypes } from "../main";
-import { sleep } from "../test_utils/sleep";
-import { withRunningApp } from "../test_utils/with-test-app";
+import { App, Collection, FieldTypes } from "../main.js";
+import { sleep } from "../test_utils/sleep.js";
+import { withRunningApp } from "../test_utils/with-test-app.js";
 
 class Entries extends Collection {
 	fields = {

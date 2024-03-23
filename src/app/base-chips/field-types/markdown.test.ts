@@ -1,8 +1,8 @@
 import assert from "assert";
-import { Collection, SuperContext } from "../../../main";
-import { withRunningApp } from "../../../test_utils/with-test-app";
-import { TestApp } from "../../../test_utils/test-utils";
-import Markdown from "./markdown";
+import { Collection, SuperContext } from "../../../main.js";
+import { withRunningApp } from "../../../test_utils/with-test-app.js";
+import { TestApp } from "../../../test_utils/test-utils.js";
+import Markdown from "./markdown.js";
 
 const testFormating = (
 	input: string,

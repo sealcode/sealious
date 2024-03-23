@@ -1,6 +1,6 @@
 import { is, predicates } from "@sealcode/ts-predicates";
-import { Field, Context } from "../../../main";
-import { ArrayStorage } from "./array-storage";
+import { Field, Context } from "../../../main.js";
+import { ArrayStorage } from "./array-storage.js";
 
 export class EnumMultiple<Values extends string> extends ArrayStorage<Values> {
 	typeName = "enum-multiple";

@@ -1,5 +1,5 @@
-import SecureHasher from "../../../utils/secure-hasher";
-import { Context, Field } from "../../../main";
+import SecureHasher from "../../../utils/secure-hasher.js";
+import { Context, Field } from "../../../main.js";
 
 const MIN_LENGTH = 8;
 

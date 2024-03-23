@@ -1,9 +1,9 @@
 import { predicates } from "@sealcode/ts-predicates";
 import assert from "assert";
-import Collection from "../../../chip-types/collection";
-import { FieldTypes } from "../../../main";
-import { withRunningApp } from "../../../test_utils/with-test-app";
-import { App } from "../../app";
+import Collection from "../../../chip-types/collection.js";
+import { FieldTypes } from "../../../main.js";
+import { withRunningApp } from "../../../test_utils/with-test-app.js";
+import { App } from "../../app.js";
 
 describe("Fields > EnumMultiple", () => {
 	it("allows you to filter array by a single value", async () =>

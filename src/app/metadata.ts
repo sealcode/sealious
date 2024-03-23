@@ -1,4 +1,4 @@
-import type { App } from "../main";
+import type { App } from "../main.js";
 
 export const METADATA_COLLECTION_NAME = "_metadata";
 

@@ -1,7 +1,7 @@
-import type { App } from "../app/app";
-import type Context from "../context";
-import type { CollectionItem } from "../main";
-import type Collection from "./collection";
+import type { App } from "../app/app.js";
+import type Context from "../context.js";
+import type { CollectionItem } from "../main.js";
+import type Collection from "./collection.js";
 
 export default abstract class CalculatedField<ReturnType> {
 	app: App;

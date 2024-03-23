@@ -1,7 +1,7 @@
 import EventEmitter from "events";
-import type LongRunningProcessEvents from "../app/collections/long-running-process-events";
-import type LongRunningProcesses from "../app/collections/long-running-processes";
-import type { CollectionInput, CollectionItem, Context } from "../main";
+import type LongRunningProcessEvents from "../app/collections/long-running-process-events.js";
+import type LongRunningProcesses from "../app/collections/long-running-processes.js";
+import type { CollectionInput, CollectionItem, Context } from "../main.js";
 
 type LongRunningProcessEvent = {
 	type: string;

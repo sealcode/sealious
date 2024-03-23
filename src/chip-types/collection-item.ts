@@ -1,17 +1,17 @@
-import Collection, { Fieldnames } from "./collection";
-import type Context from "../context";
+import Collection, { Fieldnames } from "./collection.js";
+import type Context from "../context.js";
 import {
 	DeveloperError,
 	BadContext,
 	ValidationError,
 	FieldsError,
-} from "../response/errors";
+} from "../response/errors.js";
 import shortid from "shortid";
-import type { AttachmentOptions, ItemListResult } from "./item-list";
-import type { PolicyDecision } from "./policy";
-import isEmpty from "../utils/is-empty";
-import type { Fieldset, FieldsetInput, FieldsetOutput } from "./fieldset";
-import CollectionItemBody from "./collection-item-body";
+import type { AttachmentOptions, ItemListResult } from "./item-list.js";
+import type { PolicyDecision } from "./policy.js";
+import isEmpty from "../utils/is-empty.js";
+import type { Fieldset, FieldsetInput, FieldsetOutput } from "./fieldset.js";
+import CollectionItemBody from "./collection-item-body.js";
 
 export type ItemMetadata = {
 	modified_at: number;

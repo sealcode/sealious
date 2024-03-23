@@ -1,7 +1,7 @@
 import Bluebird from "bluebird";
-import { And as AndQuery } from "../../datastore/query";
-import type { Context, CollectionItem } from "../../main";
-import Policy, { ReducingPolicy } from "../../chip-types/policy";
+import { And as AndQuery } from "../../datastore/query.js";
+import type { Context, CollectionItem } from "../../main.js";
+import Policy, { ReducingPolicy } from "../../chip-types/policy.js";
 
 export default class And extends ReducingPolicy {
 	static type_name = "and";

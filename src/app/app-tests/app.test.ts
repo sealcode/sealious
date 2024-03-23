@@ -1,9 +1,7 @@
 import assert from "assert";
-import { withRunningApp } from "../../test_utils/with-test-app";
+import { withRunningApp } from "../../test_utils/with-test-app.js";
 
 describe("app", () => {
-	require("../sort.subtest");
-
 	describe("metadata", () => {
 		it("is cleared when running .removeAllData()", async () => {
 			return withRunningApp(

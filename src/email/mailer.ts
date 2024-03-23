@@ -1,5 +1,5 @@
-import type { App } from "../main";
-import type { MessageData } from "./message";
+import type { App } from "../main.js";
+import type { MessageData } from "./message.js";
 
 export default abstract class Mailer {
 	app: App;

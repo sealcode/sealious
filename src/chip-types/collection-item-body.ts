@@ -1,8 +1,12 @@
-import type Collection from "./collection";
-import type { FieldsetEncoded, FieldsetInput, FieldsetOutput } from "../main";
-import type { FieldOutput, RequiredField } from "./field";
-import { Fieldset } from "./fieldset";
-import type { CollectionOutput } from "./collection";
+import type Collection from "./collection.js";
+import type {
+	FieldsetEncoded,
+	FieldsetInput,
+	FieldsetOutput,
+} from "../main.js";
+import type { FieldOutput, RequiredField } from "./field.js";
+import { Fieldset } from "./fieldset.js";
+import type { CollectionOutput } from "./collection.js";
 
 export type FieldNames<T extends Collection> = keyof T["fields"] & string;
 

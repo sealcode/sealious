@@ -1,14 +1,14 @@
-import CollectionItem from "./collection-item";
-import Collection from "./collection";
-import { Context, ExtractFilterParams, Query } from "../main";
+import CollectionItem from "./collection-item.js";
+import Collection from "./collection.js";
+import { Context, ExtractFilterParams, Query } from "../main.js";
 import {
 	BadContext,
 	NotFound,
 	BadSubjectAction,
 	ValidationError,
-} from "../response/errors";
-import type QueryStage from "../datastore/query-stage";
-import sealious_to_mongo_sort_param from "../utils/mongo-sorts";
+} from "../response/errors.js";
+import type QueryStage from "../datastore/query-stage.js";
+import sealious_to_mongo_sort_param from "../utils/mongo-sorts.js";
 import { stringify as csvStringify } from "csv-stringify/sync";
 
 type FilterT<T extends Collection> = Partial<{

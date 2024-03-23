@@ -1,6 +1,6 @@
 import assert from "assert";
-import { withRunningApp, withTestApp } from "../../test_utils/with-test-app";
-import SimpleTemplate from "./simple";
+import { withRunningApp, withTestApp } from "../../test_utils/with-test-app.js";
+import SimpleTemplate from "./simple.js";
 
 describe("simpleTemplate", () => {
 	it("sends an email", async () =>

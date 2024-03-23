@@ -1,4 +1,4 @@
-import { Field } from "../../../main";
+import { Field } from "../../../main.js";
 
 import shortid from "shortid";
 

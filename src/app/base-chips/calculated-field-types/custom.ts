@@ -4,7 +4,7 @@ import {
 	App,
 	Collection,
 	CollectionItem,
-} from "../../../main";
+} from "../../../main.js";
 
 type Getter<ReturnType> = (
 	contect: Context,

@@ -1,11 +1,11 @@
 import assert from "assert";
-import Context from "../context";
+import Context from "../context.js";
 import {
 	assertThrowsAsync,
 	sleep,
 	withRunningApp,
-} from "../test_utils/test-utils";
-import { LongRunningProcess } from "./long-running-process";
+} from "../test_utils/test-utils.js";
+import { LongRunningProcess } from "./long-running-process.js";
 
 describe("long running process", () => {
 	it("works as advertised", async () => {

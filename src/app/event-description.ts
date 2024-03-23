@@ -1,9 +1,9 @@
 import type {
 	CollectionEvent,
 	CollectionCallback,
-} from "../chip-types/collection";
-import type { App, Collection } from "../main";
-import type Context from "../context";
+} from "../chip-types/collection.js";
+import type { App, Collection } from "../main.js";
+import type Context from "../context.js";
 import * as cron from "cron";
 
 export type RefreshCallbackArguments = [context: Context, ...args: unknown[]];

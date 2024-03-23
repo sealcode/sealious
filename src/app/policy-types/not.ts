@@ -1,6 +1,6 @@
-import Policy from "../../chip-types/policy";
-import * as Query from "../../datastore/query";
-import type { CollectionItem, Context } from "../../main";
+import Policy from "../../chip-types/policy.js";
+import * as Query from "../../datastore/query.js";
+import type { CollectionItem, Context } from "../../main.js";
 
 export default class Not extends Policy {
 	static type_name = "not";

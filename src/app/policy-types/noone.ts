@@ -1,6 +1,6 @@
-import type { Context } from "../../main";
-import Policy from "../../chip-types/policy";
-import DenyAll from "../../datastore/deny-all";
+import type { Context } from "../../main.js";
+import Policy from "../../chip-types/policy.js";
+import DenyAll from "../../datastore/deny-all.js";
 
 export default class Noone extends Policy {
 	static type_name = "noone";

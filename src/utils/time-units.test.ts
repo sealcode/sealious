@@ -1,4 +1,4 @@
-import time_units, { TimeUnit } from "./time-units";
+import time_units, { TimeUnit } from "./time-units.js";
 import * as assert from "assert";
 
 const formats: { [full_name: string]: [TimeUnit, number] } = {

@@ -1,5 +1,5 @@
 import assert from "assert";
-import negate_match from "./negate-stage";
+import negate_match from "./negate-stage.js";
 
 describe("negate-stage", () => {
 	it("properly negates queries", () => {

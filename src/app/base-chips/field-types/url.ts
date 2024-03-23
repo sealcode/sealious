@@ -1,6 +1,6 @@
 import { URL } from "url";
-import type { ValidationResult } from "../../../chip-types/field";
-import { Field, Context } from "../../../main";
+import type { ValidationResult } from "../../../chip-types/field.js";
+import { Field, Context } from "../../../main.js";
 
 export type UrlParams = Partial<{
 	allowed_origins: string[];

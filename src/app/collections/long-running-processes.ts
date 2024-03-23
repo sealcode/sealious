@@ -1,6 +1,6 @@
-import Collection from "../../chip-types/collection";
-import { FieldTypes, Policies } from "../../main";
-import Matches from "../base-chips/special_filters/matches";
+import Collection from "../../chip-types/collection.js";
+import { FieldTypes, Policies } from "../../main.js";
+import Matches from "../base-chips/special_filters/matches.js";
 
 export default class LongRunningProcesses extends Collection {
 	name = "long_running_processes";

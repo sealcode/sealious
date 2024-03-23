@@ -1,4 +1,10 @@
-import { Policy, Query, Context, QueryTypes, CollectionItem } from "../../main";
+import {
+	Policy,
+	Query,
+	Context,
+	QueryTypes,
+	CollectionItem,
+} from "../../main.js";
 
 export default class UserReferencedInField extends Policy {
 	static type_name = "user-referenced-in-field";

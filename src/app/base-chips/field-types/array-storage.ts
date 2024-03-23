@@ -5,12 +5,12 @@ import {
 	predicates,
 } from "@sealcode/ts-predicates";
 import type { InputType } from "zlib";
-import type { ActionName } from "../../../action";
-import { Field, Context, ValidationResult } from "../../../main";
-import { Insert } from "./array-actions/insert";
-import { Remove } from "./array-actions/remove";
-import { Replace } from "./array-actions/replace";
-import { Swap } from "./array-actions/swap";
+import type { ActionName } from "../../../action.js";
+import { Field, Context, ValidationResult } from "../../../main.js";
+import { Insert } from "./array-actions/insert.js";
+import { Remove } from "./array-actions/remove.js";
+import { Replace } from "./array-actions/replace.js";
+import { Swap } from "./array-actions/swap.js";
 
 export type ArrayStorageAction<ContentType> = (
 	| { remove: number }

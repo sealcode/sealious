@@ -5,10 +5,10 @@ import type {
 	Collection,
 	CollectionItem,
 	Context,
-} from "../../../main";
-import { HybridField, ValidationResult } from "../../../chip-types/field";
-import isEmpty from "../../../utils/is-empty";
-import { BadContext } from "../../../response/errors";
+} from "../../../main.js";
+import { HybridField, ValidationResult } from "../../../chip-types/field.js";
+import isEmpty from "../../../utils/is-empty.js";
+import { BadContext } from "../../../response/errors.js";
 /*
 
 todo: make the deriving_fn more type-safe by reading the types of the fields?

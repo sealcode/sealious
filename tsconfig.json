@@ -1,11 +1,11 @@
 {
 	"compilerOptions": {
-		"module": "commonjs",
-		"moduleResolution": "node",
+		"module": "node16",
+		"moduleResolution": "node16",
 		"noImplicitAny": true,
 		"noImplicitThis": true,
 		"strictNullChecks": true,
-		"target": "ES2020",
+		"target": "es2020",
 		"declaration": true,
 		"esModuleInterop": true,
 		"lib": ["es6", "esnext"],
@@ -16,7 +16,8 @@
 		"resolveJsonModule": true,
 		"sourceMap": true,
 		"importsNotUsedAsValues": "error",
-		"skipLibCheck": true
+		"skipLibCheck": true,
+		"allowSyntheticDefaultImports": true
 	},
 	"include": ["src/**/*"]
 }

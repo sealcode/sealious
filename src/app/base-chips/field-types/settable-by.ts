@@ -1,6 +1,6 @@
-import Field, { HybridField } from "../../../chip-types/field";
-import type { Context } from "../../../main";
-import type Policy from "../../../chip-types/policy";
+import Field, { HybridField } from "../../../chip-types/field.js";
+import type { Context } from "../../../main.js";
+import type Policy from "../../../chip-types/policy.js";
 
 export default class SettableBy<T extends Field> extends HybridField<T> {
 	typeName = "settable-by";
