@@ -1,10 +1,8 @@
 import assert from "assert";
 import Collection from "../../../chip-types/collection.js";
 import { FieldTypes } from "../../../main.js";
-import {
-	assertThrowsAsync,
-	withRunningApp,
-} from "../../../test_utils/test-utils.js";
+import { assertThrowsAsync } from "../../../test_utils/test-utils.js";
+import { withRunningApp } from "../../../test_utils/with-test-app.js";
 import { App } from "../../app.js";
 import { StructuredArray } from "./structured-array.js";
 

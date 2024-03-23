@@ -1,7 +1,7 @@
 import assert from "assert";
 import { Collection, SuperContext } from "../../../main.js";
+import { TestApp } from "../../../test_utils/test-app.js";
 import { withRunningApp } from "../../../test_utils/with-test-app.js";
-import { TestApp } from "../../../test_utils/test-utils.js";
 import Markdown from "./markdown.js";
 
 const testFormating = (

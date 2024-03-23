@@ -7,12 +7,12 @@ import Public from "../app/policy-types/public.js";
 import SameAsForResourceInField from "../app/policy-types/same-as-for-resource-in-field.js";
 import type { CollectionInput } from "../chip-types/collection.js";
 import { Collection, Context, SuperContext } from "../main.js";
-import { TestApp } from "../test_utils/test-utils.js";
 import { withRunningApp } from "../test_utils/with-test-app.js";
 import { module_dirname } from "../utils/module_filename.js";
 import File from "./file.js";
 
 import _locreq from "locreq";
+import { TestApp } from "../test_utils/test-app.js";
 const locreq = _locreq(module_dirname(import.meta.url));
 
 describe("file", () => {

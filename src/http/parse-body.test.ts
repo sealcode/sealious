@@ -7,9 +7,9 @@ import {
 import Field from "../chip-types/field.js";
 import { Collection, FieldTypes } from "../main.js";
 import asyncRequest from "../test_utils/async-request.js";
-import { TestApp } from "../test_utils/test-utils.js";
 import parseBody from "./parse-body.js";
 import JsonObject from "../app/base-chips/field-types/json-object.js";
+import { TestApp } from "../test_utils/test-app.js";
 
 function extend(t: TestAppConstructor<TestApp>) {
 	class ArrayOfObjects extends Field {
