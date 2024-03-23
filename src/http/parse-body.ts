@@ -1,20 +1,8 @@
 import type { Middleware } from "@koa/router";
 import { promises as fs } from "fs";
 import koaBody from "koa-body";
+import qs from "qs";
 import File from "../data-structures/file.js";
-import { setProperty } from "dot-prop";
-
-function setDeep(
-	target: Record<string, unknown>,
-	complex_key: string,
-	value: unknown
-) {
-	setProperty(
-		target,
-		complex_key.replaceAll("[", ".").replaceAll("]", ""),
-		value
-	);
-}
 
 export default function parseBody(): Middleware {
 	const koaParser = koaBody({ multipart: true });
@@ -35,13 +23,10 @@ export default function parseBody(): Middleware {
 						promises.push(
 							fs
 								.readFile(files.path, "utf-8")
-								.then((json_str) =>
-									setDeep(
-										ctx.request.body,
-										file_name,
-										JSON.parse(json_str)
-									)
-								)
+								.then((json_str) => {
+									ctx.request.body[file_name] =
+										JSON.parse(json_str);
+								})
 						);
 						continue;
 					} else {
@@ -60,27 +45,32 @@ export default function parseBody(): Middleware {
 				});
 				promises.push(
 					Promise.all(file_promises).then((sealious_files) => {
-						setDeep(ctx.request.body, file_name, sealious_files);
+						ctx.request.body[file_name] = sealious_files;
 					})
 				);
 			}
 		}
 
 		for (const [key, value] of Object.entries(original_body)) {
-			setDeep(ctx.request.body, key, value);
+			ctx.request.body[key] = value;
 		}
 
 		for (const [key, value] of Object.entries(ctx.query)) {
 			// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
 			if (ctx.request.body[key] === undefined) {
 				// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-				setDeep(ctx.request.body, key, value);
+				ctx.request.body[key] = value;
 			}
 		}
 
 		await Promise.all(promises);
 		ctx.$app.Logger.info("REQUEST", "Parsed body", ctx.request.body);
-		ctx.$body = ctx.request.body;
+		ctx.$body = qs.parse(ctx.request.body, {
+			allowDots: true,
+			depth: 20,
+			allowEmptyArrays: true,
+		});
+		ctx.request.body = ctx.$body;
 		await next();
 	};
 }

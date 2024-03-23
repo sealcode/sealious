@@ -9,6 +9,7 @@ import { Collection, FieldTypes } from "../main.js";
 import asyncRequest from "../test_utils/async-request.js";
 import { TestApp } from "../test_utils/test-utils.js";
 import parseBody from "./parse-body.js";
+import JsonObject from "../app/base-chips/field-types/json-object.js";
 
 function extend(t: TestAppConstructor<TestApp>) {
 	class ArrayOfObjects extends Field {
@@ -35,6 +36,14 @@ function extend(t: TestAppConstructor<TestApp>) {
 		};
 	})();
 
+	const any_json = new (class ComplexData extends Collection {
+		name = "any_json";
+		fields = {
+			body: new JsonObject(),
+			source: new FieldTypes.Image(),
+		};
+	})();
+
 	const strings = new (class Strings extends Collection {
 		name = "strings";
 		fields = {
@@ -47,6 +56,7 @@ function extend(t: TestAppConstructor<TestApp>) {
 			...TestApp.BaseCollections,
 			strings,
 			"complex-data": complex_data,
+			any_json,
 		};
 	};
 }
@@ -98,6 +108,64 @@ describe("parseBody", () => {
 			assert.strictEqual(response.json_data, "123");
 			assert.strictEqual(response.token, "abc");
 			await test.app.stop();
+		});
+	});
+
+	it("handles arrays data sent within multipart/form-data", async () => {
+		await withRunningApp(extend, async ({ port }) => {
+			// PNG file is empty but it doesnt matter for the test
+
+			const response = await fetch(
+				`http://localhost:${port}/api/v1/collections/any_json`,
+				{
+					credentials: "include",
+					headers: {
+						"Content-Type":
+							"multipart/form-data; boundary=209086842812694783493155782262",
+					},
+					body: `--209086842812694783493155782262\r\nContent-Disposition: form-data; name="body.component_args[table][rows][0][cells][0][color]"\r\n\r\nred\r\n--209086842812694783493155782262\r\nContent-Disposition: form-data; name="body.component_args[table][rows][0][cells][0][word]"\r\n\r\nbanana\r\n--209086842812694783493155782262\r\nContent-Disposition: form-data; name="body.component_args[table][rows][1][cells][0][image].old"\r\n\r\n{"persistent":true,"file_id":"4379b88e-d6f3-43d9-b87b-569d6179be61.data"}\r\n--209086842812694783493155782262\r\nContent-Disposition: form-data; name="body.component_args[table][rows][1][cells][0][color]"\r\n\r\ngreen\r\n--209086842812694783493155782262\r\nContent-Disposition: form-data; name="body.component_args[table][rows][2][cells][0][word]"\r\n\r\npineapple\r\n--209086842812694783493155782262\r\nContent-Disposition: form-data; name="body.component_args[table][rows][2][cells][0][image].old"\r\n\r\n{"persistent":true,"file_id":"2ee38767-af26-492f-997f-e3797917761e.data"}\r\n--209086842812694783493155782262--\r\n`,
+					method: "POST",
+					mode: "cors",
+				}
+			);
+
+			const { body } = (await response.json()) as any;
+			assert.strict.deepStrictEqual(body, {
+				component_args: {
+					table: {
+						rows: [
+							{
+								cells: [
+									{
+										color: "red",
+										word: "banana",
+									},
+								],
+							},
+							{
+								cells: [
+									{
+										color: "green",
+										image: {
+											old: '{"persistent":true,"file_id":"4379b88e-d6f3-43d9-b87b-569d6179be61.data"}',
+										},
+									},
+								],
+							},
+							{
+								cells: [
+									{
+										image: {
+											old: '{"persistent":true,"file_id":"2ee38767-af26-492f-997f-e3797917761e.data"}',
+										},
+										word: "pineapple",
+									},
+								],
+							},
+						],
+					},
+				},
+			});
 		});
 	});
 });
