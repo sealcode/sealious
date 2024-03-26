@@ -26,6 +26,14 @@ export type RestAPIError = {
 	};
 };
 
+function json_or_text(text: string): Record<string, unknown> | string {
+	try {
+		return JSON.parse(text);
+	} catch {
+		return text;
+	}
+}
+
 async function api_call(
 	method: string,
 	base_url: string,
@@ -55,20 +63,12 @@ async function api_call(
 	if (!response.status.toString().startsWith("2")) {
 		throw {
 			response: {
-				data: JSON.parse(text),
+				data: json_or_text(text),
 				status: response.status,
 			},
 		};
 	}
-	if (response.headers.get("Content-Type")?.includes("json")) {
-		try {
-			return JSON.parse(text);
-		} catch {
-			return text;
-		}
-	} else {
-		return text;
-	}
+	return json_or_text(text);
 }
 
 // using `any` as return type as it's only supposed to be used for tests, anyway
