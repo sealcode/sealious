@@ -26,6 +26,51 @@ export type RestAPIError = {
 	};
 };
 
+async function api_call(
+	method: string,
+	base_url: string,
+	url: string,
+	data?: Record<string, unknown>,
+	options: Parameters<typeof fetch>[1] = {}
+) {
+	const full_url = `${base_url}${url}${
+		method == "get" && data && Object.values(data).length > 0
+			? "?" + qs.stringify(data)
+			: ""
+	}`;
+	const response = await fetch(full_url, {
+		method: method.toUpperCase(),
+		...options,
+		headers: {
+			...(options?.headers || {}),
+			...(["GET", "HEAD"].includes(method.toLocaleUpperCase())
+				? {}
+				: { "Content-Type": "application/json" }),
+		},
+		...(["GET", "HEAD"].includes(method.toLocaleUpperCase())
+			? {}
+			: { body: JSON.stringify(data) }),
+	});
+	const text = await response.text();
+	if (!response.status.toString().startsWith("2")) {
+		throw {
+			response: {
+				data: JSON.parse(text),
+				status: response.status,
+			},
+		};
+	}
+	if (response.headers.get("Content-Type")?.includes("json")) {
+		try {
+			return JSON.parse(text);
+		} catch {
+			return text;
+		}
+	} else {
+		return text;
+	}
+}
+
 // using `any` as return type as it's only supposed to be used for tests, anyway
 export default class MockRestApi {
 	constructor(public base_url: string) {}
@@ -34,94 +79,27 @@ export default class MockRestApi {
 		options?: Parameters<typeof fetch>[1],
 		query: Record<string, unknown> = {}
 	): Promise<any> {
-		const response = await fetch(
-			`${this.base_url}${url}${
-				query && Object.values(query).length > 0
-					? "?" + qs.stringify(query)
-					: ""
-			}`,
-			{
-				method: "get",
-				...options,
-			}
-		);
-		if (!response.status.toString().startsWith("2")) {
-			throw {
-				response: {
-					data: await response.json(),
-					status: response.status,
-				},
-			};
-		}
-		if (response.headers.get("content-type")?.includes("json")) {
-			const text = await response.text();
-			return JSON.parse(text) as unknown as Record<string, unknown>;
-		} else {
-			return response.text();
-		}
+		return api_call("GET", this.base_url, url, query, options);
 	}
 	async delete(
 		url: string,
 		options?: Parameters<typeof fetch>[1]
 	): Promise<any> {
-		return await fetch(`${this.base_url}${url}`, {
-			method: "delete",
-			...options,
-		});
+		return api_call("GET", this.base_url, url, undefined, options);
 	}
 	async patch(
 		url: string,
 		data: any,
 		options?: Parameters<typeof fetch>[1]
 	): Promise<any> {
-		const response = await fetch(`${this.base_url}${url}`, {
-			method: "PATCH",
-			...options,
-			headers: {
-				...(options?.headers || {}),
-				"Content-Type": "application/json",
-			},
-			body: JSON.stringify(data),
-		});
-		const text = await response.text();
-		if (!response.status.toString().startsWith("2")) {
-			throw {
-				response: {
-					data: JSON.parse(text),
-					status: response.status,
-				},
-			};
-		}
-		if (response.headers.get("Content-Type")?.includes("json")) {
-			return JSON.parse(text);
-		} else {
-			return text;
-		}
+		return api_call("PATCH", this.base_url, url, data, options);
 	}
 	async post(
 		url: string,
 		data: any,
 		options?: Parameters<typeof fetch>[1]
 	): Promise<any> {
-		const response = await fetch(`${this.base_url}${url}`, {
-			method: "post",
-			...options,
-			headers: {
-				...(options?.headers || {}),
-				"Content-Type": "application/json",
-			},
-			body: JSON.stringify(data),
-		});
-		if (!response.status.toString().startsWith("2")) {
-			throw {
-				response: {
-					data: await response.json(),
-					status: response.status,
-				},
-			};
-		}
-		const text = await response.text();
-		return JSON.parse(text);
+		return api_call("POST", this.base_url, url, data, options);
 	}
 	async login({
 		username,
