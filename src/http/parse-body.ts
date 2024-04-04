@@ -64,12 +64,12 @@ export default function parseBody(): Middleware {
 		}
 
 		await Promise.all(promises);
-		ctx.$app.Logger.info("REQUEST", "Parsed body", ctx.request.body);
 		ctx.$body = qs.parse(ctx.request.body, {
 			allowDots: true,
 			depth: 20,
 			allowEmptyArrays: true,
 		});
+		ctx.$app.Logger.info("REQUEST", "Parsed body", ctx.request.body);
 		ctx.request.body = ctx.$body;
 		await next();
 	};
