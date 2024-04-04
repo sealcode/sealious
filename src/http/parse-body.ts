@@ -69,7 +69,7 @@ export default function parseBody(): Middleware {
 			depth: 20,
 			allowEmptyArrays: true,
 		});
-		ctx.$app.Logger.info("REQUEST", "Parsed body", ctx.request.body);
+		ctx.$app.Logger.info("REQUEST", "Parsed body", ctx.$body);
 		ctx.request.body = ctx.$body;
 		await next();
 	};
