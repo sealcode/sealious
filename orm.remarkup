@@ -2,60 +2,38 @@
 
 Each Sealious collection has simple Promise-based accessor methods.
 
-## Creating an item in a database
+## Getting a single item
 
 ```
 lang=typescript
-const new_task = app.collections.task.make();
-new_task.set("title", "Write sealious docs");
-new_task.set("done", false);
-await item.save(context);
+const item = await app.collections.tasks.getByID(context, some_id);
 ```
 
-Alternatively, you can use `setMultiple` to set multiple fields with one call:
+If you want to skip any access policy checks, you can pass `SuperContext` as the first argument:
 
 ```
 lang=typescript
-const new_task = app.collections.task.make();
-new_task.setMultiple({ title: "Write sealious docs", done: false });
-await item.save(context);
+await app.collections.tasks.getByID(new app.SuperContext(), some_id);
 ```
 
-## Editing an item
+A shorthand for that, as with many other collection methods, is to add a `su` prefix to the method name, and skip the context:
 
 ```
 lang=typescript
-const item = await this.getByID(context, "Xi3am-29");
-item.set("done", true);
-await item.save(context);
+await app.collections.tasks.suGetByID(some_id);
 ```
 
-## Removing an item from database
+If you want to use `.attach` or `.filter` or any other list-based methods on a single item, you can use
 
 ```
 lang=typescript
-const item = await this.getByID(context, "Xi3am-29");
-item.set("done", true);
-await item.remove(context);
-```
-
-## Upserting
-
-You can use the upsert method to add or update an existing item in the
-database based on some identifying field:
-
-```
-lang=typescript
-await app.collections.patrons.upsert(
-	new app.SuperContext(),
-	"email",
-	[
-		{
-			email: "adam@example.com",
-			end_date: "2024-12-24",
-		},
-	]
-);
+const {
+  items: [item],
+} = await app.collectionst.tasks
+  .list(context)
+  .ids([some_id])
+  .attach({ author: true })
+  .fetch();
 ```
 
 ## Listing items
@@ -163,7 +141,6 @@ all Images linked to a Gallery item, make sure that the Gallery
 collection has an `images` field that is a `ReverseSingleReference`
 and do:
 
-
 ```
 const { items: users } = await app.collections.galleries
   .list(context)
@@ -180,7 +157,6 @@ const { items: users } = await app.collections.galleries
   .fetch();
 ```
 
-
 ### Sorting
 
 ```
@@ -191,9 +167,21 @@ const { items: users } = await app.collections.users
   .fetch();
 ```
 
+### Listing many items by a list of IDs
+
+If you have a list of IDs, you can get all of the items for that ids with a single query like this:
+
+```
+lang=typescript
+const { items } = await app.collections.tasks
+  .list(context)
+  .ids([id1, id2, id3, ...])
+  .fetch();
+```
+
 ### Combining the chain methods
 
-You can combine the `filter`, `paginate`, `format`, `sort` and `attach` methods into one elegant chain, like so:
+You can combine the `filter`, `paginate`, `format`, `sort`, `ids` and `attach` methods into one elegant chain, like so:
 
 ```
 const { items } = await app.collections.items
@@ -208,6 +196,62 @@ const { items } = await app.collections.items
 
 The order of the methods in chain is not significant, aside from the fact that
 `fetch` has to be at the end of the chain.
+
+## Creating an item in a database
+
+```
+lang=typescript
+const new_task = app.collections.tasks.make();
+new_task.set("title", "Write sealious docs");
+new_task.set("done", false);
+await item.save(context);
+```
+
+Alternatively, you can use `setMultiple` to set multiple fields with one call:
+
+```
+lang=typescript
+const new_task = app.collections.tasks.make();
+new_task.setMultiple({ title: "Write sealious docs", done: false });
+await item.save(context);
+```
+
+## Editing an item
+
+```
+lang=typescript
+const item = await app.collections.tasks.getByID(context, "Xi3am-29");
+item.set("done", true);
+await item.save(context);
+```
+
+## Removing an item from database
+
+```
+lang=typescript
+const item = await app.collections.tasks.getByID(context, "Xi3am-29");
+item.set("done", true);
+await item.remove(context);
+```
+
+## Upserting
+
+You can use the upsert method to add or update an existing item in the
+database based on some identifying field:
+
+```
+lang=typescript
+await app.collections.patrons.upsert(
+	new app.SuperContext(),
+	"email",
+	[
+		{
+			email: "adam@example.com",
+			end_date: "2024-12-24",
+		},
+	]
+);
+```
 
 ## Custom methods
 
