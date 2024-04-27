@@ -156,7 +156,9 @@ export abstract class App {
 		if (!fs.existsSync(uploadPath)) {
 			fs.mkdirSync(uploadPath, { recursive: false });
 		}
-		this.FileManager = new FileManager(uploadPath);
+		if (!this.FileManager) {
+			this.FileManager = new FileManager(uploadPath);
+		}
 		this.Logger.setLevel(this.ConfigManager.get("logger").level);
 		this.i18n = i18nFactory(this.manifest.default_language);
 		new Manifest(this.manifest).validate();
