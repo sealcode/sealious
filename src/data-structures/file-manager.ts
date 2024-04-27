@@ -13,7 +13,22 @@ export abstract class FilePointer {
 	abstract getContent(): Promise<Buffer>;
 	abstract save(persistent: boolean): Promise<string>;
 
-	constructor(public file_manager: FileManager, public mimetype: string) {}
+	async getOriginalFilename() {
+		if (this.original_filename) {
+			return this.original_filename;
+		}
+		if (this.token) {
+			return this.file_manager.parseToken(this.token).original_filename;
+		} else {
+			return path.basename(await this.getPath());
+		}
+	}
+
+	constructor(
+		public file_manager: FileManager,
+		public mimetype: string,
+		public original_filename: string
+	) {}
 }
 
 export class PathFilePointer extends FilePointer {
@@ -21,14 +36,15 @@ export class PathFilePointer extends FilePointer {
 	constructor(
 		file_manager: FileManager,
 		public file_path: string,
-		filename = basename(file_path),
+		public original_filename = basename(file_path),
 		public has_id = false,
 		public token: string | null = null
 	) {
 		super(
 			file_manager,
-			mime.lookup(path.extname(filename).slice(1)) ||
-				"application/octet-stream"
+			mime.lookup(path.extname(original_filename).slice(1)) ||
+				"application/octet-stream",
+			original_filename
 		);
 	}
 
@@ -40,6 +56,7 @@ export class PathFilePointer extends FilePointer {
 		this.token = await this.file_manager.addFile(
 			await fs.readFile(this.file_path),
 			this.mimetype,
+			this.original_filename,
 			persistent
 		);
 		this.has_id = true;
@@ -74,11 +91,15 @@ export class BufferFilePointer extends FilePointer {
 	constructor(
 		file_manager: FileManager,
 		public content: Buffer,
-		public filename_extension: string
+		public original_filename: string,
+		public filename_extension: string = path
+			.extname(original_filename)
+			.slice(1)
 	) {
 		super(
 			file_manager,
-			mime.lookup(filename_extension) || "application/octet-stream"
+			mime.lookup(filename_extension) || "application/octet-stream",
+			original_filename
 		);
 	}
 
@@ -90,6 +111,7 @@ export class BufferFilePointer extends FilePointer {
 		this.token = await this.file_manager.addFile(
 			this.content,
 			this.filename_extension,
+			this.original_filename,
 			persistent
 		);
 		return this.token;
@@ -116,6 +138,7 @@ export class FileManager {
 	async addFile(
 		content: Buffer,
 		mimetype: string,
+		original_filename: string,
 		persistent: boolean
 	): Promise<string> {
 		const target_filename =
@@ -124,7 +147,7 @@ export class FileManager {
 			await this.resolveFilePath(target_filename, persistent),
 			content
 		);
-		return this.encodeToken(persistent, target_filename);
+		return this.encodeToken(persistent, target_filename, original_filename);
 	}
 
 	async resolveFilePath(
@@ -134,16 +157,20 @@ export class FileManager {
 		return path.resolve(this.getStorageDir(persistent), filename);
 	}
 
-	parseToken(token: string): { persistent: boolean; name: string } {
+	parseToken(token: string): {
+		persistent: boolean;
+		name: string;
+		original_filename: string;
+	} {
 		return JSON.parse(token);
 	}
 
-	encodeToken(persistent: boolean, name: string) {
-		return JSON.stringify({ persistent, name });
+	encodeToken(persistent: boolean, name: string, original_filename: string) {
+		return JSON.stringify({ persistent, name, original_filename });
 	}
 
 	async fromToken(token: string): Promise<PathFilePointer> {
-		const { persistent, name } = this.parseToken(token);
+		const { persistent, name, original_filename } = this.parseToken(token);
 		if (name.includes(path.sep)) {
 			throw new Error(
 				"filenames cannot contain directory paths, for security reasons"
@@ -152,7 +179,7 @@ export class FileManager {
 		return new PathFilePointer(
 			this,
 			path.resolve(this.getStorageDir(persistent), name),
-			path.extname(name),
+			original_filename,
 			true,
 			token
 		);
@@ -163,11 +190,11 @@ export class FileManager {
 		return new PathFilePointer(this, path, file_name);
 	}
 
-	fromContent(content: Buffer, extension: string) {
-		return new BufferFilePointer(this, content, extension);
+	fromContent(content: Buffer, original_filename: string) {
+		return new BufferFilePointer(this, content, original_filename);
 	}
 
-	fromData(content: Buffer, extension: string) {
-		return this.fromContent(content, extension);
+	fromData(content: Buffer, original_filename: string) {
+		return this.fromContent(content, original_filename);
 	}
 }

@@ -4,6 +4,7 @@ uploaded_files.get("/:bucket/:filename", async (ctx) => {
 	const file = await ctx.$app.FileManager.fromToken(
 		ctx.$app.FileManager.encodeToken(
 			ctx.params.bucket == "persistent",
+			ctx.params.filename,
 			ctx.params.filename
 		)
 	);
