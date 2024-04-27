@@ -2,7 +2,6 @@ import type { Middleware } from "@koa/router";
 import { promises as fs } from "fs";
 import koaBody from "koa-body";
 import qs from "qs";
-import File from "../data-structures/file.js";
 
 export default function parseBody(): Middleware {
 	const koaParser = koaBody({ multipart: true });
@@ -36,8 +35,7 @@ export default function parseBody(): Middleware {
 				const file_promises = files.map(async (file) => {
 					const extracted_filename = file.name;
 					if (extracted_filename) {
-						return File.fromPath(
-							ctx.$app,
+						return ctx.$app.FileManager.fromPath(
 							file.path,
 							extracted_filename
 						);

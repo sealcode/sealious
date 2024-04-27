@@ -1,18 +1,15 @@
-import { Field, Context, File } from "../../../main.js";
-import type { FileDBEntry } from "../../../data-structures/file.js";
+import Field from "../../../chip-types/field.js";
+import type Context from "../../../context.js";
 import {
-	hasField,
-	hasFieldOfType,
-	is,
-	predicates,
-} from "@sealcode/ts-predicates";
-
-export type FileStorageFormat = FileDBEntry;
+	BufferFilePointer,
+	FilePointer,
+	PathFilePointer,
+} from "../../../data-structures/file-manager.js";
 
 export abstract class FileStorage extends Field {
 	handles_large_data = true;
-	get_default_file: (context: Context) => Promise<File>;
-	async isProperValue(context: Context, value: File | [File]) {
+	get_default_file: (context: Context) => Promise<FilePointer>;
+	async isProperValue(context: Context, value: FilePointer | [FilePointer]) {
 		if (typeof value === "string") {
 			return Field.valid();
 		}
@@ -22,18 +19,13 @@ export abstract class FileStorage extends Field {
 					"If you use array for this field, it can only have one file element"
 				);
 			}
-			value = value[0] as File;
+			value = value[0];
 		}
 		if (value === null || value instanceof File) {
 			return Field.valid();
 		}
 
-		if (
-			is(value, predicates.object) &&
-			hasFieldOfType(value, "id", predicates.string) &&
-			hasFieldOfType(value, "filename", predicates.string) &&
-			hasField("data", value)
-		) {
+		if (value instanceof FilePointer) {
 			return Field.valid();
 		}
 
@@ -41,12 +33,12 @@ export abstract class FileStorage extends Field {
 	}
 
 	setParams(params: {
-		get_default_file: (context: Context) => Promise<File>;
+		get_default_file: (context: Context) => Promise<FilePointer>;
 	}) {
 		this.get_default_file = params.get_default_file;
 	}
 
-	async encode(_: Context, file: File | [File]) {
+	async encode(_: Context, file: FilePointer | [FilePointer]) {
 		if (file === null) {
 			return null;
 		}
@@ -56,12 +48,16 @@ export abstract class FileStorage extends Field {
 					"If you use array for this field, it can only have one file element"
 				);
 			}
-			file = file[0] as File;
+			file = file[0];
 		}
-		if (!file.id) {
-			await file.save();
+		let token;
+		if (
+			(file instanceof PathFilePointer && !file.has_id) ||
+			file instanceof BufferFilePointer
+		) {
+			token = await file.save(true);
 		}
-		return file.toDBEntry();
+		return token || file.token;
 	}
 }
 
@@ -73,18 +69,20 @@ export abstract class FileStorage extends Field {
 export default class FileField extends FileStorage {
 	typeName = "file";
 	async decode(
-		_: Context,
-		db_value: FileStorageFormat | null,
+		context: Context,
+		db_value: string | null,
 		__: any,
-		format?: "url" | "file"
+		format?: "url" | "file",
+		is_http_api_request: boolean = false
 	) {
 		if (db_value === null) {
 			return null;
 		}
-		const file = await File.fromID(this.app, db_value.id);
+		const file = await context.app.FileManager.fromToken(db_value);
 		if (format == undefined) {
-			return { id: file.id, filename: file.filename };
-		} else if (format == "file") {
+			format = is_http_api_request ? "url" : "file";
+		}
+		if (format == "file") {
 			return file;
 		} else {
 			return file.getURL();

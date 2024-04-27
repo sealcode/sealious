@@ -168,7 +168,8 @@ export abstract class Field<InputType = unknown> {
 		context: Context,
 		storage_value: Depromisify<ReturnType<this["encode"]>>,
 		old_value: any,
-		format_params: any
+		format_params: any,
+		is_http_api_request = false
 	): Promise<unknown | null> {
 		context.app.Logger.debug3("FIELD DECODE", this.name, {
 			storage_value,

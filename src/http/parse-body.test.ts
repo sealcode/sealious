@@ -79,12 +79,13 @@ describe("parseBody", () => {
 				},
 			};
 			const response = (await asyncRequest(options, form_data)) as {
-				source: Record<string, unknown>;
+				source: string;
 				body: Array<Record<string, unknown>>;
 			};
 			const { body, source } = response;
 			assert.strict.deepStrictEqual(body, [["Foo", { Bar: "baz" }]]);
-			assert.deepStrictEqual(source?.filename, "test.png");
+			// if an API response stems from HTTP, it should automatically choose the "url" format for file fields, unless requested otherwise
+			assert.ok(source.endsWith(".png"));
 		});
 	});
 

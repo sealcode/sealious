@@ -131,7 +131,7 @@ export default class CollectionItem<T extends Collection = any> {
 	}
 
 	/** Save the item to the database */
-	async save(context: Context) {
+	async save(context: Context, is_http_api_request = false) {
 		context.app.Logger.debug2("ITEM", "Saving item", this.body);
 		const can_save = await this.canSave(context);
 		if (can_save === null) {
@@ -157,7 +157,7 @@ export default class CollectionItem<T extends Collection = any> {
 				...encoded,
 				_metadata: this._metadata,
 			});
-			await this.decode(context);
+			await this.decode(context, {}, is_http_api_request);
 			this.save_mode = "update";
 			await this.collection.emit("after:create", [context, this]);
 		} else {
@@ -181,13 +181,13 @@ export default class CollectionItem<T extends Collection = any> {
 					$set: { ...encoded, _metadata: this._metadata },
 				}
 			);
-			await this.decode(context);
+			await this.decode(context, {}, is_http_api_request);
 			await this.collection.emit("after:edit", [context, this]);
 		}
 		this.body.clearChangedFields();
 		this.original_body = this.body;
 		this.body = this.body.copy();
-		await this.decode(context);
+		await this.decode(context, {}, is_http_api_request);
 		return this;
 	}
 
@@ -330,9 +330,10 @@ export default class CollectionItem<T extends Collection = any> {
 
 	async decode(
 		context: Context,
-		format: { [field_name: string]: any } = {}
+		format: { [field_name: string]: any } = {},
+		is_http_api_request = false
 	): Promise<CollectionItem<T>> {
-		await this.body.decode(context, format);
+		await this.body.decode(context, format, is_http_api_request);
 		return this;
 	}
 

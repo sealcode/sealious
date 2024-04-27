@@ -16,7 +16,7 @@ export class TestApp extends App {
 		port: number,
 		base_url: string,
 		public config = {
-			upload_path: "/tmp",
+			upload_path: "/tmp/sealious-uploads",
 			datastore_mongo: {
 				host: process.env.SEALIOUS_DB_HOST || "127.0.0.1",
 				password: "sealious-test",

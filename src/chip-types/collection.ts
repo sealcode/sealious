@@ -324,14 +324,16 @@ export default abstract class Collection {
 					list.namedFilter(ctx.params[key]);
 				}
 			}
-			ctx.body = (await list.fetch()).serialize();
+			ctx.body = (
+				await list.fetch({ is_http_api_request: true })
+			).serialize();
 		});
 
 		router.post("/", parseBody(), async (ctx) => {
 			const item = this.make();
 			item.setMultiple(ctx.request.body);
-			await item.save(ctx.$context);
-			await item.decode(ctx.$context);
+			await item.save(ctx.$context, true);
+			await item.decode(ctx.$context, {}, true);
 			ctx.body = item.serializeBody();
 			ctx.status = 201;
 		});

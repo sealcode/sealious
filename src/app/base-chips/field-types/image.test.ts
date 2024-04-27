@@ -1,5 +1,5 @@
 import assert from "assert";
-import { Collection, File } from "../../../main.js";
+import { Collection, FilePointer } from "../../../main.js";
 import { MockRestApi } from "../../../test_utils/test-utils.js";
 import { App } from "../../app.js";
 import Image from "./image.js";
@@ -22,8 +22,7 @@ describe("FieldTypes.Image", () => {
 				},
 			async ({ app }) => {
 				await app.collections.images.create(new app.SuperContext(), {
-					image: await File.fromPath(
-						app,
+					image: app.FileManager.fromPath(
 						locreq.resolve("src/assets/logo.png")
 					),
 				});
@@ -34,7 +33,7 @@ describe("FieldTypes.Image", () => {
 					.format({ image: "file" })
 					.fetch();
 
-				assert(item.get("image") instanceof File);
+				assert(item.get("image") instanceof FilePointer);
 			}
 		));
 
@@ -52,8 +51,7 @@ describe("FieldTypes.Image", () => {
 			async ({ app }) => {
 				await app.collections.images.create(new app.SuperContext(), {
 					image: [
-						await File.fromPath(
-							app,
+						app.FileManager.fromPath(
 							locreq.resolve("src/assets/logo.png")
 						),
 					],
@@ -65,7 +63,7 @@ describe("FieldTypes.Image", () => {
 					.format({ image: "file" })
 					.fetch();
 
-				assert(item.get("image") instanceof File);
+				assert(item.get("image") instanceof FilePointer);
 			}
 		));
 
@@ -83,8 +81,7 @@ describe("FieldTypes.Image", () => {
 			async ({ app, rest_api }) => {
 				await app.collections.images.create(new app.SuperContext(), {
 					image: [
-						await File.fromPath(
-							app,
+						app.FileManager.fromPath(
 							locreq.resolve("src/assets/logo.png")
 						),
 					],
@@ -118,8 +115,7 @@ describe("FieldTypes.Image", () => {
 			async ({ app }) => {
 				await app.collections.images.create(new app.SuperContext(), {
 					image: [
-						await File.fromPath(
-							app,
+						app.FileManager.fromPath(
 							locreq.resolve("src/assets/logo.png")
 						),
 					],

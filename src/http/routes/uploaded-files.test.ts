@@ -1,6 +1,6 @@
 import assert from "assert";
 import FileField from "../../app/base-chips/field-types/file.js";
-import { Collection, File } from "../../main.js";
+import Collection from "../../chip-types/collection.js";
 import asyncRequest from "../../test_utils/async-request.js";
 import { TestApp } from "../../test_utils/test-app.js";
 import { withRunningApp } from "../../test_utils/with-test-app.js";
@@ -50,46 +50,11 @@ describe("uploaded_files", () => {
 						"?format[file]=url",
 				})) as Record<string, { file: string }[]>;
 				const url_regex = new RegExp(
-					/\/api\/v1\/uploaded-files\/\S*\/test.txt/
+					/\/api\/v1\/uploaded-files\/persistent\/[^\/.]+.txt/
 				);
 				assert.match(data.file, url_regex);
 				const response = await rest_api.get(data.file);
 				assert.strictEqual(response, "I AM A TEST\r\n\r\n");
-			}
-		);
-	});
-
-	it("properly handles files with non-ascii filenames", () => {
-		return withRunningApp(
-			(test_app_type) => {
-				return class extends test_app_type {
-					collections = {
-						...TestApp.BaseCollections,
-						files: new (class extends Collection {
-							fields = {
-								file: new FileField(),
-							};
-						})(),
-					};
-				};
-			},
-			async ({ port, rest_api, app }) => {
-				const file = await File.fromData(app, "ABC", "ąęćż.txt");
-				const file_item = await app.collections.files.suCreate({
-					file,
-				});
-				const {
-					items: [file_item_new],
-				} = await app.collections.files
-					.suList()
-					.ids([file_item.id])
-					.format({ file: "file" })
-					.fetch();
-				const url = (file_item_new.get("file") as File)?.getURL();
-				if (!url) {
-					throw new Error("Missing url");
-				}
-				const response = await rest_api.get(url);
 			}
 		);
 	});

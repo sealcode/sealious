@@ -74,7 +74,7 @@ export const translations = {
 	invalid_json_object: () => `Wartość nie jest obiektem.`,
 	read_only_field: () => `Pole jest przeznaczone tylko do odczytu.`,
 	invalid_file_storage: () =>
-		`Wartość powinna być udostępnieniem pliku lub instancją obiektu File.`,
+		`Wartość powinna być udostępnieniem pliku lub instancją obiektu FilePointer.`,
 	invalid_datetime: (value: number | string) =>
 		`Wartość '${value}' nie jest w formacie daty. Tylko znaczniki czasu są akceptowalne.`,
 	invalid_color: () => `Nie udało się się zinterpretować koloru.`,

@@ -12,7 +12,7 @@ import HttpServer from "../http/http.js";
 import logo from "../http/routes/logo.js";
 import sessionRouter from "../http/routes/session.js";
 import uploaded_files from "../http/routes/uploaded-files.js";
-import { i18nFactory, MetadataFactory } from "../main.js";
+import { FileManager, i18nFactory, MetadataFactory } from "../main.js";
 import { module_dirname } from "../utils/module_filename.js";
 import BaseCollections from "./collections/base-collections.js";
 import type LongRunningProcessEvents from "./collections/long-running-process-events.js";
@@ -27,6 +27,7 @@ import Manifest, { ManifestData } from "./manifest.js";
 import type Metadata from "./metadata.js";
 
 import _locreq from "locreq";
+import { UPLOADED_FILES_BASE_URL } from "./consts.js";
 const locreq = _locreq(module_dirname(import.meta.url));
 
 const default_config = JSON.parse(
@@ -42,6 +43,7 @@ export abstract class App {
 	/** The current status of the app */
 	status: "stopped" | "running" | "starting" | "stopping";
 	private emitter = new Emittery();
+	public FileManager: FileManager;
 
 	/** The base collections including users, registration intents, etc */
 	static BaseCollections = BaseCollections;
@@ -154,6 +156,7 @@ export abstract class App {
 		if (!fs.existsSync(uploadPath)) {
 			fs.mkdirSync(uploadPath, { recursive: false });
 		}
+		this.FileManager = new FileManager(uploadPath);
 		this.Logger.setLevel(this.ConfigManager.get("logger").level);
 		this.i18n = i18nFactory(this.manifest.default_language);
 		new Manifest(this.manifest).validate();
@@ -238,7 +241,7 @@ export abstract class App {
 		});
 
 		router.use(
-			"/api/v1/uploaded-files",
+			UPLOADED_FILES_BASE_URL,
 			uploaded_files.routes(),
 			uploaded_files.allowedMethods()
 		);

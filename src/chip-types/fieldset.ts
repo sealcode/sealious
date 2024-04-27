@@ -1,6 +1,5 @@
 import type Context from "../context.js";
 import type {
-	ExtractInput,
 	ExtractStorage,
 	FieldOutput,
 	GetInputType,
@@ -146,7 +145,8 @@ export class Fieldset<Fields extends Record<string, Field>> {
 
 	async decode(
 		context: Context,
-		format: { [field_name: string]: any } = {}
+		format: { [field_name: string]: any } = {},
+		is_http_api_request = false
 	): Promise<Fieldset<Fields>> {
 		if (this.is_decoded) return this;
 		context.app.Logger.debug3("ITEM BODY", "Decoding item", {
@@ -167,7 +167,8 @@ export class Fieldset<Fields extends Record<string, Field>> {
 						context,
 						encoded[field_name],
 						null,
-						format?.[field_name]
+						format?.[field_name],
+						is_http_api_request
 					)
 					.then((decoded_value) => {
 						this.decoded = {

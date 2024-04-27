@@ -1,25 +1,25 @@
-import { App, Context, File } from "../main.js";
 import {
 	NewSession,
 	ResourceCreated,
 } from "../../common_lib/response/responses.js";
+import type { App } from "../app/app.js";
+import type Context from "../context.js";
+import { PathFilePointer } from "../main.js";
 
-export default function (app: App, context: Context, h: any) {
+export default function (app: App, _context: Context, h: any) {
 	const config = app.ConfigManager.get("www-server");
 	return function (response: any) {
 		app.Logger.debug("HANDLE RESPONSE", "Handling response", response);
 		let rep = null;
-		if (response instanceof File) {
+		if (response instanceof PathFilePointer) {
 			app.Logger.debug3("HANDLE RESPONSE", "Response is a file");
-			if (response.id) {
-				rep = h.file(response.getDataPath(), { confine: false });
+			if (response.has_id) {
+				rep = h.file(response.getPath(), { confine: false });
 			} else {
-				rep = h.response(response.data);
+				rep = h.response(response.getContent());
 			}
-			rep.type(response.getMimeType()).header(
-				"Cache-Control",
-				"max-age=6000, must-revalidate"
-			);
+			rep.type(response.mimetype);
+			rep.header("Cache-Control", "max-age=6000, must-revalidate");
 		} else if (response instanceof NewSession) {
 			app.Logger.debug("HANDLE RESPONSE", "Response is a new session");
 			rep = h

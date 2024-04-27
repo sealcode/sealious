@@ -1,18 +1,18 @@
 import assert from "assert";
-import FileField from "../app/base-chips/field-types/file.js";
-import ReverseSingleReference from "../app/base-chips/field-types/reverse-single-reference.js";
-import SingleReference from "../app/base-chips/field-types/single-reference.js";
-import Text from "../app/base-chips/field-types/text.js";
-import Public from "../app/policy-types/public.js";
-import SameAsForResourceInField from "../app/policy-types/same-as-for-resource-in-field.js";
-import type { CollectionInput } from "../chip-types/collection.js";
-import { Collection, Context, SuperContext } from "../main.js";
-import { withRunningApp } from "../test_utils/with-test-app.js";
-import { module_dirname } from "../utils/module_filename.js";
-import File from "./file.js";
 
 import _locreq from "locreq";
-import { TestApp } from "../test_utils/test-app.js";
+import Collection from "../../../chip-types/collection.js";
+import Context, { SuperContext } from "../../../context.js";
+import { TestApp } from "../../../test_utils/test-app.js";
+import { withRunningApp } from "../../../test_utils/with-test-app.js";
+import { module_dirname } from "../../../utils/module_filename.js";
+import Public from "../../policy-types/public.js";
+import SameAsForResourceInField from "../../policy-types/same-as-for-resource-in-field.js";
+import FileField from "./file.js";
+import ReverseSingleReference from "./reverse-single-reference.js";
+import SingleReference from "./single-reference.js";
+import Text from "./text.js";
+
 const locreq = _locreq(module_dirname(import.meta.url));
 
 describe("file", () => {
@@ -33,7 +33,7 @@ describe("file", () => {
 			async ({ app, rest_api }) => {
 				const context = new SuperContext(app);
 				const buff = Buffer.from("Hello world!", "utf-8");
-				const file = await File.fromData(app, buff, "test-file.txt");
+				const file = app.FileManager.fromData(buff, "txt");
 
 				const response = await app.collections.with_file.create(
 					context,
@@ -50,6 +50,7 @@ describe("file", () => {
 					.format({ file: "url" })
 					.fetch();
 
+				console.log("file.test.ts:53", item.get("file"));
 				const api_response = await rest_api.get(
 					item.get("file") as string
 				);
@@ -95,13 +96,11 @@ describe("file", () => {
 					password: "useruser",
 				});
 				const context = new Context(app, Date.now(), user.id);
-				type input = CollectionInput<typeof app.collections.people>;
 				const person = await app.collections.people.create(context, {
 					name: "Ben",
 				});
-				const file = await File.fromPath(
-					app,
-					locreq.resolve("src/data-structures/file.test.ts")
+				const file = app.FileManager.fromPath(
+					locreq.resolve("package.json")
 				);
 				const response = await app.collections.photos.create(context, {
 					file,

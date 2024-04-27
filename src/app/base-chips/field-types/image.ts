@@ -1,10 +1,13 @@
-import Field, { ValidationResult } from "../../../chip-types/field.js";
-import type { FileDBEntry, FileFromDB } from "../../../data-structures/file.js";
-import { Context, ExtractInput, File } from "../../../main.js";
+import Field, {
+	ExtractInput,
+	ValidationResult,
+} from "../../../chip-types/field.js";
 import { module_dirname } from "../../../utils/module_filename.js";
-import FileField, { FileStorage, FileStorageFormat } from "./file.js";
+import FileField, { FileStorage } from "./file.js";
 
 import _locreq from "locreq";
+import type Context from "../../../context.js";
+import type { PathFilePointer } from "../../../main.js";
 const locreq = _locreq(module_dirname(import.meta.url));
 
 /** Like {@link FileField}, but meant for images. Has the capacity to format images and serve thumbnails and different sizes.
@@ -32,7 +35,7 @@ export default class Image extends FileStorage {
 			}
 			input = input[0];
 		}
-		if (input.getMimeType().indexOf("image/") !== 0) {
+		if (!input.mimetype.startsWith("image/")) {
 			return Field.invalid(context.app.i18n("invalid_image"));
 		}
 		return Field.valid();
@@ -46,9 +49,8 @@ export default class Image extends FileStorage {
 		>
 	): void {
 		super.setParams({
-			get_default_file: () =>
-				File.fromPath(
-					this.app,
+			get_default_file: async () =>
+				this.app.FileManager.fromPath(
 					locreq.resolve(
 						"src/app/base-chips/field-types/default-image.jpg"
 					)
@@ -60,23 +62,27 @@ export default class Image extends FileStorage {
 
 	async decode(
 		context: Context,
-		db_value: FileStorageFormat | null,
+		db_value: string | null,
 		_: unknown,
-		format?: "file" | "url" | "path"
-	): Promise<FileDBEntry | FileFromDB | string | null> {
+		format?: "file" | "url" | "path",
+		is_http_api_request = false
+	): Promise<PathFilePointer | string | null> {
 		if (db_value === undefined || db_value === null) {
 			return null;
 		}
-		if (format === "file") {
-			return File.fromID(context.app, db_value.id);
+		if (format == undefined) {
+			format = is_http_api_request ? "url" : "file";
 		}
-		if (format === "path") {
-			const file = await File.fromID(context.app, db_value.id);
-			return file.getURL();
+		if (format === "file") {
+			return context.app.FileManager.fromToken(db_value);
 		}
 		if (format === "url") {
-			const file = await File.fromID(context.app, db_value.id);
+			const file = await context.app.FileManager.fromToken(db_value);
 			return `${context.app.manifest.base_url}${file.getURL()}`;
+		}
+		if (format === "path") {
+			const file = await context.app.FileManager.fromToken(db_value);
+			return file.getURL();
 		}
 		return db_value;
 	}

@@ -279,7 +279,9 @@ export default class ItemList<T extends Collection> {
 	/**
 	 * execute crated database request
 	 */
-	async fetch(): Promise<ItemListResult<T>> {
+	async fetch(
+		{ is_http_api_request } = { is_http_api_request: false }
+	): Promise<ItemListResult<T>> {
 		const result = await this.collection
 			.getPolicy("show")
 			.check(this.context);
@@ -296,9 +298,11 @@ export default class ItemList<T extends Collection> {
 		for (const document of documents) {
 			const item = this.collection.createFromDB(document);
 			item_promises.push(
-				item.decode(this.context, this._format) as Promise<
-					CollectionItem<T>
-				>
+				item.decode(
+					this.context,
+					this._format,
+					is_http_api_request
+				) as Promise<CollectionItem<T>>
 			);
 		}
 		const items = await Promise.all(item_promises);

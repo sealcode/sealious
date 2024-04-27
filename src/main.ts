@@ -23,7 +23,7 @@ export * from "./chip-types/field.js";
 export { default as ItemList, ItemListResult } from "./chip-types/item-list.js";
 export { default as SpecialFilter } from "./chip-types/special-filter.js";
 export { default as Context, SuperContext } from "./context.js";
-export { default as File } from "./data-structures/file.js";
+export * from "./data-structures/file-manager.js";
 export { AllowAll } from "./datastore/allow-all.js";
 export { default as DenyAll } from "./datastore/deny-all.js";
 export { default as Query } from "./datastore/query.js";
