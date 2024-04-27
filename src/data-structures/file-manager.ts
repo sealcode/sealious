@@ -53,6 +53,14 @@ export class PathFilePointer extends FilePointer {
 	}
 
 	async save(persistent: boolean): Promise<string> {
+		if (this.token) {
+			const { persistent: persistence_from_token } =
+				this.file_manager.parseToken(this.token);
+			if (persistent == persistence_from_token) {
+				// no need to save
+				return this.token;
+			}
+		}
 		this.token = await this.file_manager.addFile(
 			await fs.readFile(this.file_path),
 			this.mimetype,
