@@ -135,8 +135,15 @@ export class BufferFilePointer extends FilePointer {
 export class FileManager {
 	public tmpdir: string;
 
-	constructor(public persistent_dir_path: string) {
+	constructor(
+		public persistent_dir_path: string,
+		public magic_prefix = "~~~~~~###FILE_PREFIX------###~~~"
+	) {
 		this.tmpdir = tmpdir();
+	}
+
+	couldBeAFileToken(s: string) {
+		return s.startsWith(this.magic_prefix);
 	}
 
 	private getStorageDir(persistent: boolean) {
@@ -170,11 +177,14 @@ export class FileManager {
 		name: string;
 		original_filename: string;
 	} {
-		return JSON.parse(token);
+		return JSON.parse(token.slice(this.magic_prefix.length));
 	}
 
 	encodeToken(persistent: boolean, name: string, original_filename: string) {
-		return JSON.stringify({ persistent, name, original_filename });
+		return (
+			this.magic_prefix +
+			JSON.stringify({ persistent, name, original_filename })
+		);
 	}
 
 	async fromToken(token: string): Promise<PathFilePointer> {

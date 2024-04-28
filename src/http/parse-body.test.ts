@@ -5,11 +5,15 @@ import {
 	withStoppedApp,
 } from "../test_utils/with-test-app.js";
 import Field from "../chip-types/field.js";
-import { Collection, FieldTypes } from "../main.js";
+import { Collection, FieldTypes, FilePointer } from "../main.js";
 import asyncRequest from "../test_utils/async-request.js";
 import parseBody from "./parse-body.js";
 import JsonObject from "../app/base-chips/field-types/json-object.js";
 import { TestApp } from "../test_utils/test-app.js";
+
+import _locreq from "locreq";
+import { module_dirname } from "../utils/module_filename.js";
+const locreq = _locreq(module_dirname(import.meta.url));
 
 function extend(t: TestAppConstructor<TestApp>) {
 	class ArrayOfObjects extends Field {
@@ -167,6 +171,52 @@ describe("parseBody", () => {
 					},
 				},
 			});
+		});
+	});
+
+	it("resolves files by their token into a proper FilePointer", async () => {
+		await withRunningApp(extend, async ({ port, app }) => {
+			const file = app.FileManager.fromPath(
+				locreq.resolve("src/assets/logo.png")
+			);
+
+			let received_body: any;
+			const TEST_PATH = "/for-testing-purposes";
+			app.HTTPServer.router.post(TEST_PATH, parseBody(), (ctx) => {
+				received_body = ctx.$body;
+				ctx.body = "{}";
+				ctx.status = 200;
+			});
+
+			const token = await file.save(false);
+			// PNG file is empty but it doesnt matter for the test
+			const form_data =
+				`-----------------------------12598523621949976270510557487
+Content-Disposition: form-data; name="photo[old]"
+
+${token}
+-----------------------------12598523621949976270510557487
+Content-Disposition: form-data; name="photo[new]"; filename="Screenshot from 2024-04-23 14-48-34.png"
+Content-Type: image/png
+
+PNG
+-----------------------------12598523621949976270510557487--
+
+`.replaceAll(/\n/g, "\r\n");
+
+			await fetch(`http://localhost:${port}${TEST_PATH}`, {
+				credentials: "include",
+				headers: {
+					"Content-Type":
+						"multipart/form-data; boundary=---------------------------12598523621949976270510557487",
+				},
+				body: form_data,
+				method: "POST",
+				mode: "cors",
+			});
+
+			assert(received_body.photo.old instanceof FilePointer);
+			assert(received_body.photo.new[0] instanceof FilePointer);
 		});
 	});
 });

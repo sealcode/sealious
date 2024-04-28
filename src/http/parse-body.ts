@@ -61,6 +61,22 @@ export default function parseBody(): Middleware {
 			}
 		}
 
+		for (const [key, value] of Object.entries(ctx.request.body)) {
+			// resolve all file tokens into actual files
+			if (
+				typeof value == "string" &&
+				ctx.$app.FileManager.couldBeAFileToken(value)
+			) {
+				let file;
+				try {
+					file = await ctx.$app.FileManager.fromToken(value);
+				} catch (e) {
+					// not a file
+				}
+				ctx.request.body[key] = file;
+			}
+		}
+
 		await Promise.all(promises);
 		ctx.$body = qs.parse(ctx.request.body, {
 			allowDots: true,
