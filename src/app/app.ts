@@ -12,7 +12,7 @@ import HttpServer from "../http/http.js";
 import logo from "../http/routes/logo.js";
 import sessionRouter from "../http/routes/session.js";
 import uploaded_files from "../http/routes/uploaded-files.js";
-import { FileManager, i18nFactory, MetadataFactory } from "../main.js";
+import { i18nFactory, MetadataFactory } from "../main.js";
 import { module_dirname } from "../utils/module_filename.js";
 import BaseCollections from "./collections/base-collections.js";
 import type LongRunningProcessEvents from "./collections/long-running-process-events.js";
@@ -28,6 +28,7 @@ import type Metadata from "./metadata.js";
 
 import _locreq from "locreq";
 import { UPLOADED_FILES_BASE_URL } from "./consts.js";
+import { FileManager } from "@sealcode/file-manager";
 const locreq = _locreq(module_dirname(import.meta.url));
 
 const default_config = JSON.parse(
@@ -157,7 +158,10 @@ export abstract class App {
 			fs.mkdirSync(uploadPath, { recursive: false });
 		}
 		if (!this.FileManager) {
-			this.FileManager = new FileManager(uploadPath);
+			this.FileManager = new FileManager(
+				uploadPath,
+				UPLOADED_FILES_BASE_URL
+			);
 		}
 		this.Logger.setLevel(this.ConfigManager.get("logger").level);
 		this.i18n = i18nFactory(this.manifest.default_language);

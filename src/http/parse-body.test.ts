@@ -5,7 +5,7 @@ import {
 	withStoppedApp,
 } from "../test_utils/with-test-app.js";
 import Field from "../chip-types/field.js";
-import { Collection, FieldTypes, FilePointer } from "../main.js";
+import { Collection, FieldTypes } from "../main.js";
 import asyncRequest from "../test_utils/async-request.js";
 import parseBody from "./parse-body.js";
 import JsonObject from "../app/base-chips/field-types/json-object.js";
@@ -13,6 +13,7 @@ import { TestApp } from "../test_utils/test-app.js";
 
 import _locreq from "locreq";
 import { module_dirname } from "../utils/module_filename.js";
+import { FilePointer } from "@sealcode/file-manager";
 const locreq = _locreq(module_dirname(import.meta.url));
 
 function extend(t: TestAppConstructor<TestApp>) {

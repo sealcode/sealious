@@ -1,10 +1,10 @@
+import { PathFilePointer } from "@sealcode/file-manager";
 import {
 	NewSession,
 	ResourceCreated,
 } from "../../common_lib/response/responses.js";
 import type { App } from "../app/app.js";
 import type Context from "../context.js";
-import { PathFilePointer } from "../main.js";
 
 export default function (app: App, _context: Context, h: any) {
 	const config = app.ConfigManager.get("www-server");

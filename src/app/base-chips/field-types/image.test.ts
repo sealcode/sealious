@@ -1,11 +1,12 @@
 import assert from "assert";
-import { Collection, FilePointer } from "../../../main.js";
+import { Collection } from "../../../main.js";
 import { MockRestApi } from "../../../test_utils/test-utils.js";
 import { App } from "../../app.js";
 import Image from "./image.js";
 import _locreq from "locreq";
 import { module_dirname } from "../../../utils/module_filename.js";
 import { withRunningApp } from "../../../test_utils/with-test-app.js";
+import { FilePointer } from "@sealcode/file-manager";
 const locreq = _locreq(module_dirname(import.meta.url));
 
 describe("FieldTypes.Image", () => {

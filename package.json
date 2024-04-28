@@ -32,6 +32,7 @@
 	},
 	"dependencies": {
 		"@koa/router": "^12.0.1",
+		"@sealcode/file-manager": "^1.0.1",
 		"@sealcode/ts-predicates": "^0.4.3",
 		"@types/bluebird": "^3.5.30",
 		"@types/boom": "^7.3.0",
@@ -44,7 +45,6 @@
 		"@types/koa-qs": "^2.0.0",
 		"@types/koa-send": "^4.1.2",
 		"@types/koa-static": "^4.0.1",
-		"@types/mime-types": "^2.1.4",
 		"@types/mjml": "^4.0.4",
 		"@types/mongodb": "^3.5.20",
 		"@types/node": "^20.0",
@@ -74,7 +74,6 @@
 		"koa-send": "^5.0.1",
 		"koa-static": "^5.0.0",
 		"locreq": "^3.0.0",
-		"mime-types": "^2.1.35",
 		"mjml": "^4.2.0",
 		"mongodb": "^6.5.0",
 		"nodemailer": "^6.4.6",

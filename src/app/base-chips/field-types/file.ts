@@ -1,10 +1,10 @@
-import Field from "../../../chip-types/field.js";
-import type Context from "../../../context.js";
 import {
 	BufferFilePointer,
 	FilePointer,
 	PathFilePointer,
-} from "../../../data-structures/file-manager.js";
+} from "@sealcode/file-manager";
+import Field from "../../../chip-types/field.js";
+import type Context from "../../../context.js";
 
 export abstract class FileStorage extends Field {
 	handles_large_data = true;

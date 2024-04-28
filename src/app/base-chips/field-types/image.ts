@@ -7,7 +7,7 @@ import FileField, { FileStorage } from "./file.js";
 
 import _locreq from "locreq";
 import type Context from "../../../context.js";
-import type { PathFilePointer } from "../../../main.js";
+import type { PathFilePointer } from "@sealcode/file-manager";
 const locreq = _locreq(module_dirname(import.meta.url));
 
 /** Like {@link FileField}, but meant for images. Has the capacity to format images and serve thumbnails and different sizes.
