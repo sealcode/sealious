@@ -1,11 +1,20 @@
 import type { Middleware } from "@koa/router";
+import type { FileManager } from "@sealcode/file-manager";
 import { promises as fs } from "fs";
 import koaBody from "koa-body";
 import qs from "qs";
 
-export default function parseBody(): Middleware {
+export default function parseBody(file_manager?: FileManager): Middleware {
 	const koaParser = koaBody({ multipart: true });
 	return async (ctx, next) => {
+		if (!file_manager) {
+			// we use it as an argument to be able to use this middleware sometimes without a Sealious App
+			file_manager = ctx.$app.FileManager;
+		}
+		if (!file_manager) {
+			throw new Error("Missing file manager");
+		}
+		const final_file_manager = file_manager;
 		await koaParser(ctx, () => Promise.resolve());
 		const original_body = ctx.request.body || {};
 		ctx.request.body = {};
@@ -35,7 +44,7 @@ export default function parseBody(): Middleware {
 				const file_promises = files.map(async (file) => {
 					const extracted_filename = file.name;
 					if (extracted_filename) {
-						return ctx.$app.FileManager.fromPath(
+						return final_file_manager.fromPath(
 							file.path,
 							extracted_filename
 						);
@@ -65,11 +74,11 @@ export default function parseBody(): Middleware {
 			// resolve all file tokens into actual files
 			if (
 				typeof value == "string" &&
-				ctx.$app.FileManager.couldBeAFileToken(value)
+				final_file_manager.couldBeAFileToken(value)
 			) {
 				let file;
 				try {
-					file = await ctx.$app.FileManager.fromToken(value);
+					file = await final_file_manager.fromToken(value);
 				} catch (e) {
 					// not a file
 				}
