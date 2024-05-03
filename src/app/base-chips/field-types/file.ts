@@ -6,7 +6,11 @@ import {
 import Field from "../../../chip-types/field.js";
 import type Context from "../../../context.js";
 
-export abstract class FileStorage extends Field {
+export abstract class FileStorage extends Field<
+	FilePointer | string,
+	FilePointer | [FilePointer],
+	string
+> {
 	handles_large_data = true;
 	get_default_file: (context: Context) => Promise<FilePointer>;
 	async isProperValue(context: Context, value: FilePointer | [FilePointer]) {

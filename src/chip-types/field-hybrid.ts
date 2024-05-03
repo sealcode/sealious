@@ -1,4 +1,4 @@
-import Field, { Depromisify, GetInputType } from "./field.js";
+import Field from "./field.js";
 
 import type Context from "../context.js";
 import type { App, Collection, ItemListResult } from "../main.js";
@@ -10,9 +10,15 @@ uncustomized methods should be taken from that given field type
 
 */
 
-export default abstract class HybridField<T extends Field> extends Field<
-	GetInputType<T>
-> {
+export default abstract class HybridField<
+	ParsedType,
+	InputType,
+	StorageType,
+	InnerParsedType,
+	InnerInputType,
+	InnerStorageType,
+	T extends Field<InnerParsedType, InnerInputType, InnerStorageType>
+> extends Field<ParsedType, InputType, StorageType> {
 	virtual_field: T;
 
 	constructor(base_field: T) {
@@ -32,10 +38,14 @@ export default abstract class HybridField<T extends Field> extends Field<
 
 	async encode(
 		context: Context,
-		value: Parameters<T["encode"]>[1],
-		old_value?: Parameters<T["encode"]>[2]
+		value: InputType | null,
+		old_value?: InputType
 	) {
-		return this.virtual_field.encode(context, value, old_value);
+		return this.virtual_field.encode(
+			context,
+			value as unknown as InnerInputType,
+			old_value
+		) as StorageType;
 	}
 
 	async getMatchQueryValue(context: Context, filter: any) {
@@ -66,16 +76,16 @@ export default abstract class HybridField<T extends Field> extends Field<
 
 	async decode(
 		context: Context,
-		decoded_value: Depromisify<ReturnType<this["encode"]>>,
+		storage_value: StorageType,
 		old_value: Parameters<T["decode"]>[2],
 		format: Parameters<T["decode"]>[3]
 	) {
 		return this.virtual_field.decode(
 			context,
-			decoded_value,
+			storage_value as unknown as InnerStorageType,
 			old_value,
 			format
-		);
+		) as ParsedType;
 	}
 
 	async getAttachments(

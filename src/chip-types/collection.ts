@@ -305,7 +305,7 @@ export default abstract class Collection {
 		return this.emitter.on(event_name, cb);
 	}
 
-	getRequiredFields(): Field[] {
+	getRequiredFields(): Field<unknown>[] {
 		return Object.values(this.fields).filter((field) => field.required);
 	}
 

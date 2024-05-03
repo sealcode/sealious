@@ -7,7 +7,7 @@ type Props<S> = S[] | ((app: App) => S[]);
  * **Params**:
  * - `allowed_values` - `Array<any>` - list of acceptable values
  */
-export default class Enum<S> extends Field {
+export default class Enum<S> extends Field<string> {
 	typeName = "enum";
 	allowed_values: Props<S>;
 

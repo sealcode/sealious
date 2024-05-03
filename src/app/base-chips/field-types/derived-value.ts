@@ -1,6 +1,5 @@
 import type {
 	Field,
-	FieldOutput,
 	App,
 	Collection,
 	CollectionItem,
@@ -15,24 +14,36 @@ todo: make the deriving_fn more type-safe by reading the types of the fields?
 
 */
 
-export type DerivingFn<T extends Field> = (
+export type DerivingFn<DecodedType> = (
 	context: Context,
 	item: CollectionItem,
 	...args: any[]
-) => Promise<FieldOutput<T>>;
+) => Promise<DecodedType>;
 
-export default class DerivedValue<T extends Field> extends HybridField<T> {
+export default class DerivedValue<
+	ParsedType,
+	InputType,
+	T extends Field<ParsedType, any, any>
+> extends HybridField<
+	ParsedType,
+	InputType,
+	unknown,
+	ParsedType,
+	InputType,
+	unknown,
+	T
+> {
 	typeName = "derived-value";
 
 	fields: string[];
-	deriving_fn: DerivingFn<T>;
+	deriving_fn: DerivingFn<ParsedType>;
 	private blessed_symbol = Symbol();
 
 	constructor(
 		base_field: T,
 		params: {
 			fields: string[];
-			deriving_fn: DerivingFn<T>;
+			deriving_fn: DerivingFn<ParsedType>;
 		}
 	) {
 		super(base_field);

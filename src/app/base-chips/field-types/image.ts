@@ -1,5 +1,5 @@
 import Field, {
-	ExtractInput,
+	ExtractFieldInput,
 	ValidationResult,
 } from "../../../chip-types/field.js";
 import { module_dirname } from "../../../utils/module_filename.js";
@@ -21,7 +21,7 @@ export default class Image extends FileStorage {
 
 	async isProperValue(
 		context: Context,
-		input: ExtractInput<FileField>
+		input: ExtractFieldInput<FileField>
 	): Promise<ValidationResult> {
 		const result = await super.isProperValue(context, input);
 		if (!result.valid) {

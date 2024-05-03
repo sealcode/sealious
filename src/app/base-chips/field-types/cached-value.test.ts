@@ -44,8 +44,9 @@ const MIN_VALUE = 0;
 const extend =
 	(is_status_field_desired: boolean, clear_database_on_stop = true) =>
 	(t: TestAppConstructor) => {
-		const account_fields: { [field_name: string]: Field } = {
+		const account_fields: { [field_name: string]: Field<any> } = {
 			username: new FieldTypes.Username(),
+
 			number: new FieldTypes.CachedValue(
 				new FieldTypes.Int({
 					min: MIN_VALUE,
@@ -68,7 +69,10 @@ const extend =
 			account_fields.status = new FieldTypes.CachedValue(
 				new FieldTypes.Enum(Object.values(action_to_status)),
 				{
-					get_value: async (context: Context, item: CollectionItem) => {
+					get_value: async (
+						context: Context,
+						item: CollectionItem
+					) => {
 						context.app.Logger.debug3(
 							"STATUS FIELD",
 							`calculating value for ${item.id}`
@@ -82,10 +86,16 @@ const extend =
 						context.app.Logger.debug3(
 							"STATUS FIELD",
 							"New cached value is",
-							action_to_status[items[0].get("name") as keyof typeof action_to_status]
+							action_to_status[
+								items[0].get(
+									"name"
+								) as keyof typeof action_to_status
+							]
 						);
 						return action_to_status[
-							items[0].get("name") as keyof typeof action_to_status
+							items[0].get(
+								"name"
+							) as keyof typeof action_to_status
 						];
 					},
 					refresh_on: make_refresh_on(),
@@ -103,7 +113,12 @@ const extend =
 		const actions = new (class extends Collection {
 			name = "actions";
 			fields = {
-				name: new FieldTypes.Enum(["create", "open", "suspend", "close"]),
+				name: new FieldTypes.Enum([
+					"create",
+					"open",
+					"suspend",
+					"close",
+				]),
 				account: new FieldTypes.SingleReference("accounts"),
 			};
 		})();
@@ -149,8 +164,9 @@ describe("cached-value", () => {
 			extend(false, false),
 			async ({ app, rest_api }) => {
 				await app.start();
-				account_ids = await Bluebird.map(["user_1", "user_2"], (username) =>
-					add_account(rest_api, { username })
+				account_ids = await Bluebird.map(
+					["user_1", "user_2"],
+					(username) => add_account(rest_api, { username })
 				);
 
 				await rest_api.post("/api/v1/collections/actions", {
@@ -165,7 +181,11 @@ describe("cached-value", () => {
 			extend(true),
 			async ({ rest_api }) => {
 				await assert_status_equals(rest_api, account_ids[0], "created");
-				await assert_status_equals(rest_api, account_ids[1], "suspended");
+				await assert_status_equals(
+					rest_api,
+					account_ids[1],
+					"suspended"
+				);
 			},
 			"cached-fill"
 		);
@@ -173,8 +193,9 @@ describe("cached-value", () => {
 
 	it("Correctly updates cached-value on create", async () =>
 		withRunningApp(extend(true), async ({ rest_api }) => {
-			const account_ids = await Bluebird.map(["user_1", "user_2"], (username) =>
-				add_account(rest_api, { username })
+			const account_ids = await Bluebird.map(
+				["user_1", "user_2"],
+				(username) => add_account(rest_api, { username })
 			);
 			await assert_status_equals(rest_api, account_ids[0], "created");
 
@@ -245,7 +266,10 @@ describe("cached-value", () => {
 		withRunningApp(extend(true), async ({ rest_api }) => {
 			const id = await add_account(rest_api, { username: "user_1" });
 
-			const expected_datetime = getDateTime(new Date("2018-01-01"), "yyyy-mm-dd hh:mm:ss");
+			const expected_datetime = getDateTime(
+				new Date("2018-01-01"),
+				"yyyy-mm-dd hh:mm:ss"
+			);
 			const actual_datetime = (
 				(await rest_api.get(
 					`/api/v1/collections/accounts/${id}?format[date_time]=human_readable`
@@ -256,50 +280,65 @@ describe("cached-value", () => {
 		}));
 
 	it("Properly responds to recursive edits", async () =>
-		withStoppedApp(extend(true), async ({ app, app_class, base_url, uniq_id, env, port }) => {
-			await assertThrowsAsync(
-				async () => {
-					const HappyNumbers = class HappyNumbers extends Collection {
-						fields = {
-							number: new FieldTypes.Int(),
-							double_number: new FieldTypes.CachedValue(new FieldTypes.Int(), {
-								get_value: async (context: Context, number: CollectionItem) => {
-									const response =
-										// @ts-ignore
-										await app.collections["happy-numbers"]
-											.list(context)
-											.ids([number.id])
-											.fetch();
-									return (response.items[0].get("number") as number) * 2;
-								},
-								refresh_on: [
-									new CollectionRefreshCondition(
-										"happy-numbers",
-										"after:create",
-										async ([, item]) => [item.id]
-									),
-								],
-								initial_value: 0,
-							}),
+		withStoppedApp(
+			extend(true),
+			async ({ app, app_class, base_url, uniq_id, env, port }) => {
+				await assertThrowsAsync(
+					async () => {
+						const HappyNumbers = class HappyNumbers extends Collection {
+							fields = {
+								number: new FieldTypes.Int(),
+								double_number: new FieldTypes.CachedValue(
+									new FieldTypes.Int(),
+									{
+										get_value: async (
+											context: Context,
+											number: CollectionItem
+										) => {
+											const response =
+												// @ts-ignore
+												await app.collections[
+													"happy-numbers"
+												]
+													.list(context)
+													.ids([number.id])
+													.fetch();
+											return (
+												(response.items[0].get(
+													"number"
+												) as number) * 2
+											);
+										},
+										refresh_on: [
+											new CollectionRefreshCondition(
+												"happy-numbers",
+												"after:create",
+												async ([, item]) => [item.id]
+											),
+										],
+										initial_value: 0,
+									}
+								),
+							};
 						};
-					};
 
-					const new_app = new (class extends app_class {
-						collections = {
-							...super.collections,
-							"happy-numbers": new HappyNumbers(),
-						};
-					})(uniq_id, env, port, base_url);
-					await new_app.start();
-				},
-				(e) => {
-					assert.strictEqual(
-						e.message,
-						`In the happy-numbers collection definition you've tried to create the double_number cached-value field that refers to the collection itself. Consider using 'derived-value' field type to avoid problems with endless recurrence.`
-					);
-				}
-			);
-		}));
+						const new_app = new (class extends app_class {
+							collections = {
+								...super.collections,
+								"happy-numbers": new HappyNumbers(),
+							};
+						})(uniq_id, env, port, base_url);
+						await new_app.start();
+					},
+					(e) => {
+						assert.strictEqual(
+							e.message,
+							`In the happy-numbers collection definition you've tried to create the double_number cached-value field that refers to the collection itself. Consider using 'derived-value' field type to avoid problems with endless recurrence.`
+						);
+					}
+				);
+			}
+		));
 
 	it("should pass friendship scenario", async () => {
 		return withRunningApp(
@@ -318,19 +357,26 @@ describe("cached-value", () => {
 												"who-likes-who",
 												"after:create",
 												async ([, item]) => [
-													item.get("likes_this_person") as string,
+													item.get(
+														"likes_this_person"
+													) as string,
 												]
 											),
 										],
-										get_value: async function (context, item) {
-											const is_liked_by = (await context.app.collections[
-												"who-likes-who"
-											]
-												.suList()
-												.filter({
-													likes_this_person: item.id,
-												})
-												.fetch()) as ItemListResult<any>;
+										get_value: async function (
+											context,
+											item
+										) {
+											const is_liked_by =
+												(await context.app.collections[
+													"who-likes-who"
+												]
+													.suList()
+													.filter({
+														likes_this_person:
+															item.id,
+													})
+													.fetch()) as ItemListResult<any>;
 											return is_liked_by.items.length;
 										},
 										initial_value: 0,
@@ -340,30 +386,41 @@ describe("cached-value", () => {
 						})(),
 						"who-likes-who": new (class extends Collection {
 							fields = {
-								this_person: new FieldTypes.SingleReference("people"),
-								likes_this_person: new FieldTypes.SingleReference("people"),
+								this_person: new FieldTypes.SingleReference(
+									"people"
+								),
+								likes_this_person:
+									new FieldTypes.SingleReference("people"),
 							};
 						})(),
 					};
 				};
 			},
 			async ({ rest_api }) => {
-				const alice = await rest_api.post("/api/v1/collections/people", {
-					name: "alice",
-				});
+				const alice = await rest_api.post(
+					"/api/v1/collections/people",
+					{
+						name: "alice",
+					}
+				);
 				const bob = await rest_api.post("/api/v1/collections/people", {
 					name: "bob",
 				});
-				const friendship = await rest_api.post("/api/v1/collections/who-likes-who", {
-					this_person: bob.id as string,
-					likes_this_person: alice.id as string,
-				});
+				const friendship = await rest_api.post(
+					"/api/v1/collections/who-likes-who",
+					{
+						this_person: bob.id as string,
+						likes_this_person: alice.id as string,
+					}
+				);
 				const response = await rest_api.get(
 					`/api/v1/collections/people/${alice.id as string}`
 				);
 				assert.strictEqual(response.items[0].popularity, 1);
 				await rest_api.delete(
-					`/api/v1/collections/who-likes-who/${friendship.id as string}`
+					`/api/v1/collections/who-likes-who/${
+						friendship.id as string
+					}`
 				);
 			}
 		);
@@ -392,10 +449,14 @@ describe("cached-value", () => {
 												async ([, item]) => [item.id]
 											),
 										],
-										get_value: async function (context, item) {
-											const job = await context.app.collections[
-												"jobs"
-											].getByID(context, item.id);
+										get_value: async function (
+											context,
+											item
+										) {
+											const job =
+												await context.app.collections[
+													"jobs"
+												].getByID(context, item.id);
 											return job.id;
 										},
 										initial_value: null,
@@ -406,7 +467,9 @@ describe("cached-value", () => {
 					};
 				},
 			async ({ app }) => {
-				const hasdefault = await app.collections.hasdefault.suCreate({});
+				const hasdefault = await app.collections.hasdefault.suCreate(
+					{}
+				);
 				assert.strictEqual(hasdefault.get("isdefault"), null);
 			}
 		));
@@ -420,7 +483,9 @@ describe("cached-value", () => {
 						jobs: new (class extends Collection {
 							fields = {
 								title: new FieldTypes.Text(),
-								hasjob: new FieldTypes.SingleReference("hasjob"),
+								hasjob: new FieldTypes.SingleReference(
+									"hasjob"
+								),
 							};
 						})(),
 						hasjob: new (class extends Collection {
@@ -432,19 +497,27 @@ describe("cached-value", () => {
 											new CollectionRefreshCondition(
 												"jobs",
 												"after:create",
-												async ([, item]) => [item.get("hasjob")]
+												async ([, item]) => [
+													item.get(
+														"hasjob"
+													) as string,
+												]
 											),
 										],
-										get_value: async function (context, item) {
+										get_value: async function (
+											context,
+											item
+										) {
 											const {
 												items: [job],
-											} = await context.app.collections.jobs
-												.suList()
-												.filter({ hasjob: item.id })
-												.fetch();
+											} =
+												await context.app.collections.jobs
+													.suList()
+													.filter({ hasjob: item.id })
+													.fetch();
 											return job.id;
 										},
-										initial_value: null,
+										initial_value: "",
 									}
 								),
 							};
@@ -490,7 +563,11 @@ describe("cached-value", () => {
 														.fetch();
 												return items.map((i) => i.id);
 											},
-											(app: App) => new SuperContext(app, Date.now())
+											(app: App) =>
+												new SuperContext(
+													app,
+													Date.now()
+												)
 										),
 									],
 									get_value: async (_item) => {
@@ -524,7 +601,9 @@ describe("cached-value", () => {
 							comments: new (class extends Collection {
 								fields = {
 									text: new FieldTypes.Text(),
-									product: new FieldTypes.SingleReference("products"),
+									product: new FieldTypes.SingleReference(
+										"products"
+									),
 								};
 							})(),
 							products: new (class extends Collection {
@@ -532,40 +611,66 @@ describe("cached-value", () => {
 									name: new FieldTypes.Text(),
 									price: new FieldTypes.Float(),
 									// a product is considered hot if it's cheap or has at least one comment
-									is_hot: new FieldTypes.CachedValue(new FieldTypes.Boolean(), {
-										refresh_on: [
-											new CollectionRefreshCondition(
-												"comments",
-												["after:create", "after:edit", "after:remove"],
-												async ([, item]) => [item.get("product") as string]
-											),
-										],
-										get_value: async (context, item) => {
-											const price = await item.getDecoded("price", context);
-											const comments_count = (
-												await context.app.collections["comments"]
-													.suList()
-													.filter({
-														product: item.id,
-													})
-													.fetch()
-											).items.length;
-											return (price as number) < 100 || comments_count > 0;
-										},
-										initial_value: false,
-										derive_from: ["price"],
-									}),
+									is_hot: new FieldTypes.CachedValue(
+										new FieldTypes.Boolean(),
+										{
+											refresh_on: [
+												new CollectionRefreshCondition(
+													"comments",
+													[
+														"after:create",
+														"after:edit",
+														"after:remove",
+													],
+													async ([, item]) => [
+														item.get(
+															"product"
+														) as string,
+													]
+												),
+											],
+											get_value: async (
+												context,
+												item
+											) => {
+												const price =
+													await item.getDecoded(
+														"price",
+														context
+													);
+												const comments_count = (
+													await context.app.collections[
+														"comments"
+													]
+														.suList()
+														.filter({
+															product: item.id,
+														})
+														.fetch()
+												).items.length;
+												return (
+													(price as number) < 100 ||
+													comments_count > 0
+												);
+											},
+											initial_value: false,
+											derive_from: ["price"],
+										}
+									),
 								};
 							})(),
 						};
 					},
 				async ({ app }) => {
 					const context = new Context(app);
-					let product = await app.collections.products.create(context, {
-						name: "hehe shampoo",
-						price: 150,
-						is_hot: null,
-					});
+					let product = await app.collections.products.create(
+						context,
+						{
+							name: "hehe shampoo",
+							price: 150,
+							is_hot: false,
+						}
+					);
 					assert.strictEqual(
 						product.get("is_hot"),
 						false,
@@ -573,7 +678,10 @@ describe("cached-value", () => {
 					);
 					product.set("price", 90);
 					await product.save(context);
-					product = await app.collections.products.getByID(context, product.id); // refreshing;
+					product = await app.collections.products.getByID(
+						context,
+						product.id
+					); // refreshing;
 					assert.strictEqual(
 						product.get("is_hot"),
 						true,
@@ -581,7 +689,10 @@ describe("cached-value", () => {
 					);
 					product.set("price", 110);
 					await product.save(context);
-					product = await app.collections.products.getByID(context, product.id); // refreshing;
+					product = await app.collections.products.getByID(
+						context,
+						product.id
+					); // refreshing;
 					assert.strictEqual(
 						product.get("is_hot"),
 						false,
@@ -591,7 +702,10 @@ describe("cached-value", () => {
 						text: "good stuff",
 						product: product.id,
 					});
-					product = await app.collections.products.getByID(context, product.id); // refreshing;
+					product = await app.collections.products.getByID(
+						context,
+						product.id
+					); // refreshing;
 					assert.strictEqual(
 						product.get("is_hot"),
 						true,

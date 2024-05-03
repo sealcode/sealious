@@ -1,17 +1,17 @@
 import type Collection from "./collection.js";
 import type {
+	ExtractFieldDecoded,
 	FieldsetEncoded,
 	FieldsetInput,
 	FieldsetOutput,
 } from "../main.js";
-import type { FieldOutput, RequiredField } from "./field.js";
 import { Fieldset } from "./fieldset.js";
 import type { CollectionOutput } from "./collection.js";
 
 export type FieldNames<T extends Collection> = keyof T["fields"] & string;
 
 export type ItemFieldsOutput<T extends Collection> = {
-	[field in FieldNames<T>]: FieldOutput<T["fields"][field]>;
+	[field in FieldNames<T>]: ExtractFieldDecoded<T["fields"][field]>;
 };
 
 export default class CollectionItemBody<

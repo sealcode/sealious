@@ -2,7 +2,7 @@ import { Field } from "../../../main.js";
 
 import shortid from "shortid";
 
-export default class ShortID extends Field {
+export default class ShortID extends Field<string> {
 	typeName = "shortid";
 	hasIndex = async () => true;
 

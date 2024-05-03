@@ -1,7 +1,7 @@
 import { Context, Field } from "../../../main.js";
 import ColorParser from "color"; //putting it here not to slow down `new Sealious.app()`
 
-export default class Color extends Field {
+export default class Color extends Field<string> {
 	typeName = "color";
 	async isProperValue(context: Context, new_value: string) {
 		try {
@@ -16,7 +16,7 @@ export default class Color extends Field {
 		}
 	}
 
-	async encode(_: any, value: string) {
+	async encode(_: any, value: string | null) {
 		if (value === null) {
 			return null;
 		}

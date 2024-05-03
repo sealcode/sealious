@@ -19,11 +19,11 @@ export type IntStorageParams = { min?: number; max?: number };
  * - `{ age: {">": 2}}`
  * - `{ age: {">": 2, "<" 10}}`
  */
+
 export abstract class IntStorage<
-	Input extends number | string,
-	Output = any,
-	Format = any
-> extends Field {
+	Output = number,
+	Input extends number | string = number | string
+> extends Field<Output, Input, number> {
 	/** the min allowed value */
 	min?: number;
 	/** tha max allowed value*/
@@ -93,9 +93,6 @@ export abstract class IntStorage<
 		if (value === null) {
 			return null;
 		}
-		if (value === null) {
-			return null;
-		}
 		const ret = parseInt(value.toString(), 10);
 		return ret;
 	};
@@ -103,6 +100,6 @@ export abstract class IntStorage<
 
 /** An integer field. Consult {@link IntStorage} for information on
  * customizing it's behavior.*/
-export default class Int extends IntStorage<number | string, number> {
+export default class Int extends IntStorage<number, number | string> {
 	typeName = "int";
 }

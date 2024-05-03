@@ -5,7 +5,7 @@ export {
 	default as Collection,
 	CollectionInput,
 } from "./chip-types/collection.js";
-export { Field, FieldOutput } from "./chip-types/field-base.js";
+export { Field, ExtractFieldDecoded } from "./chip-types/field-base.js";
 export * as FieldTypes from "./app/base-chips/field-types/field-types.js";
 export { App, Translation, AppEvents } from "./app/app.js";
 export * as SpecialFilters from "./app/base-chips/special_filters/special-filters.js";

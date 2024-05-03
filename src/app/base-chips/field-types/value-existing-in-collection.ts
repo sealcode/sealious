@@ -1,7 +1,8 @@
 import Field from "../../../chip-types/field.js";
 import type { Context, App } from "../../../main.js";
+import type { ExtractTail } from "../../../utils/extract-tail.js";
 
-export default class ValueExistingInCollection extends Field {
+export default class ValueExistingInCollection extends Field<unknown> {
 	typeName = "value-existing-in-collection";
 	target_field_name: string;
 	target_collection_name: string;
@@ -61,19 +62,34 @@ export default class ValueExistingInCollection extends Field {
 		];
 	}
 
-	encode(...args: Parameters<Field["encode"]>) {
-		return this.getField(args[0].app).encode(...args);
+	encode(
+		context: Context,
+		...args: ExtractTail<Parameters<Field<unknown>["encode"]>>
+	): Promise<unknown> {
+		return this.getField(context.app).encode(context, ...args);
 	}
 
-	decode(...args: Parameters<Field["decode"]>) {
-		return this.getField(args[0].app).decode(...args);
+	decode(
+		context: Context,
+		...args: ExtractTail<Parameters<Field<unknown>["decode"]>>
+	) {
+		return this.getField(context.app).decode(context, ...args);
 	}
 
-	getMatchQueryValue(...args: Parameters<Field["getMatchQueryValue"]>) {
-		return this.getField(args[0].app).getMatchQueryValue(...args);
+	getMatchQueryValue(
+		context: Context,
+		...args: ExtractTail<Parameters<Field<unknown>["getMatchQueryValue"]>>
+	) {
+		return this.getField(context.app).getMatchQueryValue(context, ...args);
 	}
 
-	getAggregationStages(...args: Parameters<Field["getAggregationStages"]>) {
-		return this.getField(args[0].app).getAggregationStages(...args);
+	getAggregationStages(
+		context: Context,
+		...args: ExtractTail<Parameters<Field<unknown>["getMatchQueryValue"]>>
+	) {
+		return this.getField(context.app).getAggregationStages(
+			context,
+			...args
+		);
 	}
 }

@@ -1,8 +1,17 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import assert from "assert";
-import { TestAppConstructor, withRunningApp } from "../../../test_utils/with-test-app.js";
+import {
+	TestAppConstructor,
+	withRunningApp,
+} from "../../../test_utils/with-test-app.js";
 import { assertThrowsAsync } from "../../../test_utils/assert-throws-async.js";
-import { App, Collection, Context, FieldTypes, Policies } from "../../../main.js";
+import {
+	App,
+	Collection,
+	Context,
+	FieldTypes,
+	Policies,
+} from "../../../main.js";
 import type MockRestApi from "../../../test_utils/rest-api.js";
 import type {
 	CollectionResponse,
@@ -88,7 +97,9 @@ describe("control-access", () => {
 		withRunningApp(extend, async ({ app, rest_api }) => {
 			await setup(app, rest_api);
 
-			const { items: ssh_keys } = (await rest_api.get(SSH_KEYS_URL)) as CollectionResponse;
+			const { items: ssh_keys } = (await rest_api.get(
+				SSH_KEYS_URL
+			)) as CollectionResponse;
 
 			ssh_keys.forEach((key) => {
 				assert.deepStrictEqual(key.private, "Forbidden");
@@ -126,8 +137,12 @@ describe("control-access", () => {
 					),
 				(e: RestAPIError) =>
 					assert.strictEqual(
-						e?.response?.data?.data?.field_messages?.private?.message,
-						app.i18n("too_short_text", [too_short_text, MIN_TEXT_LENGTH])
+						e?.response?.data?.data?.field_messages?.private
+							?.message,
+						app.i18n("too_short_text", [
+							too_short_text,
+							MIN_TEXT_LENGTH,
+						])
 					)
 			);
 		}));

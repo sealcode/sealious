@@ -7,32 +7,42 @@ import type { MatchBody } from "../datastore/query-stage.js";
 import { ItemListResult } from "./item-list.js";
 import { BadSubjectAction } from "../response/errors.js";
 import isEmpty from "../utils/is-empty.js";
+import type Int from "../app/base-chips/field-types/int.js";
 
 export type Depromisify<T> = T extends Promise<infer V> ? V : T;
 
-export type ExtractParams<F extends Field> = Parameters<F["setParams"]>[0];
+export type ExtractParams<F extends Field<any, any, any>> = Parameters<
+	F["setParams"]
+>[0];
 
-export type ExtractFilterParams<F extends Field> = Parameters<
+export type ExtractFilterParams<F extends Field<any, any, any>> = Parameters<
 	F["getMatchQueryValue"]
 >[1];
-
-export type ExtractInput<F extends Field> = Parameters<F["encode"]>[1];
-export type GetInputType<F extends Field> = F extends Field<infer R>
-	? R
-	: never;
-
-export type FieldOutput<F extends Field> = Depromisify<ReturnType<F["decode"]>>;
-
-export type ExtractStorage<F extends Field> = Depromisify<
-	ReturnType<F["encode"]>
->;
 
 export type ValidationResult = {
 	valid: boolean;
 	reason?: string;
 };
 
-export type RequiredField<InputType> = Field<InputType> & { required: true };
+export type ExtractFieldDecoded<F extends Field<any, any, any>> =
+	F extends Field<infer T, any, any> ? T : never;
+
+export type ExtractFieldInput<F extends Field<any, any, any>> = F extends Field<
+	any,
+	infer T,
+	any
+>
+	? T
+	: never;
+
+export type ExtractFieldStorage<F extends Field<any, any, any>> =
+	F extends Field<any, any, infer T> ? T : never;
+
+export type RequiredField<DecodedType, InputType, StorageType> = Field<
+	DecodedType,
+	InputType,
+	StorageType
+> & { required: true };
 
 /** The field class itself. Stores information on the field name, and
  * methods that decide waht values are valid and how they are
@@ -61,7 +71,12 @@ export type RequiredField<InputType> = Field<InputType> & { required: true };
  * * {@link SingleReference}
  * * {@link Text}
  */
-export abstract class Field<InputType = unknown> {
+
+export abstract class Field<
+	DecodedType,
+	InputType = DecodedType,
+	StorageType = DecodedType
+> {
 	/** the name of the field */
 	name: string;
 	/** the app that the field exists in
@@ -86,9 +101,11 @@ export abstract class Field<InputType = unknown> {
 		this.collection = collection;
 	}
 
-	setRequired(required: boolean): RequiredField<InputType> {
+	setRequired(
+		required: boolean
+	): RequiredField<DecodedType, InputType, StorageType> {
 		this.required = required;
-		return this as RequiredField<InputType>;
+		return this as RequiredField<DecodedType, InputType, StorageType>;
 	}
 
 	/** Sets the name @internal */
@@ -159,23 +176,27 @@ export abstract class Field<InputType = unknown> {
 
 	/** Decides how to store the given value in the database, based on
 	 * the context and previous value of the field */
-	async encode(_: Context, value: InputType | null, __?: any): Promise<any> {
+	async encode(
+		_: Context,
+		value: InputType | null,
+		__?: any
+	): Promise<StorageType | null> {
 		return value as any;
 	}
 
 	/** Reverse to the {@link Field.encode} function. Takes what's inside the database and returns the value in a given format */
 	async decode(
 		context: Context,
-		storage_value: Depromisify<ReturnType<this["encode"]>>,
+		storage_value: StorageType,
 		old_value: any,
 		format_params: any,
 		is_http_api_request = false
-	): Promise<unknown | null> {
+	): Promise<DecodedType | null> {
 		context.app.Logger.debug3("FIELD DECODE", this.name, {
 			storage_value,
 			old_value,
 		});
-		return storage_value as unknown;
+		return storage_value as unknown as DecodedType;
 	}
 
 	/** Generates a mongo query based on the filter value */

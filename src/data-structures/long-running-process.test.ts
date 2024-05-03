@@ -43,9 +43,11 @@ describe("long running process", () => {
 			async ({ app }) => {
 				const user_one = await app.collections.users.suCreate({
 					username: "one",
+					password: "secretsecret",
 				});
 				const user_two = await app.collections.users.suCreate({
 					username: "two",
+					password: "secretsecret",
 				});
 				const context_one = new Context(app, Date.now(), user_one.id);
 				const context_two = new Context(app, Date.now(), user_two.id);
@@ -94,8 +96,10 @@ describe("long running process", () => {
 				const lrp_id = await lrp.getID();
 				await lrp.waitForFinished();
 				assert.strictEqual(info_count, 2);
-				const { events, latestEvent, state, progress } =
-					await LongRunningProcess.getByID(context, lrp_id);
+				const { latestEvent, state } = await LongRunningProcess.getByID(
+					context,
+					lrp_id
+				);
 				assert.strictEqual(state, "error");
 				assert.strictEqual(latestEvent.message, "NOOOO");
 			}

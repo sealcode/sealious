@@ -1,6 +1,10 @@
 import { Context, Field } from "../../../main.js";
 
-export default class ContextField extends Field {
+export default class ContextField extends Field<
+	Context,
+	Context,
+	Record<string, unknown>
+> {
 	typeName = "context";
 	async isProperValue(context: Context, value: Context) {
 		if (value instanceof Context) {

@@ -1,12 +1,15 @@
 import { Field, Context } from "../../../main.js";
-import type { QueryStage } from "../../../datastore/query.js";
 import escape from "escape-html";
 import { hasShape, is, predicates } from "@sealcode/ts-predicates";
 
 type TextStorageFormat = { original: string; safe: string };
 type TextFormatParam = keyof TextStorageFormat;
 
-export default abstract class TextStorage extends Field<string | null> {
+export default abstract class TextStorage extends Field<
+	string,
+	string,
+	TextStorageFormat
+> {
 	async encode(context: Context, input: string | null) {
 		context.app.Logger.debug2("TEXT FIELD", "encode", {
 			name: this.name,
@@ -40,7 +43,7 @@ export default abstract class TextStorage extends Field<string | null> {
 	}
 
 	async getMatchQueryValue(
-		context: Context,
+		_context: Context,
 		filter_value: string | { regex: string | RegExp } | string[]
 	): Promise<any> {
 		if (!filter_value && !(filter_value == "")) {

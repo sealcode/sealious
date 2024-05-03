@@ -15,7 +15,8 @@ function dateStrToDayInt(date_str: string) {
  *
  * **Params**: None
  */
-export default class DateField extends Field {
+
+export default class DateField extends Field<string, string | number, number> {
 	typeName = "date";
 	async isProperValue(context: Context, value: string) {
 		const date_in_string = value.toString();
@@ -30,6 +31,7 @@ export default class DateField extends Field {
 		}
 		return Field.valid();
 	}
+
 	async encode(_: Context, value: string | null) {
 		if (value === null) {
 			return null;
@@ -38,6 +40,7 @@ export default class DateField extends Field {
 		// value is already confirmed to be properly formatted
 		return dateStrToDayInt(date_str);
 	}
+
 	async getMatchQueryValue(
 		_: Context,
 		field_filter: string | ComparatorObject<string>

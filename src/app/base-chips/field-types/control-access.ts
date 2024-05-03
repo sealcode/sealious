@@ -1,25 +1,35 @@
-import { Field, Context, Policy, App, ExtractStorage } from "../../../main.js";
+import { Field, Context, Policy, App } from "../../../main.js";
 import {
+	ExtractFieldDecoded,
+	ExtractFieldInput,
+	ExtractFieldStorage,
 	ExtractParams,
-	FieldOutput,
 	HybridField,
 } from "../../../chip-types/field.js";
 
-type Params<T extends Field> = {
+type Params<DecodedType> = {
 	target_policies: { [key in "show" | "edit"]: Policy };
-	value_when_not_allowed: FieldOutput<T>;
+	value_when_not_allowed: DecodedType | null;
 };
 
 export default class ControlAccess<
-	T extends Field<any>
-> extends HybridField<T> {
+	T extends Field<any, any, any>
+> extends HybridField<
+	ExtractFieldInput<T>,
+	ExtractFieldDecoded<T>,
+	ExtractFieldStorage<T>,
+	ExtractFieldInput<T>,
+	ExtractFieldDecoded<T>,
+	ExtractFieldStorage<T>,
+	T
+> {
 	typeName = "control-access";
 	edit_strategy: Policy;
 	show_strategy: Policy;
-	value_when_not_allowed: FieldOutput<T>;
+	value_when_not_allowed: ExtractFieldDecoded<T> | null;
 	app: App;
 
-	constructor(base_field: T, params: Params<T>) {
+	constructor(base_field: T, params: Params<ExtractFieldDecoded<T>>) {
 		super(base_field);
 		this.edit_strategy = params.target_policies.edit;
 		this.show_strategy = params.target_policies.show;
@@ -49,8 +59,8 @@ export default class ControlAccess<
 
 	async decode(
 		context: Context,
-		value_in_db: ExtractStorage<T>,
-		old_value: FieldOutput<T>,
+		value_in_db: ExtractFieldStorage<T>,
+		old_value: ExtractFieldDecoded<T>,
 		format_params: ExtractParams<T>
 	) {
 		if (!context.is_super) {
@@ -66,10 +76,11 @@ export default class ControlAccess<
 					`Access to field '${this.name}' not allowed!`,
 					result
 				);
-				value_in_db = await this.encode(
+				value_in_db = (await this.encode(
 					context,
-					this.value_when_not_allowed
-				);
+					this
+						.value_when_not_allowed as unknown as ExtractFieldInput<T>
+				)) as any;
 			} else if (result?.allowed) {
 				context.app.Logger.debug2(
 					"CONTROL ACCESS",

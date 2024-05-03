@@ -1,31 +1,42 @@
 import type Context from "../context.js";
 import type {
-	ExtractStorage,
-	FieldOutput,
-	GetInputType,
+	ExtractFieldDecoded,
+	ExtractFieldInput,
+	ExtractFieldStorage,
 	RequiredField,
 } from "./field.js";
 import type Field from "./field.js";
 
-export type FieldNames<T extends Record<string, Field>> = keyof T & string;
+export type FieldNames<T extends Record<string, Field<any, any, any>>> =
+	keyof T & string;
 
-export type FieldsetOutput<T extends Record<string, Field>> = {
-	[field in keyof T]: FieldOutput<T[field]> | null;
+export type FieldsetOutput<T extends Record<string, Field<any, any>>> = {
+	[field in keyof T]: T[field] extends RequiredField<any, any, any>
+		? ExtractFieldDecoded<T[field]>
+		: ExtractFieldDecoded<T[field]> | null;
 };
 
-export type FieldsetInput<T extends Record<string, Field>> =
+export type FieldsetInput<T extends Record<string, Field<any, any, any>>> =
 	| {
-			[field in keyof T & string as T[field] extends RequiredField<any>
+			[field in keyof T & string as T[field] extends RequiredField<
+				any,
+				any,
+				any
+			>
 				? field
-				: never]: GetInputType<T[field]>;
+				: never]: ExtractFieldInput<T[field]>;
 	  } & {
-			[field in keyof T & string as T[field] extends RequiredField<any>
+			[field in keyof T & string as T[field] extends RequiredField<
+				any,
+				any,
+				any
+			>
 				? never
-				: field]?: GetInputType<T[field]>;
+				: field]?: ExtractFieldInput<T[field]>;
 	  };
 
-export type FieldsetEncoded<T extends Record<string, Field>> = {
-	[field in keyof T]: ExtractStorage<T[field]>;
+export type FieldsetEncoded<T extends Record<string, Field<any, any, any>>> = {
+	[field in keyof T]: ExtractFieldStorage<T[field]>;
 };
 
 // a quick test for the types, shoud know which fields can be undefined
@@ -35,7 +46,7 @@ export type FieldsetEncoded<T extends Record<string, Field>> = {
 // };
 // type fi = FieldsetInput<typeof f>;
 
-export class Fieldset<Fields extends Record<string, Field>> {
+export class Fieldset<Fields extends Record<string, Field<any, any, any>>> {
 	changed_fields: Set<keyof Fields> = new Set();
 	is_decoded = false;
 	is_encoded = false;
@@ -54,7 +65,7 @@ export class Fieldset<Fields extends Record<string, Field>> {
 		}
 	}
 
-	getRequiredFields(): Field[] {
+	getRequiredFields(): Field<unknown>[] {
 		return Object.values(this.fields).filter((f) => f.required);
 	}
 
@@ -120,7 +131,8 @@ export class Fieldset<Fields extends Record<string, Field>> {
 			}
 
 			if (to_encode === undefined) {
-				new_encoded[field_name as keyof typeof new_encoded] = null;
+				new_encoded[field_name as keyof typeof new_encoded] =
+					null as any;
 				continue;
 			}
 			promises.push(

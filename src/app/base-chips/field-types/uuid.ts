@@ -2,7 +2,7 @@ import { v4 as uuid } from "uuid";
 import Field, { ValidationResult } from "../../../chip-types/field.js";
 import type Context from "../../../context.js";
 
-export class Uuid extends Field {
+export class Uuid extends Field<string> {
 	typeName = "uuid";
 
 	isOldValueSensitive = (): boolean => true;

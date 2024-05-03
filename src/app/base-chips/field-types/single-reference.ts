@@ -10,7 +10,7 @@ type SearchFilter = InnerFilter | string;
  *
  */
 
-export default class SingleReference extends Field {
+export default class SingleReference extends Field<string, string> {
 	typeName = "single-reference";
 	hasIndex = async () => true;
 	target_collection: string;

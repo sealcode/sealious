@@ -2,7 +2,7 @@ import { Field, Context } from "../../../main.js";
 
 import { v4 as uuid } from "uuid";
 
-export default class SecretToken extends Field {
+export default class SecretToken extends Field<string> {
 	typeName = "secret-token";
 
 	isOldValueSensitive = () => true;

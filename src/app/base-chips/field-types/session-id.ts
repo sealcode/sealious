@@ -2,7 +2,7 @@ import { Context, Field } from "../../../main.js";
 
 import { v4 as uuid } from "uuid";
 
-export default class SessionID extends Field {
+export default class SessionID extends Field<null | string, string> {
 	typeName = "session-id";
 
 	async isProperValue() {

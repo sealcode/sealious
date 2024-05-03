@@ -1,16 +1,29 @@
 import assert from "assert";
-import { TestAppConstructor, withRunningApp } from "../../../test_utils/with-test-app.js";
+import {
+	TestAppConstructor,
+	withRunningApp,
+} from "../../../test_utils/with-test-app.js";
 import { assertThrowsAsync } from "../../../test_utils/assert-throws-async.js";
-import { Collection, FieldTypes, Field, App, Policies } from "../../../main.js";
+import {
+	Collection,
+	FieldTypes,
+	Field,
+	App,
+	Policies,
+	ExtractFieldDecoded,
+} from "../../../main.js";
 import type { DerivingFn } from "./derived-value.js";
 import { sleep } from "../../../test_utils/sleep.js";
 import { TestApp } from "../../../test_utils/test-app.js";
 
 const extend =
-	<T extends Field = FieldTypes.Text>(derived_value_params: {
-		deriving_fn: DerivingFn<T>;
-		fields: string[];
-	}) =>
+	<T extends Field<any, any>>(
+		derived_value_params: {
+			deriving_fn: DerivingFn<ExtractFieldDecoded<T>>;
+			fields: string[];
+		},
+		field: T = new FieldTypes.Text() as any
+	) =>
 	(t: TestAppConstructor) => {
 		return class extends t {
 			collections = {
@@ -21,7 +34,7 @@ const extend =
 						username: new FieldTypes.Text(),
 						surname: new FieldTypes.Text(),
 						name_and_surname: new FieldTypes.DerivedValue(
-							new FieldTypes.Text(),
+							field,
 							// @ts-ignore
 							{
 								...derived_value_params,
@@ -43,10 +56,13 @@ describe("derived-value", () => {
 					`${username} ${surname}`,
 			}),
 			async ({ rest_api }) => {
-				const person = await rest_api.post("/api/v1/collections/people", {
-					username: "Jan",
-					surname: "Kowalski",
-				});
+				const person = await rest_api.post(
+					"/api/v1/collections/people",
+					{
+						username: "Jan",
+						surname: "Kowalski",
+					}
+				);
 
 				assert.deepStrictEqual(person.name_and_surname, "Jan Kowalski");
 			}
@@ -60,33 +76,48 @@ describe("derived-value", () => {
 					`${username} ${surname}`,
 			}),
 			async ({ rest_api }) => {
-				const person = await rest_api.post("/api/v1/collections/people", {
-					username: "Jan",
-					surname: "Kowalski",
-				});
+				const person = await rest_api.post(
+					"/api/v1/collections/people",
+					{
+						username: "Jan",
+						surname: "Kowalski",
+					}
+				);
 
 				assert.deepStrictEqual("Jan Kowalski", person.name_and_surname);
 
 				const {
 					items: [updated_person],
-				} = await rest_api.patch(`/api/v1/collections/people/${person.id}`, {
-					username: "Janusz",
-				});
+				} = await rest_api.patch(
+					`/api/v1/collections/people/${person.id}`,
+					{
+						username: "Janusz",
+					}
+				);
 
 				assert.deepStrictEqual(updated_person.username, "Janusz");
 
-				assert.deepStrictEqual(updated_person.name_and_surname, "Janusz Kowalski");
+				assert.deepStrictEqual(
+					updated_person.name_and_surname,
+					"Janusz Kowalski"
+				);
 
 				const {
 					items: [updated_person2],
-				} = await rest_api.patch(`/api/v1/collections/people/${person.id}`, {
-					username: "John",
-					surname: "Doe",
-				});
+				} = await rest_api.patch(
+					`/api/v1/collections/people/${person.id}`,
+					{
+						username: "John",
+						surname: "Doe",
+					}
+				);
 
 				assert.deepStrictEqual(updated_person2.username, "John");
 				assert.deepStrictEqual(updated_person2.surname, "Doe");
-				assert.deepStrictEqual(updated_person2.name_and_surname, "John Doe");
+				assert.deepStrictEqual(
+					updated_person2.name_and_surname,
+					"John Doe"
+				);
 			}
 		));
 
@@ -98,29 +129,38 @@ describe("derived-value", () => {
 					`${username} ${surname}`,
 			}),
 			async ({ rest_api }) => {
-				const person = await rest_api.post("/api/v1/collections/people", {
-					username: "Jan",
-					surname: "Kowalski",
-					age: 60,
-				});
+				const person = await rest_api.post(
+					"/api/v1/collections/people",
+					{
+						username: "Jan",
+						surname: "Kowalski",
+						age: 60,
+					}
+				);
 
 				assert.deepStrictEqual(60, person.age);
 
 				const {
 					items: [updated_person],
-				} = await rest_api.patch(`/api/v1/collections/people/${person.id}`, {
-					age: 22,
-				});
+				} = await rest_api.patch(
+					`/api/v1/collections/people/${person.id}`,
+					{
+						age: 22,
+					}
+				);
 
 				assert.deepStrictEqual(updated_person.age, 22);
-				assert.deepStrictEqual(updated_person.name_and_surname, "Jan Kowalski");
+				assert.deepStrictEqual(
+					updated_person.name_and_surname,
+					"Jan Kowalski"
+				);
 			}
 		));
 
 	it("throws when the value returned from deriving_fn is unnacceptable by target_field_type of derived-value", async () => {
 		const str = 555;
 		await withRunningApp(
-			extend<FieldTypes.Int>({
+			extend({
 				fields: ["username", "surname"],
 				deriving_fn: async (_, __, ___: string, ____: string) => str,
 			}),
@@ -134,7 +174,8 @@ describe("derived-value", () => {
 					},
 					(error) => {
 						assert.deepStrictEqual(
-							error.response.data.data.field_messages.name_and_surname.message,
+							error.response.data.data.field_messages
+								.name_and_surname.message,
 							app.i18n("invalid_text", [str, typeof str])
 						);
 					}
@@ -155,7 +196,11 @@ describe("derived-value", () => {
 										new FieldTypes.SingleReference("A"),
 										{
 											fields: ["simple"],
-											deriving_fn: async (_, __, _simple) => {
+											deriving_fn: async (
+												_,
+												__,
+												_simple
+											) => {
 												return "any_id"; // this isn't a proper ID, and the SingleReference should detect that by being able to access the `this.app` instance and reading the database. If any other error than "bad id" will be thrown, it means that the base field is not initiated properly
 											},
 										}
@@ -171,7 +216,8 @@ describe("derived-value", () => {
 							app.collections.A.create(new app.SuperContext(), {
 								simple: "anything",
 							}),
-						(error) => assert.strictEqual(error.message, "Invalid values!")
+						(error) =>
+							assert.strictEqual(error.message, "Invalid values!")
 					);
 				}
 			));
@@ -184,39 +230,48 @@ describe("derived-value", () => {
 					collections = {
 						...TestApp.BaseCollections,
 						products: new (class Products extends Collection {
-							fields: Record<string, Field> = {
+							fields: Record<string, Field<unknown>> = {
 								name: new FieldTypes.Text(),
-								category: new FieldTypes.DerivedValue(new FieldTypes.Text(), {
-									fields: ["name"],
-									deriving_fn: async (
-										_,
-										__,
+								category: new FieldTypes.DerivedValue(
+									new FieldTypes.Text(),
+									{
+										fields: ["name"],
+										deriving_fn: async (
+											_,
+											__,
 
-										name: string
-									) => {
-										await sleep(0);
-										return `${name} after sleep`;
-									},
-								}),
+											name: string
+										) => {
+											await sleep(0);
+											return `${name} after sleep`;
+										},
+									}
+								),
 							};
 
 							async init(app: App, name: string): Promise<void> {
 								await super.init(app, name);
 
-								this.on("before:edit", async ([context, product]) => {
-									await product.decode(context);
-									product.get("name");
-									await sleep(100);
-									product.get("name"); // should throw an error "decode first" if there's a race condition
-								});
+								this.on(
+									"before:edit",
+									async ([context, product]) => {
+										await product.decode(context);
+										product.get("name");
+										await sleep(100);
+										product.get("name"); // should throw an error "decode first" if there's a race condition
+									}
+								);
 							}
 						})(),
 					};
 				},
 			async ({ app }) => {
-				const product = await app.collections.products.create(new app.SuperContext(), {
-					name: "aaa",
-				});
+				const product = await app.collections.products.create(
+					new app.SuperContext(),
+					{
+						name: "aaa",
+					}
+				);
 				product.setMultiple({ name: "bbb" });
 				await product.save(new app.SuperContext());
 			}
@@ -231,21 +286,24 @@ describe("derived-value", () => {
 						entries: new (class extends Collection {
 							fields = {
 								title: new FieldTypes.Text(),
-
 								promoted_until: new FieldTypes.ControlAccess(
 									new FieldTypes.Date(),
+
 									{
 										target_policies: {
 											show: new Policies.Public(),
 											edit: new Policies.Super(),
 										},
-										value_when_not_allowed: "",
+										value_when_not_allowed: "0",
 									}
 								),
-								is_promoted: new FieldTypes.DerivedValue(new FieldTypes.Boolean(), {
-									deriving_fn: async () => false,
-									fields: ["promoted_until"],
-								}),
+								is_promoted: new FieldTypes.DerivedValue(
+									new FieldTypes.Boolean(),
+									{
+										deriving_fn: async () => false,
+										fields: ["promoted_until"],
+									}
+								),
 							};
 						})(),
 					};
@@ -255,7 +313,9 @@ describe("derived-value", () => {
 					title: "title",
 				});
 				await entry.save(new app.SuperContext());
-				const newEntry = await app.collections.entries.suGetByID(entry.id);
+				const newEntry = await app.collections.entries.suGetByID(
+					entry.id
+				);
 				newEntry.set("promoted_until", "2022-12-21");
 				await newEntry.save(new app.SuperContext());
 				const {
@@ -275,11 +335,18 @@ describe("derived-value", () => {
 							fields = {
 								name: new FieldTypes.Text(),
 								surname: new FieldTypes.Text(),
-								full_name: new FieldTypes.DerivedValue(new FieldTypes.Text(), {
-									deriving_fn: async (_, __, name: string, surname: string) =>
-										name + " " + surname,
-									fields: ["name", "surname"],
-								}),
+								full_name: new FieldTypes.DerivedValue(
+									new FieldTypes.Text(),
+									{
+										deriving_fn: async (
+											_,
+											__,
+											name: string,
+											surname: string
+										) => name + " " + surname,
+										fields: ["name", "surname"],
+									}
+								),
 							};
 						})(),
 					};
@@ -313,10 +380,16 @@ describe("derived-value", () => {
 								name: new FieldTypes.Text(),
 								surname: new FieldTypes.Text(),
 								full_name: new FieldTypes.DerivedValue(
-									new FieldTypes.Text({ full_text_search: true }),
+									new FieldTypes.Text({
+										full_text_search: true,
+									}),
 									{
-										deriving_fn: async (_, __, name: string, surname: string) =>
-											name + " " + surname,
+										deriving_fn: async (
+											_,
+											__,
+											name: string,
+											surname: string
+										) => name + " " + surname,
 										fields: ["name", "surname"],
 									}
 								),
@@ -333,7 +406,10 @@ describe("derived-value", () => {
 					name: "Artur",
 					surname: "Makonia",
 				});
-				const { items } = await app.collections.entries.suList().search("makonia").fetch();
+				const { items } = await app.collections.entries
+					.suList()
+					.search("makonia")
+					.fetch();
 				assert.strictEqual(items.length, 1);
 				assert.strictEqual(items[0].get("full_name"), "Artur Makonia");
 			}
@@ -350,10 +426,16 @@ describe("derived-value", () => {
 								name: new FieldTypes.Text(),
 								surname: new FieldTypes.Text(),
 								full_name: new FieldTypes.DerivedValue(
-									new FieldTypes.Text({ full_text_search: true }),
+									new FieldTypes.Text({
+										full_text_search: true,
+									}),
 									{
-										deriving_fn: async (_, __, name: string, surname: string) =>
-											name + " " + surname,
+										deriving_fn: async (
+											_,
+											__,
+											name: string,
+											surname: string
+										) => name + " " + surname,
 										fields: ["name", "surname"],
 									}
 								),

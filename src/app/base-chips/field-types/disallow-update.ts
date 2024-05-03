@@ -1,7 +1,20 @@
 import { Field, Context } from "../../../main.js";
 import { HybridField } from "../../../chip-types/field.js";
 
-export default class DisallowUpdate<T extends Field> extends HybridField<T> {
+export default class DisallowUpdate<
+	DecodedType,
+	InputType,
+	StorageType,
+	T extends Field<DecodedType, InputType, StorageType>
+> extends HybridField<
+	DecodedType,
+	InputType,
+	StorageType,
+	DecodedType,
+	InputType,
+	StorageType,
+	T
+> {
 	typeName = "disallow-update";
 	async isProperValue(
 		context: Context,

@@ -7,7 +7,7 @@ export type UrlParams = Partial<{
 	allowed_protocols: string[];
 }>;
 
-export default class Url extends Field {
+export default class Url extends Field<string> {
 	typeName = "url";
 	params: UrlParams;
 

@@ -266,4 +266,41 @@ describe("CollectionItem", () => {
 				}
 			));
 	});
+
+	it("properly maps types for the fields", async () =>
+		withRunningApp(
+			(test_app) =>
+				class extends test_app {
+					collections = {
+						...App.BaseCollections,
+						entries: new (class extends Collection {
+							fields = {
+								number: new FieldTypes.Int(),
+								string: new FieldTypes.Text(),
+								required_number:
+									new FieldTypes.Int().setRequired(true),
+							};
+						})(),
+					};
+				},
+			async ({ app }) => {
+				let ala = await app.collections.entries.suCreate({
+					string: "text",
+					number: 123,
+					required_number: 2,
+				});
+
+				const {
+					items: [ala_result],
+				} = await app.collections.entries
+					.suList()
+					.ids([ala.id])
+					.fetch();
+
+				ala_result.get("string")?.padStart(0, "0");
+				ala_result.get("number")?.toExponential(2);
+				ala.get("number")?.toExponential(2);
+				ala.get("required_number").toExponential(2);
+			}
+		));
 });

@@ -4,7 +4,6 @@ import {
 	Predicate,
 	predicates,
 } from "@sealcode/ts-predicates";
-import type { InputType } from "zlib";
 import type { ActionName } from "../../../action.js";
 import { Field, Context, ValidationResult } from "../../../main.js";
 import { Insert } from "./array-actions/insert.js";

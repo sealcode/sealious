@@ -2,7 +2,7 @@ import { Field, Context } from "../../../main.js";
 
 import flattenObjectToDotNotation from "../../../utils/flatten-object-dot-notation.js";
 
-export default class JsonObject extends Field {
+export default class JsonObject extends Field<Record<string, unknown>> {
 	typeName = "json-object";
 
 	async isProperValue(context: Context, new_value: {}, __: {}) {

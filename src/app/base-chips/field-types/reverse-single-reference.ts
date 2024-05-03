@@ -12,7 +12,11 @@ class ListOfIDs extends Field<[]> {
 	}
 }
 
-export default class ReverseSingleReference extends CachedValue<ListOfIDs> {
+export default class ReverseSingleReference extends CachedValue<
+	string[],
+	string[],
+	ListOfIDs
+> {
 	typeName = "reverse-single-refernce";
 	referencing_field: string;
 	referencing_collection: string;

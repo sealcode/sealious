@@ -6,18 +6,14 @@ import {
 	Policies,
 	Context,
 	ActionName,
-	Field,
 } from "../../main.js";
 import { BadContext } from "../../response/errors.js";
 import SecureHasher from "../../utils/secure-hasher.js";
 
 export default class Users extends Collection {
-	fields = {
+	fields = <const>{
 		username: new FieldTypes.Username(),
 		password: new FieldTypes.Password(),
-	} as {
-		username: Field;
-		password: Field;
 	};
 
 	defaultPolicy: Policy = new Policies.Themselves();

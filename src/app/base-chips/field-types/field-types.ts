@@ -27,7 +27,7 @@ export { default as Text } from "./text.js";
 export { default as Username } from "./username.js";
 export { default as ValueNotExistingInCollection } from "./value-not-existing-in-collection.js";
 export { default as ValueExistingInCollection } from "./value-existing-in-collection.js";
-export { default as FileID } from "./file-id.js";
+// export { default as FileID } from "./file-id.js";
 export { default as Required } from "./required.js";
 export { default as Url } from "./url.js";
 export { default as Money } from "./money.js";

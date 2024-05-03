@@ -1,7 +1,7 @@
 import type { Context } from "../../../main.js";
 import Float from "./float.js";
 
-export default class Money extends Float {
+export default class Money extends Float<number | string> {
 	typeName = "money";
 
 	async decode(

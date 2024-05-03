@@ -6,8 +6,12 @@ import humanComparatorToQuery, {
 	HumanComparator,
 } from "../../../utils/human-comparator-to-query.js";
 
-/** Stores a floating point number. DOes not take params. Does not allow range filtering. @todo: add range filtering */
-export default class Float extends Field {
+/** Stores a floating point number. Does not take params. Does not allow range filtering. @todo: add range filtering */
+export default class Float<Decoded = number> extends Field<
+	Decoded,
+	string | number,
+	number
+> {
 	typeName = "float";
 	async isProperValue(
 		context: Context,

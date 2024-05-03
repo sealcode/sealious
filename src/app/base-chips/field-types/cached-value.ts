@@ -5,7 +5,7 @@ import type {
 	ValidationResult,
 	Collection,
 	CollectionItem,
-	GetInputType,
+	ExtractFieldInput,
 } from "../../../main.js";
 import ItemList from "../../../chip-types/item-list.js";
 import { BadContext } from "../../../response/errors.js";
@@ -18,29 +18,48 @@ import {
 } from "../../event-description.js";
 import DerivedValue from "./derived-value.js";
 
-type GetValue<T extends Field> = (
+type GetValue<DecodedValue> = (
 	context: Context,
 	item: CollectionItem
-) => Promise<Parameters<T["decode"]>[1]>;
+) => Promise<DecodedValue>;
 
-type CachedValueSettings<T extends Field> = {
+type CachedValueSettings<InputType, DecodedType> = {
 	refresh_on: RefreshCondition[];
-	get_value: GetValue<T>;
-	initial_value: GetInputType<T>;
+	get_value: GetValue<DecodedType>;
+	initial_value: InputType | null;
 	derive_from?: string[];
 };
 
-export default class CachedValue<T extends Field> extends HybridField<T> {
+export default class CachedValue<
+	DecodedType,
+	StorageType,
+	T extends Field<any, any, any>
+> extends HybridField<
+	DecodedType,
+	ExtractFieldInput<T>,
+	{ timestamp: number; value: StorageType },
+	DecodedType,
+	ExtractFieldInput<T>,
+	StorageType,
+	T
+> {
 	typeName = "cached-value";
 
 	app: App;
 	refresh_on: RefreshCondition[];
-	get_value: GetValue<T>;
+	get_value: GetValue<DecodedType>;
 	hasDefaultValue: () => true;
-	private initial_value: GetInputType<T>;
-	private virtual_derived: DerivedValue<T> | null = null; // sometimes it's necessary to have a field react to both the changes in local fields, as well as changes in cron/another collection
+	private initial_value: ExtractFieldInput<T> | null;
+	private virtual_derived: DerivedValue<
+		DecodedType,
+		ExtractFieldInput<T>,
+		T
+	> | null = null; // sometimes it's necessary to have a field react to both the changes in local fields, as well as changes in cron/another collection
 
-	constructor(base_field: T, public params: CachedValueSettings<T>) {
+	constructor(
+		base_field: T,
+		public params: CachedValueSettings<ExtractFieldInput<T>, DecodedType>
+	) {
 		super(base_field);
 		super.setParams(params);
 		this.refresh_on = params.refresh_on;
@@ -193,7 +212,7 @@ export default class CachedValue<T extends Field> extends HybridField<T> {
 			.fetch();
 		for (const item of items) {
 			const value = await this.get_value(su_context, item);
-			const cache_value = await this.encode(su_context, value);
+			const cache_value = await this.encode(su_context, value as any);
 			this.app.Logger.debug3(
 				"CACHED",
 				`New value for item ${item.id}.${this.name}`,
@@ -211,20 +230,20 @@ export default class CachedValue<T extends Field> extends HybridField<T> {
 		return this.initial_value;
 	}
 
-	async encode(context: Context, new_value: GetInputType<T>) {
+	async encode(context: Context, new_value: ExtractFieldInput<T>) {
 		const encoded_value = await super.encode(context, new_value);
 		const ret = { timestamp: Date.now(), value: encoded_value };
 		context.app.Logger.debug3("CACHED VALUE", "Encode", { new_value, ret });
-		return ret;
+		return ret as any;
 	}
 
 	async decode(
 		context: Context,
-		db_value: { timestamp: number; value: any },
+		db_value: { timestamp: number; value: StorageType },
 		old_value: any,
 		format: any
 	) {
-		return super.decode(context, db_value.value, old_value, format);
+		return super.decode(context, db_value.value as any, old_value, format);
 	}
 
 	async isProperValue(

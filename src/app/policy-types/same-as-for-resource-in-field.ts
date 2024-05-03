@@ -52,7 +52,7 @@ export default class SameAsForResourceInField extends Policy {
 		);
 	}
 
-	getField(context: Context): Field {
+	getField(context: Context): Field<unknown> {
 		const collection = this.getCollection(context.app);
 		const ret = collection.fields[this.field];
 		if (!ret) {

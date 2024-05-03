@@ -17,7 +17,7 @@ import { FilePointer } from "@sealcode/file-manager";
 const locreq = _locreq(module_dirname(import.meta.url));
 
 function extend(t: TestAppConstructor<TestApp>) {
-	class ArrayOfObjects extends Field {
+	class ArrayOfObjects extends Field<Array<Record<string, unknown>>> {
 		typeName = "array-of-objects";
 		async isProperValue(_: any, new_value: any) {
 			if (!Array.isArray(new_value)) {

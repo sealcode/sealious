@@ -1,4 +1,5 @@
 import EventEmitter from "events";
+
 import type LongRunningProcessEvents from "../app/collections/long-running-process-events.js";
 import type LongRunningProcesses from "../app/collections/long-running-processes.js";
 import type { CollectionInput, CollectionItem, Context } from "../main.js";
@@ -140,13 +141,15 @@ export class LongRunningProcess<
 		}
 		const events = lrp_item
 			.getAttachments("events")
-			.map((e) => ({
+			.map((e: CollectionItem<LongRunningProcessEvents>) => ({
 				type: e.get("type"),
 				message: e.get("message"),
-				timestamp: e.get("timestamp"),
+				timestamp: e.get("timestamp") as number,
 				progress: e.get("progress"),
 			}))
-			.sort((e1, e2) => (e1.timestamp > e2.timestamp ? 1 : -1));
+			.sort(({ timestamp: t1 }, { timestamp: t2 }) =>
+				!t1 || !t2 ? 0 : t1 > t2 ? 1 : -1
+			);
 		const latestEvent = events[events.length - 1];
 		return {
 			emitter: this.registry[lrp_item.id] || null,

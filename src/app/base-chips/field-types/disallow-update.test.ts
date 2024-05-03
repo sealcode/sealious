@@ -16,7 +16,7 @@ import { TestApp } from "../../../test_utils/test-app.js";
 
 const url = "/api/v1/collections/constseals";
 
-class NullOrFive extends Field {
+class NullOrFive extends Field<number> {
 	typeName = "null-or-five";
 	async isProperValue(_: Context, new_value: any, __: any) {
 		if (new_value === null || new_value === 5) {

@@ -1,11 +1,10 @@
-import { hasShape, is, predicates } from "@sealcode/ts-predicates";
-import type { ValidationResult } from "../../../chip-types/field.js";
+import { predicates } from "@sealcode/ts-predicates";
 import type Field from "../../../chip-types/field.js";
 import { Context, Fieldset, FieldsetInput } from "../../../main.js";
 import { ArrayStorage } from "./array-storage.js";
 
 export class StructuredArray<
-	Subfields extends Record<string, Field>
+	Subfields extends Record<string, Field<any>>
 > extends ArrayStorage<FieldsetInput<Subfields>> {
 	typeName = "structured-array";
 	constructor(public subfields: Subfields) {

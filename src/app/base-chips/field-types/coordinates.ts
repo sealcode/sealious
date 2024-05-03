@@ -13,7 +13,11 @@ type GeoJSONPoint = { type: "Point"; coordinates: number[] };
  * **Accepted values**: strings (i.g. "12.12421,65.21312") tuple (i.g. `[12.12421, 65.21312]`) or object (i.g. `{lat: 12.12421, lon: 65.21312})`
  */
 
-export default class Coordinates extends Field {
+export default class Coordinates extends Field<
+	CoordinatesFieldInputType,
+	CoordinatesFieldInputType,
+	GeoJSONPoint
+> {
 	typeName = "coordinates";
 
 	async isProperValue(
@@ -38,10 +42,7 @@ export default class Coordinates extends Field {
 	async encode(
 		_: Context,
 		value: CoordinatesFieldInputType
-	): Promise<{
-		type: string;
-		coordinates: number[];
-	}> {
+	): Promise<GeoJSONPoint> {
 		if (typeof value === "string") {
 			const coords = value.split(",").map(parseFloat);
 			return {

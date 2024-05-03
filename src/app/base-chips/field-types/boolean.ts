@@ -8,7 +8,7 @@ type InputType = boolean | "false" | "true" | "1" | "0" | 1 | 0;
  *
  * **Accepted values**: accepts actual booleans, strings (`"true"`, `"false"`) and the numbers `1` and `0`
  */
-export default class Boolean extends Field {
+export default class Boolean extends Field<boolean, InputType> {
 	typeName = "boolean";
 	async isProperValue(ctx: Context, value: InputType) {
 		if (typeof value === "boolean") {
@@ -29,7 +29,7 @@ export default class Boolean extends Field {
 		return Field.invalid(ctx.app.i18n("invalid_boolean", [value]));
 	}
 
-	async encode(_: Context, value: InputType) {
+	async encode(_: Context, value: InputType | null) {
 		if (value === null) {
 			return null;
 		} else if (typeof value === "boolean") {
