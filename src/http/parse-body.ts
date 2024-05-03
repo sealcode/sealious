@@ -7,6 +7,10 @@ import qs from "qs";
 export default function parseBody(file_manager?: FileManager): Middleware {
 	const koaParser = koaBody({ multipart: true });
 	return async (ctx, next) => {
+		if (ctx.$body) {
+			//already parsed, continue;
+			return next();
+		}
 		if (!file_manager) {
 			// we use it as an argument to be able to use this middleware sometimes without a Sealious App
 			file_manager = ctx.$app.FileManager;

@@ -220,4 +220,55 @@ PNG
 			assert(received_body.photo.new[0] instanceof FilePointer);
 		});
 	});
+
+	it("handles gracefully a case where parseBody is called twice", async () => {
+		await withRunningApp(extend, async ({ port, app }) => {
+			const file = app.FileManager.fromPath(
+				locreq.resolve("src/assets/logo.png")
+			);
+
+			let received_body: any;
+			const TEST_PATH = "/for-testing-purposes";
+			app.HTTPServer.router.post(
+				TEST_PATH,
+				parseBody(), // important! used twice for tests. Do not remove.
+				parseBody(),
+				(ctx) => {
+					received_body = ctx.$body;
+					ctx.body = "{}";
+					ctx.status = 200;
+				}
+			);
+
+			const token = await file.save(false);
+			// PNG file is empty but it doesnt matter for the test
+			const form_data =
+				`-----------------------------12598523621949976270510557487
+Content-Disposition: form-data; name="photo[old]"
+
+${token}
+-----------------------------12598523621949976270510557487
+Content-Disposition: form-data; name="photo[new]"; filename="Screenshot from 2024-04-23 14-48-34.png"
+Content-Type: image/png
+
+PNG
+-----------------------------12598523621949976270510557487--
+
+`.replaceAll(/\n/g, "\r\n");
+
+			await fetch(`http://localhost:${port}${TEST_PATH}`, {
+				credentials: "include",
+				headers: {
+					"Content-Type":
+						"multipart/form-data; boundary=---------------------------12598523621949976270510557487",
+				},
+				body: form_data,
+				method: "POST",
+				mode: "cors",
+			});
+
+			assert(received_body.photo.old instanceof FilePointer);
+			assert(received_body.photo.new[0] instanceof FilePointer);
+		});
+	});
 });
