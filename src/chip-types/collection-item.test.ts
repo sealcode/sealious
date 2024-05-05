@@ -279,6 +279,9 @@ describe("CollectionItem", () => {
 								string: new FieldTypes.Text(),
 								required_number:
 									new FieldTypes.Int().setRequired(true),
+								markdown: new FieldTypes.Markdown().setRequired(
+									true
+								),
 							};
 						})(),
 					};
@@ -288,6 +291,7 @@ describe("CollectionItem", () => {
 					string: "text",
 					number: 123,
 					required_number: 2,
+					markdown: "**hehe**",
 				});
 
 				const {
@@ -301,6 +305,7 @@ describe("CollectionItem", () => {
 				ala_result.get("number")?.toExponential(2);
 				ala.get("number")?.toExponential(2);
 				ala.get("required_number").toExponential(2);
+				ala.get("markdown").padStart(10);
 			}
 		));
 });

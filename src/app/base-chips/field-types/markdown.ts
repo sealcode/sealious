@@ -5,7 +5,7 @@ import { Field, type Context, type ValidationResult } from "../../../main.js";
 const parser = new Parser();
 const renderer = new HtmlRenderer();
 
-export default class Markdown extends Field<string | null> {
+export default class Markdown extends Field<string> {
 	typeName = "markdown";
 
 	constructor() {
