@@ -39,4 +39,4 @@ export default function humanComparatorToQuery(
 	return human_comparators_to_query[comparator];
 }
 
-export type ComparatorObject<T> = { [key in HumanComparator]: T };
+export type ComparatorObject<T> = Partial<{ [key in HumanComparator]: T }>;

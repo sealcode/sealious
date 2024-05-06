@@ -37,6 +37,9 @@ export default class Float<Decoded = number> extends Field<
 		// treating filter as a query here
 		const new_filter: { [db_comp in DBComparator]?: number } = {};
 		for (const comparator in field_filter) {
+			if (!comparator) {
+				continue;
+			}
 			const new_comparator = humanComparatorToQuery(
 				comparator as HumanComparator
 			);
@@ -45,9 +48,12 @@ export default class Float<Decoded = number> extends Field<
 					`Unknown comparator: '${comparator}'.`
 				);
 			}
-			new_filter[new_comparator] = parseFloat(
-				field_filter[comparator as HumanComparator].toString()
-			);
+			const value =
+				field_filter[comparator as HumanComparator]?.toString();
+			if (value === undefined) {
+				continue;
+			}
+			new_filter[new_comparator] = parseInt(value, 10);
 		}
 		return new_filter;
 	}

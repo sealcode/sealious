@@ -1,5 +1,6 @@
-import { strictEqual, deepStrictEqual } from "assert";
-import { App, Collection, FieldTypes } from "../main.js";
+import assert, { strictEqual, deepStrictEqual } from "assert";
+import Int from "../app/base-chips/field-types/int.js";
+import { App, Collection, FieldTypes, Query } from "../main.js";
 import { sleep } from "../test_utils/sleep.js";
 import { withRunningApp } from "../test_utils/with-test-app.js";
 
@@ -87,6 +88,45 @@ describe("ItemList", () => {
 					"15",
 					"older",
 				]);
+			}
+		));
+
+	it("allows to add a custom aggregation stage", async () =>
+		withRunningApp(
+			(test_app) =>
+				class extends test_app {
+					collections = {
+						...App.BaseCollections,
+						entries: new (class extends Collection {
+							fields = {
+								number: new Int(),
+							};
+						})(),
+					};
+				},
+			async ({ app }) => {
+				await app.collections.entries.suCreate({
+					number: 15,
+				});
+				await app.collections.entries.suCreate({
+					number: 16,
+				});
+				await app.collections.entries.suCreate({
+					number: 17,
+				});
+				const result = (
+					await app.collections.entries
+						.suList()
+						.filter({ number: { ">": 15 } })
+						.addCustomAggregationStages(
+							Query.fromSingleMatch({
+								number: { $gt: 16 },
+							}).toPipeline()
+						)
+						.fetch()
+				).serialize();
+				assert.deepStrictEqual(result.items.length, 1);
+				assert.deepStrictEqual(result.items[0].number, 17);
 			}
 		));
 });

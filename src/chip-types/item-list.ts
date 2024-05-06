@@ -398,6 +398,11 @@ export default class ItemList<T extends Collection> {
 		// prettier-ignore
 		return [ {$skip}, {$limit} ];
 	}
+
+	addCustomAggregationStages(stages: QueryStage[]) {
+		this.aggregation_stages.push(...stages);
+		return this;
+	}
 }
 
 export class ItemListResult<T extends Collection> {

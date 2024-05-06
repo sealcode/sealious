@@ -53,6 +53,9 @@ export default class DateField extends Field<string, string | number, number> {
 		// treating filter as a query here
 		const new_filter: { [comparator in DBComparator]?: number } = {};
 		for (const comparator in field_filter as ComparatorObject<string>) {
+			if (!comparator) {
+				continue;
+			}
 			const new_comparator = humanComparatorToQuery(
 				comparator as HumanComparator
 			);
@@ -61,9 +64,12 @@ export default class DateField extends Field<string, string | number, number> {
 					`Unknown comparator: '${comparator}'.`
 				);
 			}
-			new_filter[new_comparator] = dateStrToDayInt(
-				field_filter[comparator as HumanComparator]
-			);
+			const value =
+				field_filter[comparator as HumanComparator]?.toString();
+			if (value === undefined) {
+				continue;
+			}
+			new_filter[new_comparator] = parseInt(value, 10);
 		}
 		return new_filter;
 	}
