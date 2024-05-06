@@ -18,6 +18,7 @@ export { default as JsonObject } from "./json-object.js";
 export { default as JDD } from "./jdd.js";
 export { default as Password } from "./password.js";
 export { default as ReverseSingleReference } from "./reverse-single-reference.js";
+export { DeepReverseSingleReference } from "./deep-reverse-single-reference.js";
 export { default as SecretToken } from "./secret-token.js";
 export { default as SessionID } from "./session-id.js";
 export { default as SettableBy } from "./settable-by.js";
