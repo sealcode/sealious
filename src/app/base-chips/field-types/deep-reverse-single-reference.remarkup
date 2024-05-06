@@ -1,0 +1,72 @@
+# Deep Reverse Single Reference
+
+This field will store a list of ids of a collection referenced in an
+intermediary collection, often used for n-to-n relations.
+
+Say you have collections like so:
+
+```
+articles: new (class extends Collection {
+    fields = {
+        title: new Text(),
+    };
+})(),
+
+categories: new (class extends Collection {
+    fields = {
+        name: new Text(),
+    };
+})(),
+
+article_category: new (class extends Collection {
+    fields = {
+        article: new SingleReference("articles"),
+        category: new SingleReference("categories"),
+    };
+})(),
+```
+
+
+The `article_category` collection connects `articles` and `categories` in a way
+that lets you have every connection assigned to any amount of articles, and any
+article to any amount of categories (n-to-n).
+
+Now, we can add a field to `articles` that will list the ids of categories
+assigned to that article:
+
+```
+articles: new (class extends Collection {
+    fields = {
+        title: new Text(),
+        categories: new DeepReverseSingleReference({
+            intermediary_collection: "article_category",
+            intermediary_field_that_points_here:
+                "article",
+            intermediary_field_that_points_there:
+                "category",
+            target_collection: "categories",
+        }),
+    };
+})(),
+```
+
+Now, when you add a category-article binding to the `article_category`
+collection, the `categories` field in `articles` will automatically update and
+contain a list of all categories that are assigned to the articles.
+
+
+## Constructor params
+
+Assuming you have A and B collections with n-to-n relation:
+
+
+```
+// .. in collection A 
+
+new DeepReverseSingleReference({
+    intermediary_collection: "a_to_b", // the collection that stores the links between colllection A and B
+    intermediary_field_that_points_here: "a", // which field in intermediary collection points to collection A 
+    intermediary_field_that_points_there: "b", // which field in intermediary collection points to collection b
+    target_collection: "b", // the target collection
+}),
+```

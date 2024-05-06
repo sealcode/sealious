@@ -196,11 +196,22 @@ export default abstract class Collection {
 		return ret;
 	}
 
-	async suRemoveByID(id: string): Promise<void> {
-		await this.removeByID(new this.app.SuperContext(), id);
+	async suRemoveByID(
+		id: string,
+		wait_for_after_events = true
+	): Promise<void> {
+		await this.removeByID(
+			new this.app.SuperContext(),
+			id,
+			wait_for_after_events
+		);
 	}
 
-	async removeByID(context: Context, id: string): Promise<void> {
+	async removeByID(
+		context: Context,
+		id: string,
+		wait_for_after_events = true
+	): Promise<void> {
 		const item =
 			this.emitter.listenerCount("before:remove") ||
 			this.emitter.listenerCount("after:remove")
@@ -217,7 +228,12 @@ export default abstract class Collection {
 		}
 		await context.app.Datastore.remove(this.name, { id: id }, true);
 		if (this.emitter.listenerCount("after:remove")) {
-			void this.emit("after:remove", [context, item]);
+			const promise = this.emit("after:remove", [context, item]);
+			if (wait_for_after_events) {
+				await promise;
+			} else {
+				void promise;
+			}
 		}
 	}
 

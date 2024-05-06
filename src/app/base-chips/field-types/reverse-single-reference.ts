@@ -3,7 +3,7 @@ import ItemList, { AttachmentOptions } from "../../../chip-types/item-list.js";
 import { CachedValue } from "./field-types.js";
 import { CollectionRefreshCondition } from "../../event-description.js";
 
-class ListOfIDs extends Field<[]> {
+export class ListOfIDs extends Field<[]> {
 	typeName = "list-of-ids";
 	async isProperValue(context: Context) {
 		return context.is_super
@@ -17,7 +17,7 @@ export default class ReverseSingleReference extends CachedValue<
 	string[],
 	ListOfIDs
 > {
-	typeName = "reverse-single-refernce";
+	typeName = "reverse-single-reference";
 	referencing_field: string;
 	referencing_collection: string;
 
@@ -50,11 +50,12 @@ export default class ReverseSingleReference extends CachedValue<
 							"REVERSE SINGLE REFERENCE",
 							"handling the after:remove event"
 						);
-						const deleted_id = item.id;
+						const search_value =
+							this.getValueFromReferencingCollection(item);
 						const affected = await this.app.Datastore.find(
 							this.collection.name,
 							{
-								[await this.getValuePath()]: deleted_id,
+								[await this.getValuePath()]: search_value,
 							}
 						);
 						const ret = affected.map(
@@ -112,30 +113,31 @@ export default class ReverseSingleReference extends CachedValue<
 					}
 				),
 			],
-			get_value: async (context: Context, item: CollectionItem) => {
-				context.app.Logger.debug2(
-					"REVERSE SINGLE REFERENCE",
-					"get_value",
-					{ affected_id: item.id }
-				);
-				const list = await new ItemList(
-					this.getReferencingCollection(),
-					context
-				)
-					.filter({ [this.referencing_field]: item.id })
-					.fetch();
-				const ret = list.items.map((item) => item.id);
-				context.app.Logger.debug2(
-					"REVERSE SINGLE REFERENCE",
-					"get_value",
-					{ affected_id: item.id, ret }
-				);
-				return ret;
+			get_value: (context: Context, item: CollectionItem) => {
+				return this.getValueOnChange(context, item);
 			},
 			initial_value: [],
 		});
 		this.referencing_field = params.referencing_field;
 		this.referencing_collection = params.referencing_collection;
+	}
+
+	async getValueOnChange(context: Context, item: CollectionItem) {
+		context.app.Logger.debug2("REVERSE SINGLE REFERENCE", "get_value", {
+			affected_id: item.id,
+		});
+		const list = await new ItemList(
+			this.getReferencingCollection(),
+			context
+		)
+			.filter({ [this.referencing_field]: item.id })
+			.fetch();
+		const ret = list.items.map((item) => item.id);
+		context.app.Logger.debug2("REVERSE SINGLE REFERENCE", "get_value", {
+			affected_id: item.id,
+			ret,
+		});
+		return ret;
 	}
 
 	getReferencingCollection() {
@@ -196,5 +198,11 @@ export default class ReverseSingleReference extends CachedValue<
 			ret.attach(attachment_options);
 		}
 		return ret.fetch();
+	}
+
+	getValueFromReferencingCollection(item: CollectionItem) {
+		// this returns what need to be stored as one of the values in the array
+		// that becomes this field's value
+		return item.id;
 	}
 }
