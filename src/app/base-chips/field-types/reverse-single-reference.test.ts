@@ -16,6 +16,10 @@ import {
 	withRunningApp,
 } from "../../../test_utils/with-test-app.js";
 
+import _locreq from "locreq";
+import { module_dirname } from "../../../utils/module_filename.js";
+const locreq = _locreq(module_dirname(import.meta.url));
+
 const extend = (with_reverse = true, clear_database = true) =>
 	function (t: TestAppConstructor) {
 		const b_fields: { [name: string]: Field<unknown> } = {
@@ -350,4 +354,55 @@ describe("reverse-single-reference", () => {
 				);
 			}
 		));
+
+	it("handles formatting of the referenced collection", async () => {
+		return withRunningApp(
+			(t) =>
+				class extends t {
+					collections = {
+						...TestApp.BaseCollections,
+						dogs: new (class extends Collection {
+							fields = {
+								name: new FieldTypes.Text(),
+								photos: new FieldTypes.ReverseSingleReference({
+									referencing_collection: "dog_photos",
+									referencing_field: "dog",
+								}),
+							};
+						})(),
+						dog_photos: new (class extends Collection {
+							fields = {
+								dog: new FieldTypes.SingleReference("dogs"),
+								photo: new FieldTypes.Image(),
+							};
+						})(),
+					};
+				},
+			async ({ app }) => {
+				let leon = await app.collections.dogs.suCreate({
+					name: "Leon",
+				});
+				await app.collections.dog_photos.suCreate({
+					dog: leon.id,
+					photo: app.FileManager.fromPath(
+						locreq.resolve(
+							"src/app/base-chips/field-types/default-image.jpg"
+						)
+					),
+				});
+				leon = (
+					await app.collections.dogs
+						.suList()
+						.ids([leon.id])
+						.format({ photos: { photo: "url" } })
+						.attach({ photos: true })
+						.fetch()
+				).items[0];
+				assert.strictEqual(
+					typeof leon.getAttachments("photos")[0].get("photo"),
+					"string"
+				);
+			}
+		);
+	});
 });

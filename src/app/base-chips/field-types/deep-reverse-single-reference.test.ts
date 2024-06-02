@@ -1,10 +1,14 @@
 import assert from "assert";
-import { Collection } from "../../../main.js";
+import { Collection, FieldTypes } from "../../../main.js";
 import { TestApp } from "../../../test_utils/test-app.js";
 import { withRunningApp } from "../../../test_utils/with-test-app.js";
 import { DeepReverseSingleReference } from "./deep-reverse-single-reference.js";
 import SingleReference from "./single-reference.js";
 import Text from "./text.js";
+
+import _locreq from "locreq";
+import { module_dirname } from "../../../utils/module_filename.js";
+const locreq = _locreq(module_dirname(import.meta.url));
 
 describe("deep-reverse-single-reference", () => {
 	it("adds ids in an n-to-n collection scenario", () =>
@@ -69,4 +73,69 @@ describe("deep-reverse-single-reference", () => {
 				assert.deepStrictEqual(article_tris.get("categories"), []);
 			}
 		));
+
+	it("handles formatting of the referenced collection", async () => {
+		return withRunningApp(
+			(t) =>
+				class extends t {
+					collections = {
+						...TestApp.BaseCollections,
+						dogs: new (class extends Collection {
+							fields = {
+								name: new FieldTypes.Text(),
+								photos: new FieldTypes.DeepReverseSingleReference(
+									{
+										intermediary_collection: "dog_to_photo",
+										intermediary_field_that_points_here:
+											"dog",
+										intermediary_field_that_points_there:
+											"photo",
+										target_collection: "photos",
+									}
+								),
+							};
+						})(),
+						dog_to_photo: new (class extends Collection {
+							fields = {
+								dog: new FieldTypes.SingleReference("dogs"),
+								photo: new FieldTypes.SingleReference("photos"),
+							};
+						})(),
+						photos: new (class extends Collection {
+							fields = {
+								photo: new FieldTypes.Image(),
+							};
+						})(),
+					};
+				},
+			async ({ app }) => {
+				let leon = await app.collections.dogs.suCreate({
+					name: "Leon",
+				});
+				let photo = await app.collections.photos.suCreate({
+					photo: app.FileManager.fromPath(
+						locreq.resolve(
+							"src/app/base-chips/field-types/default-image.jpg"
+						)
+					),
+				});
+				await app.collections.dog_to_photo.suCreate({
+					dog: leon.id,
+					photo: photo.id,
+				});
+				leon = (
+					await app.collections.dogs
+						.suList()
+						.ids([leon.id])
+						.format({ photos: { photo: "url" } })
+						.attach({ photos: true })
+						.fetch()
+				).items[0];
+				assert.strictEqual(
+					typeof leon.getAttachments("photos")[0].get("photo"),
+					"string"
+				);
+			}
+		);
+	});
 });

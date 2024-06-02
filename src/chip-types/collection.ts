@@ -359,7 +359,12 @@ export default abstract class Collection {
 				.ids([ctx.params.id])
 				.safeFormat(ctx.query.format)
 				.fetch();
-			await ret.safeLoadAttachments(ctx.$context, ctx.query.attachments);
+			const format = ctx.query.format;
+			await ret.safeLoadAttachments(
+				ctx.$context,
+				ctx.query.attachments,
+				typeof format == "object" && format ? format : {}
+			);
 			ctx.body = ret.serialize();
 		});
 

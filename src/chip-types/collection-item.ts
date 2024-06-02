@@ -343,7 +343,11 @@ export default class CollectionItem<T extends Collection = any> {
 		} & FieldsetOutput<T["fields"]>;
 	}
 
-	async safeLoadAttachments(context: Context, attachment_options: unknown) {
+	async safeLoadAttachments(
+		context: Context,
+		attachment_options: unknown,
+		format: Parameters<Fieldset<T["fields"]>["decode"]>[1]
+	) {
 		if (attachment_options === undefined) {
 			attachment_options = {};
 		}
@@ -363,13 +367,15 @@ export default class CollectionItem<T extends Collection = any> {
 		}
 		return this.loadAttachments(
 			context,
-			attachment_options as AttachmentOptions<T>
+			attachment_options as AttachmentOptions<T>,
+			format
 		);
 	}
 
 	async loadAttachments(
 		context: Context,
-		attachment_options: AttachmentOptions<T> = {}
+		attachment_options: AttachmentOptions<T> = {},
+		format: Parameters<Fieldset<T["fields"]>["decode"]>[1]
 	): Promise<this> {
 		// TODO: This function is kinda like a duplicate of `fetchAttachments` from ItemList?
 		if (this.attachments_loaded) {
@@ -387,7 +393,8 @@ export default class CollectionItem<T extends Collection = any> {
 								field.name as Fieldnames<typeof this.collection>
 							),
 						],
-						attachment_options[field.name as keyof T["fields"]]
+						attachment_options[field.name as keyof T["fields"]],
+						(format || {})[field.name] || null
 					)
 					.then((attachmentsList) => {
 						if (!attachmentsList.empty) {

@@ -257,7 +257,8 @@ export default class ItemList<T extends Collection> {
 						),
 						this._attachments_options[
 							field_name as keyof T["fields"]
-						]
+						],
+						this._format?.[field_name]
 					)
 					.then((attachmentsList) => {
 						attachments = {
