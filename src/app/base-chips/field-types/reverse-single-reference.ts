@@ -179,7 +179,8 @@ export default class ReverseSingleReference extends CachedValue<
 	async getAttachments(
 		context: Context,
 		target_id_lists: string[][],
-		attachment_options?: AttachmentOptions<any>
+		attachment_options?: AttachmentOptions<any>,
+		format: any = {}
 	) {
 		context.app.Logger.debug2(
 			"REVERSE SINGLE REFERENCE",
@@ -194,9 +195,13 @@ export default class ReverseSingleReference extends CachedValue<
 			this.getReferencingCollection(),
 			context
 		).ids(merged_ids);
+		if (format) {
+			ret.format(format);
+		}
 		if (typeof attachment_options === "object") {
 			ret.attach(attachment_options);
 		}
+
 		return ret.fetch();
 	}
 

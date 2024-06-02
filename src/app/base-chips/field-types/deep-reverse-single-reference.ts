@@ -68,7 +68,8 @@ export class DeepReverseSingleReference extends ReverseSingleReference {
 	async getAttachments(
 		context: Context,
 		target_id_lists: string[][],
-		attachment_options?: AttachmentOptions<any>
+		attachment_options?: AttachmentOptions<any>,
+		format: any = {}
 	) {
 		context.app.Logger.debug2(
 			"DEEP REVERSE SINGLE REFERENCE",
@@ -82,6 +83,9 @@ export class DeepReverseSingleReference extends ReverseSingleReference {
 		const ret = new ItemList<any>(this.getTargetCollection(), context).ids(
 			merged_ids
 		);
+		if (format) {
+			ret.format(format);
+		}
 		if (typeof attachment_options === "object") {
 			ret.attach(attachment_options);
 		}

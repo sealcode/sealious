@@ -91,12 +91,14 @@ export default abstract class HybridField<
 	async getAttachments(
 		context: Context,
 		values: any[],
-		attachment_options: any
+		attachment_options: any,
+		format: Parameters<T["decode"]>[3]
 	): Promise<ItemListResult<any>> {
 		return this.virtual_field.getAttachments(
 			context,
 			values,
-			attachment_options
+			attachment_options,
+			format
 		);
 	}
 

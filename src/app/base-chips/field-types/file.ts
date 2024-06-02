@@ -77,7 +77,7 @@ export default class FileField extends FileStorage {
 		db_value: string | null,
 		__: any,
 		format?: "url" | "file",
-		is_http_api_request: boolean = false
+		is_http_api_request = false
 	) {
 		if (db_value === null) {
 			return null;

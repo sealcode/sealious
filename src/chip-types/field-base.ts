@@ -259,7 +259,8 @@ export abstract class Field<
 	async getAttachments(
 		context: Context,
 		values: any[], // this method gets called once for multiple resources, to limit the number of queries. Field values of all the resources are passed in this array
-		attachment_options: any
+		attachment_options: any,
+		format_params: any
 	): Promise<ItemListResult<any>> {
 		if (attachment_options !== undefined) {
 			throw new BadSubjectAction(
