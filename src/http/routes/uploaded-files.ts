@@ -9,6 +9,7 @@ uploaded_files.get("/:bucket/:filename", async (ctx) => {
 		)
 	);
 	ctx.body = file.getStream();
+	ctx.type = file.mimetype;
 	// removing this as it only created trouble and you can declare download
 	// target in html <a> element, anyway
 

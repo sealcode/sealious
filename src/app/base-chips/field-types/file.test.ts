@@ -3,6 +3,7 @@ import assert from "assert";
 import _locreq from "locreq";
 import Collection from "../../../chip-types/collection.js";
 import Context, { SuperContext } from "../../../context.js";
+import { FieldTypes } from "../../../main.js";
 import { TestApp } from "../../../test_utils/test-app.js";
 import { withRunningApp } from "../../../test_utils/with-test-app.js";
 import { module_dirname } from "../../../utils/module_filename.js";
@@ -117,5 +118,45 @@ describe("file", () => {
 				await rest_api.get(item.get("file") as string);
 			}
 		);
+	});
+
+	describe("uploaded_files endpoint", () => {
+		it("adds mimetype to the uploaded files", async () => {
+			return withRunningApp(
+				(t) =>
+					class extends t {
+						collections = {
+							...TestApp.BaseCollections,
+							photos: new (class extends Collection {
+								fields = {
+									photo: new FieldTypes.Image(),
+								};
+							})(),
+						};
+					},
+				async ({ app }) => {
+					await app.collections.photos.suCreate({
+						photo: app.FileManager.fromPath(
+							locreq.resolve(
+								"src/app/base-chips/field-types/default-image.jpg"
+							)
+						),
+					});
+					const photo2 = (
+						await app.collections.photos
+							.suList()
+							.format({ photo: "url" })
+							.fetch()
+					).items[0];
+					const url = photo2.get("photo");
+					assert.strictEqual(typeof url, "string");
+					const response = await fetch(url as string);
+					assert.equal(
+						response.headers.get("content-type"),
+						"image/jpeg"
+					);
+				}
+			);
+		});
 	});
 });
