@@ -26,7 +26,7 @@ export type ArrayStorageInput<ContentType> =
 
 export abstract class ArrayStorage<
 	T extends string | number | Record<string, unknown>
-> extends Field<ArrayStorageInput<T>> {
+> extends Field<T[], ArrayStorageInput<T>> {
 	constructor(public value_predicate: Predicate) {
 		super();
 	}

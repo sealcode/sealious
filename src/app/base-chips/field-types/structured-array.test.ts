@@ -276,4 +276,36 @@ describe("structured-array", () => {
 				assert.deepStrictEqual(invoice.get("entries"), [{}]);
 			}
 		));
+
+	it("reports the output type as an array", async () =>
+		withRunningApp(
+			(testapp) =>
+				class extends testapp {
+					collections = {
+						...App.BaseCollections,
+						invoices: new (class extends Collection {
+							fields = {
+								entries: new StructuredArray({
+									title: new FieldTypes.Text(),
+									price: new FieldTypes.Float(),
+								}),
+							};
+						})(),
+					};
+				},
+			async ({ app }) => {
+				const invoice = await app.collections.invoices.suCreate({
+					entries: [],
+				});
+				invoice.set("entries", {
+					insert: {
+						index: "0",
+					},
+				});
+				await invoice.save(new app.SuperContext());
+
+				// this would throw a TS error if the types were wrong:
+				invoice.get("entries")?.[0];
+			}
+		));
 });
