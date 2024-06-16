@@ -28,7 +28,7 @@ export default class CollectionItem<T extends Collection = any> {
 	id: string;
 
 	fields_with_attachments: string[] = [];
-	attachments: Record<string, CollectionItem<T>>;
+	attachments: Record<string, CollectionItem>;
 	private attachments_loaded = false;
 	private save_mode: "update" | "insert" = "insert";
 	public original_body: CollectionItemBody;
@@ -417,7 +417,7 @@ export default class CollectionItem<T extends Collection = any> {
 		collection: T,
 		data: { id: string; _metadata: ItemMetadata },
 		attachments: { [id: string]: any }
-	) {
+	): CollectionItem<T> {
 		const fieldset = CollectionItemBody.fromDecoded<T>(
 			collection,
 			data as Partial<FieldsetOutput<T["fields"]>>
@@ -431,7 +431,7 @@ export default class CollectionItem<T extends Collection = any> {
 		);
 	}
 
-	fetchAs(context: Context) {
+	fetchAs(context: Context): Promise<CollectionItem<T>> {
 		return this.collection.getByID(context, this.id);
 	}
 
