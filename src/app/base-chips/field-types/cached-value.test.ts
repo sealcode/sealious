@@ -8,7 +8,6 @@ import {
 import { assertThrowsAsync } from "../../../test_utils/assert-throws-async.js";
 import { getDateTime } from "../../../utils/get-datetime.js";
 import Bluebird from "bluebird";
-import type { ItemListResult } from "../../../chip-types/item-list.js";
 import type MockRestApi from "../../../test_utils/rest-api.js";
 import { TestApp } from "../../../test_utils/test-app.js";
 import CachedValue from "./cached-value.js";
@@ -31,6 +30,7 @@ import type {
 	ItemCreatedResponse,
 	ItemResponse,
 } from "../../../test_utils/rest-api.js";
+import type { ItemListResult } from "../../../chip-types/item-list-result.js";
 
 const action_to_status: { [name: string]: string } = {
 	create: "created",

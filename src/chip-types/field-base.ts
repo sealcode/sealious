@@ -1,13 +1,12 @@
 import type Collection from "./collection.js";
 import type Context from "../context.js";
 import type { ActionName } from "../action.js";
-import type { App } from "../main.js";
 import type QueryStage from "../datastore/query-stage.js";
 import type { MatchBody } from "../datastore/query-stage.js";
-import { ItemListResult } from "./item-list.js";
 import { BadSubjectAction } from "../response/errors.js";
 import isEmpty from "../utils/is-empty.js";
-import type Int from "../app/base-chips/field-types/int.js";
+import type { App } from "../app/app.js";
+import { ItemListResult } from "./item-list-result.js";
 
 export type Depromisify<T> = T extends Promise<infer V> ? V : T;
 

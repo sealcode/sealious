@@ -1,6 +1,4 @@
-import CollectionItem from "./collection-item.js";
 import Collection from "./collection.js";
-import { Context, ExtractFilterParams, Query } from "../main.js";
 import {
 	BadContext,
 	NotFound,
@@ -10,6 +8,11 @@ import {
 import type QueryStage from "../datastore/query-stage.js";
 import sealious_to_mongo_sort_param from "../utils/mongo-sorts.js";
 import { stringify as csvStringify } from "csv-stringify/sync";
+import type { ExtractFilterParams } from "./field.js";
+import type Context from "../context.js";
+import Query from "../datastore/query.js";
+import type CollectionItem from "./collection-item.js";
+import { ItemListResult } from "./item-list-result.js";
 
 type FilterT<T extends Collection> = Partial<{
 	[FieldName in keyof T["fields"]]: ExtractFilterParams<
@@ -261,8 +264,10 @@ export default class ItemList<T extends Collection> {
 						this._format?.[field_name]
 					)
 					.then((attachmentsList) => {
+						// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 						attachments = {
 							...attachments,
+							// eslint-disable-next-line @typescript-eslint/no-unsafe-call,  @typescript-eslint/no-unsafe-member-access
 							...attachmentsList.flattenWithAttachments(),
 						};
 						this.context.app.Logger.debug3(
@@ -403,67 +408,5 @@ export default class ItemList<T extends Collection> {
 	addCustomAggregationStages(stages: QueryStage[]) {
 		this.aggregation_stages.push(...stages);
 		return this;
-	}
-}
-
-export class ItemListResult<T extends Collection> {
-	constructor(
-		public items: CollectionItem<T>[],
-		public fields_with_attachments: string[],
-		public attachments: { [id: string]: CollectionItem } = {}
-	) {
-		items.forEach((item) => item.setParentList(this));
-	}
-
-	// this generator method makes the instance of this class iterable with for..of
-	*[Symbol.iterator](): Iterator<CollectionItem<T>> {
-		for (const item of this.items) {
-			yield item;
-		}
-	}
-
-	get empty(): boolean {
-		return this.items.length === 0;
-	}
-
-	serialize() {
-		return {
-			items: this.items.map((item) => item.serializeBody()),
-			attachments: Object.fromEntries(
-				Object.entries(this.attachments).map(([id, item]) => [
-					id,
-					item.serializeBody(),
-				])
-			),
-			fields_with_attachments: this.fields_with_attachments,
-		};
-	}
-
-	static fromSerialized<T extends Collection>(
-		collection: T,
-		serialized: {
-			items: any[];
-			attachments: { [id: string]: any };
-			fields_with_attachments: string[];
-		}
-	) {
-		return new ItemListResult<T>(
-			serialized.items.map((item_data) =>
-				CollectionItem.fromSerialized(
-					collection,
-					item_data,
-					serialized.attachments
-				)
-			),
-			serialized.fields_with_attachments,
-			serialized.attachments
-		);
-	}
-
-	flattenWithAttachments() {
-		return {
-			...this.attachments,
-			...Object.fromEntries(this.items.map((item) => [item.id, item])),
-		};
 	}
 }

@@ -7,11 +7,12 @@ import {
 	FieldsError,
 } from "../response/errors.js";
 import shortid from "shortid";
-import type { AttachmentOptions, ItemListResult } from "./item-list.js";
+import type { AttachmentOptions } from "./item-list.js";
 import type { PolicyDecision } from "./policy.js";
 import isEmpty from "../utils/is-empty.js";
 import type { Fieldset, FieldsetInput, FieldsetOutput } from "./fieldset.js";
 import CollectionItemBody from "./collection-item-body.js";
+import type { ItemListResult } from "./item-list-result.js";
 
 export type ItemMetadata = {
 	modified_at: number;
