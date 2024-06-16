@@ -23,7 +23,6 @@ export type ItemMetadata = {
 export type SerializedItem = ReturnType<CollectionItem["serialize"]>;
 export type SerializedItemBody = ReturnType<CollectionItem["serializeBody"]>;
 
-/** CollectionItem */
 export default class CollectionItem<T extends Collection = any> {
 	id: string;
 
@@ -33,7 +32,7 @@ export default class CollectionItem<T extends Collection = any> {
 	private save_mode: "update" | "insert" = "insert";
 	public original_body: CollectionItemBody;
 	public has_been_replaced = false;
-	private parent_list: ItemListResult<T> | null;
+	public parent_list: ItemListResult<T> | null;
 
 	constructor(
 		public collection: T,
