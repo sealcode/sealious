@@ -1,6 +1,12 @@
 import { predicates } from "@sealcode/ts-predicates";
 import type Field from "../../../chip-types/field.js";
-import { Context, Fieldset, FieldsetInput } from "../../../main.js";
+import {
+	App,
+	Collection,
+	Context,
+	Fieldset,
+	FieldsetInput,
+} from "../../../main.js";
 import { ArrayStorage } from "./array-storage.js";
 
 export class StructuredArray<
@@ -9,6 +15,15 @@ export class StructuredArray<
 	typeName = "structured-array";
 	constructor(public subfields: Subfields) {
 		super(predicates.object);
+	}
+
+	async init(app: App, collection: Collection): Promise<void> {
+		await super.init(app, collection);
+		await Promise.all(
+			Object.values(this.subfields).map((subfield) =>
+				subfield.init(app, collection)
+			)
+		);
 	}
 
 	async getEmptyElement() {
