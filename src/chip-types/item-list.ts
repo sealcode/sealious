@@ -201,6 +201,7 @@ export default class ItemList<T extends Collection> {
 				id: { $in: ids },
 			}).toPipeline()
 		);
+		this._ids = ids;
 		return this;
 	}
 
@@ -311,7 +312,12 @@ export default class ItemList<T extends Collection> {
 				) as Promise<CollectionItem<T>>
 			);
 		}
-		const items = await Promise.all(item_promises);
+		let items = await Promise.all(item_promises);
+		if (this._ids) {
+			items = items.sort((a, b) =>
+				this._ids.indexOf(a.id) < this._ids.indexOf(b.id) ? -1 : 1
+			);
+		}
 		const attachments = await this.fetchAttachments(items);
 		return new ItemListResult(
 			items,

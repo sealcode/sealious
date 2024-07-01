@@ -129,4 +129,43 @@ describe("ItemList", () => {
 				assert.deepStrictEqual(result.items[0].number, 17);
 			}
 		));
+
+	it("should return the items in the order they were provided in the .ids() function", async () =>
+		withRunningApp(
+			(test_app) =>
+				class extends test_app {
+					collections = {
+						...App.BaseCollections,
+						entries: new (class extends Collection {
+							fields = {
+								number: new Int(),
+							};
+						})(),
+					};
+				},
+			async ({ app }) => {
+				const one = await app.collections.entries.suCreate({
+					number: 1,
+				});
+				const two = await app.collections.entries.suCreate({
+					number: 1,
+				});
+				const result1 = await app.collections.entries
+					.suList()
+					.ids([one.id, two.id])
+					.fetch();
+				assert.deepStrictEqual(
+					result1.items.map(({ id }) => id),
+					[one.id, two.id]
+				);
+				const result2 = await app.collections.entries
+					.suList()
+					.ids([two.id, one.id])
+					.fetch();
+				assert.deepStrictEqual(
+					result2.items.map(({ id }) => id),
+					[two.id, one.id]
+				);
+			}
+		));
 });
