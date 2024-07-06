@@ -1,6 +1,15 @@
 import assert from "assert";
-import { TestAppConstructor, withRunningApp } from "../../test_utils/with-test-app.js";
-import { App, Collection, FieldTypes, Policies, SpecialFilters } from "../../main.js";
+import {
+	TestAppConstructor,
+	withRunningApp,
+} from "../../test_utils/with-test-app.js";
+import {
+	App,
+	Collection,
+	FieldTypes,
+	Policies,
+	SpecialFilters,
+} from "../../main.js";
 import Matches from "../base-chips/special_filters/matches.js";
 import { TestApp } from "../../test_utils/test-app.js";
 
@@ -108,10 +117,78 @@ describe("if", () => {
 					username: "user",
 					password: "passwordpassword",
 				};
-				await app.collections.users.create(new app.SuperContext(), data);
+				await app.collections.users.create(
+					new app.SuperContext(),
+					data
+				);
 				const session = await rest_api.login(data);
 
 				await rest_api.get("/api/v1/collections/tasks", session);
+			}
+		));
+
+	it("when filtering on a boolean field with a 'true' condition, count items without a value for that field as not matching", async () =>
+		withRunningApp(
+			(test_app) =>
+				class extends test_app {
+					collections = {
+						...TestApp.BaseCollections,
+						articles: new (class extends Collection {
+							fields = {
+								title: new FieldTypes.Text(),
+								published: new FieldTypes.Boolean(),
+							};
+
+							named_filters = {
+								published: new SpecialFilters.Matches(
+									"articles",
+									{
+										published: true,
+									}
+								),
+							};
+							policies = {
+								list: new Policies.If(
+									"articles",
+									"published",
+									new Policies.Public(),
+									new Policies.LoggedIn()
+								),
+							};
+						})(),
+					};
+				},
+			async ({ app, rest_api }) => {
+				const data = {
+					username: "user",
+					password: "passwordpassword",
+				};
+				await app.collections.users.create(
+					new app.SuperContext(),
+					data
+				);
+				const session = await rest_api.login(data);
+				await app.collections.articles.suCreate({
+					title: "Article 1, published true",
+					published: true,
+				});
+				await app.collections.articles.suCreate({
+					title: "Article 2, published false",
+					published: false,
+				});
+				await app.collections.articles.suCreate({
+					title: "Article 2, published unset",
+				});
+
+				const anon_result = await rest_api.get(
+					"/api/v1/collections/articles"
+				);
+				const logged_in_result = await rest_api.get(
+					"/api/v1/collections/articles",
+					session
+				);
+				assert.strictEqual(anon_result.items.length, 1);
+				assert.strictEqual(logged_in_result.items.length, 3);
 			}
 		));
 });

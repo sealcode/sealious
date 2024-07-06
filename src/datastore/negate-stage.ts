@@ -16,7 +16,15 @@ export default function negate_match(stage: MatchBody) {
 				negated_stage[key] = (stage[key] as MatchBody)
 					.$not as MatchBody;
 			} else if (typeof stage[key] == "boolean") {
-				negated_stage[key] = !stage[key];
+				// in this case, the behavior for true and false is not symmetrical.
+				// We treat "unset" values as false. - see if.test.ts
+				if (stage[key]) {
+					// negating a 'true' value - so we're matching both false and unset
+					negated_stage[key] = { $ne: true };
+				} else {
+					// negating a 'false' value - so we're matching only true
+					negated_stage[key] = true;
+				}
 			} else if (typeof stage[key] !== "object") {
 				negated_stage[key] = { $not: { $eq: stage[key] } };
 			} else {
