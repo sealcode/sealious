@@ -17,7 +17,7 @@ import { ItemListResult } from "./item-list-result.js";
 type FilterT<T extends Collection> = Partial<{
 	[FieldName in keyof T["fields"]]: ExtractFilterParams<
 		T["fields"][FieldName]
-	>;
+	> | null;
 }>;
 
 type PaginationParams = {

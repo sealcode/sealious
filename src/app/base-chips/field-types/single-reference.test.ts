@@ -501,4 +501,37 @@ describe("single_reference", () => {
 				assert.strictEqual(items2.length, 0);
 			}
 		));
+
+	it("allows filtering items with an empty value for single reference", () =>
+		withRunningApp(
+			(test_app) => {
+				const A = new (class extends Collection {
+					name = "A";
+					fields = {
+						reference_to_b: new FieldTypes.SingleReference("B"),
+					};
+				})();
+				const B = new (class extends Collection {
+					name = "B";
+					fields = { number: new FieldTypes.Int() };
+				})();
+
+				return class extends test_app {
+					collections = {
+						...TestApp.BaseCollections,
+						A,
+						B,
+					};
+				};
+			},
+			async ({ app }) => {
+				const b = await app.collections.B.suCreate({ number: 2 });
+				await app.collections.A.suCreate({ reference_to_b: b.id });
+				await app.collections.A.suCreate({ reference_to_b: undefined });
+				const { items } = await app.collections.A.suList()
+					.filter({ reference_to_b: null })
+					.fetch();
+				assert.strictEqual(items.length, 1);
+			}
+		));
 });

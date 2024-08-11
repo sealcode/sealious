@@ -93,6 +93,19 @@ export default class SingleReference extends Field<string, string> {
 		const temp_field_name = `${
 			this.getTargetCollection(context).name
 		}-lookup${Math.floor(Math.random() * Math.pow(10, 7))}`;
+		if (filter_value === null) {
+			return [
+				{
+					$match: {
+						$or: [
+							{ [await this.getValuePath()]: "" },
+							{ [await this.getValuePath()]: null },
+							{ [await this.getValuePath()]: { $exists: false } },
+						],
+					},
+				},
+			];
+		}
 		if (
 			!filter_value ||
 			Object.keys(filter_value as SearchFilter).length === 0
