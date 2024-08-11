@@ -459,7 +459,7 @@ export default class CollectionItem<T extends Collection = any> {
 		} else {
 			throw new Error("Attachments list could not be reached");
 		}
-		return ids.map((id) => attachments_source[id]);
+		return ids.map((id) => attachments_source[id]).filter((e) => !!e);
 	}
 
 	setParentList(list: ItemListResult<T>) {
