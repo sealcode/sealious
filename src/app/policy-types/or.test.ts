@@ -1,11 +1,15 @@
 import assert from "assert";
 import Bluebird from "bluebird";
 
-import { TestAppConstructor, withRunningApp } from "../../test_utils/with-test-app.js";
+import {
+	TestAppConstructor,
+	withRunningApp,
+} from "../../test_utils/with-test-app.js";
 import create_policies from "../../test_utils/policy-types/create-policies-with-complex-pipeline.js";
 import type * as Sealious from "../../main.js";
 import { Collection, FieldTypes, Policies, Policy } from "../../main.js";
 import { TestApp } from "../../test_utils/test-app.js";
+import type { PolicyDecision } from "../../chip-types/policy.js";
 
 const [ComplexDenyPipeline, ComplexAllowPipeline] = create_policies.allowDeny();
 
@@ -14,7 +18,10 @@ const collections = [
 		name: "collection-or(nested-or(allow,noone),nested-and(allow,public))",
 		policies: [
 			new Policies.Or([new ComplexAllowPipeline(), new Policies.Noone()]),
-			new Policies.And([new ComplexAllowPipeline(), new Policies.Public()]),
+			new Policies.And([
+				new ComplexAllowPipeline(),
+				new Policies.Public(),
+			]),
 		],
 	},
 	{
@@ -95,7 +102,9 @@ describe("OrPolicy", () => {
 		withRunningApp(extend, async ({ app, rest_api }) => {
 			await createItems(app);
 			return rest_api
-				.get("/api/v1/collections/collection-or(complex-allow-pipeline,public)")
+				.get(
+					"/api/v1/collections/collection-or(complex-allow-pipeline,public)"
+				)
 				.then(({ items }: any) => assert.equal(items.length, 3));
 		}));
 
@@ -103,7 +112,9 @@ describe("OrPolicy", () => {
 		withRunningApp(extend, async ({ app, rest_api }) => {
 			await createItems(app);
 			return rest_api
-				.get("/api/v1/collections/collection-or(complex-deny-pipeline,noone)")
+				.get(
+					"/api/v1/collections/collection-or(complex-deny-pipeline,noone)"
+				)
 				.then(({ items }: any) => assert.equal(items.length, 0));
 		}));
 
@@ -111,7 +122,20 @@ describe("OrPolicy", () => {
 		withRunningApp(extend, async ({ app, rest_api }) => {
 			await createItems(app);
 			return rest_api
-				.get("/api/v1/collections/collection-or(complex-deny-pipeline,public)")
+				.get(
+					"/api/v1/collections/collection-or(complex-deny-pipeline,public)"
+				)
 				.then(({ items }: any) => assert.equal(items.length, 3));
 		}));
+
+	describe(".check()", () => {
+		it("Properly makes the decision about isItemSensitive when one of the policies uses async isItemSensitive", () =>
+			withRunningApp(extend, async ({ app }) => {
+				const policy = new Policies.Or([new Policies.Public()]);
+				assert.equal(
+					await policy.isItemSensitive(new app.Context()),
+					false
+				);
+			}));
+	});
 });

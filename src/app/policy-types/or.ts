@@ -23,9 +23,11 @@ export default class Or extends ReducingPolicy {
 	}
 
 	async isItemSensitive(context: Context) {
-		return Bluebird.map(this.policies, (strategy) =>
-			strategy.isItemSensitive(context)
-		).reduce((a, b) => a || b, true);
+		return (
+			await Promise.all(
+				this.policies.map((policy) => policy.isItemSensitive(context))
+			)
+		).some((e) => e);
 	}
 
 	async checkerFunction(
