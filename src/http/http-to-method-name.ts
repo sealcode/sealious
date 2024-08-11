@@ -4,7 +4,7 @@ const method_map: { [method: string]: ActionName } = {
 	GET: "show",
 	POST: "create",
 	PATCH: "edit",
-	PUT: "replace",
+	PUT: "edit",
 	DELETE: "delete",
 };
 
