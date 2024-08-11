@@ -128,7 +128,7 @@ describe("OrPolicy", () => {
 				.then(({ items }: any) => assert.equal(items.length, 3));
 		}));
 
-	describe(".check()", () => {
+	describe(".isItemSensitive()", () => {
 		it("Properly makes the decision about isItemSensitive when one of the policies uses async isItemSensitive", () =>
 			withRunningApp(extend, async ({ app }) => {
 				const policy = new Policies.Or([new Policies.Public()]);

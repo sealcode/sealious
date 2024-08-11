@@ -2,7 +2,10 @@ import assert from "assert";
 import Bluebird from "bluebird";
 import { App, Collection, FieldTypes, Policies } from "../../main.js";
 
-import { TestAppConstructor, withRunningApp } from "../../test_utils/with-test-app.js";
+import {
+	TestAppConstructor,
+	withRunningApp,
+} from "../../test_utils/with-test-app.js";
 import create_policies from "../../test_utils/policy-types/create-policies-with-complex-pipeline.js";
 import And from "./and.js";
 import { assertThrowsAsync } from "../../test_utils/assert-throws-async.js";
@@ -86,7 +89,9 @@ describe("AndPolicy", () => {
 				.get(
 					"/api/v1/collections/collection-and(nested-and(allow,public),nested-or(allow,noone))"
 				)
-				.then(({ items }: { items: any[] }) => assert.equal(items.length, 3));
+				.then(({ items }: { items: any[] }) =>
+					assert.equal(items.length, 3)
+				);
 		}));
 
 	it("returns nothing for and(ComplexAllowPipeline,noone)", () =>
@@ -94,9 +99,14 @@ describe("AndPolicy", () => {
 			await setup(app);
 			await assertThrowsAsync(
 				() =>
-					rest_api.get("/api/v1/collections/collection-and(ComplexAllowPipeline,noone)"),
+					rest_api.get(
+						"/api/v1/collections/collection-and(ComplexAllowPipeline,noone)"
+					),
 				(e) => {
-					assert.equal(e.response.data.message, app.i18n("policy_noone_deny"));
+					assert.equal(
+						e.response.data.message,
+						app.i18n("policy_noone_deny")
+					);
 				}
 			);
 		}));
@@ -118,4 +128,15 @@ describe("AndPolicy", () => {
 			);
 			assert.strictEqual(items.length, 0);
 		}));
+
+	describe(".isItemSensitive()", () => {
+		it("Properly makes the decision about isItemSensitive when one of the policies uses async isItemSensitive", () =>
+			withRunningApp(extend, async ({ app }) => {
+				const policy = new Policies.And([new Policies.Public()]);
+				assert.equal(
+					await policy.isItemSensitive(new app.Context()),
+					false
+				);
+			}));
+	});
 });
