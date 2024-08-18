@@ -1,5 +1,6 @@
 import assert from "assert";
 import nodemailer from "nodemailer";
+import type SMTPTransport from "nodemailer/lib/smtp-transport/index.js";
 import type { App } from "../main.js";
 import Mailer from "./mailer.js";
 import type { MessageData } from "./message.js";
@@ -7,12 +8,15 @@ import type { MessageData } from "./message.js";
 export default class SmtpMailer extends Mailer {
 	mail_config: { from_name: string; from_address: string };
 	transport: nodemailer.Transporter;
-	constructor(config: {
-		host: string;
-		port: number;
-		user: string;
-		password: string;
-	}) {
+	constructor(
+		config: {
+			host: string;
+			port: number;
+			user: string;
+			password: string;
+		},
+		additional_options: SMTPTransport.Options = {}
+	) {
 		super();
 		assert(typeof config.host == "string");
 		assert(typeof config.port == "number");
@@ -25,6 +29,7 @@ export default class SmtpMailer extends Mailer {
 				user: config.user,
 				pass: config.password,
 			},
+			...additional_options,
 		});
 	}
 
