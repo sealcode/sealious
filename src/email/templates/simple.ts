@@ -11,6 +11,7 @@ export type SimpleTemplateData = {
 	subject: string;
 	to: string;
 	buttons?: Button[];
+	replyTo?: string;
 };
 
 export default async function SimpleTemplate(
@@ -47,6 +48,7 @@ export default async function SimpleTemplate(
 		],
 		text,
 		html,
+		replyTo: data.replyTo,
 	});
 }
 
