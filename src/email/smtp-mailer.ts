@@ -49,6 +49,7 @@ export default class SmtpMailer extends Mailer {
 		html,
 		from_name,
 		attachments,
+		replyTo,
 	}: MessageData & { from_name: string }) {
 		return this.transport.sendMail({
 			from: `${from_name || this.mail_config.from_name} <${
@@ -59,6 +60,7 @@ export default class SmtpMailer extends Mailer {
 			text,
 			html,
 			attachments,
+			replyTo,
 		});
 	}
 

@@ -7,6 +7,7 @@ export type MessageData = {
 	html: string;
 	attachments: any[];
 	text: string;
+	replyTo?: string;
 };
 
 export default class Message {
