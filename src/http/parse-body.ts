@@ -94,6 +94,7 @@ export default function parseBody(file_manager?: FileManager): Middleware {
 		ctx.$body = qs.parse(ctx.request.body, {
 			allowDots: true,
 			depth: 20,
+			arrayLimit: 150,
 			allowEmptyArrays: true,
 		});
 		ctx.$app.Logger.info("REQUEST", "Parsed body", ctx.$body);
