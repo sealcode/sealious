@@ -474,7 +474,7 @@ export default class Patrons extends Collection {
 
 ```lang=ts
 export default class Articles extends Collection {
-    fiels = {
+    fields = {
 		published: new FieldTypes.Boolean()
 	}
 
