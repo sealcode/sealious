@@ -470,6 +470,30 @@ export default class Patrons extends Collection {
 }
 ```
 
+### How to hide from public unpublished items?
+
+```lang=ts
+export default class Articles extends Collection {
+    fiels = {
+		published: new FieldTypes.Boolean()
+	}
+
+	named_filters = {
+			published: new SpecialFilters.Matches("articles", { published: true }),
+	};
+
+	policies = {
+		show: new Policies.If(
+			"articles",
+			"published",
+			new Policies.Public(),
+			new Roles(["admin"])
+		),
+	};
+
+}
+```
+
 ## Development
 
 To run test outside of docker, run:
