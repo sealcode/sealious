@@ -1,3 +1,4 @@
+import type * as Koa from "koa";
 import type { Middleware } from "@koa/router";
 import Context from "../context.js";
 
@@ -10,6 +11,23 @@ export default function extract_context(): Middleware {
 		if (ctx.$context) {
 			await next();
 			return;
+		}
+
+		if (!ctx.$cache) {
+			const cache_entries: Record<
+				string,
+				unknown | Promise<unknown> | undefined
+			> = {};
+
+			ctx.$cache = async function <T>(
+				key: string,
+				getter: (ctx: Koa.Context) => Promise<T>
+			) {
+				if (cache_entries[key] == undefined) {
+					cache_entries[key] = getter(ctx);
+				}
+				return cache_entries[key] as Promise<T> | T;
+			};
 		}
 
 		if (!session_id) {

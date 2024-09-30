@@ -1,6 +1,7 @@
 import type * as Sealious from "../main.js";
 import type { Socket } from "net";
 import type * as url from "url";
+import type * as Koa from "koa";
 // adding this so properties `$app` and `$context` of `ctx` are known
 
 declare module "koa" {
@@ -8,6 +9,10 @@ declare module "koa" {
 		$context: Sealious.Context;
 		$app: Sealious.App;
 		$body: Record<string, unknown>;
+		$cache: <T>(
+			key: string,
+			getter: (ctx: Koa.Context) => Promise<T>
+		) => Promise<T>;
 	}
 }
 
