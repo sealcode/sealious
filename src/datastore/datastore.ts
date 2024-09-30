@@ -154,6 +154,7 @@ export default class Datastore {
 		if (artificial_delay) {
 			await sleep(artificial_delay);
 		}
+		const start_timestamp = Date.now();
 		const cursor = this.db.collection(collection_name).aggregate(pipeline);
 
 		if (pipeline.find((element) => element instanceof QueryStep)) {
@@ -181,9 +182,10 @@ export default class Datastore {
 			cursor.limit(output_options.amount);
 		}
 		const ret = await cursor.toArray();
+		const duration = Date.now() - start_timestamp;
 		this.app.Logger.debug3(
 			"DB",
-			`Aggregate on collection ${collection_name} returns`,
+			`Aggregate on collection took ${duration} ${collection_name} returns`,
 			ret
 		);
 		return ret as Record<string, any>[];
