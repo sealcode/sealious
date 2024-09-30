@@ -179,7 +179,8 @@ export default class Datastore {
 			{
 				pipeline,
 				output_options,
-			}
+			},
+			6
 		);
 		this.app.Logger.debug3("DB", "The above aggregation returned", ret);
 		return ret as Record<string, any>[];
