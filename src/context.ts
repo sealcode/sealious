@@ -10,6 +10,7 @@ export default class Context {
 	session_id: string | null;
 	is_super = false;
 	original_context: Context | null;
+	cache_entries: Record<string, unknown>;
 
 	constructor(
 		public app: App,
@@ -22,6 +23,14 @@ export default class Context {
 		this.timestamp = timestamp;
 		this.user_id = user_id || null;
 		this.session_id = session_id || null;
+		this.cache_entries = {};
+	}
+
+	cache<T>(key: string, getter: () => Promise<T>): Promise<T> {
+		if (!this.cache_entries[key]) {
+			this.cache_entries[key] = getter();
+		}
+		return this.cache_entries[key] as Promise<T>;
 	}
 
 	async getUserData(app: App): Promise<CollectionItem | null> {
@@ -49,4 +58,8 @@ export default class Context {
 
 export class SuperContext extends Context {
 	is_super = true;
+
+	cache<T>(_key: string, getter: () => Promise<T>): Promise<T> {
+		return getter(); // not caching within super context
+	}
 }
