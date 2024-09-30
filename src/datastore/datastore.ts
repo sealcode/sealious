@@ -162,16 +162,6 @@ export default class Datastore {
 				"Pipeline elements should be simple objects, not QuerySteps. Perhaps you should use .toPipeline()?"
 			);
 		}
-		this.app.Logger.debug2(
-			"DB",
-			"Running aggregate",
-			{
-				collection_name,
-				pipeline,
-				output_options,
-			},
-			null
-		);
 		if (output_options.sort) {
 			cursor.sort(output_options.sort);
 		}
@@ -183,11 +173,15 @@ export default class Datastore {
 		}
 		const ret = await cursor.toArray();
 		const duration = Date.now() - start_timestamp;
-		this.app.Logger.debug3(
+		this.app.Logger.debug2(
 			"DB",
-			`Aggregate on collection ${collection_name} took ${duration}ms and returned`,
-			ret
+			`Aggregate on collection ${collection_name} took ${duration}ms.`,
+			{
+				pipeline,
+				output_options,
+			}
 		);
+		this.app.Logger.debug3("DB", "The above aggregation returned", ret);
 		return ret as Record<string, any>[];
 	}
 
