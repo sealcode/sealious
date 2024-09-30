@@ -101,6 +101,10 @@ export abstract class IntStorage<
 		const ret = parseInt(value.toString(), 10);
 		return ret;
 	};
+
+	async hasIndex(): Promise<boolean> {
+		return true;
+	}
 }
 
 /** An integer field. Consult {@link IntStorage} for information on

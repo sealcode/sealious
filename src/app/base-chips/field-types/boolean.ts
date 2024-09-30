@@ -10,6 +10,11 @@ type InputType = boolean | "false" | "true" | "1" | "0" | 1 | 0;
  */
 export default class Boolean extends Field<boolean, InputType> {
 	typeName = "boolean";
+
+	async hasIndex(): Promise<boolean> {
+		return true;
+	}
+
 	async isProperValue(ctx: Context, value: InputType) {
 		if (typeof value === "boolean") {
 			return Field.valid();

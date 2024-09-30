@@ -25,6 +25,10 @@ export default class Float<Decoded = number> extends Field<
 		}
 	}
 
+	async hasIndex(): Promise<boolean> {
+		return true;
+	}
+
 	async getMatchQueryValue(
 		_: Context,
 		field_filter: number | string | ComparatorObject<number>

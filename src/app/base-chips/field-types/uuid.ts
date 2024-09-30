@@ -5,6 +5,10 @@ import type Context from "../../../context.js";
 export class Uuid extends Field<string> {
 	typeName = "uuid";
 
+	async hasIndex(): Promise<boolean> {
+		return true;
+	}
+
 	isOldValueSensitive = (): boolean => true;
 
 	async isProperValue(): Promise<ValidationResult> {

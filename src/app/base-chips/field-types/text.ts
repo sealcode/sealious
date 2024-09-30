@@ -24,7 +24,7 @@ export default class Text extends TextStorage {
 	 * @internal */
 	async hasIndex() {
 		if (this.params.full_text_search) {
-			return { original: "text" as "text" };
+			return { original: "text" as const };
 		} else {
 			return false;
 		}

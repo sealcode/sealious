@@ -33,4 +33,8 @@ export default class Enum<S> extends Field<string> {
 			);
 		}
 	}
+
+	async hasIndex(): Promise<boolean> {
+		return true;
+	}
 }

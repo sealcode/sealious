@@ -18,6 +18,11 @@ function dateStrToDayInt(date_str: string) {
 
 export default class DateField extends Field<string, string | number, number> {
 	typeName = "date";
+
+	async hasIndex(): Promise<boolean> {
+		return true;
+	}
+
 	async isProperValue(context: Context, value: string) {
 		const date_in_string = value.toString();
 
