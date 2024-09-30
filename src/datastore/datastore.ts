@@ -185,7 +185,7 @@ export default class Datastore {
 		const duration = Date.now() - start_timestamp;
 		this.app.Logger.debug3(
 			"DB",
-			`Aggregate on collection took ${duration} ${collection_name} returns`,
+			`Aggregate on collection ${collection_name} took ${duration}ms and returned`,
 			ret
 		);
 		return ret as Record<string, any>[];
