@@ -63,7 +63,7 @@ export default class Datastore {
 	}
 
 	async create_index(collection: Collection): Promise<void> {
-		const indexes: { [field: string]: number }[] = [];
+		const indexes: { [field: string]: number }[] = [{ id: 1 }];
 		const text_index: { [field: string]: "text" } = {};
 		for (const field_name in collection.fields) {
 			const index_answer = await collection.fields[field_name].hasIndex();
