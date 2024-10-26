@@ -500,11 +500,11 @@ To run test outside of docker, run:
 
 ```
 docker-compose up -d
-npm run test-cmd
+npm run test
 ```
 
 If you want to debug the tests, run:
 
 ```
-npm run test-cmd -- --debug
+npm run test -- --debug
 ```

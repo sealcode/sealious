@@ -148,6 +148,11 @@ export abstract class App {
 	 * connects to the database and starts the app, serving the REST
 	 * API */
 	async start(): Promise<void> {
+		if (this.status !== "stopped")
+			throw new Error(
+				`app should be on 'stopped' status (current status - '${this.status}')`
+			);
+
 		this.ConfigManager.setRoot(this.config);
 
 		const promises = [];
