@@ -1,4 +1,10 @@
-import { Field, Context, CollectionItem } from "../../../main.js";
+import {
+	Field,
+	Context,
+	CollectionItem,
+	App,
+	Collection,
+} from "../../../main.js";
 import ItemList, { AttachmentOptions } from "../../../chip-types/item-list.js";
 import { CachedValue } from "./field-types.js";
 import { CollectionRefreshCondition } from "../../event-description.js";
@@ -26,93 +32,7 @@ export default class ReverseSingleReference extends CachedValue<
 		referencing_collection: string;
 	}) {
 		super(new ListOfIDs(), {
-			refresh_on: [
-				new CollectionRefreshCondition(
-					params.referencing_collection,
-					"after:create",
-					async ([, item]) => {
-						const ret = [
-							item.get(params.referencing_field) as string,
-						];
-						this.app.Logger.debug3(
-							"REVERSE SINGLE REFERENCE",
-							"resource_getter for after create",
-							{ ret, item }
-						);
-						return ret;
-					}
-				),
-				new CollectionRefreshCondition(
-					params.referencing_collection,
-					"after:remove",
-					async ([, item]) => {
-						this.app.Logger.debug3(
-							"REVERSE SINGLE REFERENCE",
-							"handling the after:remove event"
-						);
-						const search_value =
-							this.getValueFromReferencingCollection(item);
-						const affected = await this.app.Datastore.find(
-							this.collection.name,
-							{
-								[await this.getValuePath()]: search_value,
-							}
-						);
-						const ret = affected.map(
-							(document: { id: string }) => document.id
-						);
-						this.app.Logger.debug3(
-							"REVERSE SINGLE REFERENCE",
-							"resource_getter for after delete",
-							{ ret }
-						);
-						return ret;
-					}
-				),
-				new CollectionRefreshCondition(
-					params.referencing_collection,
-					"after:edit",
-					async ([, item]) => {
-						if (
-							!item.body.changed_fields.has(
-								this.referencing_field
-							)
-						) {
-							this.app.Logger.debug3(
-								"REVERSE SINGLE REFERENCE",
-								`Update does not concern the ${this.name} field, skipping hook...`
-							);
-							return [];
-						}
-						this.app.Logger.debug3(
-							"REVERSE SINGLE REFERENCE",
-							"started resource_getter for after edit"
-						);
-
-						const affected_ids: string[] = Array.from(
-							new Set<string>(
-								[
-									(await item.get(
-										this.referencing_field
-									)) as string,
-									item.original_body.getEncoded(
-										this.referencing_field
-									) as string,
-								].filter(
-									(e) =>
-										e /* is truthy, not null or undefined*/
-								)
-							).values()
-						);
-						this.app.Logger.debug3(
-							"REVERSE SINGLE REFERENCE",
-							"resource_getter for after edit",
-							{ affected_ids }
-						);
-						return affected_ids;
-					}
-				),
-			],
+			refresh_on: [],
 			get_value: (context: Context, item: CollectionItem) => {
 				return this.getValueOnChange(context, item);
 			},
@@ -120,6 +40,90 @@ export default class ReverseSingleReference extends CachedValue<
 		});
 		this.referencing_field = params.referencing_field;
 		this.referencing_collection = params.referencing_collection;
+	}
+
+	async init(app: App, collection: Collection) {
+		this.refresh_on = [
+			new CollectionRefreshCondition(
+				this.referencing_collection,
+				"after:create",
+				async ([, item]) => {
+					const ret = [item.get(this.referencing_field) as string];
+					this.app.Logger.debug3(
+						"REVERSE SINGLE REFERENCE",
+						"resource_getter for after create",
+						{ ret, item }
+					);
+					return ret;
+				}
+			),
+			new CollectionRefreshCondition(
+				this.referencing_collection,
+				"after:remove",
+				async ([, item]) => {
+					this.app.Logger.debug3(
+						"REVERSE SINGLE REFERENCE",
+						"handling the after:remove event"
+					);
+					const search_value =
+						this.getValueFromReferencingCollection(item);
+					const affected = await this.app.Datastore.find(
+						this.collection.name,
+						{
+							[await this.getValuePath()]: search_value,
+						}
+					);
+					const ret = affected.map(
+						(document: { id: string }) => document.id
+					);
+					this.app.Logger.debug3(
+						"REVERSE SINGLE REFERENCE",
+						"resource_getter for after delete",
+						{ ret }
+					);
+					return ret;
+				}
+			),
+			new CollectionRefreshCondition(
+				this.referencing_collection,
+				"after:edit",
+				async ([, item]) => {
+					if (!item.body.changed_fields.has(this.referencing_field)) {
+						this.app.Logger.debug3(
+							"REVERSE SINGLE REFERENCE",
+							`Update does not concern the ${this.name} field, skipping hook...`
+						);
+						return [];
+					}
+					this.app.Logger.debug3(
+						"REVERSE SINGLE REFERENCE",
+						"started resource_getter for after edit"
+					);
+
+					const affected_ids: string[] = Array.from(
+						new Set<string>(
+							[
+								(await item.get(
+									this.referencing_field
+								)) as string,
+								item.original_body.getEncoded(
+									this.referencing_field
+								) as string,
+							].filter(
+								(e) => e /* is truthy, not null or undefined*/
+							)
+						).values()
+					);
+					this.app.Logger.debug3(
+						"REVERSE SINGLE REFERENCE",
+						"resource_getter for after edit",
+						{ affected_ids }
+					);
+					return affected_ids;
+				}
+			),
+		];
+		super.init(app, collection);
 	}
 
 	async getValueOnChange(context: Context, item: CollectionItem) {

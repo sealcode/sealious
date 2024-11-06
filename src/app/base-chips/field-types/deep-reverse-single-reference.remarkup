@@ -38,6 +38,20 @@ assigned to that article:
 articles: new (class extends Collection {
     fields = {
         title: new Text(),
+        categories: new DeepReverseSingleReference("article_category"),
+    };
+})(),
+```
+
+In most cases its enough to provide just name of intermediary collection for 
+sealious to figure out what values he needs but if its not a case you will get 
+descriptive error. If thats a case you can use legacy API that will allow you 
+to configure every value needed:
+
+```
+articles: new (class extends Collection {
+    fields = {
+        title: new Text(),
         categories: new DeepReverseSingleReference({
             intermediary_collection: "article_category",
             intermediary_field_that_points_here:
@@ -59,6 +73,13 @@ contain a list of all categories that are assigned to the articles.
 
 Assuming you have A and B collections with n-to-n relation:
 
+```
+// .. in collection A 
+
+new DeepReverseSingleReference("a_to_b"), // the collection that stores the links between colllection A and B
+```
+
+or
 
 ```
 // .. in collection A 

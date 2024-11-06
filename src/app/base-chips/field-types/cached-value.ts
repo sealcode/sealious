@@ -46,6 +46,7 @@ export default class CachedValue<
 	typeName = "cached-value";
 
 	app: App;
+	base_field: T;
 	refresh_on: RefreshCondition[];
 	get_value: GetValue<DecodedType>;
 	hasDefaultValue: () => true;
@@ -63,17 +64,18 @@ export default class CachedValue<
 		super(base_field);
 		super.setParams(params);
 		this.refresh_on = params.refresh_on;
-		this.get_value = params.get_value;
-		this.initial_value = params.initial_value;
-		if (params.derive_from) {
-			this.virtual_derived = new DerivedValue(base_field, {
-				fields: params.derive_from,
-				deriving_fn: params.get_value,
-			});
-		}
+		this.base_field = base_field;
 	}
 
 	async init(app: App, collection: Collection): Promise<void> {
+		this.get_value = this.params.get_value;
+		this.initial_value = this.params.initial_value;
+		if (this.params.derive_from) {
+			this.virtual_derived = new DerivedValue(this.base_field, {
+				fields: this.params.derive_from,
+				deriving_fn: this.params.get_value,
+			});
+		}
 		await super.init(app, collection);
 		await this.virtual_field.init(app, collection);
 		await this.virtual_derived?.init(app, collection);

@@ -77,8 +77,8 @@ export default abstract class Collection {
 		const promises = [];
 		for (const [field_name, field] of Object.entries(this.fields)) {
 			field.setCollection(this);
-			field.setName(field_name);
 			promises.push(field.init(this.app, this));
+			field.setName(field_name);
 		}
 		await Promise.all(promises);
 	}
