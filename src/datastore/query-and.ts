@@ -1,4 +1,4 @@
-import { Query } from "./query-base.js";
+import { Query, SQLPreparedStatement } from "./query-base.js";
 import QueryStep, { Match } from "./query-step.js";
 import Graph from "./graph.js";
 import { QueryTypes } from "../main.js";
@@ -8,8 +8,10 @@ export default class And extends Query {
 	graph: Graph;
 	aggregation_steps: { [id: string]: QueryStep };
 	received_deny_all: boolean;
+	queries: Query[];
 	constructor(...queries: Query[]) {
 		super();
+		this.queries = queries;
 		this._reset();
 		for (let query of queries) {
 			this.addQuery(query);
@@ -84,5 +86,30 @@ export default class And extends Query {
 			return [...pipeline, ...this.aggregation_steps[id].toPipeline()];
 		}, [] as QueryStage[]);
 		return ret;
+	}
+
+	toPreparedStatement(): SQLPreparedStatement {
+		const compiledStatements = this.queries.map((query) =>
+			query.toPreparedStatement()
+		);
+		const parameters = compiledStatements.flatMap(
+			(statement) => statement.parameters
+		);
+		const sqlExpressions = compiledStatements.map(
+			(statement) => statement.where
+		);
+		const sqlJoins = compiledStatements.flatMap(
+			(statement) => statement.join
+		);
+		let counter = 0;
+
+		return {
+			where: `(${sqlExpressions.join(" AND ")})`.replace(
+				/\$[0-9]+/g,
+				() => `$${++counter}`
+			),
+			join: sqlJoins,
+			parameters,
+		};
 	}
 }

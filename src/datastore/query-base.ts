@@ -7,6 +7,12 @@ import {
 	SimpleLookupBodyInput,
 } from "./query-step.js";
 
+export type SQLPreparedStatement = {
+	where: string;
+	join: string[];
+	parameters: (string | number)[];
+};
+
 export class Query {
 	steps: QueryStep[];
 	body: any;
@@ -34,6 +40,33 @@ export class Query {
 		return this.steps
 			.map((step) => step.toPipeline())
 			.reduce((acc, cur) => acc.concat(cur), []);
+	}
+
+	toPreparedStatement(): SQLPreparedStatement {
+		const compiledStatements = this.steps.map((step) =>
+			step.toPreparedStatement()
+		);
+		let counter = 0;
+
+		return compiledStatements.reduce(
+			(finalStatement, currentStatement) => ({
+				where: [finalStatement.where, currentStatement.where]
+					.filter((statement) => !!statement)
+					.map((statement) => `(${statement})`)
+					.join(" AND ")
+					.replace(/\$[0-9]+/g, () => `$${++counter}`),
+				join: [...finalStatement.join, ...currentStatement.join],
+				parameters: [
+					...finalStatement.parameters,
+					...currentStatement.parameters,
+				],
+			}),
+			{
+				where: "",
+				join: [],
+				parameters: [],
+			}
+		);
 	}
 
 	static fromSingleMatch(body: any) {

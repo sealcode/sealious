@@ -3,6 +3,7 @@ import transformObject from "../utils/transform-object.js";
 import negate_stage from "./negate-stage.js";
 import type QueryStage from "./query-stage.js";
 import type { MatchBody } from "./query-stage.js";
+import type { SQLPreparedStatement } from "./query-base.js";
 
 export default abstract class QueryStep {
 	body: any;
@@ -44,6 +45,7 @@ export default abstract class QueryStep {
 	abstract negate(): QueryStep;
 	abstract prefix(prefix: string): QueryStep;
 	abstract toPipeline(): QueryStage[];
+	abstract toPreparedStatement(): SQLPreparedStatement;
 	abstract renameField(old_name: string, new_name: string): void;
 }
 
@@ -60,6 +62,39 @@ export class Match extends QueryStep {
 
 	toPipeline(): [QueryStage] {
 		return [{ $match: this.body }];
+	}
+
+	toPreparedStatement(): SQLPreparedStatement {
+		const codeToSignMap: Record<string, string> = {
+			$eq: "=",
+			$ne: "!=",
+			$gt: ">",
+			$gte: ">=",
+			$lt: "<",
+			$lte: "<=",
+		};
+		const field = Object.keys(this.body)[0];
+		const sign = Object.keys(this.body[field] as any)[0];
+		const parameter = (this.body[field] as any)[sign];
+		const sqlSign = codeToSignMap[sign] || "";
+
+		if (sign === "$in") {
+			return {
+				where: `${field} IN (${(parameter as any[])
+					.map((_, index) => {
+						return `$${index + 1}`;
+					})
+					.join(", ")})`,
+				join: [],
+				parameters: [...parameter],
+			};
+		}
+
+		return {
+			where: `${field} ${sqlSign} $1`,
+			join: [],
+			parameters: [parameter],
+		};
 	}
 
 	pushStage(pipeline: QueryStage[]): QueryStage[] {
@@ -239,6 +274,24 @@ export abstract class Lookup extends QueryStep {
 			...(this.body.unwind ? [{ $unwind: `$${this.body.as}` }] : []),
 		];
 	}
+
+	toPreparedStatement(): SQLPreparedStatement {
+		if ("pipeline" in this.body) {
+			// https://hub.sealcode.org/source/sealious/browse/master/src/app/policy-types/same-as-for-resource-in-field.ts$89-93
+			throw new Error(
+				"Yet to be implemented. For now use only simple lookups when using sql."
+			);
+		}
+
+		return {
+			where: "",
+			join: [
+				`${this.body.from} ON currenttable.${this.body.localField} = ${this.body.as}.${this.body.foreignField}`,
+			],
+			parameters: [],
+		};
+	}
+
 	renameField(old_name: string, new_name: string) {
 		Function.prototype(); //noop
 	}
@@ -307,6 +360,11 @@ abstract class SimpleQueryStep<T> {
 	}
 	toPipeline(): QueryStage[] {
 		return [{ [this.getStageName()]: this.body }];
+	}
+	toPreparedStatement(): SQLPreparedStatement {
+		throw new Error(
+			"Yet to be implemented. For now use only simple lookups when using sql."
+		);
 	}
 	hash() {
 		return object_hash(this.body);
