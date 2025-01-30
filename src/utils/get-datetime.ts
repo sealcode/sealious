@@ -10,22 +10,25 @@ const timeFormatters = {
 const dateFormats = Object.keys(dateFormatters);
 const timeFormats = Object.keys(timeFormatters);
 
-export function getTimeOfNow() {
+export function getTimeOfNow(): string {
 	return getDateTime(new Date(), "hh:mm:ss.mmm");
 }
 
-export function getTimeDifference(begin: number, end: number) {
+export function getTimeDifference(begin: number, end: number): string {
 	const date = new Date();
 	const currentTime = `${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}.${date.getMilliseconds()}`;
 	const difference = `${prettyMs(end - begin)}`;
 	return `${currentTime} (${difference})`;
 }
 
-export function getNow() {
+export function getNow(): string {
 	return getDateTime(new Date(), "yyyy-mm-dd hh:mm:ss.mmm");
 }
 
-export function getDateTime(date: Date, format_string = "yyyy-mm-dd hh:mm:ss") {
+export function getDateTime(
+	date: Date,
+	format_string = "yyyy-mm-dd hh:mm:ss"
+): string {
 	const formats = format_string.split(" ");
 	return formats
 		.reduce((date_string, format) => {
@@ -48,5 +51,5 @@ export function getDateTime(date: Date, format_string = "yyyy-mm-dd hh:mm:ss") {
 				throw new Error("Unknown format: " + format);
 			}
 		}, "")
-		.trimLeft();
+		.trimStart();
 }
