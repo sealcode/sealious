@@ -176,7 +176,7 @@ export default class Graph {
 	_meanPriorityOfSuccessors(i: number) {
 		let sum = 0,
 			length = 0;
-		for (let j of this.indexes) {
+		for (const j of this.indexes) {
 			if (this.adjacency_matrix[i][j] && !this._isVisited(j)) {
 				sum += this.nodes[j].priority;
 				++length;

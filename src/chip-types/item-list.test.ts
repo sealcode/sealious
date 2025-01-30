@@ -32,9 +32,7 @@ describe("ItemList", () => {
 				await app.collections.entries.suCreate({ name: "older" });
 				await sleep(100);
 				await app.collections.entries.suCreate({ name: "newer" });
-				const { items: desc } = await (
-					app.collections.entries as Entries
-				)
+				const { items: desc } = await app.collections.entries
 					.suList()
 					.sort({ "_metadata.modified_at": "desc" })
 					.fetch();

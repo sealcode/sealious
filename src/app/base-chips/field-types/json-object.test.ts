@@ -1,5 +1,8 @@
 import assert from "assert";
-import { TestAppConstructor, withRunningApp } from "../../../test_utils/with-test-app.js";
+import {
+	TestAppConstructor,
+	withRunningApp,
+} from "../../../test_utils/with-test-app.js";
 import { assertThrowsAsync } from "../../../test_utils/assert-throws-async.js";
 import { Collection, FieldTypes } from "../../../main.js";
 import { TestApp } from "../../../test_utils/test-app.js";
@@ -28,11 +31,14 @@ describe("json-object", () => {
 					weight: 300,
 				},
 			};
-			const { id } = await rest_api.post("/api/v1/collections/seals", item);
+			const { id } = await rest_api.post(
+				"/api/v1/collections/seals",
+				item
+			);
 
 			let {
 				items: [{ name, metadata }],
-			} = (await rest_api.get(`/api/v1/collections/seals/${id}`)) as any;
+			} = await rest_api.get(`/api/v1/collections/seals/${id}`);
 			assert.deepEqual({ name, metadata }, item);
 
 			item.metadata.weight = 320;
@@ -40,7 +46,7 @@ describe("json-object", () => {
 
 			let {
 				items: [{ name: name2, metadata: metadata2 }],
-			} = (await rest_api.get(`/api/v1/collections/seals/${id}`)) as any;
+			} = await rest_api.get(`/api/v1/collections/seals/${id}`);
 
 			assert.deepEqual({ name: name2, metadata: metadata2 }, item);
 		}));
@@ -81,12 +87,19 @@ describe("json-object", () => {
 			let seals = (await rest_api.get("/api/v1/collections/seals")).items;
 			assert.equal(seals.length, 2);
 
-			seals = (await rest_api.get("/api/v1/collections/seals?filter[name]=Hoover")).items;
+			seals = (
+				await rest_api.get(
+					"/api/v1/collections/seals?filter[name]=Hoover"
+				)
+			).items;
 
 			assert.equal(seals[0].name, "Hoover");
 
-			seals = (await rest_api.get("/api/v1/collections/seals?filter[metadata][weight]=280"))
-				.items;
+			seals = (
+				await rest_api.get(
+					"/api/v1/collections/seals?filter[metadata][weight]=280"
+				)
+			).items;
 
 			assert.equal(seals.length, 1);
 			assert.equal(seals[0].name, "Maksiu");

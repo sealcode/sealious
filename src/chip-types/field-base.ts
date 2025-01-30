@@ -87,7 +87,7 @@ export abstract class Field<
 	/** Whether or not the field handles large data
 	 * @todo: see if there's any viability in storing this
 	 */
-	handles_large_data: boolean = false;
+	handles_large_data = false;
 	/** The collection this field is attached to */
 	collection: Collection;
 	/** Whether or not this field should always have a value. Creating

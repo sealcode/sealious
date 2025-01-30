@@ -13,7 +13,7 @@ export default class And extends Query {
 		super();
 		this.queries = queries;
 		this._reset();
-		for (let query of queries) {
+		for (const query of queries) {
 			this.addQuery(query);
 		}
 	}
@@ -31,7 +31,7 @@ export default class And extends Query {
 			this.received_deny_all = true;
 		}
 		const steps = query.dump();
-		for (let step of steps) {
+		for (const step of steps) {
 			const id = step.hash();
 			if (this._isInGraph(id)) {
 				continue;
@@ -61,7 +61,7 @@ export default class And extends Query {
 			);
 		}
 
-		for (let dependency of dependencies) {
+		for (const dependency of dependencies) {
 			this.graph.addEdge(dependency, id);
 		}
 	}

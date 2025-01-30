@@ -57,7 +57,7 @@ export default class DateField extends Field<string, string | number, number> {
 		}
 		// treating filter as a query here
 		const new_filter: { [comparator in DBComparator]?: number } = {};
-		for (const comparator in field_filter as ComparatorObject<string>) {
+		for (const comparator in field_filter) {
 			if (!comparator) {
 				continue;
 			}

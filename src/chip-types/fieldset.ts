@@ -131,8 +131,7 @@ export class Fieldset<Fields extends Record<string, Field<any, any, any>>> {
 			}
 
 			if (to_encode === undefined) {
-				new_encoded[field_name as keyof typeof new_encoded] =
-					null as any;
+				new_encoded[field_name] = null as any;
 				continue;
 			}
 			promises.push(
@@ -143,8 +142,7 @@ export class Fieldset<Fields extends Record<string, Field<any, any, any>>> {
 						original_body[field_name as keyof FieldsetInput<Fields>]
 					)
 					.then((value) => {
-						new_encoded[field_name as keyof typeof new_encoded] =
-							value;
+						new_encoded[field_name] = value;
 					})
 			);
 		}
@@ -241,7 +239,7 @@ export class Fieldset<Fields extends Record<string, Field<any, any, any>>> {
 						this.raw_input[
 							field_name as keyof FieldsetInput<Fields>
 						],
-						original_body.encoded[field_name as keyof Fields],
+						original_body.encoded[field_name],
 						this.blessings[field_name] || null
 					)
 					.then(async (result) => {

@@ -73,7 +73,7 @@ export default abstract class Policy {
 		} else if (Array.isArray(definition)) {
 			ret = new definition[0](definition[1]);
 		} else if (typeof definition == "function") {
-			ret = new (definition as PolicyClass)({});
+			ret = new definition({});
 		}
 		if (!ret) {
 			throw new Error("could not read the definition");

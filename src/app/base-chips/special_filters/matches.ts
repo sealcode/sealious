@@ -12,7 +12,7 @@ export default class Matches extends SpecialFilter {
 
 	async getFilteringQuery() {
 		let pipeline: QueryStage[] = [];
-		for (let field_name in this.filter) {
+		for (const field_name in this.filter) {
 			const field_pipeline = await this.getCollection().fields[
 				field_name
 			].getAggregationStages(

@@ -19,9 +19,7 @@ export default class Datastore {
 		this.app = app;
 	}
 	async start(): Promise<void> {
-		const config = this.app.ConfigManager.get(
-			"datastore_mongo"
-		) as Config["datastore_mongo"];
+		const config = this.app.ConfigManager.get("datastore_mongo");
 
 		const url = `mongodb://${
 			config.username

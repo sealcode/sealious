@@ -3,5 +3,5 @@ export default function getAttachment(
 	field: string,
 	response: { attachments: { [id: string]: any } }
 ) {
-	return response.attachments[item[field] as string];
+	return response.attachments[item[field]];
 }

@@ -2,9 +2,17 @@ import assert from "assert";
 import Bluebird from "bluebird";
 import type Context from "../../context.js";
 import * as Sealious from "../../main.js";
-import { Collection, CollectionItem, FieldTypes, Policies } from "../../main.js";
+import {
+	Collection,
+	CollectionItem,
+	FieldTypes,
+	Policies,
+} from "../../main.js";
 import { assertThrowsAsync } from "../../test_utils/assert-throws-async.js";
-import { TestAppConstructor, withRunningApp } from "../../test_utils/with-test-app.js";
+import {
+	TestAppConstructor,
+	withRunningApp,
+} from "../../test_utils/with-test-app.js";
 import getAttachment from "../../test_utils/get-attachment.js";
 import { TestApp } from "../../test_utils/test-app.js";
 
@@ -25,7 +33,10 @@ function create_less_than_policy(number: number) {
 			});
 			return query;
 		}
-		async checkerFunction(_: Context, item_getter: () => Promise<CollectionItem>) {
+		async checkerFunction(
+			_: Context,
+			item_getter: () => Promise<CollectionItem>
+		) {
 			const item = await item_getter();
 			const item_number = (
 				item as unknown as {
@@ -33,7 +44,9 @@ function create_less_than_policy(number: number) {
 				}
 			).number.number;
 			if (item_number >= number) {
-				return Sealious.Policy.deny(`Given value is not lower than ${number}`);
+				return Sealious.Policy.deny(
+					`Given value is not lower than ${number}`
+				);
 			}
 			return Sealious.Policy.allow(`Number is less than ${number}`);
 		}
@@ -108,9 +121,12 @@ describe("NotPolicy", () => {
 		withRunningApp(extend, async ({ app, rest_api }) => {
 			await setup(app);
 			await assertThrowsAsync(
-				async () => await rest_api.get("/api/v1/collections/collection-not(public)"),
+				async () =>
+					await rest_api.get(
+						"/api/v1/collections/collection-not(public)"
+					),
 				(e) => {
-					assert.strictEqual((e as any).response.status, 401);
+					assert.strictEqual(e.response.status, 401);
 				}
 			);
 		}));

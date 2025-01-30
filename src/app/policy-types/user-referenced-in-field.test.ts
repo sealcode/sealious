@@ -1,5 +1,8 @@
 import assert from "assert";
-import { TestAppConstructor, withRunningApp } from "../../test_utils/with-test-app.js";
+import {
+	TestAppConstructor,
+	withRunningApp,
+} from "../../test_utils/with-test-app.js";
 import { Collection, FieldTypes, Policies } from "../../main.js";
 import { TestApp } from "../../test_utils/test-app.js";
 
@@ -44,7 +47,10 @@ describe("user-referenced-in-field", () => {
 				password: "password",
 			});
 
-			const { items } = await rest_api.get("/api/v1/collections/pets", alice_session);
+			const { items } = await rest_api.get(
+				"/api/v1/collections/pets",
+				alice_session
+			);
 			assert.strictEqual(items.length, 1);
 			assert.strictEqual(items[0].name, "Alice&#39;s pet");
 		}));

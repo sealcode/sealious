@@ -28,7 +28,7 @@ export class LongRunningProcess<
 			...rest: Args
 		) => Promise<unknown>,
 		args: Args,
-		name: string = "Long running process",
+		name = "Long running process",
 		owner_id: string | null = context.user_id
 	) {
 		super();
