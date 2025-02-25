@@ -3,7 +3,7 @@
 export async function post(
 	url: string,
 	body: Record<string, unknown>
-): Promise<unknown> {
+): Promise<any> {
 	const response = await fetch(url, {
 		method: "post",
 		headers: {
