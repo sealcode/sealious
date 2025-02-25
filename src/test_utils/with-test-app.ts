@@ -26,7 +26,7 @@ type CallbackParams<FinalTestAppType extends TestApp> = {
 
 type TestCallback<FinalTestAppType extends TestApp> = (
 	params: CallbackParams<FinalTestAppType>
-) => Promise<any>;
+) => Promise<unknown>;
 
 type extendFn<FinalTestAppType extends TestApp> =
 	| null
@@ -40,7 +40,7 @@ export async function withStoppedApp<FinalTestAppType extends TestApp>(
 	extend_fn: extendFn<FinalTestAppType>,
 	cb: TestCallback<FinalTestAppType>,
 	test_collection?: string // tests with the same collection get assigned the same db id
-): Promise<any> {
+): Promise<void> {
 	await withTestApp(false, "dev", extend_fn, cb, test_collection);
 }
 
@@ -48,7 +48,7 @@ export async function withRunningApp<FinalTestAppType extends TestApp>(
 	extend_fn: extendFn<FinalTestAppType>,
 	cb: TestCallback<FinalTestAppType>,
 	test_collection?: string // tests with the same collection get assigned the same db id
-): Promise<any> {
+): Promise<void> {
 	await withTestApp(true, "dev", extend_fn, cb, test_collection);
 }
 
@@ -71,7 +71,7 @@ export async function withTestApp<FinalTestAppType extends TestApp>(
 	extend_fn: extendFn<FinalTestAppType>,
 	fn: (params: CallbackParams<FinalTestAppType>) => Promise<unknown>,
 	test_collection?: string
-) {
+): Promise<void> {
 	const port = await getPort();
 	const base_url = `http://127.0.0.1:${port}`;
 	const smtp_api_url = `http://${

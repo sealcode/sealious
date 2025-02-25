@@ -71,13 +71,13 @@ export class TestApp extends App {
 					await this.Datastore.remove(
 						collection_name,
 						{},
-						"just_one" && false
+						/*just_one*/ false
 					);
 				}
 				await this.Datastore.remove(
 					this.Metadata.db_collection_name,
 					{},
-					"just_one" && false
+					/*just_one*/ false
 				);
 			}
 		});
