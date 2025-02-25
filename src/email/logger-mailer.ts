@@ -2,10 +2,10 @@ import Mailer from "./mailer.js";
 import type { MessageData } from "./message.js";
 
 export default class LoggerMailer extends Mailer {
-	async verify() {
+	async verify(): Promise<true> {
 		return true;
 	}
-	async sendEmail({ to, subject, text }: MessageData) {
+	async sendEmail({ to, subject, text }: MessageData): Promise<void> {
 		this.app.Logger.info("✉ MAIL", "Would send an email here", {
 			to,
 			subject,

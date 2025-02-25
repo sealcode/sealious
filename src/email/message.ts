@@ -21,7 +21,7 @@ export default class Message {
 		);
 		this.data = data;
 	}
-	async send(app: App) {
+	async send(app: App): Promise<void> {
 		return app.mailer.send(this.data);
 	}
 }

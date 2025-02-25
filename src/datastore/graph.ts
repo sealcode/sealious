@@ -27,7 +27,7 @@ export default class Graph {
 		this.nodes = [];
 		this.indexes = [];
 	}
-	addNode(id: NodeID, priority: number) {
+	addNode(id: NodeID, priority: number): void {
 		this.adjacency_matrix.push(Array(this.getNoOfNodes()).fill(0));
 		for (const row of this.adjacency_matrix) {
 			row.push(0);
@@ -36,17 +36,17 @@ export default class Graph {
 		this.nodes.push({ id, priority });
 		this.indexes.push(this.nodes.length - 1);
 	}
-	getNoOfNodes() {
+	getNoOfNodes(): number {
 		return this.nodes.length;
 	}
-	addEdge(id_i: NodeID, id_j: NodeID) {
+	addEdge(id_i: NodeID, id_j: NodeID): void {
 		const [i, j] = this._getIndexesOfNodePair(id_i, id_j);
 		this.adjacency_matrix[i][j] = 1;
 	}
-	_getIndexesOfNodePair(id_i: NodeID, id_j: NodeID) {
+	_getIndexesOfNodePair(id_i: NodeID, id_j: NodeID): [number, number] {
 		return [this.node_ids.indexOf(id_i), this.node_ids.indexOf(id_j)];
 	}
-	pathExists(id_i: NodeID, id_j: NodeID) {
+	pathExists(id_i: NodeID, id_j: NodeID): boolean {
 		const [i, j] = this._getIndexesOfNodePair(id_i, id_j);
 		return this._pathExists(i, j);
 	}
@@ -61,7 +61,7 @@ export default class Graph {
 		}
 		return false;
 	}
-	bestFirstSearch() {
+	bestFirstSearch(): NodeID[] {
 		this.front = [];
 		this.visited = [];
 		while (this.visited.length < this.nodes.length) {
@@ -81,7 +81,7 @@ export default class Graph {
 		}
 		return this.visited.map((i) => this.nodes[i].id);
 	}
-	_areAllSuccessorsVisited(i: number) {
+	_areAllSuccessorsVisited(i: number): boolean {
 		for (let j = 0; j < this.nodes.length; ++j) {
 			if (this.adjacency_matrix[i][j] && !this._isVisited(j)) {
 				return false;
@@ -89,10 +89,10 @@ export default class Graph {
 		}
 		return true;
 	}
-	_isVisited(i: number) {
+	_isVisited(i: number): boolean {
 		return this.visited.includes(i);
 	}
-	_isNodeWithoutPredecessors(i: number) {
+	_isNodeWithoutPredecessors(i: number): boolean {
 		for (let j = 0; j < this.nodes.length; ++j) {
 			if (this.adjacency_matrix[j][i]) {
 				return false;
@@ -173,7 +173,7 @@ export default class Graph {
 			mean_priority_of_succcessors: best_mean,
 		};
 	}
-	_meanPriorityOfSuccessors(i: number) {
+	_meanPriorityOfSuccessors(i: number): number {
 		let sum = 0,
 			length = 0;
 		for (const j of this.indexes) {
