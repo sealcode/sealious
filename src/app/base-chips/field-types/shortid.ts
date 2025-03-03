@@ -1,6 +1,6 @@
 import { Field } from "../../../main.js";
 
-import shortid from "shortid";
+import { nanoid } from "nanoid";
 
 export default class ShortID extends Field<string> {
 	typeName = "shortid";
@@ -14,6 +14,6 @@ export default class ShortID extends Field<string> {
 		if (input === null) {
 			return null;
 		}
-		return input ? input : shortid.generate();
+		return input ? input : nanoid();
 	}
 }

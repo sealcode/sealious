@@ -6,7 +6,7 @@ import {
 	ValidationError,
 	FieldsError,
 } from "../response/errors.js";
-import shortid from "shortid";
+import { nanoid } from "nanoid";
 import type { AttachmentOptions } from "./item-list.js";
 import type { PolicyDecision } from "./policy.js";
 import isEmpty from "../utils/is-empty.js";
@@ -48,7 +48,7 @@ export default class CollectionItem<T extends Collection = any> {
 		collection.app.Logger.debug3("ITEM", "Creating an item from fieldset", {
 			body,
 		});
-		this.id = shortid();
+		this.id = nanoid();
 		if (id) {
 			this.id = id;
 			this.save_mode = "update";
