@@ -1,6 +1,9 @@
 import * as assert from "assert";
 
-import { TestAppConstructor, withRunningApp } from "../../../test_utils/with-test-app.js";
+import {
+	type TestAppConstructor,
+	withRunningApp,
+} from "../../../test_utils/with-test-app.js";
 import { Collection, FieldTypes } from "../../../main.js";
 import Matches from "./matches.js";
 import type { SerializedItemBody } from "../../../chip-types/collection-item.js";
@@ -45,7 +48,9 @@ describe("Matches", () => {
 				.fetch();
 
 			assert.deepEqual(
-				sealious_response.items.map((resource) => resource.get("number")),
+				sealious_response.items.map((resource) =>
+					resource.get("number")
+				),
 				[1, 2]
 			);
 		}));
@@ -66,7 +71,9 @@ describe("Matches", () => {
 	it("returns empty array when using both @positive and @negative filters", () =>
 		withRunningApp(extend, async ({ rest_api }) => {
 			await setup(rest_api);
-			const { items } = await rest_api.get("/api/v1/collections/numbers/@positive/@negative");
+			const { items } = await rest_api.get(
+				"/api/v1/collections/numbers/@positive/@negative"
+			);
 			assert.deepEqual(
 				items.map((resource: SerializedItemBody) => resource.number),
 				[]

@@ -2,7 +2,7 @@ import assert from "assert";
 import Bluebird from "bluebird";
 
 import {
-	TestAppConstructor,
+	type TestAppConstructor,
 	withRunningApp,
 } from "../../test_utils/with-test-app.js";
 import create_policies from "../../test_utils/policy-types/create-policies-with-complex-pipeline.js";

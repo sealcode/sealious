@@ -1,7 +1,7 @@
 import Field, {
-	ExtractFieldDecoded,
-	ExtractFieldInput,
-	ExtractFieldStorage,
+	type ExtractFieldDecoded,
+	type ExtractFieldInput,
+	type ExtractFieldStorage,
 	HybridField,
 } from "../../../chip-types/field.js";
 import type { Context } from "../../../main.js";

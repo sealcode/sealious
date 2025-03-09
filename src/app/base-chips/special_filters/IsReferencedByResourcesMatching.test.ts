@@ -1,6 +1,9 @@
 import * as assert from "assert";
 
-import { TestAppConstructor, withRunningApp } from "../../../test_utils/with-test-app.js";
+import {
+	type TestAppConstructor,
+	withRunningApp,
+} from "../../../test_utils/with-test-app.js";
 import { Collection, FieldTypes, Policies } from "../../../main.js";
 import IsReferencedByResourcesMatching from "./IsReferencedByResourcesMatching.js";
 import Users from "../../collections/users.js";
@@ -59,7 +62,10 @@ describe("IsReferencedByResourcesMatching", () => {
 		];
 
 		for (let user of users) {
-			const { id, username } = await rest_api.post("/api/v1/collections/users", user);
+			const { id, username } = await rest_api.post(
+				"/api/v1/collections/users",
+				user
+			);
 			await rest_api.post("/api/v1/collections/users-roles", {
 				user: id,
 				role: username,
@@ -71,11 +77,16 @@ describe("IsReferencedByResourcesMatching", () => {
 		withRunningApp(extend, async ({ rest_api }) => {
 			await setup(rest_api);
 
-			return rest_api.get("/api/v1/collections/users/@staff").then(({ items }: any) => {
-				assert.ok(items.length > 0);
-				items.forEach((user: any) => {
-					assert.ok(user.username === "admin" || user.username === "moderator");
+			return rest_api
+				.get("/api/v1/collections/users/@staff")
+				.then(({ items }: any) => {
+					assert.ok(items.length > 0);
+					items.forEach((user: any) => {
+						assert.ok(
+							user.username === "admin" ||
+								user.username === "moderator"
+						);
+					});
 				});
-			});
 		}));
 });

@@ -1,7 +1,7 @@
 import object_hash from "object-hash";
 import transformObject from "../utils/transform-object.js";
 import negate_stage from "./negate-stage.js";
-import type QueryStage from "./query-stage.js";
+import type { QueryStage } from "./query-stage.js";
 import type { MatchBody } from "./query-stage.js";
 import type { SQLPreparedStatement } from "./query-base.js";
 

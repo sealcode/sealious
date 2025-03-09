@@ -1,5 +1,8 @@
 import assert from "assert";
-import { TestAppConstructor, withRunningApp } from "../../../test_utils/with-test-app.js";
+import {
+	type TestAppConstructor,
+	withRunningApp,
+} from "../../../test_utils/with-test-app.js";
 import { assertThrowsAsync } from "../../../test_utils/assert-throws-async.js";
 import { App, Collection, FieldTypes, Policies } from "../../../main.js";
 
@@ -90,7 +93,8 @@ describe("boolean", () => {
 						(error) => {
 							assert.equal(error.response.status, 403);
 							assert.deepEqual(
-								error.response.data.data.field_messages.is_old.message,
+								error.response.data.data.field_messages.is_old
+									.message,
 								error_message
 							);
 						}

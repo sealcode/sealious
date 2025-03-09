@@ -1,7 +1,7 @@
 import Bluebird from "bluebird";
 import Policy, {
 	ReducingPolicy,
-	PolicyDecision,
+	type PolicyDecision,
 } from "../../chip-types/policy.js";
 
 import type Context from "../../context.js";

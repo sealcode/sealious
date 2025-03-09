@@ -2,7 +2,7 @@ import type { LoggerLevel } from "./logger.js";
 
 export type Environment = "dev" | "production";
 
-type Config = {
+export type Config = {
 	core: {
 		environment: Environment;
 	};
@@ -40,8 +40,6 @@ type Config = {
 		version: string;
 	};
 };
-
-export default Config;
 
 type RecursivePartial<T> = {
 	[P in keyof T]?: RecursivePartial<T[P]>;

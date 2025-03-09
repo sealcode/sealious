@@ -68,16 +68,12 @@ export class TestApp extends App {
 			if (this.clear_database_on_stop && this.Datastore.db) {
 				this.Logger.info("TEST APP", "Clearing the database...");
 				for (const collection_name in this.collections) {
-					await this.Datastore.remove(
-						collection_name,
-						{},
-						"just_one" && false
-					);
+					await this.Datastore.remove(collection_name, {}, false);
 				}
 				await this.Datastore.remove(
 					this.Metadata.db_collection_name,
 					{},
-					"just_one" && false
+					false
 				);
 			}
 		});

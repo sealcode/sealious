@@ -12,7 +12,7 @@ import {
 import type { CollectionResponse } from "../../../test_utils/rest-api.js";
 import { TestApp } from "../../../test_utils/test-app.js";
 import {
-	TestAppConstructor,
+	type TestAppConstructor,
 	withRunningApp,
 } from "../../../test_utils/with-test-app.js";
 

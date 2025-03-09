@@ -1,4 +1,4 @@
-import { Context, Field, ValidationResult } from "../../../main.js";
+import { Context, Field, type ValidationResult } from "../../../main.js";
 import Text from "./text.js";
 import JsonObject from "./json-object.js";
 import { StructuredArray } from "./structured-array.js";

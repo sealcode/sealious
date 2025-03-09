@@ -8,7 +8,7 @@ import {
 
 import assert from "assert";
 import {
-	TestAppConstructor,
+	type TestAppConstructor,
 	withRunningApp,
 } from "../../../test_utils/with-test-app.js";
 import { assertThrowsAsync } from "../../../test_utils/assert-throws-async.js";

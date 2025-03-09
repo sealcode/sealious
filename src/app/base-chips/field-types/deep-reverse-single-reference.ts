@@ -1,4 +1,6 @@
-import ItemList, { AttachmentOptions } from "../../../chip-types/item-list.js";
+import ItemList, {
+	type AttachmentOptions,
+} from "../../../chip-types/item-list.js";
 import type Context from "../../../context.js";
 import type { App, Collection, CollectionItem } from "../../../main.js";
 import ReverseSingleReference from "./reverse-single-reference.js";

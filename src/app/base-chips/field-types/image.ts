@@ -1,6 +1,6 @@
 import Field, {
-	ExtractFieldInput,
-	ValidationResult,
+	type ExtractFieldInput,
+	type ValidationResult,
 } from "../../../chip-types/field.js";
 import { module_dirname } from "../../../utils/module_filename.js";
 import FileField, { FileStorage } from "./file.js";

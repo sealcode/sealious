@@ -1,7 +1,10 @@
 import assert from "assert";
 import { Collection, FieldTypes, Policies } from "../../../main.js";
 import { TestApp } from "../../../test_utils/test-app.js";
-import { TestAppConstructor, withRunningApp } from "../../../test_utils/with-test-app.js";
+import {
+	type TestAppConstructor,
+	withRunningApp,
+} from "../../../test_utils/with-test-app.js";
 
 function extend(t: TestAppConstructor) {
 	return class extends t {

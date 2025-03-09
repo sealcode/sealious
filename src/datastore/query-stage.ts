@@ -9,7 +9,7 @@ export type MatchBody = Partial<{
 	[field: string]: unknown;
 }>;
 
-type QueryStage = Partial<{
+export type QueryStage = Partial<{
 	$match: MatchBody;
 	$lookup: SimpleLookupBody | ComplexLookupBody;
 	$unwind: string;
@@ -23,5 +23,3 @@ type QueryStage = Partial<{
 	$count: string;
 	$unset: string;
 }>;
-
-export default QueryStage;

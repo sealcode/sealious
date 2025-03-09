@@ -1,8 +1,8 @@
 import {
 	hasShape,
-	Predicate,
-	Shape,
-	ShapeToType,
+	type Predicate,
+	type Shape,
+	type ShapeToType,
 } from "@sealcode/ts-predicates";
 import type Context from "../../../../context.js";
 

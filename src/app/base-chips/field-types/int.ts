@@ -1,8 +1,8 @@
 import { Field, Context, Errors } from "../../../main.js";
 import humanComparatorToQuery, {
-	ComparatorObject,
-	HumanComparator,
-	DBComparator,
+	type ComparatorObject,
+	type HumanComparator,
+	type DBComparator,
 } from "../../../utils/human-comparator-to-query.js";
 
 export type IntStorageParams = { min?: number; max?: number };
@@ -42,12 +42,12 @@ export abstract class IntStorage<
 			);
 		}
 
-		if (this.min !== undefined && new_value < this.min) {
+		if (this.min !== undefined && number < this.min) {
 			return Field.invalid(
 				context.app.i18n("too_small_integer", [number, this.min])
 			);
 		}
-		if (this.max !== undefined && new_value > this.max) {
+		if (this.max !== undefined && number > this.max) {
 			return Field.invalid(
 				context.app.i18n("too_big_integer", [number, this.max])
 			);

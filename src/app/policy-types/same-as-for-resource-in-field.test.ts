@@ -1,7 +1,7 @@
 import assert from "assert";
 import type Policy from "../../chip-types/policy.js";
 import {
-	ActionName,
+	type ActionName,
 	App,
 	Collection,
 	FieldTypes,
@@ -12,7 +12,7 @@ import { assertThrowsAsync } from "../../test_utils/assert-throws-async.js";
 import type MockRestApi from "../../test_utils/rest-api.js";
 import { TestApp } from "../../test_utils/test-app.js";
 import {
-	TestAppConstructor,
+	type TestAppConstructor,
 	withRunningApp,
 } from "../../test_utils/with-test-app.js";
 import Matches from "../base-chips/special_filters/matches.js";

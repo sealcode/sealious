@@ -1,5 +1,5 @@
 import Query from "./query.js";
-import type QueryStage from "./query-stage.js";
+import type { QueryStage } from "./query-stage.js";
 import type { MatchBody } from "./query-stage.js";
 import QueryStep, { Lookup, Match } from "./query-step.js";
 import type { SQLPreparedStatement } from "./query-base.js";

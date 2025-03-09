@@ -5,7 +5,10 @@ import type {
 	CollectionItem,
 	Context,
 } from "../../../main.js";
-import { HybridField, ValidationResult } from "../../../chip-types/field.js";
+import {
+	HybridField,
+	type ValidationResult,
+} from "../../../chip-types/field.js";
 import isEmpty from "../../../utils/is-empty.js";
 import { BadContext } from "../../../response/errors.js";
 /*

@@ -3,7 +3,7 @@ import assert from "assert";
 import {
 	withStoppedApp,
 	withRunningApp,
-	TestAppConstructor,
+	type TestAppConstructor,
 } from "../../../test_utils/with-test-app.js";
 import { assertThrowsAsync } from "../../../test_utils/assert-throws-async.js";
 import { getDateTime } from "../../../utils/get-datetime.js";
@@ -324,7 +324,7 @@ describe("cached-value", () => {
 
 						const new_app = new (class extends app_class {
 							collections = {
-								...super.collections,
+								...App.BaseCollections,
 								"happy-numbers": new HappyNumbers(),
 							};
 						})(uniq_id, env, port, base_url);

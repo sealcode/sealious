@@ -1,4 +1,4 @@
-import Query, { QueryStage } from "./query.js";
+import Query, { type QueryStage } from "./query.js";
 import type QueryStep from "./query-step.js";
 import type { SQLPreparedStatement } from "./query-base.js";
 

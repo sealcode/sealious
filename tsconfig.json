@@ -15,7 +15,7 @@
 		"declarationDir": "@types",
 		"resolveJsonModule": true,
 		"sourceMap": true,
-		"importsNotUsedAsValues": "error",
+		"verbatimModuleSyntax": true,
 		"skipLibCheck": true,
 		"allowSyntheticDefaultImports": true
 	},

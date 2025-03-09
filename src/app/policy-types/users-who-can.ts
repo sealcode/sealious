@@ -1,4 +1,10 @@
-import { Policy, Context, ActionName, QueryTypes, App } from "../../main.js";
+import {
+	Policy,
+	Context,
+	type ActionName,
+	QueryTypes,
+	App,
+} from "../../main.js";
 
 export default class UsersWhoCan extends Policy {
 	static type_name = "users-who-can";

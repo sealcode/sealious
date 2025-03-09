@@ -1,8 +1,8 @@
-import { Query, SQLPreparedStatement } from "./query-base.js";
+import { Query, type SQLPreparedStatement } from "./query-base.js";
 import QueryStep, { Match } from "./query-step.js";
 import Graph from "./graph.js";
 import { QueryTypes } from "../main.js";
-import type QueryStage from "./query-stage.js";
+import type { QueryStage } from "./query-stage.js";
 
 export default class And extends Query {
 	graph: Graph;

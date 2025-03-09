@@ -1,6 +1,6 @@
 import { getProperty, setProperty } from "dot-prop";
 import merge from "deepmerge";
-import type Config from "./config.js";
+import type { Config } from "./config.js";
 
 type ConfigObject = { [key: string]: any };
 

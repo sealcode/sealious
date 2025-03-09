@@ -3,7 +3,7 @@ import type Collection from "../../chip-types/collection.js";
 import Policy from "../../chip-types/policy.js";
 import { AllowAll } from "../../datastore/allow-all.js";
 import DenyAll from "../../datastore/deny-all.js";
-import type QueryStage from "../../datastore/query-stage.js";
+import type { QueryStage } from "../../datastore/query-stage.js";
 import {
 	App,
 	CollectionItem,

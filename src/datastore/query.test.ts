@@ -1,13 +1,12 @@
-import Query, { And, Not, Or, QueryStage } from "./query.js";
+import Query, { And, Not, Or, type QueryStage } from "./query.js";
 import * as assert from "assert";
 import QueryStep, {
-	SimpleLookupBody,
+	type SimpleLookupBody,
 	SimpleLookup,
 	Lookup,
-	LookupBody,
-	SimpleLookupBodyInput,
-	ComplexLookup,
-	ComplexLookupBody,
+	type LookupBody,
+	type SimpleLookupBodyInput,
+	type ComplexLookupBody,
 } from "./query-step.js";
 import DenyAll from "./deny-all.js";
 

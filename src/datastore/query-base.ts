@@ -1,10 +1,10 @@
-import type QueryStage from "./query-stage.js";
+import type { QueryStage } from "./query-stage.js";
 import {
-	ComplexLookupBodyInput,
+	type ComplexLookupBodyInput,
 	default as QueryStep,
 	Lookup,
 	Match,
-	SimpleLookupBodyInput,
+	type SimpleLookupBodyInput,
 } from "./query-step.js";
 
 export type SQLPreparedStatement = {

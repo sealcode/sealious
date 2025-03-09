@@ -5,7 +5,7 @@ import {
 	Collection,
 	Context,
 	Fieldset,
-	FieldsetInput,
+	type FieldsetInput,
 } from "../../../main.js";
 import { ArrayStorage } from "./array-storage.js";
 

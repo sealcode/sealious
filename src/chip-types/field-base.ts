@@ -1,7 +1,7 @@
 import type Collection from "./collection.js";
 import type Context from "../context.js";
 import type { ActionName } from "../action.js";
-import type QueryStage from "../datastore/query-stage.js";
+import type { QueryStage } from "../datastore/query-stage.js";
 import type { MatchBody } from "../datastore/query-stage.js";
 import { BadSubjectAction } from "../response/errors.js";
 import isEmpty from "../utils/is-empty.js";

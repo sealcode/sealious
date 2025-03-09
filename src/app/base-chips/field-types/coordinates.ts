@@ -1,5 +1,5 @@
 import { hasShape, predicates } from "@sealcode/ts-predicates";
-import { Context, Field, ValidationResult } from "../../../main.js";
+import { Context, Field, type ValidationResult } from "../../../main.js";
 
 export type CoordinatesFieldInputType =
 	| string

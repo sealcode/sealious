@@ -1,6 +1,8 @@
 import Bluebird from "bluebird";
 import { Field, Context } from "../../../main.js";
-import ItemList, { AttachmentOptions } from "../../../chip-types/item-list.js";
+import ItemList, {
+	type AttachmentOptions,
+} from "../../../chip-types/item-list.js";
 import { ValidationError } from "../../../response/errors.js";
 
 type InnerFilter = Record<string, any>;

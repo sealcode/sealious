@@ -1,9 +1,9 @@
 import { Field, Context, Policy, App } from "../../../main.js";
 import {
-	ExtractFieldDecoded,
-	ExtractFieldInput,
-	ExtractFieldStorage,
-	ExtractParams,
+	type ExtractFieldDecoded,
+	type ExtractFieldInput,
+	type ExtractFieldStorage,
+	type ExtractParams,
 	HybridField,
 } from "../../../chip-types/field.js";
 

@@ -1,7 +1,7 @@
 import assert from "assert";
 import { assertThrowsAsync } from "../../../test_utils/assert-throws-async.js";
 import {
-	TestAppConstructor,
+	type TestAppConstructor,
 	withRunningApp,
 } from "../../../test_utils/with-test-app.js";
 import { Collection, FieldTypes, Policies } from "../../../main.js";

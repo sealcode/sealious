@@ -1,5 +1,8 @@
 import assert from "assert";
-import { TestAppConstructor, withRunningApp } from "../test_utils/with-test-app.js";
+import {
+	type TestAppConstructor,
+	withRunningApp,
+} from "../test_utils/with-test-app.js";
 import { assertThrowsAsync } from "../test_utils/assert-throws-async.js";
 import { App, Collection, FieldTypes } from "../main.js";
 import type { SerializedItemBody } from "../chip-types/collection-item.js";
@@ -31,15 +34,21 @@ function extend(t: TestAppConstructor) {
 describe("sorting", () => {
 	const items: { [name: string]: SerializedItemBody } = {};
 	async function create_resources(app: App, rest_api: MockRestApi) {
-		items.baltic_sea = (await rest_api.post("/api/v1/collections/water_areas", {
-			name: "Baltic Sea",
-			temperature: 10,
-		})) as any;
+		items.baltic_sea = (await rest_api.post(
+			"/api/v1/collections/water_areas",
+			{
+				name: "Baltic Sea",
+				temperature: 10,
+			}
+		)) as any;
 
-		items.arabic_sea = (await rest_api.post("/api/v1/collections/water_areas", {
-			name: "Arabic Sea",
-			temperature: 20,
-		})) as any;
+		items.arabic_sea = (await rest_api.post(
+			"/api/v1/collections/water_areas",
+			{
+				name: "Arabic Sea",
+				temperature: 20,
+			}
+		)) as any;
 
 		const seals = [
 			{
@@ -86,7 +95,9 @@ describe("sorting", () => {
 
 			await assertThrowsAsync(
 				async () =>
-					await rest_api.get("/api/v1/collections/seals?sort[favorite_number]=dsc"),
+					await rest_api.get(
+						"/api/v1/collections/seals?sort[favorite_number]=dsc"
+					),
 				(e) => {
 					assert.equal(e.response.status, 405);
 					assert.equal(

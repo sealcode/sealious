@@ -1,4 +1,4 @@
-import { Context, default as Koa } from "koa";
+import { default as Koa } from "koa";
 import Static from "koa-static";
 import Router from "@koa/router";
 import type { Server } from "http";

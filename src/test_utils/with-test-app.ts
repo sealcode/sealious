@@ -41,13 +41,7 @@ export async function withStoppedApp<FinalTestAppType extends TestApp>(
 	cb: TestCallback<FinalTestAppType>,
 	test_collection?: string // tests with the same collection get assigned the same db id
 ): Promise<any> {
-	await withTestApp(
-		"auto_start" && false,
-		"dev",
-		extend_fn,
-		cb,
-		test_collection
-	);
+	await withTestApp(false, "dev", extend_fn, cb, test_collection);
 }
 
 export async function withRunningApp<FinalTestAppType extends TestApp>(
@@ -55,13 +49,7 @@ export async function withRunningApp<FinalTestAppType extends TestApp>(
 	cb: TestCallback<FinalTestAppType>,
 	test_collection?: string // tests with the same collection get assigned the same db id
 ): Promise<any> {
-	await withTestApp(
-		"auto_start" && true,
-		"dev",
-		extend_fn,
-		cb,
-		test_collection
-	);
+	await withTestApp(true, "dev", extend_fn, cb, test_collection);
 }
 
 function getAppID(test_collection?: string) {

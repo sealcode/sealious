@@ -1,4 +1,4 @@
-import { predicates, ShapeToType } from "@sealcode/ts-predicates";
+import { predicates, type ShapeToType } from "@sealcode/ts-predicates";
 import type Context from "../../../../context.js";
 import { ArrayAction } from "./array-action.js";
 
@@ -22,7 +22,12 @@ export class Swap extends ArrayAction<
 				reason: "swap action parameter should be a list of two numbers",
 			};
 		}
-		if (action.swap.some((index) => index >= array.length || index < 0)) {
+		if (
+			action.swap.some((index) => {
+				index = parseInt(index.toString());
+				return index >= array.length || index < 0;
+			})
+		) {
 			return {
 				valid: false,
 				reason: "swap action parameter out of range",

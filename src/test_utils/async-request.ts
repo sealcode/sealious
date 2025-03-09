@@ -1,4 +1,4 @@
-import { request, RequestOptions } from "http";
+import { request, type RequestOptions } from "http";
 
 export default async function asyncRequest(
 	options: RequestOptions,

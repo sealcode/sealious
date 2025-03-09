@@ -5,7 +5,7 @@ import {
 	BadSubjectAction,
 	ValidationError,
 } from "../response/errors.js";
-import type QueryStage from "../datastore/query-stage.js";
+import type { QueryStage } from "../datastore/query-stage.js";
 import sealious_to_mongo_sort_param from "../utils/mongo-sorts.js";
 import { stringify as csvStringify } from "csv-stringify/sync";
 import type { ExtractFilterParams } from "./field.js";

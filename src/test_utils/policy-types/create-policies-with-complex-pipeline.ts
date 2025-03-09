@@ -1,4 +1,4 @@
-import { Policy, Query, PolicyClass } from "../../main.js";
+import { Policy, Query, type PolicyClass } from "../../main.js";
 
 export default {
 	allowDeny: function (): PolicyClass[] {

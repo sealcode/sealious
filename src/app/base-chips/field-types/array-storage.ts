@@ -1,11 +1,11 @@
 import {
 	hasFieldOfType,
 	is,
-	Predicate,
+	type Predicate,
 	predicates,
 } from "@sealcode/ts-predicates";
 import type { ActionName } from "../../../action.js";
-import { Field, Context, ValidationResult } from "../../../main.js";
+import { Field, Context, type ValidationResult } from "../../../main.js";
 import { Insert } from "./array-actions/insert.js";
 import { Remove } from "./array-actions/remove.js";
 import { Replace } from "./array-actions/replace.js";

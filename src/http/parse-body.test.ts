@@ -1,6 +1,6 @@
 import assert from "assert";
 import {
-	TestAppConstructor,
+	type TestAppConstructor,
 	withRunningApp,
 	withStoppedApp,
 } from "../test_utils/with-test-app.js";

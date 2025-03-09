@@ -5,7 +5,7 @@ import {
 	FieldTypes,
 	Policies,
 	Context,
-	ActionName,
+	type ActionName,
 } from "../../main.js";
 import { BadContext } from "../../response/errors.js";
 import SecureHasher from "../../utils/secure-hasher.js";

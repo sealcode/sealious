@@ -5,7 +5,7 @@ import { App, Context, FieldTypes, Policies } from "../main.js";
 import { assertThrowsAsync } from "../test_utils/assert-throws-async.js";
 import type { TestApp } from "../test_utils/test-app.js";
 import {
-	TestAppConstructor,
+	type TestAppConstructor,
 	withRunningApp,
 } from "../test_utils/with-test-app.js";
 import Collection from "./collection.js";

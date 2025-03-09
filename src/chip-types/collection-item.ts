@@ -1,4 +1,4 @@
-import Collection, { Fieldnames } from "./collection.js";
+import Collection, { type Fieldnames } from "./collection.js";
 import type Context from "../context.js";
 import {
 	DeveloperError,

@@ -20,10 +20,10 @@ import type LongRunningProcesses from "./collections/long-running-processes.js";
 import type Sessions from "./collections/sessions.js";
 import type Users from "./collections/users.js";
 import ConfigManager from "./config-manager.js";
-import type Config from "./config.js";
+import type { Config } from "./config.js";
 import type { PartialConfig } from "./config.js";
 import Logger from "./logger.js";
-import Manifest, { ManifestData } from "./manifest.js";
+import Manifest, { type ManifestData } from "./manifest.js";
 import type Metadata from "./metadata.js";
 
 import _locreq from "locreq";
@@ -212,7 +212,7 @@ export abstract class App {
 	async removeAllData(): Promise<void> {
 		await Promise.all([
 			...Object.keys(this.collections).map((collection_name) =>
-				this.Datastore.remove(collection_name, {}, "just_one" && false)
+				this.Datastore.remove(collection_name, {}, false)
 			),
 			this.Metadata.clear(),
 		]);

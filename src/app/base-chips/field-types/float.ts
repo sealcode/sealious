@@ -1,9 +1,9 @@
 import type { ValidationResult } from "../../../chip-types/field.js";
 import { Context, Errors, Field } from "../../../main.js";
 import humanComparatorToQuery, {
-	ComparatorObject,
-	DBComparator,
-	HumanComparator,
+	type ComparatorObject,
+	type DBComparator,
+	type HumanComparator,
 } from "../../../utils/human-comparator-to-query.js";
 
 /** Stores a floating point number. Does not take params. Does not allow range filtering. @todo: add range filtering */
