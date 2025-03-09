@@ -655,7 +655,7 @@ export default abstract class Collection {
 								<updated>${data.updated.toISOString()}</updated>
 								<content type="xhtml">
 									<div xmlns="http://www.w3.org/1999/xhtml">
-										${data.content}
+										${data.content.replaceAll("<", "&lt;")}
 									</div>
 								</content>
 								${data.author

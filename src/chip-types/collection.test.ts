@@ -682,5 +682,43 @@ describe("collection", () => {
 					);
 				}
 			));
+
+		it("escapes the content of the atom feed html entry", async () =>
+			withRunningApp(
+				(t) =>
+					class extends t {
+						collections = {
+							...App.BaseCollections,
+							posts: new (class extends Collection {
+								readonly fields = {
+									title: new FieldTypes.Text(),
+								} as const;
+
+								mapFieldsToFeed(): FieldEntryMapping<this> {
+									return {
+										...super.mapFieldsToFeed(),
+										content: `<b>STRONG CONTENT</b>`,
+									};
+								}
+							})(),
+						};
+					},
+
+				async ({ app, rest_api }) => {
+					await app.collections.posts.upsert(
+						new app.SuperContext(),
+						"title",
+						[
+							{
+								title: "article 1",
+							},
+						]
+					);
+					const atom_feed = await rest_api.get(
+						"/api/v1/collections/posts/feed"
+					);
+					assert(atom_feed.includes("&lt;b>STRONG CONTENT&lt;/b>"));
+				}
+			));
 	});
 });
