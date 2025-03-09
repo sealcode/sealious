@@ -607,12 +607,13 @@ export default abstract class Collection {
 
 	async getFeed(ctx: Koa.Context): Promise<string> {
 		const items = await this.getFeedItems(ctx);
-		const last_update = new Date(
-			items
-				.map((e) => e._metadata.modified_at)
-				.sort()
-				.reverse()[0]
-		);
+		const latest_item_timestamp = items
+			.map((e) => e._metadata.modified_at)
+			.sort()
+			.reverse()[0];
+		const last_update = latest_item_timestamp
+			? new Date(latest_item_timestamp)
+			: new Date();
 		return /* HTML */ `<?xml version="1.0" encoding="utf-8"?>
 
 			<feed xmlns="http://www.w3.org/2005/Atom">
