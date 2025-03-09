@@ -1,3 +1,4 @@
+import type Koa from "koa";
 import Router from "@koa/router";
 import Emittery from "emittery";
 import type { ActionName } from "../action.js";
@@ -334,7 +335,7 @@ export default abstract class Collection {
 
 		router.get(["/feed"], async (ctx) => {
 			ctx.type = "text/xml";
-			ctx.body = await this.getFeed(ctx.$context);
+			ctx.body = await this.getFeed(ctx);
 		});
 
 		router.get(["/", "/@:filter1", "/@:filter1/@:filter2"], async (ctx) => {
@@ -475,18 +476,18 @@ export default abstract class Collection {
 	}
 
 	// how many items to include
-	async getFeedSize(_ctx: Context): Promise<number> {
+	async getFeedSize(_ctx: Koa.Context): Promise<number> {
 		return 50;
 	}
 
-	async getFeedSortOrder(_ctx: Context): Promise<SortParams<this>> {
+	async getFeedSortOrder(_ctx: Koa.Context): Promise<SortParams<this>> {
 		return {
 			"_metadata.modified_at": "desc" as const,
 		} as SortParams<this>;
 	}
 
-	async getFeedItems(ctx: Context): Promise<CollectionItem<this>[]> {
-		const { items } = await this.list(ctx)
+	async getFeedItems(ctx: Koa.Context): Promise<CollectionItem<this>[]> {
+		const { items } = await this.list(ctx.$context)
 
 			.sort(await this.getFeedSortOrder(ctx))
 			.paginate({ items: await this.getFeedSize(ctx) })
@@ -505,7 +506,7 @@ export default abstract class Collection {
 			link: async (ctx, item) => {
 				return [
 					{
-						href: `${ctx.app.manifest.base_url}/api/v1/collections/${this.name}/${item.id}`,
+						href: `${ctx.$app.manifest.base_url}/api/v1/collections/${this.name}/${item.id}`,
 					},
 				];
 			},
@@ -517,7 +518,7 @@ export default abstract class Collection {
 			},
 			id: async (ctx, item) => {
 				return (
-					`${ctx.app.manifest.base_url}/api/v1/colections/${this.name}/${item.id}` ||
+					`${ctx.$app.manifest.base_url}/api/v1/colections/${this.name}/${item.id}` ||
 					"Unknown id"
 				);
 			},
@@ -582,12 +583,12 @@ export default abstract class Collection {
 		};
 	}
 
-	async getFeedTitle(ctx: Context) {
-		return `${ctx.app.manifest.name} / ${this.name}`;
+	async getFeedTitle(ctx: Koa.Context) {
+		return `${ctx.$app.manifest.name} / ${this.name}`;
 	}
 
 	async getFeedItemData(
-		ctx: Context,
+		ctx: Koa.Context,
 		item: CollectionItem<this>
 	): Promise<FeedEntryShape> {
 		const mapping = this.mapFieldsToFeed();
@@ -604,7 +605,7 @@ export default abstract class Collection {
 		);
 	}
 
-	async getFeed(ctx: Context): Promise<string> {
+	async getFeed(ctx: Koa.Context): Promise<string> {
 		const items = await this.getFeedItems(ctx);
 		const last_update = new Date(
 			items
@@ -617,15 +618,15 @@ export default abstract class Collection {
 			<feed xmlns="http://www.w3.org/2005/Atom">
 				<title>${await this.getFeedTitle(ctx)}</title>
 				<link
-					href="${ctx.app.manifest.base_url}/api/v1/collections/${this
-						.name}/feed"
+					href="${ctx.$app.manifest
+						.base_url}/api/v1/collections/${this.name}/feed"
 					rel="self"
 				/>
 				<id
-					>${ctx.app.manifest.base_url}/api/v1/collections/${this
+					>${ctx.$app.manifest.base_url}/api/v1/collections/${this
 						.name}/feed</id
 				>
-				<link href="${ctx.app.manifest.base_url}" />
+				<link href="${ctx.$app.manifest.base_url}" />
 				<updated>${last_update.toISOString()}</updated>
 
 				${(
@@ -674,7 +675,7 @@ export default abstract class Collection {
 
 export type FieldToFeedMappingEntry<C extends Collection, T> =
 	| T
-	| ((context: Context, item: CollectionItem<C>) => Promise<T>);
+	| ((context: Koa.Context, item: CollectionItem<C>) => Promise<T>);
 
 export type FeedEntryShape = {
 	title: string;
