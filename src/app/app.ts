@@ -297,4 +297,19 @@ export abstract class App {
 			return value(...params);
 		}
 	}
+
+	getFeedHTMLMetatags(): string {
+		let result = "";
+		for (const collection of Object.values(this.collections)) {
+			if (collection.hasFeed()) {
+				result += /* HTML */ `<link
+					href="/api/v1/collections/${collection.name}/feed"
+					type="application/atom+xml"
+					rel="alternate"
+					title="${this.manifest.name} - ${collection.name} feed"
+				/>`;
+			}
+		}
+		return result;
+	}
 }

@@ -5,13 +5,15 @@ import { getDateTime } from "../../../utils/get-datetime.js";
 
 // cannot extends because that changes the output of `decode`. I should use composition here
 
+export const DATETIME_FIELD_TYPE_NAME = "datetime";
+
 /** Stores a date and the time. Accepts only timestamps - number or ms since Epoch. Can be configured and filtered by in the same way as other {@link IntStorage}-based fields.
  */
 export default class Datetime extends IntStorage<
 	number | string,
 	number | string
 > {
-	typeName = "datetime";
+	typeName = DATETIME_FIELD_TYPE_NAME;
 
 	async isProperValue(context: Context, value: number | string) {
 		const int_result = await super.isProperValue(context, value);

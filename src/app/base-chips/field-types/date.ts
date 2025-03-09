@@ -11,13 +11,15 @@ function dateStrToDayInt(date_str: string) {
 	return Date.parse(date_str) / DAY;
 }
 
+export const DATE_FIELD_TYPE_NAME = "date";
+
 /** Stores a date - without hours/minutes, just the day.
  *
  * **Params**: None
  */
 
 export default class DateField extends Field<string, string | number, number> {
-	typeName = "date";
+	typeName = DATE_FIELD_TYPE_NAME;
 
 	async hasIndex(): Promise<boolean> {
 		return true;

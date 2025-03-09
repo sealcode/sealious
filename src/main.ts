@@ -38,5 +38,8 @@ export * as Errors from "./response/errors.js";
 export * as TestUtils from "./test_utils/test-utils.js";
 export * as Queries from "./datastore/query.js";
 export * from "./data-structures/long-running-process.js";
-export { type CollectionValidationResult } from "./chip-types/collection.js";
+export {
+	type CollectionValidationResult,
+	type Fieldnames,
+} from "./chip-types/collection.js";
 export { default as CollectionItemBody } from "./chip-types/collection-item-body.js";

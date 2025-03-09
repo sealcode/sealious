@@ -26,13 +26,13 @@ type PaginationParams = {
 	forward_buffer: number;
 };
 
-type SortParams<T extends Collection> = Partial<
+export type SortParams<T extends Collection> = Partial<
 	{
 		[key in keyof T["fields"]]: keyof typeof sealious_to_mongo_sort_param;
-	} & {
+	} & Partial<{
 		"_metadata.created_at": keyof typeof sealious_to_mongo_sort_param;
 		"_metadata.modified_at": keyof typeof sealious_to_mongo_sort_param;
-	}
+	}>
 >;
 
 type FormatParam<T extends Collection> = Partial<{

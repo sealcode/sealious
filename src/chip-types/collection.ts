@@ -15,7 +15,7 @@ import type {
 	FieldsetInput,
 	FieldsetOutput,
 } from "./fieldset.js";
-import ItemList from "./item-list.js";
+import ItemList, { type SortParams } from "./item-list.js";
 import type Policy from "./policy.js";
 import type SpecialFilter from "./special-filter.js";
 
@@ -45,8 +45,7 @@ export type CollectionEncoded<T extends Collection> = FieldsetEncoded<
 	T["fields"]
 >;
 
-export type Fieldnames<T extends Collection> = keyof CollectionInput<T> &
-	string;
+export type Fieldnames<T extends Collection> = keyof T["fields"] & string;
 
 /** Creates a collection. All collections are automatically served via
  * the REST API, with permissions set by the Policies */
@@ -333,6 +332,11 @@ export default abstract class Collection {
 	getRouter(): Router {
 		const router = new Router();
 
+		router.get(["/feed"], async (ctx) => {
+			ctx.type = "text/xml";
+			ctx.body = await this.getFeed(ctx.$context);
+		});
+
 		router.get(["/", "/@:filter1", "/@:filter1/@:filter2"], async (ctx) => {
 			const list = this.list(ctx.$context).setParams(ctx.query);
 			for (const key of ["filter1", "filter2"]) {
@@ -465,4 +469,228 @@ export default abstract class Collection {
 			})
 		);
 	}
+
+	hasFeed(): boolean {
+		return Object.keys(this.fields).includes("title");
+	}
+
+	// how many items to include
+	async getFeedSize(_ctx: Context): Promise<number> {
+		return 50;
+	}
+
+	async getFeedSortOrder(_ctx: Context): Promise<SortParams<this>> {
+		return {
+			"_metadata.modified_at": "desc" as const,
+		} as SortParams<this>;
+	}
+
+	async getFeedItems(ctx: Context): Promise<CollectionItem<this>[]> {
+		const { items } = await this.list(ctx)
+
+			.sort(await this.getFeedSortOrder(ctx))
+			.paginate({ items: await this.getFeedSize(ctx) })
+			.fetch();
+		return items;
+	}
+
+	mapFieldsToFeed(): FieldEntryMapping<this> {
+		return {
+			title: async (_, item) => {
+				return (
+					item.get("title" as unknown as Fieldnames<this>) ||
+					"Unknown title"
+				);
+			},
+			link: async (ctx, item) => {
+				return [
+					{
+						href: `${ctx.app.manifest.base_url}/api/v1/collections/${this.name}/${item.id}`,
+					},
+				];
+			},
+			author: async (_, item) => {
+				return [
+					item.get("author" as unknown as Fieldnames<this>) ||
+						"Unknown author",
+				];
+			},
+			id: async (ctx, item) => {
+				return (
+					`${ctx.app.manifest.base_url}/api/v1/colections/${this.name}/${item.id}` ||
+					"Unknown id"
+				);
+			},
+			content: async (_, item) => {
+				return (
+					item.get("content" as unknown as Fieldnames<this>) ||
+					"Unknown content"
+				);
+			},
+			published: async (_, item) => {
+				const fields_to_try = [
+					"published",
+					"publishedDate",
+					"publishDate",
+					"publish_date",
+					"published_date",
+					"date",
+				];
+				for (const field_name in fields_to_try) {
+					if (
+						Object.keys(this.fields).includes(field_name) &&
+						["date", "datetime"].includes(
+							this.fields[field_name].typeName
+						)
+					) {
+						const value = item.get(
+							field_name as unknown as Fieldnames<this>
+						);
+						if (value) {
+							return new Date(value);
+						}
+					}
+				}
+				return new Date(item._metadata.created_at);
+			},
+			updated: async (_, item) => {
+				const fields_to_try = [
+					"modified",
+					"modifiedDate",
+					"modified_date",
+					"last_modified",
+					"lastModifiedDate",
+					"last_modified_date",
+				];
+				for (const field_name in fields_to_try) {
+					if (
+						Object.keys(this.fields).includes(field_name) &&
+						["date", "datetime"].includes(
+							this.fields[field_name].typeName
+						)
+					) {
+						const value = item.get(
+							field_name as unknown as Fieldnames<this>
+						);
+						if (value) {
+							return new Date(value);
+						}
+					}
+				}
+				return new Date(item._metadata.created_at);
+			},
+		};
+	}
+
+	async getFeedTitle(ctx: Context) {
+		return `${ctx.app.manifest.name} / ${this.name}`;
+	}
+
+	async getFeedItemData(
+		ctx: Context,
+		item: CollectionItem<this>
+	): Promise<FeedEntryShape> {
+		const mapping = this.mapFieldsToFeed();
+		return Object.fromEntries(
+			await Promise.all(
+				Object.entries(mapping).map(async ([key, value]) => {
+					if (typeof value == "function") {
+						return [key, await value(ctx, item)];
+					} else {
+						return [key, value];
+					}
+				})
+			)
+		);
+	}
+
+	async getFeed(ctx: Context): Promise<string> {
+		const items = await this.getFeedItems(ctx);
+		const last_update = new Date(
+			items
+				.map((e) => e._metadata.modified_at)
+				.sort()
+				.reverse()[0]
+		);
+		return /* HTML */ `<?xml version="1.0" encoding="utf-8"?>
+
+			<feed xmlns="http://www.w3.org/2005/Atom">
+				<title>${await this.getFeedTitle(ctx)}</title>
+				<link
+					href="${ctx.app.manifest.base_url}/api/v1/collections/${this
+						.name}/feed"
+					rel="self"
+				/>
+				<id
+					>${ctx.app.manifest.base_url}/api/v1/collections/${this
+						.name}/feed</id
+				>
+				<link href="${ctx.app.manifest.base_url}" />
+				<updated>${last_update.toISOString()}</updated>
+
+				${(
+					await Promise.all(
+						items.map(async (item) => {
+							const data = await this.getFeedItemData(ctx, item);
+							return /* HTML */ `<entry>
+								<title>${data.title}</title>
+								${data.link
+									.map(
+										({
+											rel,
+											type,
+											href,
+										}) => /* HTML */ `<link
+											${rel ? `rel="${rel}"` : ""}
+											${type ? `type="${type}"` : ""}
+											href="${href}"
+										/>`
+									)
+									.join("\n")}
+								<id>${data.id}</id>
+								<published
+									>${data.published.toISOString()}</published
+								>
+								<updated>${data.updated.toISOString()}</updated>
+								<content type="xhtml">
+									<div xmlns="http://www.w3.org/1999/xhtml">
+										${data.content}
+									</div>
+								</content>
+								${data.author
+									.map(
+										(author) => /* HTML */ `<author>
+											<name>${author}</name>
+										</author>`
+									)
+									.join("\n")}
+							</entry>`;
+						})
+					)
+				).join("\n")}
+			</feed>`;
+	}
 }
+
+export type FieldToFeedMappingEntry<C extends Collection, T> =
+	| T
+	| ((context: Context, item: CollectionItem<C>) => Promise<T>);
+
+export type FeedEntryShape = {
+	title: string;
+	link: { rel?: string; type?: string; href: string }[];
+
+	author: string[];
+	category?: string[];
+	id: string;
+	content: string;
+	published: Date;
+	updated: Date;
+};
+
+export type FieldEntryMapping<C extends Collection> = {
+	[Property in keyof FeedEntryShape]: FieldToFeedMappingEntry<
+		C,
+		FeedEntryShape[Property]
+	>;
+};

@@ -494,6 +494,50 @@ export default class Articles extends Collection {
 }
 ```
 
+### How to configure Atom (RSS) feeds for a collection
+
+Sealious will generate an Atom feed automatically for each collection
+that has a `title` field. If you want to enable an atom feed for a
+collection that does not have a `title` field, add this to the
+collection declaration:
+
+```
+lang=ts
+hasFeed(){return true}
+```
+
+To change what fields and in what way are used for generating the Atom
+feed, you can customize the `mapFieldsToFeed` method of the collection:
+
+```
+lang=ts
+class Posts extends Collection {
+  readonly fields = {
+    title: new FieldTypes.Text(),
+    feedTitle: new FieldTypes.Text(),
+    content: new FieldTypes.Text(),
+  } as const;
+
+  mapFieldsToFeed(): FieldEntryMapping<this> {
+    return {
+      ...super.mapFieldsToFeed(),
+      title: async (_ctx, item) =>
+        item.get("feedTitle") || item.get("title") || "Untitled",
+    };
+  }
+}
+```
+
+In order for the Atom feeds to be automatically discoverable, make
+sure to add the output of
+
+```
+lang=ts
+app.getFeedHTMLMetatags()
+```
+
+to the content of the `<head>` tag of your HTML page.
+
 ## Development
 
 To run test outside of docker, run:

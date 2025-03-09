@@ -1,14 +1,20 @@
 import { hasShape, predicates } from "@sealcode/ts-predicates";
 import assert from "assert";
 import Int from "../app/base-chips/field-types/int.js";
-import { App, Context, FieldTypes, Policies } from "../main.js";
+import { App, CollectionItem, Context, FieldTypes, Policies } from "../main.js";
 import { assertThrowsAsync } from "../test_utils/assert-throws-async.js";
 import type { TestApp } from "../test_utils/test-app.js";
 import {
 	type TestAppConstructor,
 	withRunningApp,
 } from "../test_utils/with-test-app.js";
-import Collection from "./collection.js";
+import Collection, {
+	type FieldEntryMapping,
+	type Fieldnames,
+	type FieldToFeedMappingEntry,
+} from "./collection.js";
+import prettier from "prettier";
+import { sleep } from "../test_utils/sleep.js";
 
 type Policies = Collection["policies"];
 
@@ -500,6 +506,180 @@ describe("collection", () => {
 					);
 
 					assert.deepStrictEqual(changes, undefined);
+				}
+			));
+	});
+
+	describe("atom feed", () => {
+		it("generates a valid XML feed for a list of blog items", async () =>
+			withRunningApp(
+				(t) =>
+					class extends t {
+						collections = {
+							...App.BaseCollections,
+							posts: new (class extends Collection {
+								fields = {
+									title: new FieldTypes.Text(),
+									content: new FieldTypes.Text(),
+								};
+							})(),
+						};
+					},
+
+				async ({ app, rest_api }) => {
+					await app.collections.posts.upsert(
+						new app.SuperContext(),
+						"title",
+						[
+							{
+								title: "article 1",
+								content: "article 1 content",
+							},
+						]
+					);
+					// to maintain proper sorting based on timestamps
+					await sleep(100);
+					await app.collections.posts.upsert(
+						new app.SuperContext(),
+						"title",
+						[
+							{
+								title: "article 2",
+								content: "article 2 content",
+							},
+						]
+					);
+					const atom_feed = await rest_api.get(
+						"/api/v1/collections/posts/feed"
+					);
+
+					const normalizeXml = (xml: string) => {
+						return prettier.format(
+							xml
+								.replace(
+									/http:\/\/127\.0\.0\.1:\d+/g,
+									"http://127.0.0.1:PORT"
+								) // Normalize port numbers
+								.replace(
+									/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z/g,
+									"TIMESTAMP"
+								)
+								.replace(
+									/\/posts\/[a-zA-Z0-9_-]+/g,
+									"/posts/ID"
+								) // Normalize post IDs in URLs
+								.replace(
+									/<id>[^<]+<\/id>/g,
+									"<id>http://127.0.0.1:PORT/api/v1/colections/posts/ID</id>"
+								),
+							{ parser: "html" }
+						); // Normalize timestamps
+					};
+
+					assert.strictEqual(
+						await normalizeXml(atom_feed),
+						await normalizeXml(/* HTML */ `<?xml version="1.0" encoding="utf-8"?>
+
+							<feed xmlns="http://www.w3.org/2005/Atom">
+								<title>testing app / posts</title>
+								<link
+									href="http://127.0.0.1:33255/api/v1/collections/posts/feed"
+									rel="self"
+								/>
+								<id
+									>http://127.0.0.1:33255/api/v1/collections/posts/feed</id
+								>
+								<link href="http://127.0.0.1:33255" />
+								<updated>2025-03-09T14:29:57.639Z</updated>
+
+								<entry>
+									<title>article 2</title>
+									<link
+										href="http://127.0.0.1:33255/api/v1/collections/posts/Mh-6kc8F1fPOBb3eWso9Q"
+									/>
+									<id
+										>http://127.0.0.1:33255/api/v1/colections/posts/Mh-6kc8F1fPOBb3eWso9Q</id
+									>
+									<published
+										>2025-03-09T14:29:57.639Z</published
+									>
+									<updated>2025-03-09T14:29:57.639Z</updated>
+									<content type="xhtml">
+										<div
+											xmlns="http://www.w3.org/1999/xhtml"
+										>
+											article 2 content
+										</div>
+									</content>
+									<author>
+										<name>Unknown author</name>
+									</author>
+								</entry>
+								<entry>
+									<title>article 1</title>
+									<link
+										href="http://127.0.0.1:33255/api/v1/collections/posts/c40Rq8ahEs3-OgKJecsjg"
+									/>
+									<id
+										>http://127.0.0.1:33255/api/v1/colections/posts/c40Rq8ahEs3-OgKJecsjg</id
+									>
+									<published
+										>2025-03-09T14:29:57.638Z</published
+									>
+									<updated>2025-03-09T14:29:57.638Z</updated>
+									<content type="xhtml">
+										<div
+											xmlns="http://www.w3.org/1999/xhtml"
+										>
+											article 1 content
+										</div>
+									</content>
+									<author>
+										<name>Unknown author</name>
+									</author>
+								</entry>
+							</feed>`)
+					);
+				}
+			));
+
+		it("lets the user modify the values of the atom feed entries", async () =>
+			withRunningApp(
+				(t) =>
+					class extends t {
+						collections = {
+							...App.BaseCollections,
+							posts: new (class extends Collection {
+								readonly fields = {
+									title: new FieldTypes.Text(),
+									feedTitle: new FieldTypes.Text(),
+									content: new FieldTypes.Text(),
+								} as const;
+
+								mapFieldsToFeed(): FieldEntryMapping<this> {
+									return {
+										...super.mapFieldsToFeed(),
+										title: async (_ctx, item) =>
+											item.get("feedTitle") ||
+											item.get("title") ||
+											"Untitled",
+									};
+								}
+							})(),
+						};
+					},
+
+				async ({ app }) => {
+					await app.collections.posts.upsert(
+						new app.SuperContext(),
+						"title",
+						[
+							{
+								title: "article 1",
+								content: "article 1 content",
+							},
+						]
+					);
 				}
 			));
 	});
