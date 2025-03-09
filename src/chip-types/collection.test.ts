@@ -690,14 +690,14 @@ describe("collection", () => {
 						collections = {
 							...App.BaseCollections,
 							posts: new (class extends Collection {
-								readonly fields = {
+								fields = {
 									title: new FieldTypes.Text(),
 								} as const;
 
 								mapFieldsToFeed(): FieldEntryMapping<this> {
 									return {
 										...super.mapFieldsToFeed(),
-										content: `<b>STRONG CONTENT</b>`,
+										content: `<b>STRONG&nbsp;CONTENT</b>`,
 									};
 								}
 							})(),
@@ -717,7 +717,12 @@ describe("collection", () => {
 					const atom_feed = await rest_api.get(
 						"/api/v1/collections/posts/feed"
 					);
-					assert(atom_feed.includes("&lt;b>STRONG CONTENT&lt;/b>"));
+					// both the < and the & need to be escaped
+					assert(
+						atom_feed.includes(
+							"&lt;b>STRONG&amp;nbsp;CONTENT&lt;/b>"
+						)
+					);
 				}
 			));
 	});
