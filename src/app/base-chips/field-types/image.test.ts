@@ -34,7 +34,7 @@ describe("FieldTypes.Image", () => {
 					.format({ image: "file" })
 					.fetch();
 
-				assert(item.get("image") instanceof FilePointer);
+				assert(item!.get("image") instanceof FilePointer);
 			}
 		));
 
@@ -64,7 +64,7 @@ describe("FieldTypes.Image", () => {
 					.format({ image: "file" })
 					.fetch();
 
-				assert(item.get("image") instanceof FilePointer);
+				assert(item!.get("image") instanceof FilePointer);
 			}
 		));
 
@@ -95,7 +95,7 @@ describe("FieldTypes.Image", () => {
 					.fetch();
 
 				const response = await rest_api.get(
-					item.get("image") as string
+					item!.get("image") as string
 				);
 
 				assert(!!response);
@@ -130,7 +130,7 @@ describe("FieldTypes.Image", () => {
 					.fetch();
 
 				const response = await MockRestApi.getWithFullUrl(
-					item.get("image") as string
+					item!.get("image") as string
 				);
 
 				assert(response.status === 200);

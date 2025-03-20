@@ -26,6 +26,9 @@ const SecureHasher = {
 		const [iterations, key_length, salt, hash] =
 			hash_with_params.split(".");
 
+		if (!iterations || !key_length || !salt) {
+			throw new Error("iterations, key_length or salt is missing");
+		}
 		const key = await pbkdf2(
 			value,
 			salt,

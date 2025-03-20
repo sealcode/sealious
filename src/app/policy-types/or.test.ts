@@ -17,24 +17,24 @@ const collections = [
 	{
 		name: "collection-or(nested-or(allow,noone),nested-and(allow,public))",
 		policies: [
-			new Policies.Or([new ComplexAllowPipeline(), new Policies.Noone()]),
+			new Policies.Or([new ComplexAllowPipeline!(), new Policies.Noone()]),
 			new Policies.And([
-				new ComplexAllowPipeline(),
+				new ComplexAllowPipeline!(),
 				new Policies.Public(),
 			]),
 		],
 	},
 	{
 		name: "collection-or(complex-allow-pipeline,public)",
-		policies: [new ComplexAllowPipeline(), new Policies.Public()],
+		policies: [new ComplexAllowPipeline!(), new Policies.Public()],
 	},
 	{
 		name: "collection-or(complex-deny-pipeline,noone)",
-		policies: [new ComplexDenyPipeline(), new Policies.Noone()],
+		policies: [new ComplexDenyPipeline!(), new Policies.Noone()],
 	},
 	{
 		name: "collection-or(complex-deny-pipeline,public)",
-		policies: [new ComplexDenyPipeline(), new Policies.Public()],
+		policies: [new ComplexDenyPipeline!(), new Policies.Public()],
 	},
 ];
 
@@ -75,12 +75,12 @@ function extend(t: TestAppConstructor) {
 
 async function createItems(app: Sealious.App) {
 	let numbers = await Bluebird.map([0, 1, 2], (n) =>
-		app.collections.numbers.suCreate({ number: n })
+		app.collections.numbers!.suCreate({ number: n })
 	);
 
 	for (const number of numbers) {
 		await Bluebird.map(collections, ({ name }) =>
-			app.collections[name].suCreate({
+			app.collections[name]!.suCreate({
 				number: number.id,
 			})
 		);

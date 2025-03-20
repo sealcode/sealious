@@ -54,23 +54,23 @@ describe("sorting", () => {
 			{
 				name: "Hoover",
 				favorite_number: 3,
-				water_area: items.arabic_sea.id,
+				water_area: items.arabic_sea!.id,
 			},
 			{
 				name: "Maksiu",
 				favorite_number: 3,
-				water_area: items.baltic_sea.id,
+				water_area: items.baltic_sea!.id,
 			},
 			{
 				name: "Nelly",
 				favorite_number: 8,
-				water_area: items.baltic_sea.id,
+				water_area: items.baltic_sea!.id,
 			},
 		];
 
 		const promises = [];
 		for (let seal of seals) {
-			promises.push(app.collections.seals.suCreate(seal));
+			promises.push(app.collections.seals!.suCreate(seal));
 		}
 		await Promise.all(promises);
 	}

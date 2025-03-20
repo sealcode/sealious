@@ -75,7 +75,12 @@ export default class And extends Query {
 	dump() {
 		const sortedStepIds = this.graph.bestFirstSearch();
 		return sortedStepIds.reduce((steps, id) => {
-			steps.push(this.aggregation_steps[id]);
+			const currentAggregationStepId = this.aggregation_steps[id];
+			if (!currentAggregationStepId) {
+				throw new Error("aggregation steps id is missing");
+			}
+
+			steps.push(currentAggregationStepId);
 			return steps;
 		}, [] as QueryStep[]);
 	}
@@ -83,7 +88,12 @@ export default class And extends Query {
 	toPipeline(): QueryStage[] {
 		const sortedStepIds = this.graph.bestFirstSearch();
 		const ret = sortedStepIds.reduce((pipeline: QueryStage[], id) => {
-			return [...pipeline, ...this.aggregation_steps[id].toPipeline()];
+			const currentAggregationStepId = this.aggregation_steps[id];
+			if (currentAggregationStepId) {
+				return [...pipeline, ...currentAggregationStepId.toPipeline()];
+			} else {
+				throw new Error("aggregation steps id is missing");
+			}
 		}, [] as QueryStage[]);
 		return ret;
 	}

@@ -31,7 +31,7 @@ export type CollectionEvent =
 export type CollectionCallback = ([context, item, event]: [
 	Context,
 	CollectionItem,
-	CollectionEvent
+	CollectionEvent,
 ]) => Promise<void>;
 
 export type CollectionValidationResult = { error: string; fields: string[] }[];
@@ -172,7 +172,7 @@ export default abstract class Collection {
 								this["fields"]
 							>
 						),
-						unrestrictedListResult[0]._metadata as ItemMetadata,
+						unrestrictedListResult[0]!._metadata as ItemMetadata,
 						id
 					)
 			);
@@ -189,7 +189,7 @@ export default abstract class Collection {
 					this["fields"]
 				>
 			),
-			restrictedListResult[0]._metadata as ItemMetadata,
+			restrictedListResult[0]!._metadata as ItemMetadata,
 			id
 		);
 		await ret.decode(context);
@@ -274,7 +274,11 @@ export default abstract class Collection {
 	 */
 	isOldValueSensitive(action_name: ActionName): boolean {
 		for (const field_name in this.fields) {
-			if (this.fields[field_name].isOldValueSensitive(action_name)) {
+			if (!this.fields[field_name]) {
+				throw new Error("field name is missing");
+			}
+
+			if (this.fields[field_name]!.isOldValueSensitive(action_name)) {
 				return true;
 			}
 		}
@@ -285,7 +289,12 @@ export default abstract class Collection {
 	 * @param filter_name the name of the filter
 	 */
 	getNamedFilter(filter_name: string): SpecialFilter {
-		return this.named_filters[filter_name];
+		const filter = this.named_filters[filter_name];
+		if (filter) {
+			return filter;
+		} else {
+			throw new Error("filer is missing");
+		}
 	}
 
 	suList(): ItemList<this> {
@@ -342,7 +351,7 @@ export default abstract class Collection {
 			const list = this.list(ctx.$context).setParams(ctx.query);
 			for (const key of ["filter1", "filter2"]) {
 				if (ctx.params[key]) {
-					list.namedFilter(ctx.params[key]);
+					list.namedFilter(ctx.params[key]!);
 				}
 			}
 			ctx.body = (
@@ -360,11 +369,21 @@ export default abstract class Collection {
 		});
 
 		router.get("/:id", async (ctx) => {
+			const id = ctx.params.id;
+			if (!id) {
+				throw new Error("id is missing");
+			}
+
 			const [ret] = await this.list(ctx.$context)
-				.ids([ctx.params.id])
+				.ids([id])
 				.safeFormat(ctx.query.format)
 				.fetch();
 			const format = ctx.query.format;
+
+			if (!ret) {
+				throw new Error("ret is missing");
+			}
+
 			await ret.safeLoadAttachments(
 				ctx.$context,
 				ctx.query.attachments,
@@ -374,7 +393,11 @@ export default abstract class Collection {
 		});
 
 		router.patch("/:id", parseBody(), async (ctx) => {
-			const item = await this.getByID(ctx.$context, ctx.params.id);
+			const id = ctx.params.id;
+			if (!id) {
+				throw new Error("id is missing");
+			}
+			const item = await this.getByID(ctx.$context, id);
 			item.setMultiple(ctx.request.body);
 			await item.save(ctx.$context);
 			await item.decode(ctx.$context);
@@ -382,7 +405,11 @@ export default abstract class Collection {
 		});
 
 		router.put("/:id", parseBody(), async (ctx) => {
-			const item = await this.getByID(ctx.$context, ctx.params.id);
+			const id = ctx.params.id;
+			if (!id) {
+				throw new Error("id is missing");
+			}
+			const item = await this.getByID(ctx.$context, id);
 			item.replace(ctx.request.body);
 			await item.save(ctx.$context);
 			await item.decode(ctx.$context);
@@ -390,9 +417,11 @@ export default abstract class Collection {
 		});
 
 		router.delete("/:id", async (ctx) => {
-			await (
-				await this.getByID(ctx.$context, ctx.params.id)
-			).remove(ctx.$context);
+			const id = ctx.params.id;
+			if (!id) {
+				throw new Error("id is missing");
+			}
+			await (await this.getByID(ctx.$context, id)).remove(ctx.$context);
 			ctx.status = 204; // "No content"
 		});
 
@@ -431,7 +460,7 @@ export default abstract class Collection {
 
 	async upsert<
 		C extends Collection,
-		IdentityField extends keyof CollectionInput<C>
+		IdentityField extends keyof CollectionInput<C>,
 	>(
 		context: Context,
 		identify_by: IdentityField,
@@ -439,9 +468,14 @@ export default abstract class Collection {
 	): Promise<void> {
 		await Promise.all(
 			entries.map(async (entry) => {
+				const collection = context.app.collections[this.name];
+				if (!collection) {
+					throw new Error("collection is missing");
+				}
+
 				const {
 					items: [item],
-				} = await context.app.collections[this.name]
+				} = await collection
 					.list(context)
 					.filter({ [identify_by]: entry[identify_by] })
 					.paginate({ items: 1 })
@@ -462,10 +496,7 @@ export default abstract class Collection {
 						await item.save(context);
 					}
 				} else {
-					return context.app.collections[this.name].create(
-						context,
-						entry
-					);
+					return collection.create(context, entry);
 				}
 			})
 		);
@@ -537,12 +568,12 @@ export default abstract class Collection {
 					"published_date",
 					"date",
 				];
-				for (const field_name in fields_to_try) {
+				for (const field_name of fields_to_try) {
+					const field = this.fields[field_name];
+
 					if (
-						Object.keys(this.fields).includes(field_name) &&
-						["date", "datetime"].includes(
-							this.fields[field_name].typeName
-						)
+						field &&
+						["date", "datetime"].includes(field.typeName)
 					) {
 						const value = item.get(
 							field_name as unknown as Fieldnames<this>
@@ -563,12 +594,11 @@ export default abstract class Collection {
 					"lastModifiedDate",
 					"last_modified_date",
 				];
-				for (const field_name in fields_to_try) {
+				for (const field_name of fields_to_try) {
+					const field = this.fields[field_name];
 					if (
-						Object.keys(this.fields).includes(field_name) &&
-						["date", "datetime"].includes(
-							this.fields[field_name].typeName
-						)
+						field &&
+						["date", "datetime"].includes(field.typeName)
 					) {
 						const value = item.get(
 							field_name as unknown as Fieldnames<this>
@@ -638,15 +668,12 @@ export default abstract class Collection {
 								<title>${data.title}</title>
 								${data.link
 									.map(
-										({
-											rel,
-											type,
-											href,
-										}) => /* HTML */ `<link
-											${rel ? `rel="${rel}"` : ""}
-											${type ? `type="${type}"` : ""}
-											href="${href}"
-										/>`
+										({ rel, type, href }) =>
+											/* HTML */ `<link
+												${rel ? `rel="${rel}"` : ""}
+												${type ? `type="${type}"` : ""}
+												href="${href}"
+											/>`
 									)
 									.join("\n")}
 								<id>${data.id}</id>
@@ -663,9 +690,10 @@ export default abstract class Collection {
 								</content>
 								${data.author
 									.map(
-										(author) => /* HTML */ `<author>
-											<name>${author}</name>
-										</author>`
+										(author) =>
+											/* HTML */ `<author>
+												<name>${author}</name>
+											</author>`
 									)
 									.join("\n")}
 							</entry>`;

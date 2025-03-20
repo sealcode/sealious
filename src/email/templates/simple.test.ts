@@ -15,7 +15,7 @@ describe("simpleTemplate", () => {
 			const messages = await mail_api.getMessages();
 			assert.strictEqual(messages.length, 1);
 			assert.strictEqual(
-				messages[0].sender,
+				messages[0]!.sender,
 				`<${app.ConfigManager.get("email").from_address}>`
 			);
 		}));

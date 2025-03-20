@@ -61,7 +61,7 @@ describe("Fields > EnumMultiple", () => {
 					})
 					.fetch();
 				assert.strictEqual(carrot_nonreverse.length, 1);
-				assert.strictEqual(carrot_nonreverse[0].id, carrot_cake.id);
+				assert.strictEqual(carrot_nonreverse[0]!.id, carrot_cake.id);
 
 				const { items: carrot_any_direction } =
 					await app.collections.cakes

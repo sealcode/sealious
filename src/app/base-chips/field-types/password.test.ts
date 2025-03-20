@@ -43,7 +43,7 @@ describe("password", () => {
 				await app.Datastore.find("users", {
 					id: user_id,
 				})
-			)[0].password as string;
+			)[0]!.password as string;
 
 			assert.ok(await SecureHasher.matches(password, hashed_password));
 			assert.ok(!(await SecureHasher.matches("wrong-password", hashed_password)));

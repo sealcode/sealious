@@ -1,10 +1,7 @@
 import assert from "assert";
 import { Collection, FieldTypes, Policies } from "../../../main.js";
 import { TestApp } from "../../../test_utils/test-app.js";
-import {
-	type TestAppConstructor,
-	withRunningApp,
-} from "../../../test_utils/with-test-app.js";
+import { type TestAppConstructor, withRunningApp } from "../../../test_utils/with-test-app.js";
 
 function extend(t: TestAppConstructor) {
 	return class extends t {
@@ -29,7 +26,7 @@ describe("money", () => {
 				.format({ simoleon: "string" })
 				.fetch();
 
-			assert.strictEqual(response.items[0].get("simoleon"), "1.00");
+			assert.strictEqual(response.items[0]!.get("simoleon"), "1.00");
 		}));
 
 	it("should correctly format with two decimal points float value", async () =>
@@ -40,7 +37,7 @@ describe("money", () => {
 				.format({ simoleon: "string" })
 				.fetch();
 
-			assert.strictEqual(response.items[0].get("simoleon"), "14.43");
+			assert.strictEqual(response.items[0]!.get("simoleon"), "14.43");
 		}));
 
 	it("should correctly format with more than two decimal points float value", async () =>
@@ -51,6 +48,6 @@ describe("money", () => {
 				.format({ simoleon: "string" })
 				.fetch();
 
-			assert.strictEqual(response.items[0].get("simoleon"), "53.14");
+			assert.strictEqual(response.items[0]!.get("simoleon"), "53.14");
 		}));
 });

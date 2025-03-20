@@ -321,7 +321,7 @@ describe("derived-value", () => {
 				const {
 					items: [newestEntry],
 				} = await app.collections.entries.suList().fetch();
-				assert.strictEqual(newestEntry.get("title"), "title");
+				assert.strictEqual(newestEntry!.get("title"), "title");
 			}
 		));
 
@@ -365,7 +365,7 @@ describe("derived-value", () => {
 					.filter({ full_name: "Ala Makota" })
 					.fetch();
 				assert.strictEqual(items.length, 1);
-				assert.strictEqual(items[0].get("full_name"), "Ala Makota");
+				assert.strictEqual(items[0]!.get("full_name"), "Ala Makota");
 			}
 		));
 
@@ -411,7 +411,7 @@ describe("derived-value", () => {
 					.search("makonia")
 					.fetch();
 				assert.strictEqual(items.length, 1);
-				assert.strictEqual(items[0].get("full_name"), "Artur Makonia");
+				assert.strictEqual(items[0]!.get("full_name"), "Artur Makonia");
 			}
 		));
 

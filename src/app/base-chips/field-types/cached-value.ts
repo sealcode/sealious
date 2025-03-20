@@ -120,16 +120,26 @@ export default class CachedValue<
 					.list(context)
 					.ids(cache_resource_ids)
 					.fetch();
+
+				const collection =
+					context.app.collections[this.collection.name];
+
 				for (const item of items) {
-					promises.push(
-						this.get_value(context, item).then(async (value) => {
-							const su_item = await context.app.collections[
-								this.collection.name
-							].suGetByID(item.id);
-							su_item.set(this.name, value);
-							await su_item.save(new app.SuperContext());
-						})
-					);
+					if (collection) {
+						promises.push(
+							this.get_value(context, item).then(
+								async (value) => {
+									const su_item = await collection.suGetByID(
+										item.id
+									);
+									su_item.set(this.name, value);
+									await su_item.save(new app.SuperContext());
+								}
+							)
+						);
+					} else {
+						throw new Error("Collection is missing");
+					}
 				}
 				await Promise.all(promises);
 			});
@@ -162,8 +172,15 @@ export default class CachedValue<
 			"CACHED VALUE",
 			`Finding resources without cached value for field ${this.collection.name}.${this.name}. For this, we're looking for items from ${referenced_collection_name} and we'll be looking at them newest-to-oldest.`
 		);
+
+		const collection = this.app.collections[referenced_collection_name];
+
+		if (!collection) {
+			throw new Error("referenced collection is missing");
+		}
+
 		const response = await new ItemList(
-			this.app.collections[referenced_collection_name],
+			collection,
 			new this.app.SuperContext()
 		)
 			.sort({ "_metadata.modified_at": "desc" })
@@ -174,11 +191,18 @@ export default class CachedValue<
 			return;
 		}
 
-		const last_modified_timestamp = response.items[0]._metadata.modified_at;
+		const responseItem = response.items[0];
+
+		if (!responseItem) {
+			throw new Error("item is missing");
+		}
+
+		const last_modified_timestamp = responseItem._metadata.modified_at;
 		app.Logger.debug3(
 			"CACHED VALUE",
 			`Continuing searching for resources without cached value for field ${this.collection.name}.${this.name}. Now, we find resources that are potentially outdated.`
 		);
+
 		const outdated_resource_bodies = await this.app.Datastore.aggregate(
 			this.collection.name,
 			[

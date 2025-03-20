@@ -34,7 +34,12 @@ export default class SameAsForResourceInField extends Policy {
 	}
 
 	getCollection(app: App): Collection {
-		return app.collections[this.current_collection];
+		const currentCollection = app.collections[this.current_collection];
+		if (currentCollection) {
+			return currentCollection;
+		} else {
+			throw new Error("current collection is missing");
+		}
 	}
 
 	getReferencedCollection(context: Context): Collection {

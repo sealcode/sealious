@@ -27,7 +27,7 @@ export default function parseBody(file_manager?: FileManager): Middleware {
 			for (const file_name in ctx.request.files) {
 				let files = ctx.request.files[file_name];
 
-				if (!Array.isArray(files)) {
+				if (files && !Array.isArray(files)) {
 					if (
 						files.type === "application/json" &&
 						files.name === "blob"
@@ -45,6 +45,10 @@ export default function parseBody(file_manager?: FileManager): Middleware {
 						files = [files];
 					}
 				}
+				if (!files) {
+					throw new Error("files is missing");
+				}
+
 				const file_promises = files.map(async (file) => {
 					const extracted_filename = file.name;
 					if (extracted_filename) {

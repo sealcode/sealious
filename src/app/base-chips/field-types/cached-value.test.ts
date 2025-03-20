@@ -77,8 +77,8 @@ const extend =
 							"STATUS FIELD",
 							`calculating value for ${item.id}`
 						);
-						const { items } = await context.app.collections.actions
-							.list(new context.app.SuperContext())
+						const { items } = await context.app.collections
+							.actions!.list(new context.app.SuperContext())
 							.filter({ account: item.id })
 							.sort({ "_metadata.modified_at": "desc" })
 							.paginate({ items: 1 })
@@ -87,13 +87,13 @@ const extend =
 							"STATUS FIELD",
 							"New cached value is",
 							action_to_status[
-								items[0].get(
+								items[0]!.get(
 									"name"
 								) as keyof typeof action_to_status
 							]
 						);
 						return action_to_status[
-							items[0].get(
+							items[0]!.get(
 								"name"
 							) as keyof typeof action_to_status
 						];
@@ -151,7 +151,7 @@ describe("cached-value", () => {
 
 	async function add_a_few_accounts(app: App) {
 		return Bluebird.map([1, 2, 3, 4, 5], async (i) =>
-			app.collections.accounts.suCreate({
+			app.collections.accounts!.suCreate({
 				username: `user_${i}`,
 				number: i,
 			})
@@ -180,10 +180,14 @@ describe("cached-value", () => {
 		await withRunningApp(
 			extend(true),
 			async ({ rest_api }) => {
-				await assert_status_equals(rest_api, account_ids[0], "created");
 				await assert_status_equals(
 					rest_api,
-					account_ids[1],
+					account_ids[0]!,
+					"created"
+				);
+				await assert_status_equals(
+					rest_api,
+					account_ids[1]!,
 					"suspended"
 				);
 			},
@@ -197,7 +201,7 @@ describe("cached-value", () => {
 				["user_1", "user_2"],
 				(username) => add_account(rest_api, { username })
 			);
-			await assert_status_equals(rest_api, account_ids[0], "created");
+			await assert_status_equals(rest_api, account_ids[0]!, "created");
 
 			const actions = ["open", "suspend", "close"];
 			await Bluebird.each(actions, async (action) => {
@@ -206,8 +210,12 @@ describe("cached-value", () => {
 					account: account_ids[0],
 				});
 				const status = action_to_status[action];
-				await assert_status_equals(rest_api, account_ids[0], status);
-				await assert_status_equals(rest_api, account_ids[1], "created");
+				await assert_status_equals(rest_api, account_ids[0]!, status!);
+				await assert_status_equals(
+					rest_api,
+					account_ids[1]!,
+					"created"
+				);
 			});
 		}));
 
@@ -218,12 +226,14 @@ describe("cached-value", () => {
 			});
 
 			const {
-				items: [{ id: action_id }],
+				items: [element],
 			} = (await rest_api.get(
 				"/api/v1/collections/actions",
 				{},
 				{ account: account_id } // TODO: check if passing the query here works under the new MockRestAPI
 			)) as CollectionResponse;
+
+			const { id: action_id } = element!;
 
 			await rest_api.patch(`/api/v1/collections/actions/${action_id}`, {
 				name: "open",
@@ -274,7 +284,7 @@ describe("cached-value", () => {
 				(await rest_api.get(
 					`/api/v1/collections/accounts/${id}?format[date_time]=human_readable`
 				)) as CollectionResponse
-			).items[0].date_time as string;
+			).items[0]!.date_time as string;
 
 			assert.strictEqual(actual_datetime, expected_datetime);
 		}));
@@ -370,8 +380,7 @@ describe("cached-value", () => {
 											const is_liked_by =
 												(await context.app.collections[
 													"who-likes-who"
-												]
-													.suList()
+												]!.suList()
 													.filter({
 														likes_this_person:
 															item.id,
@@ -456,7 +465,7 @@ describe("cached-value", () => {
 											const job =
 												await context.app.collections[
 													"jobs"
-												].getByID(context, item.id);
+												]!.getByID(context, item.id);
 											return job.id;
 										},
 										initial_value: null,
@@ -510,12 +519,11 @@ describe("cached-value", () => {
 										) {
 											const {
 												items: [job],
-											} =
-												await context.app.collections.jobs
-													.suList()
-													.filter({ hasjob: item.id })
-													.fetch();
-											return job.id;
+											} = await context.app.collections
+												.jobs!.suList()
+												.filter({ hasjob: item.id })
+												.fetch();
+											return job!.id;
 										},
 										initial_value: "",
 									}
@@ -533,7 +541,7 @@ describe("cached-value", () => {
 				const {
 					items: [hasjob_after],
 				} = await app.collections.hasjob.suList().fetch();
-				assert.strictEqual(hasjob_after.get("job"), job.id);
+				assert.strictEqual(hasjob_after!.get("job"), job.id);
 			}
 		));
 
@@ -558,8 +566,10 @@ describe("cached-value", () => {
 											"* * * * * *",
 											async ([context]) => {
 												const { items } =
-													await context.app.collections.tick_tock
-														.list(context)
+													await context.app.collections
+														.tick_tock!.list(
+															context
+														)
 														.fetch();
 												return items.map((i) => i.id);
 											},
@@ -586,7 +596,7 @@ describe("cached-value", () => {
 				const {
 					items: [item],
 				} = await test.app.collections.tick_tock.suList().fetch();
-				assert.strictEqual(item.get("seconds"), 2);
+				assert.strictEqual(item!.get("seconds"), 2);
 				await test.app.stop();
 			}
 		));
@@ -641,8 +651,7 @@ describe("cached-value", () => {
 												const comments_count = (
 													await context.app.collections[
 														"comments"
-													]
-														.suList()
+													]!.suList()
 														.filter({
 															product: item.id,
 														})

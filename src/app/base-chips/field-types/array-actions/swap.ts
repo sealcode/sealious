@@ -43,21 +43,35 @@ export class Swap extends ArrayAction<
 		_context: Context,
 		input: ShapeToType<typeof SwapInputShape>
 	): Promise<ShapeToType<typeof SwapParsedShape> | null> {
-		return {
-			swap: [
-				parseInt(input.swap[0].toString()),
-				parseInt(input.swap[1].toString()),
-			],
-		};
+		if (
+			typeof input.swap[0] === "number" &&
+			typeof input.swap[1] === "number"
+		) {
+			return {
+				swap: [
+					parseInt(input.swap[0].toString()),
+					parseInt(input.swap[1].toString()),
+				],
+			};
+		} else {
+			return null;
+		}
 	}
 	async run<T>(
 		_context: Context,
 		action: ShapeToType<typeof SwapParsedShape>,
 		array: T[]
 	) {
-		const temp = array[action.swap[0]];
-		array[action.swap[0]] = array[action.swap[1]];
-		array[action.swap[1]] = temp;
-		return array;
+		if (
+			typeof action.swap[0] === "number" &&
+			typeof action.swap[1] === "number"
+		) {
+			const temp = array[action.swap[0]];
+			array[action.swap[0]] = array[action.swap[1]] as T;
+			array[action.swap[1]] = temp as T;
+			return array;
+		} else {
+			return array;
+		}
 	}
 }

@@ -111,7 +111,7 @@ export default class CollectionItem<T extends Collection = any> {
 						if (!field_messages[field]) {
 							field_messages[field] = [];
 						}
-						field_messages[field].push(
+						field_messages[field]!.push(
 							collection_validation_error.error
 						);
 					}
@@ -195,21 +195,25 @@ export default class CollectionItem<T extends Collection = any> {
 		context.app.Logger.debug2("ITEM", "Gathering default values");
 		const promises = [];
 		for (const field_name of Collection.getFieldnames(this.collection)) {
+			const fieldName = this.collection.fields[field_name];
+
+			if (!fieldName) {
+				throw new Error(`field is missing: "${field_name}"`);
+			}
+
 			if (
 				isEmpty(this.body.getInput(field_name)) &&
 				isEmpty(this.body.getEncoded(field_name)) &&
-				this.collection.fields[field_name].hasDefaultValue()
+				fieldName.hasDefaultValue()
 			) {
 				context.app.Logger.debug3(
 					"ITEM",
 					`Gathering default values/${field_name}`
 				);
 				promises.push(
-					this.collection.fields[field_name]
-						.getDefaultValue(context)
-						.then((value) => {
-							this.set(field_name, value);
-						})
+					fieldName.getDefaultValue(context).then((value) => {
+						this.set(field_name, value);
+					})
 				);
 			}
 		}
@@ -459,7 +463,9 @@ export default class CollectionItem<T extends Collection = any> {
 		} else {
 			throw new Error("Attachments list could not be reached");
 		}
-		return ids.map((id) => attachments_source[id]).filter((e) => !!e);
+		return ids
+			.map((id) => attachments_source[id])
+			.filter((e) => !!e) as CollectionItem<any>[];
 	}
 
 	setParentList(list: ItemListResult<T>) {

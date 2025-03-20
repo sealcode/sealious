@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import type * as Koa from "koa";
 import type { Middleware } from "@koa/router";
 import Context from "../context.js";
@@ -42,7 +43,7 @@ export default function extract_context(): Middleware {
 			if (sessions.empty) {
 				session_id = undefined;
 			} else {
-				user_id = sessions.items[0].get("user") as string;
+				user_id = sessions.items[0]!.get("user") as string;
 			}
 			ctx.$app.Logger.debug(
 				"EXTRACT CONTEXT",

@@ -47,6 +47,7 @@ module.exports = {
 				"@typescript-eslint/no-unsafe-return": 0,
 				"@typescript-eslint/no-unsafe-assignment": 0,
 				"no-await-in-loop": 1, // sometimes it's easier to debug when requests run sequentially
+				"@typescript-eslint/no-non-null-assertion": 0,
 			},
 		},
 	],

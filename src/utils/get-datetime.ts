@@ -37,6 +37,9 @@ export function getDateTime(date: Date, format_string = "yyyy-mm-dd hh:mm:ss") {
 				);
 			} else if (timeFormats.includes(format)) {
 				const parsed_time = date.toISOString().split("T")[1];
+				if (!parsed_time) {
+					throw new Error("Time could not be parsed from date");
+				}
 				return (
 					date_string +
 					" " +

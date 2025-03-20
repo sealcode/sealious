@@ -338,9 +338,9 @@ describe("SameAsForResourceInField", () => {
 					.fetch();
 
 				assert.strictEqual(projects1.length, 1);
-				assert.strictEqual(projects1[0].get("name"), "project1");
-				assert.strictEqual(projects1[0].id, project.id);
-				assert.strictEqual(projects1[0].get("organization"), org1.id);
+				assert.strictEqual(projects1[0]!.get("name"), "project1");
+				assert.strictEqual(projects1[0]!.id, project.id);
+				assert.strictEqual(projects1[0]!.get("organization"), org1.id);
 
 				assert.strictEqual(
 					(await app.collections.projects.list(user2_context).fetch())

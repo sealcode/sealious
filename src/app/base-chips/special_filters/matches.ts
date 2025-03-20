@@ -13,9 +13,17 @@ export default class Matches extends SpecialFilter {
 	async getFilteringQuery() {
 		let pipeline: QueryStage[] = [];
 		for (let field_name in this.filter) {
-			const field_pipeline = await this.getCollection().fields[
-				field_name
-			].getAggregationStages(
+			const collection = this.getCollection();
+			if (!collection) {
+				throw new Error("collection is missing");
+			}
+
+			const field = collection.fields[field_name];
+			if (!field) {
+				throw new Error("field is missing");
+			}
+
+			const field_pipeline = await field.getAggregationStages(
 				new this.app.SuperContext(),
 				this.filter[field_name]
 			);

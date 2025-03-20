@@ -17,21 +17,24 @@ const collections_to_create = [
 	{
 		name: "collection-and(nested-and(allow,public),nested-or(allow,noone))",
 		policies: [
-			new And([new ComplexAllowPipeline(), new Policies.Public()]),
-			new Policies.Or([new ComplexAllowPipeline(), new Policies.Noone()]),
+			new And([new ComplexAllowPipeline!(), new Policies.Public()]),
+			new Policies.Or([
+				new ComplexAllowPipeline!(),
+				new Policies.Noone(),
+			]),
 		],
 	},
 	{
 		name: "collection-and(ComplexAllowPipeline,noone)",
-		policies: [new ComplexAllowPipeline(), new Policies.Noone()],
+		policies: [new ComplexAllowPipeline!(), new Policies.Noone()],
 	},
 	{
 		name: "collection-and(ComplexAllowPipeline,public)",
-		policies: [new ComplexAllowPipeline(), new Policies.Public()],
+		policies: [new ComplexAllowPipeline!(), new Policies.Public()],
 	},
 	{
 		name: "collection-and(complexDenyPipeline,public)",
-		policies: [new ComplexDenyPipeline(), new Policies.Public()],
+		policies: [new ComplexDenyPipeline!(), new Policies.Public()],
 	},
 ];
 
@@ -68,14 +71,14 @@ function extend(t: TestAppConstructor) {
 describe("AndPolicy", () => {
 	async function setup(app: App) {
 		let numbers = await Bluebird.map([0, 1, 2], (n) =>
-			app.collections.numbers.suCreate({
+			app.collections.numbers!.suCreate({
 				number: n,
 			})
 		);
 
 		for (const number of numbers) {
 			await Bluebird.map(collections_to_create, ({ name }) =>
-				app.collections[name].suCreate({
+				app.collections[name]!.suCreate({
 					number: number.id,
 				})
 			);

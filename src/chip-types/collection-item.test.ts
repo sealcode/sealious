@@ -32,7 +32,7 @@ describe("CollectionItem", () => {
 					.suList()
 					.fetch();
 				assert.strictEqual(entries.length, 1);
-				assert.strictEqual(entries[0].get("title"), "title2");
+				assert.strictEqual(entries[0]!.get("title"), "title2");
 			}
 		));
 
@@ -64,7 +64,7 @@ describe("CollectionItem", () => {
 					.fetch();
 				assert.strictEqual(entries.length, 1);
 				assert.strictEqual(
-					entries[0].get("title"),
+					entries[0]!.get("title"),
 					"title-overwritten"
 				);
 			}
@@ -301,8 +301,8 @@ describe("CollectionItem", () => {
 					.ids([ala.id])
 					.fetch();
 
-				ala_result.get("string")?.padStart(0, "0");
-				ala_result.get("number")?.toExponential(2);
+				ala_result!.get("string")?.padStart(0, "0");
+				ala_result!.get("number")?.toExponential(2);
 				ala.get("number")?.toExponential(2);
 				ala.get("required_number").toExponential(2);
 				ala.get("markdown").padStart(10);

@@ -20,7 +20,7 @@ describe("sessions", () => {
 					.suList()
 					.filter({ "session-id": session_id })
 					.fetch();
-				assert.strictEqual(session.get("user"), user.id);
+				assert.strictEqual(session!.get("user"), user.id);
 
 				await app.collections.sessions.logout(
 					new app.SuperContext(),

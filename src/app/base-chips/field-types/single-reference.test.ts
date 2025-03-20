@@ -208,24 +208,24 @@ describe("single_reference", () => {
 
 			items.nelly = await rest_api.post(Seals, {
 				name: "Nelly",
-				best_friend: items.hoover.id,
+				best_friend: items.hoover!.id,
 			});
 
 			items.maksiu = await rest_api.post(Seals, {
 				name: "Maksiu",
-				best_friend: items.nelly.id,
+				best_friend: items.nelly!.id,
 			});
 
 			items.cycle = await rest_api.post(Seals, {
 				name: "Cycle",
 			});
 
-			await rest_api.patch(`${Seals}/${items.hoover.id}`, {
-				best_friend: items.maksiu.id,
+			await rest_api.patch(`${Seals}/${items.hoover!.id}`, {
+				best_friend: items.maksiu!.id,
 			});
 
-			await rest_api.patch(`${Seals}/${items.cycle.id}`, {
-				best_friend: items.cycle.id,
+			await rest_api.patch(`${Seals}/${items.cycle!.id}`, {
+				best_friend: items.cycle!.id,
 			});
 		}
 
@@ -320,35 +320,35 @@ describe("single_reference", () => {
 
 			items.baltic_sea = await rest_api.post(Water_Areas, {
 				name: "Baltic Sea",
-				type: items.cool_sea.id,
+				type: items.cool_sea!.id,
 			});
 
 			items.arabic_sea = await rest_api.post(Water_Areas, {
 				name: "Arabic Sea",
-				type: items.warm_sea.id,
+				type: items.warm_sea!.id,
 			});
 
 			items.unused_sea = await rest_api.post(Water_Areas, {
 				name: "Unused Sea",
-				type: items.warm_sea.id,
+				type: items.warm_sea!.id,
 			});
 
 			items.hoover = await rest_api.post(Seals, {
 				name: "Hoover",
-				water_area: items.arabic_sea.id,
-				favourite_meal: items.tuna.id,
+				water_area: items.arabic_sea!.id,
+				favourite_meal: items.tuna!.id,
 			});
 
 			items.nelly = await rest_api.post(Seals, {
 				name: "Nelly",
-				water_area: items.baltic_sea.id,
-				favourite_meal: items.tuna.id,
+				water_area: items.baltic_sea!.id,
+				favourite_meal: items.tuna!.id,
 			});
 
 			items.maksiu = await rest_api.post(Seals, {
 				name: "Maksiu",
-				water_area: items.baltic_sea.id,
-				favourite_meal: items.baltic_cod.id,
+				water_area: items.baltic_sea!.id,
+				favourite_meal: items.baltic_cod!.id,
 			});
 		}
 
@@ -366,8 +366,8 @@ describe("single_reference", () => {
 
 				assert.deepEqual(fields_with_attachments, ["water_area"]);
 				assert.deepEqual(attachments, {
-					[items.baltic_sea.id]: items.baltic_sea,
-					[items.arabic_sea.id]: items.arabic_sea,
+					[items.baltic_sea!.id]: items.baltic_sea,
+					[items.arabic_sea!.id]: items.arabic_sea,
 				});
 			}));
 
@@ -380,12 +380,12 @@ describe("single_reference", () => {
 					attachments,
 					fields_with_attachments,
 				} = await rest_api.get(
-					`${Seals}/${items.maksiu.id}?attachments[water_area]=true`
+					`${Seals}/${items.maksiu!.id}?attachments[water_area]=true`
 				);
-				assert.equal(seal.name, items.maksiu.name);
+				assert.equal(seal.name, items.maksiu!.name);
 				assert.deepEqual(fields_with_attachments, ["water_area"]);
 				assert.deepEqual(attachments, {
-					[items.baltic_sea.id]: items.baltic_sea,
+					[items.baltic_sea!.id]: items.baltic_sea,
 				});
 			}));
 
@@ -455,12 +455,12 @@ describe("single_reference", () => {
 					"favourite_meal",
 				]);
 				assert.deepEqual(attachments, {
-					[items.cool_sea.id]: items.cool_sea,
-					[items.warm_sea.id]: items.warm_sea,
-					[items.baltic_sea.id]: items.baltic_sea,
-					[items.arabic_sea.id]: items.arabic_sea,
-					[items.tuna.id]: items.tuna,
-					[items.baltic_cod.id]: items.baltic_cod,
+					[items.cool_sea!.id]: items.cool_sea,
+					[items.warm_sea!.id]: items.warm_sea,
+					[items.baltic_sea!.id]: items.baltic_sea,
+					[items.arabic_sea!.id]: items.arabic_sea,
+					[items.tuna!.id]: items.tuna,
+					[items.baltic_cod!.id]: items.baltic_cod,
 				});
 			}));
 	});

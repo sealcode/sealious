@@ -121,8 +121,21 @@ export default class MockRestApi {
 		if (!cookies) {
 			throw new Error("No cookies in response");
 		}
-		const session_id = cookies.split(" ")[0].split("=")[1].slice(0, -1);
-		return { headers: { Cookie: `sealious-session=${session_id}` } };
+		const splitCookieSegment = cookies.split(" ")[0];
+		if (!splitCookieSegment) {
+			throw new Error("No valid cookie segment found");
+		}
+
+		const splitCookieValue = splitCookieSegment.split("=")[1];
+		if (!splitCookieValue) {
+			throw new Error("No value found for the cookie segment");
+		}
+
+		const session_id = splitCookieValue.slice(0, -1);
+
+		return {
+			headers: { Cookie: `sealious-session=${session_id}` },
+		};
 	}
 	static async getWithFullUrl(
 		url: string,

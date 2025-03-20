@@ -6,12 +6,16 @@ export default (default_language: string) => {
 	assert.ok(languages[default_language]);
 
 	return (key: string, params: unknown[]) => {
-		let translation: string;
-		if (languages[default_language][key]) {
-			translation = languages[default_language][key](...(params || []));
-		} else {
-			translation = key;
+		let translation: string | null = null;
+		const languageData = languages[default_language];
+		if (!languageData) {
+			throw new Error("default language is missing");
 		}
-		return translation;
+		const languageDataKey = languageData[key];
+		if (languageDataKey) {
+			translation = languageDataKey(...(params || []));
+		}
+
+		return translation == null ? key : translation;
 	};
 };

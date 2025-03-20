@@ -12,13 +12,14 @@ function flatten(
 ) {
 	return Object.keys(obj).reduce((flattened, prop) => {
 		const new_prop = prefix + prop;
-		if (obj[prop] && typeof obj[prop] === "object") {
+		const value = obj[prop];
+		if (value && typeof value === "object") {
 			Object.assign(
 				flattened,
-				flattenObjectToDotNotation(new_prop + ".", obj[prop])
+				flattenObjectToDotNotation(new_prop + ".", value)
 			);
 		} else {
-			flattened[new_prop] = obj[prop];
+			flattened[new_prop] = value;
 		}
 		return flattened;
 	}, {} as { [field: string]: any });

@@ -99,7 +99,12 @@ export class Query {
 	}
 
 	_isUnwindStage(stages: QueryStage[], i: number) {
-		if (!stages[i].$lookup) {
+		const currentStage = stages[i];
+		if (!currentStage) {
+			throw Error("stage is missing");
+		}
+
+		if (!currentStage.$lookup) {
 			return false;
 		}
 		return (stages[i + 1]?.$unwind && true) || false;

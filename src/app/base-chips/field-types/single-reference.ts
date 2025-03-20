@@ -25,7 +25,13 @@ export default class SingleReference extends Field<string, string> {
 	}
 
 	getTargetCollection(context: Context) {
-		return context.app.collections[this.target_collection];
+		const targetCollection =
+			context.app.collections[this.target_collection];
+		if (targetCollection) {
+			return targetCollection;
+		} else {
+			throw new Error("target collection is missing");
+		}
 	}
 
 	async isProperValue(context: Context, input: string) {
@@ -79,10 +85,14 @@ export default class SingleReference extends Field<string, string> {
 				$eq: filter,
 			};
 		}
-		const { items } = await this.app.collections[this.target_collection]
-			.list(context)
-			.filter(filter)
-			.fetch();
+
+		const collection = this.app.collections[this.target_collection];
+		if (!collection) {
+			throw new Error(
+				`collection is missing: "${this.target_collection}"`
+			);
+		}
+		const { items } = await collection.list(context).filter(filter).fetch();
 		return { $in: items.map((resource) => resource.id) };
 	}
 

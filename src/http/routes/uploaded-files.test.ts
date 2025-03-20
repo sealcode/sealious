@@ -38,9 +38,7 @@ describe("uploaded_files", () => {
 					form_data
 				)) as Record<"file" | "id", string>;
 
-				const {
-					items: [data],
-				} = (await asyncRequest({
+				const { items: [data] = [] } = (await asyncRequest({
 					method: "GET",
 					hostname: "localhost",
 					port: port,
@@ -52,6 +50,10 @@ describe("uploaded_files", () => {
 				const url_regex = new RegExp(
 					/\/api\/v1\/uploaded-files\/persistent\/[^\/.]+.txt/
 				);
+				if (!data) {
+					throw new Error("data is missing");
+				}
+
 				assert.match(data.file, url_regex);
 				const response = await rest_api.get(data.file);
 				assert.strictEqual(response, "I AM A TEST\r\n\r\n");

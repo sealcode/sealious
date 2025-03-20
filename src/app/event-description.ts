@@ -57,7 +57,7 @@ export class CollectionRefreshCondition extends RefreshCondition<CollectionRefre
 					`Collection '${this.collection_name}' not found, perhaps a typo?`
 				);
 			}
-			app.collections[this.collection_name].on(event_name, callback);
+			app.collections[this.collection_name]!.on(event_name, callback);
 		}
 	}
 }

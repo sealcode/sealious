@@ -20,18 +20,24 @@ export default abstract class SpecialFilter {
 	abstract getNopassReason(): string;
 
 	getCollection() {
-		return this.app.collections[this.collection_name];
+		const collection = this.app.collections[this.collection_name];
+		if (collection) {
+			return collection;
+		} else {
+			throw new Error("collection is missing");
+		}
 	}
 
 	async checkSingleResource(app: App, resource_id: string) {
-		const documents = await app.Datastore.aggregate(
-			this.getCollection().name,
-			[
-				{ $match: { id: resource_id } },
-				...(await this.getFilteringQuery()).toPipeline(),
-			] as QueryStage[]
-		);
+		const collection = this.getCollection();
+		if (!collection) {
+			throw new Error("collection is missing");
+		}
 
+		const documents = await app.Datastore.aggregate(collection.name, [
+			{ $match: { id: resource_id } },
+			...(await this.getFilteringQuery()).toPipeline(),
+		] as QueryStage[]);
 		return documents.length
 			? SpecialFilter.pass()
 			: SpecialFilter.nopass(this.getNopassReason());

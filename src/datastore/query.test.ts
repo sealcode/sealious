@@ -50,12 +50,12 @@ describe("Query", () => {
 			const query = Query.fromCustomPipeline(pipeline, true);
 
 			const authors_hash = Lookup.hashBody({
-				...pipeline[1].$lookup,
+				...pipeline[1]!.$lookup,
 				unwind: false,
 			} as LookupBody);
 
 			const states_hash = Lookup.hashBody({
-				...pipeline[4].$lookup,
+				...pipeline[4]!.$lookup,
 				unwind: false,
 			} as SimpleLookupBody);
 
@@ -234,7 +234,7 @@ describe("Query", () => {
 			query.prefix("prefix");
 			const pipeline = query.toPipeline();
 			assert.strictEqual(
-				(pipeline?.[0].$lookup as ComplexLookupBody).let?.value,
+				(pipeline?.[0]!.$lookup as ComplexLookupBody).let?.value,
 				"$prefix.field"
 			);
 		});
@@ -274,7 +274,7 @@ describe("Query", () => {
 
 			let negated_query = new Not(query);
 			const expected_pipeline: any = query.toPipeline();
-			expected_pipeline[1].$match = {
+			expected_pipeline[1]!.$match = {
 				[`${L1_id}.last_name`]: {
 					$not: expected_pipeline[1].$match[`${L1_id}.last_name`],
 				},
@@ -303,9 +303,9 @@ describe("Query", () => {
 				{
 					$match: {
 						$or: [
-							{ pages: { $not: stage.$and[0].pages } },
-							{ title: { $not: stage.$and[1].title } },
-							{ printed: stage.$and[2].printed?.$not },
+							{ pages: { $not: stage.$and[0]!.pages } },
+							{ title: { $not: stage.$and[1]!.title } },
+							{ printed: stage.$and[2]!.printed?.$not },
 						],
 					},
 				},

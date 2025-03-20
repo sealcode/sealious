@@ -82,7 +82,7 @@ describe("coordinates", () => {
 				.format({ coordField: "string" })
 				.fetch();
 			assert.strictEqual(
-				response.items[0].get("coordField"),
+				response.items[0]!.get("coordField"),
 				testCoordsString
 			);
 
@@ -94,7 +94,7 @@ describe("coordinates", () => {
 				.format({ coordField: "tuple" })
 				.fetch();
 			assert.notStrictEqual(
-				response2.items[0].get("coordField"),
+				response2.items[0]!.get("coordField"),
 				testCoordsTuple
 			);
 
@@ -106,7 +106,7 @@ describe("coordinates", () => {
 				.format({ coordField: "object" })
 				.fetch();
 			assert.notStrictEqual(
-				response3.items[0].get("coordField"),
+				response3.items[0]!.get("coordField"),
 				testCoordsObject
 			);
 		});

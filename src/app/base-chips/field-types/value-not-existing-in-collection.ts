@@ -9,6 +9,10 @@ export default class ValueNotExistingInCollection extends ValueExistingInCollect
 		old_value: unknown
 	) {
 		const field = this.getField(context.app);
+		if (!field) {
+			throw new Error("field is missing");
+		}
+
 		await field.checkValue(context, new_value, old_value, null);
 		if (this.include_forbidden) {
 			context = new this.app.SuperContext();

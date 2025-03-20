@@ -25,6 +25,11 @@ export default class ValueExistingInCollection extends Field<unknown> {
 		old_value: unknown
 	) {
 		const field = this.getField(context.app);
+
+		if (!field) {
+			throw new Error("field is missing");
+		}
+
 		const collection = field.collection;
 		const result = await field.checkValue(
 			context,
@@ -57,39 +62,61 @@ export default class ValueExistingInCollection extends Field<unknown> {
 	}
 
 	getField(app: App) {
-		return app.collections[this.target_collection_name].fields[
-			this.target_field_name
-		];
+		const targetCollection = app.collections[this.target_collection_name];
+		if (targetCollection) {
+			return targetCollection.fields[this.target_field_name];
+		} else {
+			throw new Error(
+				`target collection is missing: "${this.target_collection_name}"`
+			);
+		}
 	}
 
 	encode(
 		context: Context,
 		...args: ExtractTail<Parameters<Field<unknown>["encode"]>>
 	): Promise<unknown> {
-		return this.getField(context.app).encode(context, ...args);
+		const field = this.getField(context.app);
+		if (field) {
+			return field.encode(context, ...args);
+		} else {
+			throw new Error(`field is missing: "${this.target_field_name}"`);
+		}
 	}
 
 	decode(
 		context: Context,
 		...args: ExtractTail<Parameters<Field<unknown>["decode"]>>
 	) {
-		return this.getField(context.app).decode(context, ...args);
+		const field = this.getField(context.app);
+		if (field) {
+			return field.decode(context, ...args);
+		} else {
+			throw new Error(`field is missing: "${this.target_field_name}"`);
+		}
 	}
 
 	getMatchQueryValue(
 		context: Context,
 		...args: ExtractTail<Parameters<Field<unknown>["getMatchQueryValue"]>>
 	) {
-		return this.getField(context.app).getMatchQueryValue(context, ...args);
+		const field = this.getField(context.app);
+		if (field) {
+			return field.getMatchQueryValue(context, ...args);
+		} else {
+			throw new Error("field is missing");
+		}
 	}
 
 	getAggregationStages(
 		context: Context,
 		...args: ExtractTail<Parameters<Field<unknown>["getMatchQueryValue"]>>
 	) {
-		return this.getField(context.app).getAggregationStages(
-			context,
-			...args
-		);
+		const field = this.getField(context.app);
+		if (field) {
+			return field.getAggregationStages(context, ...args);
+		} else {
+			throw new Error("field is missing");
+		}
 	}
 }

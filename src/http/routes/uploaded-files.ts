@@ -1,15 +1,20 @@
 import Router from "@koa/router";
 const uploaded_files = new Router();
 uploaded_files.get("/:bucket/:filename", async (ctx) => {
+	const filenameParams = ctx.params.filename;
+	if (!filenameParams) {
+		throw Error("filename param is missing");
+	}
 	const file = await ctx.$app.FileManager.fromToken(
 		ctx.$app.FileManager.encodeToken(
 			ctx.params.bucket == "persistent",
-			ctx.params.filename,
-			ctx.params.filename
+			filenameParams,
+			filenameParams
 		)
 	);
 	ctx.body = file.getStream();
 	ctx.type = file.mimetype;
+
 	// removing this as it only created trouble and you can declare download
 	// target in html <a> element, anyway
 

@@ -49,7 +49,7 @@ describe("jdd", () => {
 				],
 			});
 			const response_doc = item.get("document") as JDDocument;
-			assert.strictEqual(response_doc[0].component_name, "Test");
+			assert.strictEqual(response_doc[0]!.component_name, "Test");
 		}));
 
 	it("should add properly formated JDD with argument", async () =>
@@ -68,10 +68,10 @@ describe("jdd", () => {
 				],
 			});
 			const response_doc = item.get("document") as JDDocument;
-			assert.strictEqual(response_doc[0].component_name, "Test");
-			assert.strictEqual(response_doc[0].args.title, "Ipsum");
+			assert.strictEqual(response_doc[0]!.component_name, "Test");
+			assert.strictEqual(response_doc[0]!.args.title, "Ipsum");
 			assert.strictEqual(
-				response_doc[0].args.content,
+				response_doc[0]!.args.content,
 				"**Duis ut diam quam nulla**.\n\nLectus mauris *ultrices* eros!"
 			);
 		}));

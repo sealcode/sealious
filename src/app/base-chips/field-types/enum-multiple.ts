@@ -12,7 +12,12 @@ export class EnumMultiple<Values extends string> extends ArrayStorage<Values> {
 	}
 
 	async getEmptyElement(context: Context): Promise<Values> {
-		return (await this.getAllowedValues(context))[0];
+		const allowedValues = (await this.getAllowedValues(context))[0];
+		if (allowedValues) {
+			return allowedValues;
+		} else {
+			throw new Error("No allowed values found for the provided context");
+		}
 	}
 
 	async getAllowedValues(context: Context): Promise<Values[]> {

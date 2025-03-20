@@ -27,7 +27,7 @@ export default class Aggregate extends CalculatedField<any> {
 			stages
 		);
 
-		if (documents.length) {
+		if (documents.length && documents[0]) {
 			return documents[0].result;
 		} else {
 			return null;

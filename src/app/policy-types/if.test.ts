@@ -43,7 +43,7 @@ function extend(t: TestAppConstructor) {
 
 async function createResources(app: App) {
 	for (let number of [-1, 0, 1]) {
-		await app.collections.numbers.suCreate({
+		await app.collections.numbers!.suCreate({
 			number,
 			number_str: number.toString(),
 		});

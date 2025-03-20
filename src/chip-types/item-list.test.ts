@@ -39,14 +39,14 @@ describe("ItemList", () => {
 					.sort({ "_metadata.modified_at": "desc" })
 					.fetch();
 
-				strictEqual(desc[0].get("name"), "newer");
-				strictEqual(desc[1].get("name"), "older");
+				strictEqual(desc[0]!.get("name"), "newer");
+				strictEqual(desc[1]!.get("name"), "older");
 				const { items: asc } = await app.collections.entries
 					.suList()
 					.sort({ "_metadata.modified_at": "asc" })
 					.fetch();
-				strictEqual(asc[0].get("name"), "older");
-				strictEqual(asc[1].get("name"), "newer");
+				strictEqual(asc[0]!.get("name"), "older");
+				strictEqual(asc[1]!.get("name"), "newer");
 			}
 		));
 
@@ -81,11 +81,11 @@ describe("ItemList", () => {
 					age: 15,
 				});
 				const csv = await app.collections.entries.suList().toCSV();
-				deepStrictEqual(csv.split("\n")[0].split(",").sort(), [
+				deepStrictEqual(csv.split("\n")[0]!.split(",").sort(), [
 					"age",
 					"name",
 				]);
-				deepStrictEqual(csv.split("\n")[1].split(",").sort(), [
+				deepStrictEqual(csv.split("\n")[1]!.split(",").sort(), [
 					"15",
 					"older",
 				]);
@@ -127,7 +127,7 @@ describe("ItemList", () => {
 						.fetch()
 				).serialize();
 				assert.deepStrictEqual(result.items.length, 1);
-				assert.deepStrictEqual(result.items[0].number, 17);
+				assert.deepStrictEqual(result.items[0]!.number, 17);
 			}
 		));
 
@@ -203,11 +203,11 @@ describe("ItemList", () => {
 					.fetch();
 				assert.strictEqual(items.length, 1);
 				assert.deepStrictEqual(
-					items[0].getAttachments("reference_to_b"),
+					items[0]!.getAttachments("reference_to_b"),
 					[]
 				);
 				assert.deepStrictEqual(
-					items[0].getAttachments("reference_to_b").length,
+					items[0]!.getAttachments("reference_to_b").length,
 					0
 				);
 			}

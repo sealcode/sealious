@@ -106,7 +106,14 @@ export default class ItemList<T extends Collection> {
 					`Unknown field: '${field_name}' in '${this.collection.name}' collection`
 				);
 			}
-			const promise = this.collection.fields[field_name]
+
+			const fieldName = this.collection.fields[field_name];
+
+			if (!fieldName) {
+				throw Error("collection field is missing");
+			}
+
+			const promise = fieldName
 				.getAggregationStages(this.context, filter_value)
 				.then((stages) => {
 					this.aggregation_stages.push(...stages);
@@ -206,12 +213,15 @@ export default class ItemList<T extends Collection> {
 	}
 
 	namedFilter(filter_name: string): ItemList<T> {
+		const filterName = this.collection.named_filters[filter_name];
+		if (!filterName) {
+			throw Error("collection filter is missing");
+		}
+
 		this.await_before_fetch.push(
-			this.collection.named_filters[filter_name]
-				.getFilteringQuery()
-				.then((query) => {
-					this.aggregation_stages.push(...query.toPipeline());
-				})
+			filterName.getFilteringQuery().then((query) => {
+				this.aggregation_stages.push(...query.toPipeline());
+			})
 		);
 		return this;
 	}
@@ -252,8 +262,14 @@ export default class ItemList<T extends Collection> {
 				`Loading attachments for ${field_name}`
 			);
 
+			const fieldName = collection.fields[field_name];
+
+			if (!fieldName) {
+				throw Error("collection field is missing");
+			}
+
 			promises.push(
-				collection.fields[field_name]
+				fieldName
 					.getAttachments(
 						this.context,
 						items.map(
@@ -331,6 +347,10 @@ export default class ItemList<T extends Collection> {
 		const rows = [Collection.getFieldnames(this.collection)];
 		for (const item of result.items) {
 			const row = [];
+			if (!rows[0]) {
+				throw Error("collection filed is empty");
+			}
+
 			for (const field of rows[0]) {
 				row.push(String(item.get(field as any)));
 			}

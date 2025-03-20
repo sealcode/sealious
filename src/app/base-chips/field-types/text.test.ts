@@ -127,7 +127,7 @@ describe("text", () => {
 				const {
 					items: [surname],
 				} = await app.collections.surnames.suList().fetch();
-				assert.strictEqual(surname.get("surname"), null);
+				assert.strictEqual(surname!.get("surname"), null);
 			}
 		));
 
@@ -142,7 +142,7 @@ describe("text", () => {
 					.suList()
 					.filter({ surname: ["Johnson", "Smith"] })
 					.fetch();
-				assert.strictEqual(surname.get("surname"), "Smith");
+				assert.strictEqual(surname!.get("surname"), "Smith");
 			}
 		));
 
@@ -169,7 +169,7 @@ describe("text", () => {
 					.filter({ surname: { surname: ["Smith"] } })
 					.fetch();
 				assert.strictEqual(single_match.length, 1);
-				assert.strictEqual(single_match[0].get("surname"), surname.id);
+				assert.strictEqual(single_match[0]!.get("surname"), surname.id);
 			}
 		));
 
@@ -188,7 +188,7 @@ describe("text", () => {
 					.filter({ surname: "Smith" })
 					.fetch();
 				assert.strictEqual(single_match.length, 1);
-				assert.strictEqual(single_match[0].get("surname"), "Smith");
+				assert.strictEqual(single_match[0]!.get("surname"), "Smith");
 			}
 		));
 
@@ -202,6 +202,6 @@ describe("text", () => {
 				.filter({ surname: "" })
 				.fetch();
 			assert.strictEqual(single_match.length, 1);
-			assert.strictEqual(single_match[0].get("surname"), "");
+			assert.strictEqual(single_match[0]!.get("surname"), "");
 		}));
 });

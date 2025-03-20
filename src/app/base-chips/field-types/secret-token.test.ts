@@ -62,7 +62,7 @@ describe("boolean", () => {
 					.paginate({ items: 1 })
 					.fetch();
 				assert.strictEqual(filtered_items.length, 1);
-				assert.strictEqual(filtered_items[0].get("secret"), secret);
+				assert.strictEqual(filtered_items[0]!.get("secret"), secret);
 			}
 		));
 });

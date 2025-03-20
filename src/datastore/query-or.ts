@@ -28,7 +28,8 @@ export default class Or extends Query {
 			const match_stage: MatchBody =
 				match_stage_bodies.length > 1
 					? { $and: match_stage_bodies }
-					: match_stage_bodies[0];
+					: // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+					  match_stage_bodies[0]!;
 			this.steps.push(new Match(match_stage));
 		}
 	}

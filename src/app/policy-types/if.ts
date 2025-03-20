@@ -30,9 +30,12 @@ export default class If extends Policy {
 	}
 
 	getFilter(app: App): SpecialFilter {
-		return app.collections[this.collection_name].getNamedFilter(
-			this.filter_name
-		);
+		const collection = app.collections[this.collection_name];
+		if (collection) {
+			return collection.getNamedFilter(this.filter_name);
+		} else {
+			throw new Error("collection is missing");
+		}
 	}
 
 	async constructQuery(context: Context) {

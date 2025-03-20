@@ -18,9 +18,12 @@ export default class UsersWhoCan extends Policy {
 
 	getPolicy(app: App) {
 		//not doing this in the constructor because the collection may not be initialized when the constructor is ran
-		return app.collections[this.target_collection_name].getPolicy(
-			this.action_name
-		);
+		const targetCollection = app.collections[this.target_collection_name];
+		if (targetCollection) {
+			return targetCollection.getPolicy(this.action_name);
+		} else {
+			throw new Error("target collection is missing");
+		}
 	}
 
 	async _getRestrictingQuery(context: Context) {

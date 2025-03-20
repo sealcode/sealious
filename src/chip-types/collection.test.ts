@@ -50,8 +50,8 @@ describe("collection router", () => {
 			) {
 				throw new Error("Wrong reponse shape");
 			}
-			assert.ok(response.items[0].id);
-			assert.strictEqual(response.items[0].value, 2);
+			assert.ok(response.items[0]!.id);
+			assert.strictEqual(response.items[0]!.value, 2);
 		}));
 });
 
@@ -316,18 +316,18 @@ describe("collection", () => {
 						.fetch();
 					assert.strictEqual(patrons.length, 2);
 					assert.strictEqual(
-						patrons[0].get("email"),
+						patrons[0]!.get("email"),
 						"adam@example.com"
 					);
 					assert.strictEqual(
-						patrons[0].get("end_date"),
+						patrons[0]!.get("end_date"),
 						"2024-12-24"
 					);
 					assert.strictEqual(
-						patrons[1].get("email"),
+						patrons[1]!.get("email"),
 						"eve@example.com"
 					);
-					assert.strictEqual(patrons[1].get("amount_monthly"), 7);
+					assert.strictEqual(patrons[1]!.get("amount_monthly"), 7);
 				}
 			));
 
@@ -578,67 +578,73 @@ describe("collection", () => {
 
 					assert.strictEqual(
 						await normalizeXml(atom_feed),
-						await normalizeXml(/* HTML */ `<?xml version="1.0" encoding="utf-8"?>
+						await normalizeXml(
+							/* HTML */ `<?xml version="1.0" encoding="utf-8"?>
 
-							<feed xmlns="http://www.w3.org/2005/Atom">
-								<title>testing app / posts</title>
-								<link
-									href="http://127.0.0.1:33255/api/v1/collections/posts/feed"
-									rel="self"
-								/>
-								<id
-									>http://127.0.0.1:33255/api/v1/collections/posts/feed</id
-								>
-								<link href="http://127.0.0.1:33255" />
-								<updated>2025-03-09T14:29:57.639Z</updated>
-
-								<entry>
-									<title>article 2</title>
+								<feed xmlns="http://www.w3.org/2005/Atom">
+									<title>testing app / posts</title>
 									<link
-										href="http://127.0.0.1:33255/api/v1/collections/posts/Mh-6kc8F1fPOBb3eWso9Q"
+										href="http://127.0.0.1:33255/api/v1/collections/posts/feed"
+										rel="self"
 									/>
 									<id
-										>http://127.0.0.1:33255/api/v1/colections/posts/Mh-6kc8F1fPOBb3eWso9Q</id
+										>http://127.0.0.1:33255/api/v1/collections/posts/feed</id
 									>
-									<published
-										>2025-03-09T14:29:57.639Z</published
-									>
+									<link href="http://127.0.0.1:33255" />
 									<updated>2025-03-09T14:29:57.639Z</updated>
-									<content type="xhtml">
-										<div
-											xmlns="http://www.w3.org/1999/xhtml"
+
+									<entry>
+										<title>article 2</title>
+										<link
+											href="http://127.0.0.1:33255/api/v1/collections/posts/Mh-6kc8F1fPOBb3eWso9Q"
+										/>
+										<id
+											>http://127.0.0.1:33255/api/v1/colections/posts/Mh-6kc8F1fPOBb3eWso9Q</id
 										>
-											article 2 content
-										</div>
-									</content>
-									<author>
-										<name>Unknown author</name>
-									</author>
-								</entry>
-								<entry>
-									<title>article 1</title>
-									<link
-										href="http://127.0.0.1:33255/api/v1/collections/posts/c40Rq8ahEs3-OgKJecsjg"
-									/>
-									<id
-										>http://127.0.0.1:33255/api/v1/colections/posts/c40Rq8ahEs3-OgKJecsjg</id
-									>
-									<published
-										>2025-03-09T14:29:57.638Z</published
-									>
-									<updated>2025-03-09T14:29:57.638Z</updated>
-									<content type="xhtml">
-										<div
-											xmlns="http://www.w3.org/1999/xhtml"
+										<published
+											>2025-03-09T14:29:57.639Z</published
 										>
-											article 1 content
-										</div>
-									</content>
-									<author>
-										<name>Unknown author</name>
-									</author>
-								</entry>
-							</feed>`)
+										<updated
+											>2025-03-09T14:29:57.639Z</updated
+										>
+										<content type="xhtml">
+											<div
+												xmlns="http://www.w3.org/1999/xhtml"
+											>
+												article 2 content
+											</div>
+										</content>
+										<author>
+											<name>Unknown author</name>
+										</author>
+									</entry>
+									<entry>
+										<title>article 1</title>
+										<link
+											href="http://127.0.0.1:33255/api/v1/collections/posts/c40Rq8ahEs3-OgKJecsjg"
+										/>
+										<id
+											>http://127.0.0.1:33255/api/v1/colections/posts/c40Rq8ahEs3-OgKJecsjg</id
+										>
+										<published
+											>2025-03-09T14:29:57.638Z</published
+										>
+										<updated
+											>2025-03-09T14:29:57.638Z</updated
+										>
+										<content type="xhtml">
+											<div
+												xmlns="http://www.w3.org/1999/xhtml"
+											>
+												article 1 content
+											</div>
+										</content>
+										<author>
+											<name>Unknown author</name>
+										</author>
+									</entry>
+								</feed>`
+						)
 					);
 				}
 			));

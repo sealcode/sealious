@@ -37,7 +37,7 @@ const testFormating = (
 				.format({ content: format })
 				.fetch();
 
-			assert.strictEqual(item.get("content"), expected_value);
+			assert.strictEqual(item!.get("content"), expected_value);
 		}
 	);
 

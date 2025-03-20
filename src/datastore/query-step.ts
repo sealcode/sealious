@@ -74,27 +74,35 @@ export class Match extends QueryStep {
 			$lte: "<=",
 		};
 		const field = Object.keys(this.body)[0];
-		const sign = Object.keys(this.body[field] as any)[0];
-		const parameter = (this.body[field] as any)[sign];
-		const sqlSign = codeToSignMap[sign] || "";
+		if (field) {
+			const sign = Object.keys(this.body[field] as any)[0];
+			if (sign) {
+				const parameter = (this.body[field] as any)[sign];
+				const sqlSign = codeToSignMap[sign] || "";
 
-		if (sign === "$in") {
-			return {
-				where: `${field} IN (${(parameter as any[])
-					.map((_, index) => {
-						return `$${index + 1}`;
-					})
-					.join(", ")})`,
-				join: [],
-				parameters: [...parameter],
-			};
+				if (sign === "$in") {
+					return {
+						where: `${field} IN (${(parameter as any[])
+							.map((_, index) => {
+								return `$${index + 1}`;
+							})
+							.join(", ")})`,
+						join: [],
+						parameters: [...parameter],
+					};
+				}
+
+				return {
+					where: `${field} ${sqlSign} $1`,
+					join: [],
+					parameters: [parameter],
+				};
+			} else {
+				throw new Error("sign is missing");
+			}
+		} else {
+			throw new Error("field is missing");
 		}
-
-		return {
-			where: `${field} ${sqlSign} $1`,
-			join: [],
-			parameters: [parameter],
-		};
 	}
 
 	pushStage(pipeline: QueryStage[]): QueryStage[] {

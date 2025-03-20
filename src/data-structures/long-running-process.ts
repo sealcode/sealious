@@ -150,7 +150,10 @@ export class LongRunningProcess<
 			.sort(({ timestamp: t1 }, { timestamp: t2 }) =>
 				!t1 || !t2 ? 0 : t1 > t2 ? 1 : -1
 			);
-		const latestEvent = events[events.length - 1];
+		if (!events.length) {
+			throw new Error("no events found");
+		}
+		const latestEvent = events.at(-1)!;
 		return {
 			emitter: this.registry[lrp_item.id] || null,
 			events,

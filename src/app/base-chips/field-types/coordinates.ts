@@ -45,9 +45,15 @@ export default class Coordinates extends Field<
 	): Promise<GeoJSONPoint> {
 		if (typeof value === "string") {
 			const coords = value.split(",").map(parseFloat);
+			const [lat, lon] = [coords[0], coords[1]];
+
+			if (lat === undefined || lon === undefined) {
+				throw new Error("coords is missing");
+			}
+
 			return {
 				type: "Point",
-				coordinates: [coords[0], coords[1]],
+				coordinates: [lat, lon],
 			};
 		} else if (Array.isArray(value) && value.length === 2) {
 			return {
@@ -100,6 +106,15 @@ export default class Coordinates extends Field<
 		} else if (format === "tuple") {
 			return dbValueCasted.coordinates;
 		} else if (format === "object") {
+			if (
+				dbValueCasted.coordinates[0] === undefined ||
+				dbValueCasted.coordinates[1] === undefined
+			) {
+				throw new Error(
+					"coordinate provided in dbValueCasted is missing"
+				);
+			}
+
 			return {
 				lat: dbValueCasted.coordinates[0],
 				lon: dbValueCasted.coordinates[1],

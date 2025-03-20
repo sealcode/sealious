@@ -80,7 +80,7 @@ async function fillKeysCollections(App: App) {
 		},
 	];
 	await asyncForEach(keys, async ({ _public, _private }) => {
-		await App.collections["ssh-keys"].suCreate({
+		await App.collections["ssh-keys"]!.suCreate({
 			public: _public,
 			private: _private,
 		});
@@ -170,7 +170,7 @@ describe("control-access", () => {
 				session
 			)) as CollectionResponse;
 
-			assert.deepStrictEqual(updated_key.private, "654321");
+			assert.deepStrictEqual(updated_key!.private, "654321");
 		}));
 
 	it("Doesn't allow not logged to update a protected field", async () =>

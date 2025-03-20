@@ -63,7 +63,12 @@ export default class MongoDatastore extends Datastore {
 		const indexes: { [field: string]: number }[] = [{ id: 1 }];
 		const text_index: { [field: string]: "text" } = {};
 		for (const field_name in collection.fields) {
-			const index_answer = await collection.fields[field_name].hasIndex();
+			const fieldName = collection.fields[field_name];
+			if (!fieldName) {
+				throw Error("collection field is missing ");
+			}
+
+			const index_answer = await fieldName.hasIndex();
 			if (index_answer === false) {
 				continue;
 			}
@@ -95,11 +100,14 @@ export default class MongoDatastore extends Datastore {
 						error: Error & { code?: number; message: string }
 					) => {
 						if (error && error.code === 85) {
-							const index_name = (
-								error.message.match(
-									/name: "([^"]+)"/g
-								) as string[]
-							)[1]
+							const match = error.message.match(
+								/name: "([^"]+)"/g
+							) as string[];
+							if (!match[1]) {
+								throw new Error("match is missing");
+							}
+
+							const index_name = match[1]
 								.replace('name: "', "")
 								.replace('"', "");
 							await db_collection.dropIndex(index_name);

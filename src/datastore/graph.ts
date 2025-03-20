@@ -41,9 +41,10 @@ export default class Graph {
 	}
 	addEdge(id_i: NodeID, id_j: NodeID) {
 		const [i, j] = this._getIndexesOfNodePair(id_i, id_j);
-		this.adjacency_matrix[i][j] = 1;
+		// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+		this.adjacency_matrix[i]![j] = 1;
 	}
-	_getIndexesOfNodePair(id_i: NodeID, id_j: NodeID) {
+	_getIndexesOfNodePair(id_i: NodeID, id_j: NodeID): [number, number] {
 		return [this.node_ids.indexOf(id_i), this.node_ids.indexOf(id_j)];
 	}
 	pathExists(id_i: NodeID, id_j: NodeID) {
@@ -51,17 +52,19 @@ export default class Graph {
 		return this._pathExists(i, j);
 	}
 	_pathExists(i: number, j: number): boolean {
-		if (this.adjacency_matrix[i][j]) {
+		// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+		if (this.adjacency_matrix[i]?.[j]) {
 			return true;
 		}
 		for (let k = 0; k < this.getNoOfNodes(); ++k) {
-			if (this.adjacency_matrix[i][k]) {
+			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+			if (this.adjacency_matrix[i]?.[k]) {
 				return this._pathExists(k, j);
 			}
 		}
 		return false;
 	}
-	bestFirstSearch() {
+	bestFirstSearch(): NodeID[] {
 		this.front = [];
 		this.visited = [];
 		while (this.visited.length < this.nodes.length) {
@@ -79,11 +82,13 @@ export default class Graph {
 				this.front.push(next_node as number);
 			}
 		}
-		return this.visited.map((i) => this.nodes[i].id);
+		return this.visited
+			.map((i) => this.nodes[i]?.id)
+			.filter((i) => i !== undefined) as number[];
 	}
 	_areAllSuccessorsVisited(i: number) {
 		for (let j = 0; j < this.nodes.length; ++j) {
-			if (this.adjacency_matrix[i][j] && !this._isVisited(j)) {
+			if (this.adjacency_matrix[i]?.[j] && !this._isVisited(j)) {
 				return false;
 			}
 		}
@@ -94,7 +99,8 @@ export default class Graph {
 	}
 	_isNodeWithoutPredecessors(i: number) {
 		for (let j = 0; j < this.nodes.length; ++j) {
-			if (this.adjacency_matrix[j][i]) {
+			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+			if (this.adjacency_matrix[j]?.[i]) {
 				return false;
 			}
 		}
@@ -113,9 +119,13 @@ export default class Graph {
 		}
 
 		const successorsYetToBeVisited = this.front.reduce((successors, i) => {
+			if (!this.adjacency_matrix[i]) {
+				throw new Error("adjacency matrix is missing");
+			}
+
 			this.indexes
 				.filter(
-					(j) => this.adjacency_matrix[i][j] && !this._isVisited(j)
+					(j) => this.adjacency_matrix[i]![j] && !this._isVisited(j)
 				)
 				.map((j) => successors.add(j));
 			return successors;
@@ -140,7 +150,7 @@ export default class Graph {
 
 		const front_node =
 			this.indexes.find(
-				(i) => this.adjacency_matrix[i][candidate2.index as number]
+				(i) => this.adjacency_matrix[i]?.[candidate2.index as number]
 			) || null;
 		return { front_node, next_node: candidate2.index };
 	}
@@ -152,14 +162,20 @@ export default class Graph {
 			current_mean,
 			best_mean = Infinity;
 		for (const candidate of candidates) {
-			if (this.nodes[candidate].priority < best_priority) {
-				best_priority = this.nodes[candidate].priority;
+			const node = this.nodes[candidate];
+
+			if (!node) {
+				throw new Error("nodes[candidate] is missing");
+			}
+
+			if (node.priority < best_priority) {
+				best_priority = node.priority;
 				best_mean = this._meanPriorityOfSuccessors(candidate);
 				next_node = candidate;
-				if (this.nodes[candidate].priority === Graph.MAX_PRIORITY) {
+				if (node.priority === Graph.MAX_PRIORITY) {
 					break;
 				}
-			} else if (this.nodes[candidate].priority === best_priority) {
+			} else if (node.priority === best_priority) {
 				current_mean = this._meanPriorityOfSuccessors(candidate);
 				if (current_mean < best_mean) {
 					best_mean = current_mean;
@@ -177,8 +193,12 @@ export default class Graph {
 		let sum = 0,
 			length = 0;
 		for (let j of this.indexes) {
-			if (this.adjacency_matrix[i][j] && !this._isVisited(j)) {
-				sum += this.nodes[j].priority;
+			if (
+				this.nodes[j] &&
+				this.adjacency_matrix[i]?.[j] &&
+				!this._isVisited(j)
+			) {
+				sum += this.nodes[j]!.priority;
 				++length;
 			}
 		}

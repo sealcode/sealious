@@ -106,11 +106,11 @@ function extend(t: TestAppConstructor) {
 describe("NotPolicy", () => {
 	async function setup(app: Sealious.App) {
 		for (let i of [0, 1, 2, 3, 4]) {
-			const { id } = await app.collections.numbers.suCreate({
+			const { id } = await app.collections.numbers!.suCreate({
 				number: i,
 			});
 			await Bluebird.map(collections_to_create, ({ name }) =>
-				app.collections[name].suCreate({
+				app.collections[name]!.suCreate({
 					number: id,
 				})
 			);

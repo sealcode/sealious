@@ -135,17 +135,18 @@ export class Fieldset<Fields extends Record<string, Field<any, any, any>>> {
 					null as any;
 				continue;
 			}
+			if (!this.fields[field_name as string]) {
+				throw new Error("field name is missing");
+			}
+
 			promises.push(
-				this.fields[field_name as string]
-					.encode(
-						context,
-						to_encode,
-						original_body[field_name as keyof FieldsetInput<Fields>]
-					)
-					.then((value) => {
-						new_encoded[field_name as keyof typeof new_encoded] =
-							value;
-					})
+				this.fields[field_name as string]!.encode(
+					context,
+					to_encode,
+					original_body[field_name as keyof FieldsetInput<Fields>]
+				).then((value) => {
+					new_encoded[field_name as keyof typeof new_encoded] = value;
+				})
 			);
 		}
 		await Promise.all(promises);
@@ -169,12 +170,18 @@ export class Fieldset<Fields extends Record<string, Field<any, any, any>>> {
 		for (const [field_name, encoded_value] of Object.entries(
 			this.encoded
 		)) {
-			if (!this.fields?.[field_name]) {
+			const field = this.fields?.[field_name];
+
+			if (!field) {
 				continue;
 			}
 			const encoded = this.encoded;
+			if (!field) {
+				throw new Error("field name is missing");
+			}
+
 			promises.push(
-				this.fields?.[field_name]
+				field
 					.decode(
 						context,
 						encoded[field_name],
@@ -230,12 +237,17 @@ export class Fieldset<Fields extends Record<string, Field<any, any, any>>> {
 		}
 
 		for (const field_name of fields_to_check) {
-			if (!this.fields[field_name as string]) {
+			const field = this.fields[field_name as string];
+			if (!field) {
 				// field does not exist
 				continue;
 			}
+			if (!field) {
+				throw new Error("field name is missing");
+			}
+
 			promises.push(
-				this.fields[field_name as string]
+				field
 					.checkValue(
 						context,
 						this.raw_input[

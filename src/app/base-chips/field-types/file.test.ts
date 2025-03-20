@@ -51,9 +51,9 @@ describe("file", () => {
 					.format({ file: "url" })
 					.fetch();
 
-				console.log("file.test.ts:53", item.get("file"));
+				console.log("file.test.ts:53", item!.get("file"));
 				const api_response = await rest_api.get(
-					item.get("file") as string
+					item!.get("file") as string
 				);
 
 				assert.strictEqual(api_response, "Hello world!");
@@ -115,7 +115,7 @@ describe("file", () => {
 					.format({ file: "url" })
 					.fetch();
 
-				await rest_api.get(item.get("file") as string);
+				await rest_api.get(item!.get("file") as string);
 			}
 		);
 	});
@@ -148,7 +148,7 @@ describe("file", () => {
 							.format({ photo: "url" })
 							.fetch()
 					).items[0];
-					const url = photo2.get("photo");
+					const url = photo2!.get("photo");
 					assert.strictEqual(typeof url, "string");
 					const response = await fetch(url as string);
 					assert.equal(

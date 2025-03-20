@@ -15,7 +15,7 @@ export default class Metadata {
 			{ key }
 		);
 		if (matches.length) {
-			return matches[0].value;
+			return matches[0]!.value;
 		} else {
 			return undefined;
 		}

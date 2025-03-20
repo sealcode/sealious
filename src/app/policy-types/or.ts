@@ -41,6 +41,6 @@ export default class Or extends ReducingPolicy {
 		if (positives.length === 0) {
 			return Policy.deny(results.map((r) => `"${r?.reason}"`).join(", "));
 		}
-		return Policy.allow(positives[0].reason);
+		return Policy.allow(positives[0]!.reason);
 	}
 }

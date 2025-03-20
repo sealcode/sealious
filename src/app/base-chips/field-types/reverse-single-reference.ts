@@ -147,7 +147,16 @@ export default class ReverseSingleReference extends CachedValue<
 	}
 
 	getReferencingCollection() {
-		return this.app.collections[this.referencing_collection];
+		const referencingCollection =
+			this.app.collections[this.referencing_collection];
+
+		if (referencingCollection) {
+			return referencingCollection;
+		} else {
+			throw new Error(
+				`Referenced colllection is missing: "${this.referencing_collection}"`
+			);
+		}
 	}
 
 	async getMatchQueryValue(context: Context, field_filter: any) {
@@ -162,9 +171,14 @@ export default class ReverseSingleReference extends CachedValue<
 			"Querying items matching query:",
 			field_filter
 		);
-		const { items } = await this.app.collections[
-			this.referencing_collection
-		]
+
+		const collection = this.app.collections[this.referencing_collection];
+
+		if (!collection) {
+			throw new Error("collection is missing");
+		}
+
+		const { items } = await collection
 			.list(context)
 			.filter(field_filter)
 			.fetch();

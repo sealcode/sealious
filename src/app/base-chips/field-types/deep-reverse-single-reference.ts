@@ -53,10 +53,14 @@ export class DeepReverseSingleReference extends ReverseSingleReference {
 
 			const intermediary_collection_instance =
 				app.collections[this.intermediary_collection];
+
+			if (!intermediary_collection_instance) {
+				throw new Error("intermediary_collection_instance is missing");
+			}
+
 			const intermediary_fields = intermediary_collection_instance.fields;
 			const intermediary_collection_fields =
 				Object.values(intermediary_fields);
-
 			const fields_from_origin_collection =
 				intermediary_collection_fields.filter(
 					(fld: SingleReference) =>
@@ -103,8 +107,14 @@ export class DeepReverseSingleReference extends ReverseSingleReference {
 				);
 			}
 
+			const fieldFromTargetCollection = fields_from_target_collection[0];
+
+			if (!fieldFromTargetCollection) {
+				throw new Error("fields_from_target_collection is missing");
+			}
+
 			this.target_collection =
-				fields_from_target_collection[0].target_collection;
+				fieldFromTargetCollection.target_collection;
 			this.intermediary_field_that_points_there =
 				intermediary_field_that_points_there;
 			this.referencing_field = intermediary_field_that_points_here;
@@ -114,7 +124,13 @@ export class DeepReverseSingleReference extends ReverseSingleReference {
 	}
 
 	getReferencingCollection() {
-		return this.app.collections[this.referencing_collection];
+		const referencedCollection =
+			this.app.collections[this.referencing_collection];
+		if (referencedCollection) {
+			return referencedCollection;
+		} else {
+			throw new Error("Collection not found for referenced collection");
+		}
 	}
 
 	async getMatchQueryValue(context: Context, field_filter: any) {
@@ -128,7 +144,17 @@ export class DeepReverseSingleReference extends ReverseSingleReference {
 			"Querying items matching query:",
 			field_filter
 		);
-		const { items } = await this.app.collections[this.target_collection]
+
+		// eslint-disable-next-line @typescript-eslint/await-thenable
+		const targetCollection = await this.app.collections[
+			this.target_collection
+		];
+
+		if (!targetCollection) {
+			throw new Error("Target collection is missing");
+		}
+
+		const { items } = await targetCollection
 			.list(context)
 			.filter(field_filter)
 			.fetch();

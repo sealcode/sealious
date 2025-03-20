@@ -80,6 +80,9 @@ export async function withTestApp<FinalTestAppType extends TestApp>(
 
 	const constructor = extend_fn ? extend_fn(TestApp) : TestApp;
 	const uniq_id = getAppID(test_collection);
+	if (!uniq_id || !env || !port || !base_url) {
+		throw new Error("uniq_id, env, port, or base_url is missing.");
+	}
 	const test_app = new constructor(uniq_id, env, port, base_url);
 
 	if (auto_start) {

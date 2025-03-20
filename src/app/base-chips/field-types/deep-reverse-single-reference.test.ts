@@ -130,9 +130,9 @@ describe("deep-reverse-single-reference", () => {
 						.format({ photos: { photo: "url" } })
 						.attach({ photos: true })
 						.fetch()
-				).items[0];
+				).items[0]!;
 				assert.strictEqual(
-					typeof leon.getAttachments("photos")[0].get("photo"),
+					typeof leon.getAttachments("photos")[0]!.get("photo"),
 					"string"
 				);
 			}

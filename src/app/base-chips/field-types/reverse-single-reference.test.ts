@@ -53,14 +53,14 @@ describe("reverse-single-reference", () => {
 	async function createResources(app: App) {
 		const numbers = [1, 2, 3];
 		const bs = await Bluebird.map(numbers, (number) =>
-			app.collections.B.suCreate({
+			app.collections.B!.suCreate({
 				number,
 			})
 		);
 
 		for (const b of bs) {
 			for (let i = 1; i <= (b.get("number") as number); i++) {
-				await app.collections.A.suCreate({
+				await app.collections.A!.suCreate({
 					reference_to_b: b.id,
 					pairity: i % 2 ? "odd" : "even",
 				});
@@ -84,15 +84,15 @@ describe("reverse-single-reference", () => {
 				} = (await rest_api.get(
 					"/api/v1/collections/B?filter[number]=1"
 				)) as CollectionResponse<{ references_in_a: string }>;
-				assert.ok(result.references_in_a);
-				assert.strictEqual(result.references_in_a.length, 1);
+				assert.ok(result!.references_in_a);
+				assert.strictEqual(result!.references_in_a.length, 1);
 				const {
 					items: [result2],
 				} = (await rest_api.get(
 					"/api/v1/collections/B?filter[number]=2"
 				)) as CollectionResponse<{ references_in_a: string }>;
-				assert(result2.references_in_a);
-				assert.strictEqual(result2.references_in_a.length, 2);
+				assert(result2!.references_in_a);
+				assert.strictEqual(result2!.references_in_a.length, 2);
 			},
 			"cache-recreate"
 		);
@@ -106,8 +106,8 @@ describe("reverse-single-reference", () => {
 			} = (await rest_api.get(
 				"/api/v1/collections/B?filter[number]=2"
 			)) as CollectionResponse;
-			assert(result.references_in_a instanceof Array);
-			assert.strictEqual(result.references_in_a.length, 2);
+			assert(result!.references_in_a instanceof Array);
+			assert.strictEqual(result!.references_in_a.length, 2);
 		});
 	});
 
@@ -149,7 +149,7 @@ describe("reverse-single-reference", () => {
 					.suList()
 					.attach({ photos: true })
 					.fetch();
-				assert.strictEqual(dog_new.getAttachments("photos").length, 1);
+				assert.strictEqual(dog_new!.getAttachments("photos").length, 1);
 			}
 		));
 
@@ -166,10 +166,10 @@ describe("reverse-single-reference", () => {
 			} = (await rest_api.get(
 				"/api/v1/collections/B?filter[number]=2"
 			)) as CollectionResponse<{ references_in_a: string }>;
-			const referencing_id = result2.references_in_a[0];
+			const referencing_id = result2!.references_in_a[0];
 
 			await rest_api.patch(`/api/v1/collections/A/${referencing_id}`, {
-				reference_to_b: result1.id,
+				reference_to_b: result1!.id,
 			});
 
 			const {
@@ -177,13 +177,13 @@ describe("reverse-single-reference", () => {
 			} = (await rest_api.get(
 				"/api/v1/collections/B?filter[number]=2"
 			)) as CollectionResponse<{ references_in_a: string }>;
-			assert.strictEqual(new_result2.references_in_a.length, 1);
+			assert.strictEqual(new_result2!.references_in_a.length, 1);
 			const {
 				items: [new_result1],
 			} = (await rest_api.get(
 				"/api/v1/collections/B?filter[number]=1"
 			)) as CollectionResponse<{ references_in_a: string }>;
-			assert.strictEqual(new_result1.references_in_a.length, 2);
+			assert.strictEqual(new_result1!.references_in_a.length, 2);
 		}));
 
 	it("updates the cached value when an old reference is edited to an empty one", async () =>
@@ -195,7 +195,7 @@ describe("reverse-single-reference", () => {
 			} = (await rest_api.get(
 				"/api/v1/collections/B?filter[number]=2"
 			)) as CollectionResponse<{ references_in_a: string }>;
-			const referencing_id = result2.references_in_a[0];
+			const referencing_id = result2!.references_in_a[0];
 
 			await rest_api.patch(`/api/v1/collections/A/${referencing_id}`, {
 				reference_to_b: "",
@@ -205,7 +205,7 @@ describe("reverse-single-reference", () => {
 			} = (await rest_api.get(
 				"/api/v1/collections/B?filter[number]=2"
 			)) as CollectionResponse<{ references_in_a: string }>;
-			assert.strictEqual(new_result2.references_in_a.length, 1);
+			assert.strictEqual(new_result2!.references_in_a.length, 1);
 		}));
 
 	it("allows to filter by a value of the referencing resource", async () =>
@@ -238,8 +238,8 @@ describe("reverse-single-reference", () => {
 				"/api/v1/collections/B?attachments[references_in_a]=true"
 			)) as CollectionResponse<{ references_in_a: string }>;
 
-			const referenced_id = items[0].references_in_a[0];
-			assert.strictEqual(attachments[referenced_id].pairity, "odd");
+			const referenced_id = items[0]!.references_in_a[0];
+			assert.strictEqual(attachments[referenced_id!].pairity, "odd");
 		}));
 
 	it("handles nested attachments", async () =>
@@ -322,12 +322,11 @@ describe("reverse-single-reference", () => {
 					} as unknown as any)
 					.fetch();
 				assert.strictEqual(
-					db_response.items[0]
-						.getAttachments(
-							/* @ts-ignore */
-							"organizations"
-						)[0]
-						.getAttachments("organization")[0]
+					db_response.items[0]!.getAttachments(
+						/* @ts-ignore */
+						"organizations"
+					)[0]!
+						.getAttachments("organization")[0]!
 						.get("name"),
 					"org"
 				);
@@ -346,7 +345,7 @@ describe("reverse-single-reference", () => {
 					.fetch();
 
 				assert.deepStrictEqual(
-					db_response2.items[0].getAttachments(
+					db_response2.items[0]!.getAttachments(
 						/* @ts-ignore */
 						"organizations"
 					),
@@ -397,9 +396,9 @@ describe("reverse-single-reference", () => {
 						.format({ photos: { photo: "url" } })
 						.attach({ photos: true })
 						.fetch()
-				).items[0];
+				).items[0]!;
 				assert.strictEqual(
-					typeof leon.getAttachments("photos")[0].get("photo"),
+					typeof leon.getAttachments("photos")[0]!.get("photo"),
 					"string"
 				);
 			}
