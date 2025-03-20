@@ -4,7 +4,7 @@ import Emittery from "emittery";
 import fs from "fs";
 import type Collection from "../chip-types/collection.js";
 import Context, { SuperContext } from "../context.js";
-import Datastore from "../datastore/datastore.js";
+import MongoDatastore from "../datastore/datastore.js";
 import LoggerMailer from "../email/logger-mailer.js";
 import type Mailer from "../email/mailer.js";
 import extractContext from "../http/extract-context.js";
@@ -68,7 +68,7 @@ export abstract class App {
 	HTTPServer: HttpServer;
 
 	/** The mongoDB client connected to the database specified in the app config */
-	Datastore: Datastore;
+	Datastore: MongoDatastore;
 
 	/** The Metadata manager assigned to this app. Used to store
 	 * certain state information that's not meant to be shown to the
@@ -122,7 +122,7 @@ export abstract class App {
 
 		this.HTTPServer = new HttpServer(this);
 
-		this.Datastore = new Datastore(this);
+		this.Datastore = new MongoDatastore(this);
 		this.Metadata = new MetadataFactory(this);
 
 		const app = this;

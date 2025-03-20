@@ -5,6 +5,7 @@ import type { QueryStage } from "./query.js";
 import asyncForEach from "../utils/async-foreach.js";
 import QueryStep from "./query-step.js";
 import { sleep } from "../test_utils/sleep.js";
+import Datastore from "./datastore-abstract.js";
 
 export type OutputOptions = Partial<{
 	skip: number;
@@ -12,16 +13,12 @@ export type OutputOptions = Partial<{
 	sort: { [field_name: string]: -1 | 1 };
 }>;
 
-export default class Datastore {
+export default class MongoDatastore extends Datastore {
 	client: MongoClient;
 	db: Db;
-	constructor(public app: App) {
-		this.app = app;
-	}
+
 	async start(): Promise<void> {
-		const config = this.app.ConfigManager.get(
-			"datastore_mongo"
-		) as Config["datastore_mongo"];
+		const config = this.app.ConfigManager.get("datastore_mongo");
 
 		const url = `mongodb://${
 			config.username

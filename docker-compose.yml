@@ -4,6 +4,12 @@ services:
     image: mongo:4.4-bionic
     ports:
       - "127.0.0.1:20722:27017"
+  dbpostgres:
+    image: postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_PASSWORD: example
   test:
     image: sealious-test:latest
     build:

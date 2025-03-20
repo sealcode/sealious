@@ -23,6 +23,13 @@ export class TestApp extends App {
 				port: parseInt(process.env.SEALIOUS_DB_PORT || "20722"),
 				db_name: "sealious-test",
 			},
+			datastore_postgres: {
+				host: process.env.SEALIOUS_PG_HOST || "127.0.0.1",
+				password: "example",
+				username: "postgres",
+				port: parseInt(process.env.SEALIOUS_PG_PORT || "5432"),
+				db_name: "sealious-test",
+			},
 			email: {
 				from_name: "Sealious test app",
 				from_address: `sealious-${uniq_id}@example.com`,

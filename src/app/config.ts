@@ -23,13 +23,20 @@ export type Config = {
 		password: string;
 		authSource: string;
 	};
+	datastore_postgres?: {
+		host: string;
+		port: number;
+		db_name: string;
+		username: string;
+		password: string;
+	};
 	roles: string[];
 	password_hash: {
 		iterations: number;
 		key_length: number;
 		salt_length: number;
 	};
-	image_formats: {};
+	image_formats: Record<string, unknown>;
 	accout_creation_success_path: false | string;
 	email: {
 		from_address: string;
