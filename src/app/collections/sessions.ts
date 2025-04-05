@@ -12,6 +12,7 @@ export default class Sessions extends Collection {
 
 	policies = {
 		list: new Policies.UserReferencedInField("user"),
+		delete: new Policies.UserReferencedInField("user"),
 	};
 	defaultPolicy = new Policies.Super();
 
