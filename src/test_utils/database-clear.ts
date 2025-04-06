@@ -1,6 +1,6 @@
 import type { App } from "../main.js";
 
-export async function databaseClear(app: App) {
+export async function databaseClear(app: App): Promise<void> {
 	if (app.Datastore.db) {
 		app.Logger.info("TEST APP", "Clearing the database...");
 		for (const collection_name in app.collections) {

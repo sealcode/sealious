@@ -31,7 +31,7 @@ export default class HttpServer {
 		// const rest_url_base = this.config["api-base"];
 	}
 
-	async start() {
+	async start(): Promise<void> {
 		this.koa.use(handleError());
 		this.koa.use(this.router.routes());
 		this.config = this.app.ConfigManager.get("www-server");
@@ -43,11 +43,11 @@ export default class HttpServer {
 		);
 	}
 
-	async stop() {
+	async stop(): Promise<void> {
 		this.server.close();
 	}
 
-	addStaticRoute(url_path: string, local_path: string) {
+	addStaticRoute(url_path: string, local_path: string): void {
 		this.koa.use(mount(url_path, Static(local_path)));
 	}
 }

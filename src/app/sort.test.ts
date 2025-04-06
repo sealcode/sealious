@@ -34,21 +34,21 @@ function extend(t: TestAppConstructor) {
 describe("sorting", () => {
 	const items: { [name: string]: SerializedItemBody } = {};
 	async function create_resources(app: App, rest_api: MockRestApi) {
-		items.baltic_sea = (await rest_api.post(
+		items.baltic_sea = await rest_api.post(
 			"/api/v1/collections/water_areas",
 			{
 				name: "Baltic Sea",
 				temperature: 10,
 			}
-		)) as any;
+		);
 
-		items.arabic_sea = (await rest_api.post(
+		items.arabic_sea = await rest_api.post(
 			"/api/v1/collections/water_areas",
 			{
 				name: "Arabic Sea",
 				temperature: 20,
 			}
-		)) as any;
+		);
 
 		const seals = [
 			{
@@ -78,9 +78,9 @@ describe("sorting", () => {
 	it("properly sorts for correct sort key", async () => {
 		return withRunningApp(extend, async ({ app, rest_api }) => {
 			await create_resources(app, rest_api);
-			const { items } = (await rest_api.get(
+			const { items } = await rest_api.get(
 				"/api/v1/collections/seals?sort[favorite_number]=desc"
-			)) as any;
+			);
 
 			assert.deepEqual(
 				items.map((item: any) => item.favorite_number),

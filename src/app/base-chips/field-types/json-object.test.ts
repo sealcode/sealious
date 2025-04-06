@@ -38,7 +38,7 @@ describe("json-object", () => {
 
 			let {
 				items: [{ name, metadata }],
-			} = (await rest_api.get(`/api/v1/collections/seals/${id}`)) as any;
+			} = await rest_api.get(`/api/v1/collections/seals/${id}`);
 			assert.deepEqual({ name, metadata }, item);
 
 			item.metadata.weight = 320;
@@ -46,7 +46,7 @@ describe("json-object", () => {
 
 			let {
 				items: [{ name: name2, metadata: metadata2 }],
-			} = (await rest_api.get(`/api/v1/collections/seals/${id}`)) as any;
+			} = await rest_api.get(`/api/v1/collections/seals/${id}`);
 
 			assert.deepEqual({ name: name2, metadata: metadata2 }, item);
 		}));

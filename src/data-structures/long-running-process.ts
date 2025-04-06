@@ -13,7 +13,7 @@ type LongRunningProcessEvent = {
 export type LPRState = "running" | "error" | "finished";
 
 export class LongRunningProcess<
-	Args extends Array<unknown> = []
+	Args extends Array<unknown> = [],
 > extends EventEmitter {
 	public status: "ready" | LPRState = "ready";
 	protected itemPromise: Promise<CollectionItem<LongRunningProcesses>>;
@@ -28,7 +28,7 @@ export class LongRunningProcess<
 			...rest: Args
 		) => Promise<unknown>,
 		args: Args,
-		name: string = "Long running process",
+		name = "Long running process",
 		owner_id: string | null = context.user_id
 	) {
 		super();

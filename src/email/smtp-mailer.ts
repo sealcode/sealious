@@ -33,11 +33,11 @@ export default class SmtpMailer extends Mailer {
 		});
 	}
 
-	async verify() {
+	async verify(): Promise<true> {
 		return this.transport.verify();
 	}
 
-	async init(app: App) {
+	async init(app: App): Promise<void> {
 		await super.init(app);
 		this.mail_config = app.ConfigManager.get("email");
 	}

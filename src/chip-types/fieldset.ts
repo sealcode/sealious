@@ -16,24 +16,15 @@ export type FieldsetOutput<T extends Record<string, Field<any, any>>> = {
 		: ExtractFieldDecoded<T[field]> | null;
 };
 
-export type FieldsetInput<T extends Record<string, Field<any, any, any>>> =
-	| {
-			[field in keyof T & string as T[field] extends RequiredField<
-				any,
-				any,
-				any
-			>
-				? field
-				: never]: ExtractFieldInput<T[field]>;
-	  } & {
-			[field in keyof T & string as T[field] extends RequiredField<
-				any,
-				any,
-				any
-			>
-				? never
-				: field]?: ExtractFieldInput<T[field]>;
-	  };
+export type FieldsetInput<T extends Record<string, Field<any, any, any>>> = {
+	[field in keyof T & string as T[field] extends RequiredField<any, any, any>
+		? field
+		: never]: ExtractFieldInput<T[field]>;
+} & {
+	[field in keyof T & string as T[field] extends RequiredField<any, any, any>
+		? never
+		: field]?: ExtractFieldInput<T[field]>;
+};
 
 export type FieldsetEncoded<T extends Record<string, Field<any, any, any>>> = {
 	[field in keyof T]: ExtractFieldStorage<T[field]>;
@@ -131,8 +122,7 @@ export class Fieldset<Fields extends Record<string, Field<any, any, any>>> {
 			}
 
 			if (to_encode === undefined) {
-				new_encoded[field_name as keyof typeof new_encoded] =
-					null as any;
+				new_encoded[field_name] = null as any;
 				continue;
 			}
 			if (!this.fields[field_name as string]) {
@@ -253,7 +243,7 @@ export class Fieldset<Fields extends Record<string, Field<any, any, any>>> {
 						this.raw_input[
 							field_name as keyof FieldsetInput<Fields>
 						],
-						original_body.encoded[field_name as keyof Fields],
+						original_body.encoded[field_name],
 						this.blessings[field_name] || null
 					)
 					.then(async (result) => {

@@ -70,7 +70,7 @@ export default class Sessions extends Collection {
 			throw new Errors.InvalidCredentials("Incorrect password!");
 		}
 		const session = (this as Sessions).make({
-			user: user.id as unknown as string,
+			user: user.id as string,
 			"session-id": undefined,
 		});
 		await session.save(new this.app.SuperContext());

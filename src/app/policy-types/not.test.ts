@@ -126,7 +126,7 @@ describe("NotPolicy", () => {
 						"/api/v1/collections/collection-not(public)"
 					),
 				(e) => {
-					assert.strictEqual((e as any).response.status, 401);
+					assert.strictEqual(e.response.status, 401);
 				}
 			);
 		}));

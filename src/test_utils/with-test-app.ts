@@ -26,7 +26,7 @@ type CallbackParams<FinalTestAppType extends TestApp> = {
 
 type TestCallback<FinalTestAppType extends TestApp> = (
 	params: CallbackParams<FinalTestAppType>
-) => Promise<any>;
+) => Promise<unknown>;
 
 type extendFn<FinalTestAppType extends TestApp> =
 	| null
@@ -71,7 +71,7 @@ export async function withTestApp<FinalTestAppType extends TestApp>(
 	extend_fn: extendFn<FinalTestAppType>,
 	fn: (params: CallbackParams<FinalTestAppType>) => Promise<unknown>,
 	test_collection?: string
-) {
+): Promise<void> {
 	const port = await getPort();
 	const base_url = `http://127.0.0.1:${port}`;
 	const smtp_api_url = `http://${

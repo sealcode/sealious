@@ -28,9 +28,9 @@ describe("search", () => {
 				await app.collections.dogs.create(new app.Context(), {
 					name: "Greta",
 				});
-				const { items } = (await rest_api.get(
+				const { items } = await rest_api.get(
 					"/api/v1/collections/dogs?search=Greta"
-				)) as any;
+				);
 
 				assert.deepEqual(items.length, 1);
 

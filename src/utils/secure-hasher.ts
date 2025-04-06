@@ -5,14 +5,14 @@ import { promisify } from "util";
 const pbkdf2 = promisify(crypto.pbkdf2);
 
 const SecureHasher = {
-	generateRandomSalt(salt_length: number) {
+	generateRandomSalt(salt_length: number): string {
 		return crypto.randomBytes(salt_length).toString("base64");
 	},
 	async hash(
 		value_to_hash: crypto.BinaryLike,
 		salt: crypto.BinaryLike,
-		{ iterations, key_length }: any
-	) {
+		{ iterations, key_length }: { iterations: number; key_length: number }
+	): Promise<string> {
 		const key = await pbkdf2(
 			value_to_hash,
 			salt,
@@ -20,9 +20,14 @@ const SecureHasher = {
 			key_length,
 			algorithm
 		);
-		return `${iterations}.${key_length}.${salt}.${key.toString("hex")}`;
+		return `${iterations}.${key_length}.${salt.toString()}.${key.toString(
+			"hex"
+		)}`;
 	},
-	async matches(value: crypto.BinaryLike, hash_with_params: string) {
+	async matches(
+		value: crypto.BinaryLike,
+		hash_with_params: string
+	): Promise<boolean> {
 		const [iterations, key_length, salt, hash] =
 			hash_with_params.split(".");
 

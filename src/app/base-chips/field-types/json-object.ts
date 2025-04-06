@@ -44,7 +44,7 @@ export default class JsonObject extends Field<Record<string, unknown>> {
 			await this.getValuePath(),
 			filter_value || {}
 		);
-		for (let prop_path of Object.keys(flattened_filter)) {
+		for (const prop_path of Object.keys(flattened_filter)) {
 			const filter_entry = flattened_filter[prop_path];
 			flattened_filter[prop_path] =
 				getQueryWithProperOperator(filter_entry);
@@ -54,7 +54,7 @@ export default class JsonObject extends Field<Record<string, unknown>> {
 }
 
 function getQueryWithProperOperator(filter: any) {
-	let filter_as_number = parseFloat(filter);
+	const filter_as_number = parseFloat(filter);
 	return Number.isFinite(filter_as_number)
 		? { $in: [filter, filter_as_number] }
 		: { $eq: filter };

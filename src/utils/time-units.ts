@@ -11,7 +11,7 @@ export default function time_units(
 	from: TimeUnit,
 	to: TimeUnit,
 	amount: number
-) {
+): string {
 	if (!formats[from] || !formats[to]) {
 		throw new Error("Please provide a valid time format");
 	}

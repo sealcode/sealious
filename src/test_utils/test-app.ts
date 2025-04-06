@@ -64,7 +64,7 @@ export class TestApp extends App {
 					port: parseInt(process.env.SEALIOUS_SMTP_PORT || "1825"),
 					user: "any",
 					password: "any",
-			  })
+				})
 			: new LoggerMailer()
 	) {
 		super();

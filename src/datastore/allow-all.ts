@@ -9,7 +9,7 @@ export class AllowAll extends Query {
 		throw new Error("The query is not mutable!");
 		return "";
 	}
-	match() {
+	match(): void {
 		throw new Error("The query is not mutable!");
 	}
 }

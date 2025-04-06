@@ -1,108 +1,115 @@
 export const translations = {
-	password_reset_email_subject: (app_name: string) =>
+	password_reset_email_subject: (app_name: string): string =>
 		`[${app_name}] Password reset request`,
-	password_reset_email_text: ([app_name, username]: [string, string]) =>
+	password_reset_email_text: ([app_name, username]: [
+		string,
+		string,
+	]): string =>
 		`Hello, ${username}. Someone requested a password reset on your account on ${app_name}. If it was you, use the link below to change the password. Otherwise, ignore this message.`,
-	password_reset_cta: () => "Change password",
-	password_reset_input_cta: (email_address: string) =>
+	password_reset_cta: (): string => "Change password",
+	password_reset_input_cta: (email_address: string): string =>
 		`Enter the new password for ${email_address}`,
-	reveal_password: () => "Reveal password",
-	registration_intent_email_subject: (app_name: string) =>
+	reveal_password: (): string => "Reveal password",
+	registration_intent_email_subject: (app_name: string): string =>
 		`Finish creating your ${app_name} account`,
-	registration_intent_email_text: () =>
+	registration_intent_email_text: (): string =>
 		`To finish setting up your account, click the following link:`,
-	registration_intent_cta: () => `Create an account`,
-	registration_intent_form_description: () =>
+	registration_intent_cta: (): string => `Create an account`,
+	registration_intent_form_description: (): string =>
 		`Please fill in the details of your account`,
-	password: () => `password`,
-	invalid_boolean: (value: string) =>
+	password: (): string => `password`,
+	invalid_boolean: (value: string): string =>
 		`Value '${value}' is not boolean format.`,
-	invalid_context: () =>
+	invalid_context: (): string =>
 		`Provided value is not an instance of Sealious.Context.`,
-	invalid_update: () => `You cannot change a previously set value.`,
-	invalid_image: () => `Only image files are allowed.`,
-	invalid_email: (value: string) => `${value} is a not valid e-mail address.`,
+	invalid_update: (): string => `You cannot change a previously set value.`,
+	invalid_image: (): string => `Only image files are allowed.`,
+	invalid_email: (value: string): string =>
+		`${value} is a not valid e-mail address.`,
 	invalid_non_existing_value: (
 		collection: string,
 		field: string,
 		value: string
-	) =>
+	): string =>
 		`Collection ${collection} already has a record with '${field}' set to '${value}'.`,
-	invalid_date: (value: string) =>
+	invalid_date: (value: string): string =>
 		`Value '${value}' is not date calendar format. Expected value in standard IS0 8601 (YYYY-MM-DD) format.`,
-	invalid_single_reference: (collection: string) =>
+	invalid_single_reference: (collection: string): string =>
 		`You don't have access to specified resource from collection '${collection}' or it's absent.`,
-	invalid_password: (length: number) =>
+	invalid_password: (length: number): string =>
 		`Password must have at least ${length} characters.`,
-	invalid_float: (value: number) =>
+	invalid_float: (value: number): string =>
 		`Value '${value}' is not a float number format.`,
 	invalid_existing_value: (
 		collection: string,
 		field: string,
 		value: string
-	) => `No ${collection} with ${field} set to ${value}.`,
-	invalid_username: (value: string) =>
+	): string => `No ${collection} with ${field} set to ${value}.`,
+	invalid_username: (value: string): string =>
 		`'${value}' is a reserved keyword. Please pick another username.`,
-	username_taken: () => `Username already taken.`,
-	invalid_text: (value: string, value_type: string) =>
+	username_taken: (): string => `Username already taken.`,
+	invalid_text: (value: string, value_type: string): string =>
 		`Type of ${value} is ${value_type}, not string.`,
-	too_short_text: (value: string, length: number) =>
+	too_short_text: (value: string, length: number): string =>
 		`Text '${value}' is too short, minimum length is ${length} chars.`,
-	too_long_text: (value: string, length: number) =>
+	too_long_text: (value: string, length: number): string =>
 		`Text '${value}' has exceeded max length of ${length} chars.`,
-	invalid_enum: (allowed_values: string) =>
+	invalid_enum: (allowed_values: string): string =>
 		`Allowed values: ${allowed_values}`,
-	invalid_file_id: () => `File of given ID does not exist.`,
-	invalid_json_value: (value: string) =>
+	invalid_file_id: (): string => `File of given ID does not exist.`,
+	invalid_json_value: (value: string): string =>
 		`Value ${value} cannot be represented as JSON object.`,
-	invalid_json_object: () => `Value is not an object.`,
-	read_only_field: () => `This is a read-only field.`,
-	invalid_file_storage: () =>
-		`This value should e a file upload or an instance of the File object.`,
-	invalid_datetime: (value: number | string) =>
+	invalid_json_object: (): string => `Value is not an object.`,
+	read_only_field: (): string => `This is a read-only field.`,
+	invalid_file_storage: (): string =>
+		`This value should be a file upload or an instance of the File object.`,
+	invalid_datetime: (value: number | string): string =>
 		`Value '${value}' is not datetime format. Only timestamps are accepted.`,
-	invalid_color: () => `Couldn't parse the color.`,
-	invalid_integer: (value: string) =>
+	invalid_color: (): string => `Couldn't parse the color.`,
+	invalid_integer: (value: string): string =>
 		`Value '${value}' is not a int number format.`,
-	too_small_integer: (value: string, min: number) =>
+	too_small_integer: (value: string, min: number): string =>
 		`Value ${value} should be larger than or equal to ${min}.`,
-	too_big_integer: (value: string, max: number) =>
+	too_big_integer: (value: string, max: number): string =>
 		`Value ${value} should be smaller than or equal to ${max}.`,
-	policy_if_allow: (filter_name: string) =>
+	policy_if_allow: (filter_name: string): string =>
 		`Item passes '${filter_name}' filter.`,
-	policy_public_allow: () => `Everyone is allowed.`,
-	policy_themselves_allow: () => `You are the user in question.`,
-	policy_themselves_deny: (user_id: string) =>
+	policy_public_allow: (): string => `Everyone is allowed.`,
+	policy_themselves_allow: (): string => `You are the user in question.`,
+	policy_themselves_deny: (user_id: string): string =>
 		`You are not the user of ID '${user_id}'.`,
-	policy_roles_allow: (roles: string) =>
+	policy_roles_allow: (roles: string): string =>
 		`You have one of the roles: ${roles}.`,
-	policy_roles_deny: (roles: string) =>
+	policy_roles_deny: (roles: string): string =>
 		`You don't have any of the roles: ${roles}.`,
-	policy_logged_in_allow: () => `You are logged in.`,
-	policy_logged_in_deny: () => `You are not logged in.`,
-	policy_owner_allow: () => `You have created this item.`,
-	policy_owner_deny: () => `You are not who created this item.`,
-	policy_not_allow: (reason: string) => `It's not true that '${reason}'.`,
-	policy_super_allow: () => `This method was ran with a supercontext.`,
-	policy_super_deny: () => `This method was not ran with a supercontext.`,
-	policy_users_who_can_allow: (action: string, collection: string) =>
+	policy_logged_in_allow: (): string => `You are logged in.`,
+	policy_logged_in_deny: (): string => `You are not logged in.`,
+	policy_owner_allow: (): string => `You have created this item.`,
+	policy_owner_deny: (): string => `You are not who created this item.`,
+	policy_not_allow: (reason: string): string =>
+		`It's not true that '${reason}'.`,
+	policy_super_allow: (): string =>
+		`This method was ran with a supercontext.`,
+	policy_super_deny: (): string =>
+		`This method was not ran with a supercontext.`,
+	policy_users_who_can_allow: (action: string, collection: string): string =>
 		`You can run action '${action}' on collection '${collection}'.`,
 	policy_users_who_can_deny: (
 		action: string,
 		collection: string,
 		reason: string
-	) => `You can't ${action} ${collection} - because '${reason}'.`,
-	policy_allow: () => `Super-context is always allowed.`,
-	policy_user_referenced_in_field_allow: (field: string) =>
+	): string => `You can't ${action} ${collection} - because '${reason}'.`,
+	policy_allow: (): string => `Super-context is always allowed.`,
+	policy_user_referenced_in_field_allow: (field: string): string =>
 		`You are the user mentioned in field '${field}'`,
-	policy_user_referenced_in_field_deny: (field: string) =>
+	policy_user_referenced_in_field_deny: (field: string): string =>
 		`You are not the user mentioned in field ${field}.`,
-	policy_noone_deny: () => `Noone is allowed.`,
-	not_allowed_domain: (domain: string, domains: string[]) =>
+	policy_noone_deny: (): string => `Noone is allowed.`,
+	not_allowed_domain: (domain: string, domains: string[]): string =>
 		`Domain ${domain} is not allowed here. Allowed domains are: [${domains.join(
 			", "
 		)}]`,
-	not_allowed_protocol: (protocol: string, protocols: string[]) =>
+	not_allowed_protocol: (protocol: string, protocols: string[]): string =>
 		`Procotol ${protocol} is not accepted by this field. Allowed protocols are: [${protocols.join(
 			", "
 		)}]`,

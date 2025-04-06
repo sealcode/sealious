@@ -26,11 +26,18 @@ describe("password", () => {
 			});
 
 			assert.ok(
-				!(await rest_api.get(`/api/v1/collections/users/${user_id}`, session)).password
+				!(
+					await rest_api.get(
+						`/api/v1/collections/users/${user_id}`,
+						session
+					)
+				).password
 			);
 
 			assert.equal(
-				(await app.collections.users.suGetByID(user_id)).get("password"),
+				(await app.collections.users.suGetByID(user_id)).get(
+					"password"
+				),
 				"secret"
 			);
 		}));
@@ -46,7 +53,9 @@ describe("password", () => {
 			)[0]!.password as string;
 
 			assert.ok(await SecureHasher.matches(password, hashed_password));
-			assert.ok(!(await SecureHasher.matches("wrong-password", hashed_password)));
+			assert.ok(
+				!(await SecureHasher.matches("wrong-password", hashed_password))
+			);
 			assert.ok(!(await SecureHasher.matches("", hashed_password)));
 		}));
 });

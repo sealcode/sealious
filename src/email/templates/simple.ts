@@ -17,7 +17,7 @@ export type SimpleTemplateData = {
 export default async function SimpleTemplate(
 	app: App,
 	data: SimpleTemplateData
-) {
+): Promise<Message> {
 	assert(data.text);
 	assert(data.subject);
 	assert(data.to);
