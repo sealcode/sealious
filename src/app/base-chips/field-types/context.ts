@@ -1,4 +1,5 @@
 import { Context, Field } from "../../../main.js";
+import { OpenApiTypes } from "../../../schemas/open-api-types.js";
 
 export default class ContextField extends Field<
 	Context,
@@ -6,6 +7,9 @@ export default class ContextField extends Field<
 	Record<string, unknown>
 > {
 	typeName = "context";
+
+	open_api_type = OpenApiTypes.NONE;
+
 	async isProperValue(context: Context, value: Context) {
 		if (value instanceof Context) {
 			return Field.valid();

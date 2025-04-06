@@ -1,10 +1,14 @@
 import SecureHasher from "../../../utils/secure-hasher.js";
 import { Context, Field } from "../../../main.js";
+import { OpenApiTypes } from "../../../schemas/open-api-types.js";
 
 const MIN_LENGTH = 8;
 
 export default class Password extends Field<string> {
 	typeName = "password";
+
+	open_api_type: OpenApiTypes = OpenApiTypes.PASSWORD;
+
 	async isProperValue(context: Context, input: string) {
 		return input.length >= MIN_LENGTH
 			? Field.valid()

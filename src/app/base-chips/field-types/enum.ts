@@ -1,4 +1,5 @@
 import { Field, Context, App } from "../../../main.js";
+import { OpenApiTypes } from "../../../schemas/open-api-types.js";
 
 type Props<S> = S[] | ((app: App) => S[]);
 
@@ -10,6 +11,15 @@ type Props<S> = S[] | ((app: App) => S[]);
 export default class Enum<S> extends Field<string> {
 	typeName = "enum";
 	allowed_values: Props<S>;
+
+	open_api_type: OpenApiTypes = OpenApiTypes.STR;
+
+	async getOpenApiSchema(context: Context): Promise<Record<string, unknown>> {
+		return {
+			...(await super.getOpenApiSchema(context)),
+			enum: this.getAllowedValues(context.app),
+		};
+	}
 
 	constructor(allowed_values: Props<S>) {
 		super();

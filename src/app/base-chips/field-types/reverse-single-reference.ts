@@ -10,9 +10,24 @@ import ItemList, {
 } from "../../../chip-types/item-list.js";
 import { CachedValue } from "./field-types.js";
 import { CollectionRefreshCondition } from "../../event-description.js";
+import {
+	OpenApiTypeMapping,
+	OpenApiTypes,
+} from "../../../schemas/open-api-types.js";
 
 export class ListOfIDs extends Field<[]> {
 	typeName = "list-of-ids";
+	open_api_type = OpenApiTypes.NONE;
+
+	async getOpenApiSchema(): Promise<Record<string, unknown>> {
+		return {
+			type: "array",
+			items: {
+				...OpenApiTypeMapping[OpenApiTypes.INT],
+			},
+		};
+	}
+
 	async isProperValue(context: Context) {
 		return context.is_super
 			? Field.valid()
@@ -28,6 +43,8 @@ export default class ReverseSingleReference extends CachedValue<
 	typeName = "reverse-single-reference";
 	referencing_field: string;
 	referencing_collection: string;
+
+	open_api_type = OpenApiTypes.NONE;
 
 	constructor(params: {
 		referencing_field: string;

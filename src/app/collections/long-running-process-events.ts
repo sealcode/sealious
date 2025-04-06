@@ -4,6 +4,8 @@ import { FieldTypes, Policies } from "../../main.js";
 export default class LongRunningProcessEvents extends Collection {
 	name = "long_running_process_events";
 
+	internal = true;
+
 	fields = {
 		process: new FieldTypes.SingleReference(
 			"long_running_processes"

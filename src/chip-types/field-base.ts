@@ -8,34 +8,29 @@ import isEmpty from "../utils/is-empty.js";
 import type { App } from "../app/app.js";
 import { ItemListResult } from "./item-list-result.js";
 
+import { OpenApiTypeMapping, OpenApiTypes } from "../schemas/open-api-types.js";
+
 export type Depromisify<T> = T extends Promise<infer V> ? V : T;
 
-export type ExtractParams<F extends Field<any, any, any>> = Parameters<
-	F["setParams"]
->[0];
+export type ExtractParams<F extends Field<unknown, unknown, unknown>> =
+	Parameters<F["setParams"]>[0];
 
-export type ExtractFilterParams<F extends Field<any, any, any>> = Parameters<
-	F["getMatchQueryValue"]
->[1];
+export type ExtractFilterParams<F extends Field<unknown, unknown, unknown>> =
+	Parameters<F["getMatchQueryValue"]>[1];
 
 export type ValidationResult = {
 	valid: boolean;
 	reason?: string;
 };
 
-export type ExtractFieldDecoded<F extends Field<any, any, any>> =
-	F extends Field<infer T, any, any> ? T : never;
+export type ExtractFieldDecoded<F extends Field<unknown, unknown, unknown>> =
+	F extends Field<infer T, unknown, unknown> ? T : never;
 
-export type ExtractFieldInput<F extends Field<any, any, any>> = F extends Field<
-	any,
-	infer T,
-	any
->
-	? T
-	: never;
+export type ExtractFieldInput<F extends Field<unknown, unknown, unknown>> =
+	F extends Field<unknown, infer T, unknown> ? T : never;
 
-export type ExtractFieldStorage<F extends Field<any, any, any>> =
-	F extends Field<any, any, infer T> ? T : never;
+export type ExtractFieldStorage<F extends Field<unknown, unknown, unknown>> =
+	F extends Field<unknown, unknown, infer T> ? T : never;
 
 export type RequiredField<DecodedType, InputType, StorageType> = Field<
 	DecodedType,
@@ -74,7 +69,7 @@ export type RequiredField<DecodedType, InputType, StorageType> = Field<
 export abstract class Field<
 	DecodedType,
 	InputType = DecodedType,
-	StorageType = DecodedType
+	StorageType = DecodedType,
 > {
 	/** the name of the field */
 	name: string;
@@ -145,6 +140,22 @@ export abstract class Field<
 	}
 
 	abstract typeName: string;
+
+	// base open api type - sets type & format
+	abstract open_api_type: OpenApiTypes;
+
+	// generates field schema - can be overriden to add extra fields
+	// (for example to add max_length & min_length fields to text types)
+	async getOpenApiSchema(context: Context): Promise<Record<string, unknown>> {
+		return {
+			...OpenApiTypeMapping[this.open_api_type],
+			default:
+				this.hasDefaultValue?.() &&
+				(await this.getDefaultValue(context)),
+			// nullable: ? // not sure if/when applicable
+			// readOnly: ? // not sure if/when applicable
+		};
+	}
 
 	protected abstract isProperValue(
 		context: Context,

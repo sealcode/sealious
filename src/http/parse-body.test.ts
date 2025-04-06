@@ -5,7 +5,7 @@ import {
 	withStoppedApp,
 } from "../test_utils/with-test-app.js";
 import Field from "../chip-types/field.js";
-import { Collection, FieldTypes } from "../main.js";
+import { Collection, Context, FieldTypes } from "../main.js";
 import asyncRequest from "../test_utils/async-request.js";
 import parseBody from "./parse-body.js";
 import JsonObject from "../app/base-chips/field-types/json-object.js";
@@ -14,11 +14,23 @@ import { TestApp } from "../test_utils/test-app.js";
 import _locreq from "locreq";
 import { module_dirname } from "../utils/module_filename.js";
 import { FilePointer } from "@sealcode/file-manager";
+import { OpenApiTypeMapping, OpenApiTypes } from "../schemas/open-api-types.js";
 const locreq = _locreq(module_dirname(import.meta.url));
 
 function extend(t: TestAppConstructor<TestApp>) {
 	class ArrayOfObjects extends Field<Array<Record<string, unknown>>> {
 		typeName = "array-of-objects";
+		open_api_type = OpenApiTypes.NONE;
+
+		async getOpenApiSchema(): Promise<Record<string, unknown>> {
+			return {
+				type: "array",
+				items: {
+					...OpenApiTypeMapping[OpenApiTypes.OBJECT],
+				},
+			};
+		}
+
 		async isProperValue(_: any, new_value: any) {
 			if (!Array.isArray(new_value)) {
 				return Field.invalid("It should be array of objects.");

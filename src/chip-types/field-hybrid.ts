@@ -2,6 +2,7 @@ import Field from "./field.js";
 
 import type Context from "../context.js";
 import type { App, Collection, ItemListResult } from "../main.js";
+import { OpenApiTypes } from "../schemas/open-api-types.js";
 
 /*
 
@@ -17,13 +18,20 @@ export default abstract class HybridField<
 	InnerParsedType,
 	InnerInputType,
 	InnerStorageType,
-	T extends Field<InnerParsedType, InnerInputType, InnerStorageType>
+	T extends Field<InnerParsedType, InnerInputType, InnerStorageType>,
 > extends Field<ParsedType, InputType, StorageType> {
 	virtual_field: T;
+
+	open_api_type = OpenApiTypes.NONE;
+
+	async getOpenApiSchema(context: Context): Promise<Record<string, unknown>> {
+		return await this.virtual_field.getOpenApiSchema(context);
+	}
 
 	constructor(base_field: T) {
 		super();
 		this.virtual_field = base_field;
+		this.open_api_type = base_field.open_api_type;
 	}
 
 	setName(name: string) {

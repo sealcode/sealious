@@ -1,5 +1,6 @@
 import type { ValidationResult } from "../../../chip-types/field.js";
 import { Context, Errors, Field } from "../../../main.js";
+import { OpenApiTypes } from "../../../schemas/open-api-types.js";
 import humanComparatorToQuery, {
 	type ComparatorObject,
 	type DBComparator,
@@ -13,6 +14,9 @@ export default class Float<Decoded = number> extends Field<
 	number
 > {
 	typeName = "float";
+
+	open_api_type: OpenApiTypes = OpenApiTypes.FLOAT;
+
 	async isProperValue(
 		context: Context,
 		input: number

@@ -1,12 +1,15 @@
 import { Parser, HtmlRenderer } from "commonmark";
 
 import { Field, type Context, type ValidationResult } from "../../../main.js";
+import { OpenApiTypes } from "../../../schemas/open-api-types.js";
 
 const parser = new Parser();
 const renderer = new HtmlRenderer();
 
 export default class Markdown extends Field<string> {
 	typeName = "markdown";
+
+	open_api_type: OpenApiTypes = OpenApiTypes.STR;
 
 	constructor() {
 		super();

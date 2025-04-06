@@ -2,6 +2,7 @@ import { IntStorage } from "./int.js";
 import { Context, Field } from "../../../main.js";
 
 import { getDateTime } from "../../../utils/get-datetime.js";
+import { OpenApiTypes } from "../../../schemas/open-api-types.js";
 
 // cannot extends because that changes the output of `decode`. I should use composition here
 
@@ -14,6 +15,8 @@ export default class Datetime extends IntStorage<
 	number | string
 > {
 	typeName = DATETIME_FIELD_TYPE_NAME;
+
+	open_api_type: OpenApiTypes = OpenApiTypes.DATETIME;
 
 	async isProperValue(context: Context, value: number | string) {
 		const int_result = await super.isProperValue(context, value);

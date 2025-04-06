@@ -1,0 +1,79 @@
+{
+	"openapi": "3.0.3",
+	"info": {
+		"title": "testing app",
+		"version": "0.0.0-test",
+		"contact": { "email": "admin@example.com" }
+	},
+	"paths": {},
+	"components": {
+		"schemas": {
+			"users": {
+				"type": "object",
+				"properties": {
+					"username": { "type": "string", "default": null },
+					"password": {
+						"type": "string",
+						"format": "password",
+						"default": null
+					}
+				}
+			},
+			"water_areas": {
+				"type": "object",
+				"properties": {
+					"name": { "type": "string", "default": null },
+					"temperature": { "type": "integer", "default": null },
+					"best_spots": {
+						"type": "array",
+						"items": {
+							"type": "object",
+							"properties": {
+								"name": { "type": "string", "default": null },
+								"location": {
+									"type": "string",
+									"default": null
+								}
+							}
+						}
+					}
+				}
+			},
+			"seals": {
+				"type": "object",
+				"properties": {
+					"name": {
+						"type": "string",
+						"default": "foczusia",
+						"maxLength": 64,
+						"minLength": 2
+					},
+					"favorite_number": {
+						"type": "integer",
+						"default": null,
+						"minimum": 1,
+						"maximum": 9
+					},
+					"water_area": {
+						"$ref": "#/components/schemas/water_areas"
+					},
+					"fav_food": {
+						"type": "array",
+						"items": {
+							"type": "string",
+							"enum": ["flour", "carrot", "eggs", "water", "salt"]
+						}
+					}
+				},
+				"required": ["favorite_number"]
+			}
+		},
+		"securitySchemes": {
+			"cookieAuth": {
+				"type": "apiKey",
+				"in": "cookie",
+				"name": "sealious-session"
+			}
+		}
+	}
+}

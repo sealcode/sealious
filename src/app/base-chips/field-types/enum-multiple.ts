@@ -1,9 +1,25 @@
 import { is, predicates } from "@sealcode/ts-predicates";
 import { Field, Context } from "../../../main.js";
 import { ArrayStorage } from "./array-storage.js";
+import {
+	OpenApiTypeMapping,
+	OpenApiTypes,
+} from "../../../schemas/open-api-types.js";
 
 export class EnumMultiple<Values extends string> extends ArrayStorage<Values> {
 	typeName = "enum-multiple";
+
+	open_api_type = OpenApiTypes.NONE; // array - custom type generation
+
+	async getOpenApiSchema(context: Context): Promise<Record<string, unknown>> {
+		return {
+			type: "array",
+			items: {
+				...OpenApiTypeMapping[OpenApiTypes.STR],
+				enum: await this.getAllowedValues(context),
+			},
+		};
+	}
 
 	constructor(
 		public allowed_values: Values[] | ((context: Context) => Values[])

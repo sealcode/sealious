@@ -1,4 +1,5 @@
 import { Field, Context, Errors } from "../../../main.js";
+import { OpenApiTypes } from "../../../schemas/open-api-types.js";
 import humanComparatorToQuery, {
 	type ComparatorObject,
 	type HumanComparator,
@@ -20,6 +21,8 @@ export const DATE_FIELD_TYPE_NAME = "date";
 
 export default class DateField extends Field<string, string | number, number> {
 	typeName = DATE_FIELD_TYPE_NAME;
+
+	open_api_type: OpenApiTypes = OpenApiTypes.DATE;
 
 	async hasIndex(): Promise<boolean> {
 		return true;
@@ -59,7 +62,7 @@ export default class DateField extends Field<string, string | number, number> {
 		}
 		// treating filter as a query here
 		const new_filter: { [comparator in DBComparator]?: number } = {};
-		for (const comparator in field_filter as ComparatorObject<string>) {
+		for (const comparator in field_filter) {
 			if (!comparator) {
 				continue;
 			}

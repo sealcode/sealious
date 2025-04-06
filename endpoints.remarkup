@@ -28,7 +28,7 @@ using `app.collection.users.create`.
 
 params: username, password
 
-Attempts to log the user in. If the login is successfull, a cookie with session
+Attempts to log the user in. If the login is successful, a cookie with session
 ID is set. Otherwise, an error message in JSON form is returned.
 
 Why isn't it just `POST /api/v1/login`? It's simply to mainain the REST-ful

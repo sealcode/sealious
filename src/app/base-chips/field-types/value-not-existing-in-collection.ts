@@ -1,8 +1,10 @@
 import ValueExistingInCollection from "./value-existing-in-collection.js";
 import { Context, Field } from "../../../main.js";
+import { OpenApiTypes } from "../../../schemas/open-api-types.js";
 
 export default class ValueNotExistingInCollection extends ValueExistingInCollection {
 	getTypeName = () => "value-not-existing-in-collection";
+	open_api_type = OpenApiTypes.NONE; // unknown without context :C
 	async isProperValue(
 		context: Context,
 		new_value: unknown,

@@ -1,5 +1,6 @@
 import { hasShape, predicates } from "@sealcode/ts-predicates";
 import { Context, Field, type ValidationResult } from "../../../main.js";
+import { OpenApiTypes } from "../../../schemas/open-api-types.js";
 
 export type CoordinatesFieldInputType =
 	| string
@@ -19,6 +20,8 @@ export default class Coordinates extends Field<
 	GeoJSONPoint
 > {
 	typeName = "coordinates";
+
+	open_api_type = OpenApiTypes.STR;
 
 	async isProperValue(
 		ctx: Context,

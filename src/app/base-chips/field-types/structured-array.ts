@@ -8,11 +8,25 @@ import {
 	type FieldsetInput,
 } from "../../../main.js";
 import { ArrayStorage } from "./array-storage.js";
+import { OpenApiTypes } from "../../../schemas/open-api-types.js";
 
 export class StructuredArray<
-	Subfields extends Record<string, Field<any>>
+	Subfields extends Record<string, Field<unknown>>,
 > extends ArrayStorage<FieldsetInput<Subfields>> {
 	typeName = "structured-array";
+
+	open_api_type = OpenApiTypes.NONE; // array - custom type generation
+
+	async getOpenApiSchema(context: Context): Promise<Record<string, unknown>> {
+		return {
+			type: "array",
+			items: await Collection.getOpenApiSubfieldsSchema(
+				context,
+				this.subfields
+			),
+		};
+	}
+
 	constructor(public subfields: Subfields) {
 		super(predicates.object);
 	}

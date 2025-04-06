@@ -1,6 +1,7 @@
 import { URL } from "url";
 import type { ValidationResult } from "../../../chip-types/field.js";
 import { Field, Context } from "../../../main.js";
+import { OpenApiTypes } from "../../../schemas/open-api-types.js";
 
 export type UrlParams = Partial<{
 	allowed_origins: string[];
@@ -10,6 +11,8 @@ export type UrlParams = Partial<{
 export default class Url extends Field<string> {
 	typeName = "url";
 	params: UrlParams;
+
+	open_api_type = OpenApiTypes.URI_REF;
 
 	constructor(params: UrlParams = {}) {
 		super();

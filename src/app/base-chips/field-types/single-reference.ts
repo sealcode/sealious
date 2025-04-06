@@ -4,6 +4,7 @@ import ItemList, {
 	type AttachmentOptions,
 } from "../../../chip-types/item-list.js";
 import { ValidationError } from "../../../response/errors.js";
+import { OpenApiTypes } from "../../../schemas/open-api-types.js";
 
 type InnerFilter = Record<string, any>;
 type SearchFilter = InnerFilter | string;
@@ -17,6 +18,14 @@ export default class SingleReference extends Field<string, string> {
 	hasIndex = async () => true;
 	target_collection: string;
 	filter: InnerFilter;
+
+	open_api_type = OpenApiTypes.NONE; // custom - another field reference
+
+	async getOpenApiSchema(): Promise<Record<string, unknown>> {
+		return {
+			$ref: "#/components/schemas/" + this.target_collection,
+		};
+	}
 
 	constructor(target_collection: string, filter?: InnerFilter) {
 		super();
@@ -64,7 +73,7 @@ export default class SingleReference extends Field<string, string> {
 						context.app.i18n("invalid_single_reference", [
 							this.getTargetCollection(context).name,
 						])
-				  );
+					);
 
 		context.app.Logger.debug2(
 			"SINGLE REFERENCE",

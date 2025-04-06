@@ -19,6 +19,7 @@ import type {
 import ItemList, { type SortParams } from "./item-list.js";
 import type Policy from "./policy.js";
 import type SpecialFilter from "./special-filter.js";
+import type { CollectionProperties } from "../schemas/generator.js";
 
 export type CollectionEvent =
 	| "before:create"
@@ -67,6 +68,9 @@ export default abstract class Collection {
 
 	/** The app this collection is tied to */
 	app: App;
+
+	/** Whether or not should be visible in docs */
+	internal = false;
 
 	named_filters: Record<string, SpecialFilter> = {};
 
@@ -519,7 +523,6 @@ export default abstract class Collection {
 
 	async getFeedItems(ctx: Koa.Context): Promise<CollectionItem<this>[]> {
 		const { items } = await this.list(ctx.$context)
-
 			.sort(await this.getFeedSortOrder(ctx))
 			.paginate({ items: await this.getFeedSize(ctx) })
 			.fetch();
@@ -701,6 +704,30 @@ export default abstract class Collection {
 					)
 				).join("\n")}
 			</feed>`;
+	}
+
+	static async getOpenApiSubfieldsSchema(
+		context: Context,
+		fields: Record<string, Field<unknown>>
+	): Promise<CollectionProperties> {
+		const collectionSchema: CollectionProperties = {
+			type: "object",
+			properties: {},
+			required: [],
+		};
+		for (const [field_name, field] of Object.entries(fields)) {
+			collectionSchema.properties[field_name] =
+				// eslint-disable-next-line no-await-in-loop
+				await field.getOpenApiSchema(context);
+			if (field.required) collectionSchema.required?.push(field_name);
+		}
+		if (!collectionSchema.required?.length)
+			delete collectionSchema.required;
+		return collectionSchema;
+	}
+
+	async getOpenApiSchema(context: Context): Promise<CollectionProperties> {
+		return Collection.getOpenApiSubfieldsSchema(context, this.fields);
 	}
 }
 

@@ -29,6 +29,7 @@ import type Metadata from "./metadata.js";
 import _locreq from "locreq";
 import { UPLOADED_FILES_BASE_URL } from "./consts.js";
 import { FileManager } from "@sealcode/file-manager";
+import openApiSchema from "../http/routes/open-api-schema.js";
 const locreq = _locreq(module_dirname(import.meta.url));
 
 const default_config = JSON.parse(
@@ -280,6 +281,8 @@ export abstract class App {
 		);
 
 		router.get("/assets/logo", logo);
+
+		router.get("/docs/schema", openApiSchema);
 	}
 
 	getString(

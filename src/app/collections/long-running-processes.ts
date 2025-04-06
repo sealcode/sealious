@@ -10,6 +10,8 @@ export default class LongRunningProcesses extends Collection {
 		}),
 	};
 
+	internal = true;
+
 	fields = {
 		started: new FieldTypes.DateTime(),
 		name: new FieldTypes.Text(),

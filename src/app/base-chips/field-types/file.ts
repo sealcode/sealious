@@ -5,6 +5,7 @@ import {
 } from "@sealcode/file-manager";
 import Field from "../../../chip-types/field.js";
 import type Context from "../../../context.js";
+import { OpenApiTypes } from "../../../schemas/open-api-types.js";
 
 export abstract class FileStorage extends Field<
 	FilePointer | string,
@@ -12,6 +13,9 @@ export abstract class FileStorage extends Field<
 	string
 > {
 	handles_large_data = true;
+
+	open_api_type: OpenApiTypes = OpenApiTypes.URI_REF;
+
 	get_default_file: (context: Context) => Promise<FilePointer>;
 	async isProperValue(context: Context, value: FilePointer | [FilePointer]) {
 		if (typeof value === "string") {

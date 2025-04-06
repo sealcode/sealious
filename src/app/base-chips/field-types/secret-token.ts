@@ -1,9 +1,12 @@
 import { Field, Context } from "../../../main.js";
 
 import { v4 as uuid } from "uuid";
+import { OpenApiTypes } from "../../../schemas/open-api-types.js";
 
 export default class SecretToken extends Field<string> {
 	typeName = "secret-token";
+
+	open_api_type = OpenApiTypes.UUID;
 
 	isOldValueSensitive = () => true;
 

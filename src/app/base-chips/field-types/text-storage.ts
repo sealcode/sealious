@@ -2,6 +2,8 @@ import { Field, Context } from "../../../main.js";
 import escape from "escape-html";
 import { hasShape, is, predicates } from "@sealcode/ts-predicates";
 
+import { OpenApiTypes } from "../../../schemas/open-api-types.js";
+
 type TextStorageFormat = { original: string; safe: string };
 type TextFormatParam = keyof TextStorageFormat;
 
@@ -10,6 +12,8 @@ export default abstract class TextStorage extends Field<
 	string,
 	TextStorageFormat
 > {
+	open_api_type: OpenApiTypes = OpenApiTypes.STR;
+
 	async encode(context: Context, input: string | null) {
 		context.app.Logger.debug2("TEXT FIELD", "encode", {
 			name: this.name,

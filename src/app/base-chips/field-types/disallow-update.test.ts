@@ -13,11 +13,13 @@ import {
 } from "../../../test_utils/with-test-app.js";
 import { assertThrowsAsync } from "../../../test_utils/assert-throws-async.js";
 import { TestApp } from "../../../test_utils/test-app.js";
+import { OpenApiTypes } from "../../../schemas/open-api-types.js";
 
 const url = "/api/v1/collections/constseals";
 
 class NullOrFive extends Field<number> {
 	typeName = "null-or-five";
+	open_api_type = OpenApiTypes.NONE;
 	async isProperValue(_: Context, new_value: any, __: any) {
 		if (new_value === null || new_value === 5) {
 			return Field.valid();

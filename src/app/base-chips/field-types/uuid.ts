@@ -1,9 +1,12 @@
 import { v4 as uuid } from "uuid";
 import Field, { type ValidationResult } from "../../../chip-types/field.js";
 import type Context from "../../../context.js";
+import { OpenApiTypes } from "../../../schemas/open-api-types.js";
 
 export class Uuid extends Field<string> {
 	typeName = "uuid";
+
+	open_api_type = OpenApiTypes.UUID;
 
 	async hasIndex(): Promise<boolean> {
 		return true;

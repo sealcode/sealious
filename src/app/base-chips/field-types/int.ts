@@ -1,4 +1,5 @@
 import { Field, Context, Errors } from "../../../main.js";
+import { OpenApiTypes } from "../../../schemas/open-api-types.js";
 import humanComparatorToQuery, {
 	type ComparatorObject,
 	type HumanComparator,
@@ -22,12 +23,22 @@ export type IntStorageParams = { min?: number; max?: number };
 
 export abstract class IntStorage<
 	Output = number,
-	Input extends number | string = number | string
+	Input extends number | string = number | string,
 > extends Field<Output, Input, number> {
 	/** the min allowed value */
 	min?: number;
 	/** tha max allowed value*/
 	max?: number;
+
+	open_api_type: OpenApiTypes = OpenApiTypes.INT;
+
+	async getOpenApiSchema(context: Context): Promise<Record<string, unknown>> {
+		return {
+			...(await super.getOpenApiSchema(context)),
+			minimum: this.min,
+			maximum: this.max,
+		};
+	}
 
 	async isProperValue(context: Context, new_value: number | string) {
 		const number = parseInt(new_value.toString(), 10);

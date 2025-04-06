@@ -16,6 +16,8 @@ export default class Sessions extends Collection {
 	};
 	defaultPolicy = new Policies.Super();
 
+	internal = true;
+
 	getRouter() {
 		const router = new Router();
 

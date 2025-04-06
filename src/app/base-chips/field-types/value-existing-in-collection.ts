@@ -1,5 +1,6 @@
 import Field from "../../../chip-types/field.js";
 import type { Context, App } from "../../../main.js";
+import { OpenApiTypes } from "../../../schemas/open-api-types.js";
 import type { ExtractTail } from "../../../utils/extract-tail.js";
 
 export default class ValueExistingInCollection extends Field<unknown> {
@@ -7,6 +8,8 @@ export default class ValueExistingInCollection extends Field<unknown> {
 	target_field_name: string;
 	target_collection_name: string;
 	include_forbidden: boolean;
+
+	open_api_type = OpenApiTypes.NONE; // unknown without context :C
 
 	constructor(params: {
 		field: string;

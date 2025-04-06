@@ -1,4 +1,5 @@
 import { Field, Context } from "../../../main.js";
+import { OpenApiTypes } from "../../../schemas/open-api-types.js";
 
 type InputType = boolean | "false" | "true" | "1" | "0" | 1 | 0;
 
@@ -10,6 +11,8 @@ type InputType = boolean | "false" | "true" | "1" | "0" | 1 | 0;
  */
 export default class Boolean extends Field<boolean, InputType> {
 	typeName = "boolean";
+
+	open_api_type: OpenApiTypes = OpenApiTypes.BOOL;
 
 	async hasIndex(): Promise<boolean> {
 		return true;

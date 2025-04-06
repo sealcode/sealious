@@ -20,6 +20,14 @@ export default class Text extends TextStorage {
 	typeName = "text";
 	params: TextParams;
 
+	async getOpenApiSchema(context: Context): Promise<Record<string, unknown>> {
+		return {
+			...(await super.getOpenApiSchema(context)),
+			maxLength: this.params.max_length,
+			minLength: this.params.min_length,
+		};
+	}
+
 	/** Depends on the provided params
 	 * @internal */
 	async hasIndex() {

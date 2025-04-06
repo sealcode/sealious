@@ -1,9 +1,12 @@
 import { Field, Context } from "../../../main.js";
+import { OpenApiTypes } from "../../../schemas/open-api-types.js";
 
 import flattenObjectToDotNotation from "../../../utils/flatten-object-dot-notation.js";
 
 export default class JsonObject extends Field<Record<string, unknown>> {
 	typeName = "json-object";
+
+	open_api_type = OpenApiTypes.OBJECT;
 
 	async isProperValue(context: Context, new_value: {}, __: {}) {
 		let stringified_value;
