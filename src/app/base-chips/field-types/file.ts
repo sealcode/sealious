@@ -67,6 +67,10 @@ export abstract class FileStorage extends Field<
 		}
 		return token || file.token;
 	}
+
+	getPostgreSqlFieldDefinitions(): string[] {
+		return [`"${this.name}" VARCHAR`];
+	}
 }
 
 /** Takes a {@File} instance as input, stores it in the FS and then decodes to a URL.

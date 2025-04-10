@@ -126,4 +126,8 @@ export default class Coordinates extends Field<
 			return dbValueCasted.coordinates;
 		}
 	}
+
+	getPostgreSqlFieldDefinitions(): string[] {
+		return [`"${this.name}" GEOGRAPHY`];
+	}
 }

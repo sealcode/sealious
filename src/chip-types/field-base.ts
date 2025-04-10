@@ -324,4 +324,8 @@ export abstract class Field<
 		}
 		return [{ $match }];
 	}
+
+	getPostgreSqlFieldDefinitions(): string[] {
+		return [`"${this.name}" JSONB`];
+	}
 }

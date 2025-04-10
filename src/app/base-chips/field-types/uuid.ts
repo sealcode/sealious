@@ -46,4 +46,8 @@ export class Uuid extends Field<string> {
 	async getDefaultValue(): Promise<string> {
 		return uuid();
 	}
+
+	getPostgreSqlFieldDefinitions(): string[] {
+		return [`"${this.name}" UUID`];
+	}
 }

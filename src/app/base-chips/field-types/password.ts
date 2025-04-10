@@ -27,4 +27,8 @@ export default class Password extends Field<string> {
 	async decode() {
 		return "secret";
 	}
+
+	getPostgreSqlFieldDefinitions(): string[] {
+		return [`"${this.name}" VARCHAR`];
+	}
 }

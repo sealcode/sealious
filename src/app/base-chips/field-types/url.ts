@@ -60,4 +60,8 @@ export default class Url extends Field<string> {
 
 		return Field.valid();
 	}
+
+	getPostgreSqlFieldDefinitions(): string[] {
+		return [`"${this.name}" VARCHAR`];
+	}
 }

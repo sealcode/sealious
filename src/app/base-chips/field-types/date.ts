@@ -102,4 +102,8 @@ export default class DateField extends Field<string, string | number, number> {
 			d.getDate() < 10 ? "0" : ""
 		}${d.getDate()}`;
 	}
+
+	getPostgreSqlFieldDefinitions(): string[] {
+		return [`"${this.name}" DATE`];
+	}
 }

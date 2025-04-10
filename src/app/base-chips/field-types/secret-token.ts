@@ -34,4 +34,8 @@ export default class SecretToken extends Field<string> {
 	async getDefaultValue() {
 		return uuid();
 	}
+
+	getPostgreSqlFieldDefinitions(): string[] {
+		return [`"${this.name}" VARCHAR`];
+	}
 }

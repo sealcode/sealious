@@ -62,4 +62,8 @@ export class EnumMultiple<Values extends string> extends ArrayStorage<Values> {
 	async encode(_: Context, value: Values[]) {
 		return value;
 	}
+
+	getPostgreSqlFieldDefinitions(): string[] {
+		return [`"${this.name}" VARCHAR[]`];
+	}
 }

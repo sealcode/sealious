@@ -116,6 +116,10 @@ export abstract class IntStorage<
 	async hasIndex(): Promise<boolean> {
 		return true;
 	}
+
+	getPostgreSqlFieldDefinitions(): string[] {
+		return [`"${this.name}" INTEGER`];
+	}
 }
 
 /** An integer field. Consult {@link IntStorage} for information on

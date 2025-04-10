@@ -6,16 +6,17 @@ import type {
 	UpdateResult,
 } from "mongodb";
 import pg from "pg";
-import type { Config } from "../main.js";
+import type { App, Config, Field } from "../main.js";
 import type { OutputOptions } from "./datastore.js";
 import Datastore from "./datastore-abstract.js";
 import type { QueryStage } from "./query-stage.js";
 import asyncForEach from "../utils/async-foreach.js";
+import PostgresClient from "./postgres-client.js";
 
 export type PostgresConfig = Config["datastore_postgres"];
 
 export default class PostrgresDatastore extends Datastore {
-	client: pg.Client;
+	client: PostgresClient;
 
 	async start(): Promise<void> {
 		const config = this.app.ConfigManager.get(
@@ -28,7 +29,7 @@ export default class PostrgresDatastore extends Datastore {
 			throw new Error("Missing datastore_postgres config");
 		}
 
-		this.client = new pg.Client({
+		this.client = new PostgresClient({
 			password: config.password,
 			user: config.username,
 			host: config.host,
@@ -92,12 +93,15 @@ export default class PostrgresDatastore extends Datastore {
 		await asyncForEach(
 			Object.values(this.app.collections),
 			async (collection) => {
+				const fields = Object.values(
+					collection.fields as Record<string, Field<any, any, any>>
+				);
 				const sql = `CREATE TABLE IF NOT EXISTS ${
 					collection.name
-				} (\n ${Object.keys(collection.fields)
-					.map((fieldName) => `"${fieldName}" JSONB`)
+				} (\n ${fields
+					.flatMap((field) => field.getPostgreSqlFieldDefinitions())
 					.join(",\n")} \n)`;
-				await this.client.query(sql);
+				await this.client.executeQuery(this.app, sql);
 			}
 		);
 	}
@@ -109,6 +113,7 @@ export default class PostrgresDatastore extends Datastore {
 	 * @param query SQL formatted string
 	 */
 	static async executePlainQuery(
+		app: App,
 		config: PostgresConfig,
 		query: string
 	): Promise<pg.QueryResult<any>> {
@@ -116,14 +121,14 @@ export default class PostrgresDatastore extends Datastore {
 			throw new Error("Missing datastore_postgres config");
 		}
 
-		const tmpClient = new pg.Client({
+		const tmpClient = new PostgresClient({
 			password: config.password,
 			user: config.username,
 			host: config.host,
 			port: config.port,
 		});
 		await tmpClient.connect();
-		const res = await tmpClient.query(query);
+		const res = await tmpClient.executeQuery(app, query);
 		await tmpClient.end();
 
 		return res;
@@ -134,19 +139,23 @@ export default class PostrgresDatastore extends Datastore {
 			throw new Error("Missing datastore_postgres config");
 		}
 
-		const tmpClient = new pg.Client({
+		const tmpClient = new PostgresClient({
 			password: config.password,
 			user: config.username,
 			host: config.host,
 			port: config.port,
 		});
 		await tmpClient.connect();
-		const res = await tmpClient.query(
+		const res = await tmpClient.executeQuery(
+			this.app,
 			`SELECT datname FROM pg_catalog.pg_database WHERE datname = '${config.db_name}'`
 		);
 
 		if (res.rowCount === 0) {
-			await tmpClient.query(`CREATE DATABASE "${config.db_name}";`);
+			await tmpClient.executeQuery(
+				this.app,
+				`CREATE DATABASE "${config.db_name}";`
+			);
 		}
 
 		await tmpClient.end();

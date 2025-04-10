@@ -65,4 +65,8 @@ export default class Boolean extends Field<boolean, InputType> {
 			return this.encode(context, filter);
 		}
 	}
+
+	getPostgreSqlFieldDefinitions(): string[] {
+		return [`"${this.name}" BOOLEAN`];
+	}
 }

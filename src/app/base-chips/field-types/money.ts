@@ -26,4 +26,8 @@ export default class Money extends Float<number | string> {
 		}
 		return db_value;
 	}
+
+	getPostgreSqlFieldDefinitions(): string[] {
+		return [`"${this.name}" NUMERIC`];
+	}
 }

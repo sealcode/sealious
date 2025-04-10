@@ -66,6 +66,10 @@ export default class Text extends TextStorage {
 		return Field.valid();
 	}
 
+	getPostgreSqlFieldDefinitions(): string[] {
+		return [`${this.name}_original TEXT`, `${this.name}_safe TEXT`];
+	}
+
 	/** Sets the params @ignore */
 	constructor(params: TextParams = {}) {
 		super();

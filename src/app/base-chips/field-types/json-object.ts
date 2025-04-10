@@ -51,6 +51,10 @@ export default class JsonObject extends Field<Record<string, unknown>> {
 		}
 		return [{ $match: flattened_filter }];
 	}
+
+	getPostgreSqlFieldDefinitions(): string[] {
+		return [`"${this.name}" JSONB`];
+	}
 }
 
 function getQueryWithProperOperator(filter: any) {

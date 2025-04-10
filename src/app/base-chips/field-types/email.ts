@@ -24,4 +24,8 @@ export default class Email extends Field<string> {
 	): Promise<string | null> {
 		return storage_value;
 	}
+
+	getPostgreSqlFieldDefinitions(): string[] {
+		return [`"${this.name}" VARCHAR`];
+	}
 }

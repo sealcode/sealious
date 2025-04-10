@@ -29,4 +29,8 @@ export default class SessionID extends Field<null | string, string> {
 	): Promise<string | null> {
 		return storage_value;
 	}
+
+	getPostgreSqlFieldDefinitions(): string[] {
+		return [`"${this.name}" UUID`];
+	}
 }

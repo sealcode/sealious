@@ -73,4 +73,8 @@ export default class Float<Decoded = number> extends Field<
 		const parsed_float = parseFloat(value.toString());
 		return parsed_float;
 	}
+
+	getPostgreSqlFieldDefinitions(): string[] {
+		return [`"${this.name}" FLOAT`];
+	}
 }

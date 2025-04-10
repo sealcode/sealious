@@ -29,4 +29,8 @@ export default class Color extends Field<string> {
 	}
 
 	getTypeName = () => "color";
+
+	getPostgreSqlFieldDefinitions(): string[] {
+		return [`"${this.name}" VARCHAR`];
+	}
 }

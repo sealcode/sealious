@@ -83,4 +83,8 @@ export class StructuredArray<
 			};
 		}
 	}
+
+	getPostgreSqlFieldDefinitions(): string[] {
+		return [`"${this.name}" JSONB[]`];
+	}
 }

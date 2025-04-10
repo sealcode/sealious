@@ -48,4 +48,8 @@ export default class Datetime extends IntStorage<
 		}
 		return db_value;
 	}
+
+	getPostgreSqlFieldDefinitions(): string[] {
+		return [`"${this.name}" TIMESTAMP`];
+	}
 }

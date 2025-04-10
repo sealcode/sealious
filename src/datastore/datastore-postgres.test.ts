@@ -3,18 +3,19 @@ import { Collection, FieldTypes } from "../main.js";
 import { TestApp } from "../test_utils/test-app.js";
 import { withRunningApp } from "../test_utils/with-test-app.js";
 import PostrgresDatastore from "./datastore-postgres.js";
-import pg from "pg";
+import PostgresClient from "./postgres-client.js";
 
 describe("datastorepostgres", () => {
 	it("should connect to database", async () =>
 		withRunningApp(null, async ({ app }) => {
 			const config = app.ConfigManager.get("datastore_postgres");
 
-			if(!config) {
+			if (!config) {
 				assert.ok(false);
 			}
 
 			await PostrgresDatastore.executePlainQuery(
+				app,
 				config,
 				`DROP DATABASE IF EXISTS "${config.db_name}"`
 			);
@@ -41,11 +42,12 @@ describe("datastorepostgres", () => {
 			async ({ app }) => {
 				const config = app.ConfigManager.get("datastore_postgres");
 
-				if(!config) {
+				if (!config) {
 					assert.ok(false);
 				}
 
 				await PostrgresDatastore.executePlainQuery(
+					app,
 					config,
 					`DROP DATABASE IF EXISTS "${config.db_name}"`
 				);
@@ -53,7 +55,7 @@ describe("datastorepostgres", () => {
 				await datastore.start();
 				await datastore.stop();
 
-				const tmpClient = new pg.Client({
+				const tmpClient = new PostgresClient({
 					password: config.password,
 					database: config.db_name,
 					user: config.username,
@@ -64,10 +66,12 @@ describe("datastorepostgres", () => {
 
 				const [tablesListResponse, dogTableResponse] =
 					await Promise.all([
-						tmpClient.query(
+						tmpClient.executeQuery(
+							app,
 							`SELECT * FROM information_schema.tables WHERE table_schema NOT IN ('information_schema', 'pg_catalog') AND table_type = 'BASE TABLE'`
 						),
-						tmpClient.query(
+						tmpClient.executeQuery(
+							app,
 							`SELECT * FROM information_schema.columns WHERE table_name = 'dogs';`
 						),
 					]);
@@ -78,6 +82,9 @@ describe("datastorepostgres", () => {
 				const columns = dogTableResponse.rows.map(
 					(row) => row.column_name
 				);
+				const dataTypes = dogTableResponse.rows.map(
+					(row) => row.data_type
+				);
 
 				assert.deepEqual(tables, [
 					"users",
@@ -86,7 +93,13 @@ describe("datastorepostgres", () => {
 					"long_running_process_events",
 					"dogs",
 				]);
-				assert.deepEqual(columns, ["name", "age"]);
+				assert.deepEqual(columns, [
+					"age",
+					"name_original",
+					"name_safe",
+				]);
+				assert.ok(dataTypes.includes("integer"));
+				assert.ok(dataTypes.includes("text"));
 
 				await tmpClient.end();
 			}
