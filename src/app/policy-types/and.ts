@@ -1,4 +1,3 @@
-import Bluebird from "bluebird";
 import { And as AndQuery } from "../../datastore/query.js";
 import type { Context, CollectionItem } from "../../main.js";
 import Policy, { ReducingPolicy } from "../../chip-types/policy.js";
@@ -6,18 +5,21 @@ import Policy, { ReducingPolicy } from "../../chip-types/policy.js";
 export default class And extends ReducingPolicy {
 	static type_name = "and";
 	async _getRestrictingQuery(context: Context) {
-		const queries = await Bluebird.map(this.policies, (strategy) =>
-			strategy.getRestrictingQuery(context)
+		const queries = await Promise.all(
+			this.policies.map((strategy) =>
+				strategy.getRestrictingQuery(context)
+			)
 		);
 
 		const ret = new AndQuery(...queries);
 		return ret;
 	}
 
-	isItemSensitive(context: Context) {
-		return Bluebird.map(this.policies, (strategy) =>
-			strategy.isItemSensitive(context)
-		).reduce((a, b) => a || b);
+	async isItemSensitive(context: Context) {
+		const results = await Promise.all(
+			this.policies.map((strategy) => strategy.isItemSensitive(context))
+		);
+		return results.reduce((a, b) => a || b, false);
 	}
 
 	async checkerFunction(

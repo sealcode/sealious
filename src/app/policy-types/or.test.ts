@@ -1,5 +1,4 @@
 import assert from "assert";
-import Bluebird from "bluebird";
 
 import {
 	type TestAppConstructor,
@@ -17,7 +16,10 @@ const collections = [
 	{
 		name: "collection-or(nested-or(allow,noone),nested-and(allow,public))",
 		policies: [
-			new Policies.Or([new ComplexAllowPipeline!(), new Policies.Noone()]),
+			new Policies.Or([
+				new ComplexAllowPipeline!(),
+				new Policies.Noone(),
+			]),
 			new Policies.And([
 				new ComplexAllowPipeline!(),
 				new Policies.Public(),
@@ -74,15 +76,17 @@ function extend(t: TestAppConstructor) {
 }
 
 async function createItems(app: Sealious.App) {
-	let numbers = await Bluebird.map([0, 1, 2], (n) =>
-		app.collections.numbers!.suCreate({ number: n })
+	let numbers = await Promise.all(
+		[0, 1, 2].map((n) => app.collections.numbers!.suCreate({ number: n }))
 	);
 
 	for (const number of numbers) {
-		await Bluebird.map(collections, ({ name }) =>
-			app.collections[name]!.suCreate({
-				number: number.id,
-			})
+		await Promise.all(
+			collections.map(({ name }) =>
+				app.collections[name]!.suCreate({
+					number: number.id,
+				})
+			)
 		);
 	}
 }

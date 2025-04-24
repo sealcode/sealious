@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import assert from "assert";
-import Bluebird from "bluebird";
 import {
 	App,
 	Collection,
@@ -52,10 +51,12 @@ const extend = (with_reverse = true, clear_database = true) =>
 describe("reverse-single-reference", () => {
 	async function createResources(app: App) {
 		const numbers = [1, 2, 3];
-		const bs = await Bluebird.map(numbers, (number) =>
-			app.collections.B!.suCreate({
-				number,
-			})
+		const bs = await Promise.all(
+			numbers.map((number) =>
+				app.collections.B!.suCreate({
+					number,
+				})
+			)
 		);
 
 		for (const b of bs) {

@@ -1,4 +1,3 @@
-import Bluebird from "bluebird";
 import { Field, Context } from "../../../main.js";
 import ItemList, {
 	type AttachmentOptions,
@@ -172,7 +171,16 @@ export default class SingleReference extends Field<string, string> {
 					.then((query) => ({ $match: query }))
 			);
 		}
-		filter = await Bluebird.props(filter);
+
+		const entries = await Promise.all(
+			Object.entries(filter).map(async ([key, value]) => {
+				const resolvedValue = await value;
+				return [key, resolvedValue];
+			})
+		);
+
+		filter = Object.fromEntries(entries);
+
 		const match_pipeline_entries = await Promise.all(
 			match_pipeline_entries_promises
 		);

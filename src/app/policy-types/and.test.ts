@@ -1,5 +1,4 @@
 import assert from "assert";
-import Bluebird from "bluebird";
 import { App, Collection, FieldTypes, Policies } from "../../main.js";
 
 import {
@@ -70,17 +69,21 @@ function extend(t: TestAppConstructor) {
 
 describe("AndPolicy", () => {
 	async function setup(app: App) {
-		let numbers = await Bluebird.map([0, 1, 2], (n) =>
-			app.collections.numbers!.suCreate({
-				number: n,
-			})
+		let numbers = await Promise.all(
+			[0, 1, 2].map((n) =>
+				app.collections.numbers!.suCreate({
+					number: n,
+				})
+			)
 		);
 
 		for (const number of numbers) {
-			await Bluebird.map(collections_to_create, ({ name }) =>
-				app.collections[name]!.suCreate({
-					number: number.id,
-				})
+			await Promise.all(
+				collections_to_create.map(({ name }) =>
+					app.collections[name]!.suCreate({
+						number: number.id,
+					})
+				)
 			);
 		}
 	}

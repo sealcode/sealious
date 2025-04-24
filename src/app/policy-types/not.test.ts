@@ -1,5 +1,4 @@
 import assert from "assert";
-import Bluebird from "bluebird";
 import type Context from "../../context.js";
 import * as Sealious from "../../main.js";
 import {
@@ -109,10 +108,13 @@ describe("NotPolicy", () => {
 			const { id } = await app.collections.numbers!.suCreate({
 				number: i,
 			});
-			await Bluebird.map(collections_to_create, ({ name }) =>
-				app.collections[name]!.suCreate({
-					number: id,
-				})
+
+			await Promise.all(
+				collections_to_create.map(({ name }) =>
+					app.collections[name]!.suCreate({
+						number: id,
+					})
+				)
 			);
 		}
 	}

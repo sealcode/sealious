@@ -1,4 +1,3 @@
-import Bluebird from "bluebird";
 import Policy, {
 	ReducingPolicy,
 	type PolicyDecision,
@@ -13,8 +12,10 @@ import type { CollectionItem } from "../../main.js";
 export default class Or extends ReducingPolicy {
 	static type_name = "or";
 	async _getRestrictingQuery(context: Context) {
-		const queries = await Bluebird.map(this.policies, (strategy) =>
-			strategy.getRestrictingQuery(context)
+		const queries = await Promise.all(
+			this.policies.map((strategy) =>
+				strategy.getRestrictingQuery(context)
+			)
 		);
 		if (queries.some((query) => query instanceof AllowAll)) {
 			return new AllowAll();

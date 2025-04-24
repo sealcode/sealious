@@ -7,7 +7,6 @@ import {
 } from "../../../test_utils/with-test-app.js";
 import { assertThrowsAsync } from "../../../test_utils/assert-throws-async.js";
 import { getDateTime } from "../../../utils/get-datetime.js";
-import Bluebird from "bluebird";
 import type MockRestApi from "../../../test_utils/rest-api.js";
 import { TestApp } from "../../../test_utils/test-app.js";
 import CachedValue from "./cached-value.js";
@@ -150,11 +149,13 @@ describe("cached-value", () => {
 	}
 
 	async function add_a_few_accounts(app: App) {
-		return Bluebird.map([1, 2, 3, 4, 5], async (i) =>
-			app.collections.accounts!.suCreate({
-				username: `user_${i}`,
-				number: i,
-			})
+		return Promise.all(
+			[1, 2, 3, 4, 5].map((i) =>
+				app.collections.accounts!.suCreate({
+					username: `user_${i}`,
+					number: i,
+				})
+			)
 		);
 	}
 
@@ -164,9 +165,10 @@ describe("cached-value", () => {
 			extend(false, false),
 			async ({ app, rest_api }) => {
 				await app.start();
-				account_ids = await Bluebird.map(
-					["user_1", "user_2"],
-					(username) => add_account(rest_api, { username })
+				account_ids = await Promise.all(
+					["user_1", "user_2"].map((username) =>
+						add_account(rest_api, { username })
+					)
 				);
 
 				await rest_api.post("/api/v1/collections/actions", {
@@ -197,14 +199,16 @@ describe("cached-value", () => {
 
 	it("Correctly updates cached-value on create", async () =>
 		withRunningApp(extend(true), async ({ rest_api }) => {
-			const account_ids = await Bluebird.map(
-				["user_1", "user_2"],
-				(username) => add_account(rest_api, { username })
+			const account_ids = await Promise.all(
+				["user_1", "user_2"].map((username) =>
+					add_account(rest_api, { username })
+				)
 			);
+
 			await assert_status_equals(rest_api, account_ids[0]!, "created");
 
 			const actions = ["open", "suspend", "close"];
-			await Bluebird.each(actions, async (action) => {
+			for (const action of actions) {
 				await rest_api.post("/api/v1/collections/actions", {
 					name: action,
 					account: account_ids[0],
@@ -216,7 +220,7 @@ describe("cached-value", () => {
 					account_ids[1]!,
 					"created"
 				);
-			});
+			}
 		}));
 
 	it("Correctly updates cached-value on update", async () =>
