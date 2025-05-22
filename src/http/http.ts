@@ -44,7 +44,7 @@ export default class HttpServer {
 	}
 
 	async stop(): Promise<void> {
-		this.server.close();
+		this.server?.close();
 	}
 
 	addStaticRoute(url_path: string, local_path: string): void {

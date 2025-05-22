@@ -95,8 +95,8 @@ describe("datastorepostgres", () => {
 				]);
 				assert.deepEqual(columns, [
 					"age",
-					"name_original",
-					"name_safe",
+					"name:original",
+					"name:safe",
 				]);
 				assert.ok(dataTypes.includes("integer"));
 				assert.ok(dataTypes.includes("text"));

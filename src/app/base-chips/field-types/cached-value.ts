@@ -33,7 +33,7 @@ type CachedValueSettings<InputType, DecodedType> = {
 export default class CachedValue<
 	DecodedType,
 	StorageType,
-	T extends Field<any, any, any>
+	T extends Field<any, any, any>,
 > extends HybridField<
 	DecodedType,
 	ExtractFieldInput<T>,
@@ -99,9 +99,8 @@ export default class CachedValue<
 
 		for (const condition of this.refresh_on) {
 			condition.attachTo(app, this.collection, async (arg) => {
-				const cache_resource_ids = await condition.resource_id_getter(
-					arg
-				);
+				const cache_resource_ids =
+					await condition.resource_id_getter(arg);
 
 				if (!Array.isArray(cache_resource_ids)) {
 					throw new Error(
@@ -304,5 +303,10 @@ export default class CachedValue<
 	setName(name: string): void {
 		super.setName(name);
 		this.virtual_derived?.setName(name);
+	}
+
+	getPostgreSqlFieldDefinitions(): string[] {
+		const baseFieldsDefs = this.base_field.getPostgreSqlFieldDefinitions();
+		return [...baseFieldsDefs, `"${this.name}:timestamp" TIMESTAMP`];
 	}
 }

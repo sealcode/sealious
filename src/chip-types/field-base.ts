@@ -104,6 +104,9 @@ export abstract class Field<
 
 	/** Sets the name @internal */
 	setName(name: string) {
+		if (name.includes(":")) {
+			throw new Error("Field names cannot contain the `:` character.");
+		}
 		this.name = name;
 	}
 

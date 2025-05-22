@@ -34,4 +34,9 @@ export default class ValueNotExistingInCollection extends ValueExistingInCollect
 		}
 		return Field.valid();
 	}
+
+	getPostgreSqlFieldDefinitions(): string[] {
+		const baseFieldsDefs = super.getPostgreSqlFieldDefinitions();
+		return baseFieldsDefs.map((field) => `${field} UNIQUE`);
+	}
 }

@@ -79,6 +79,7 @@ export default abstract class Collection {
 	/** initializes the fields @internal */
 	async initFieldDetails(): Promise<void> {
 		const promises = [];
+		// error jak zla nazwa
 		for (const [field_name, field] of Object.entries(this.fields)) {
 			field.setCollection(this);
 			promises.push(field.init(this.app, this));

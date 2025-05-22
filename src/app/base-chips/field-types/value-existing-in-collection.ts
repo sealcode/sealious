@@ -1,5 +1,5 @@
 import Field from "../../../chip-types/field.js";
-import type { Context, App } from "../../../main.js";
+import { type Context, type App, SuperContext } from "../../../main.js";
 import { OpenApiTypes } from "../../../schemas/open-api-types.js";
 import type { ExtractTail } from "../../../utils/extract-tail.js";
 
@@ -121,5 +121,10 @@ export default class ValueExistingInCollection extends Field<unknown> {
 		} else {
 			throw new Error("field is missing");
 		}
+	}
+
+	getPostgreSqlFieldDefinitions(): string[] {
+		const field = this.getField(this.app);
+		return field?.getPostgreSqlFieldDefinitions() || [];
 	}
 }

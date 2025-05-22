@@ -7,6 +7,7 @@ import type { TestApp } from "../test_utils/test-app.js";
 import {
 	type TestAppConstructor,
 	withRunningApp,
+	withStoppedApp,
 } from "../test_utils/with-test-app.js";
 import Collection, {
 	type FieldEntryMapping,
@@ -158,6 +159,38 @@ describe("types", () => {
 });
 
 describe("collection", () => {
+	describe("initFieldDetails", () => {
+		it("should throw error when field name contains colon", async () =>
+			withStoppedApp(
+				(t) =>
+					class extends t {
+						collections = {
+							...App.BaseCollections,
+							patrons: new (class extends Collection {
+								fields = {
+									email: new FieldTypes.Email(),
+									"amount:monthly": new FieldTypes.Float(),
+								};
+							})(),
+						};
+					},
+
+				async ({ app }) => {
+					await assertThrowsAsync(
+						async () => {
+							await app.start();
+						},
+						async (e) => {
+							assert.strictEqual(
+								e.message,
+								"Field names cannot contain the `:` character."
+							);
+						}
+					);
+				}
+			));
+	});
+
 	describe("removeByID", () => {
 		it("calls after:remove", async () =>
 			withRunningApp(

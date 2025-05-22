@@ -114,4 +114,8 @@ export default abstract class HybridField<
 		await super.init(app, collection);
 		await this.virtual_field.init(app, collection);
 	}
+
+	getPostgreSqlFieldDefinitions(): string[] {
+		return this.virtual_field.getPostgreSqlFieldDefinitions();
+	}
 }
