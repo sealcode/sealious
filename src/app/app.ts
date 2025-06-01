@@ -8,7 +8,6 @@ import MongoDatastore from "../datastore/datastore.js";
 import LoggerMailer from "../email/logger-mailer.js";
 import type Mailer from "../email/mailer.js";
 import extractContext from "../http/extract-context.js";
-import HttpServer from "../http/http.js";
 import logo from "../http/routes/logo.js";
 import sessionRouter from "../http/routes/session.js";
 import uploaded_files from "../http/routes/uploaded-files.js";
@@ -65,9 +64,6 @@ export abstract class App {
 	/** The {@link Logger} instance assigned to this application */
 	Logger: Logger;
 
-	/** The server that runs the REST API routing and allows to add custom routes etc */
-	HTTPServer: HttpServer;
-
 	/** The mongoDB client connected to the database specified in the app config */
 	Datastore: MongoDatastore;
 
@@ -120,8 +116,6 @@ export abstract class App {
 		this.status = "stopped";
 
 		this.Logger = new Logger("error");
-
-		this.HTTPServer = new HttpServer(this);
 
 		this.Datastore = new MongoDatastore(this);
 		this.Metadata = new MetadataFactory(this);
@@ -187,8 +181,6 @@ export abstract class App {
 		await this.emitter.emit("starting");
 		await this.Datastore.start();
 		await this.mailer.init(this);
-		this.initRouter();
-		await this.HTTPServer.start();
 		await this.emit("started");
 		this.status = "running";
 	}
@@ -197,7 +189,6 @@ export abstract class App {
 	async stop(): Promise<void> {
 		this.status = "stopping";
 		await this.emit("stopping");
-		await this.HTTPServer.stop();
 		await this.Datastore.stop();
 		this.status = "stopped";
 		await this.emit("stopped");
@@ -238,8 +229,7 @@ export abstract class App {
 		this.collections[collection.name] = collection;
 	}
 
-	initRouter(): void {
-		const router = this.HTTPServer.router;
+	initRouter(router: Router): void {
 		router.use("/api/v1/", extractContext(), async (ctx, next) => {
 			await next();
 			ctx.$app.Logger.debug("HTTP RESPONSE", "Responding with", ctx.body);

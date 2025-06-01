@@ -31,7 +31,6 @@ export { default as QueryTypes } from "./datastore/query-types.js";
 export { default as LoggerMailer } from "./email/logger-mailer.js";
 export { default as SMTPMailer } from "./email/smtp-mailer.js";
 export * as EmailTemplates from "./email/templates/templates.js";
-export { default as HttpServer } from "./http/http.js";
 export { default as Middlewares } from "./http/middlewares.js";
 export { default as i18nFactory } from "./i18n/i18n.js";
 export * as Errors from "./response/errors.js";

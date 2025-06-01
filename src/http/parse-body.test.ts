@@ -5,7 +5,7 @@ import {
 	withStoppedApp,
 } from "../test_utils/with-test-app.js";
 import Field from "../chip-types/field.js";
-import { Collection, Context, FieldTypes } from "../main.js";
+import { Collection, FieldTypes } from "../main.js";
 import asyncRequest from "../test_utils/async-request.js";
 import parseBody from "./parse-body.js";
 import JsonObject from "../app/base-chips/field-types/json-object.js";
@@ -108,13 +108,9 @@ describe("parseBody", () => {
 
 	it("includes the url query params as parts of body, if they don't overlap", async () => {
 		await withStoppedApp(extend, async (test) => {
-			test.app.HTTPServer.router.post(
-				"/echo-data",
-				parseBody(),
-				async (ctx) => {
-					ctx.body = ctx.$body;
-				}
-			);
+			test.router.post("/echo-data", parseBody(), async (ctx) => {
+				ctx.body = ctx.$body;
+			});
 
 			await test.app.start();
 			const response = await test.rest_api.post(
@@ -188,14 +184,14 @@ describe("parseBody", () => {
 	});
 
 	it("resolves files by their token into a proper FilePointer", async () => {
-		await withRunningApp(extend, async ({ port, app }) => {
+		await withRunningApp(extend, async ({ port, app, router }) => {
 			const file = app.FileManager.fromPath(
 				locreq.resolve("src/assets/logo.png")
 			);
 
 			let received_body: any;
 			const TEST_PATH = "/for-testing-purposes";
-			app.HTTPServer.router.post(TEST_PATH, parseBody(), (ctx) => {
+			router.post(TEST_PATH, parseBody(), (ctx) => {
 				received_body = ctx.$body;
 				ctx.body = "{}";
 				ctx.status = 200;
@@ -234,14 +230,14 @@ PNG
 	});
 
 	it("handles gracefully a case where parseBody is called twice", async () => {
-		await withRunningApp(extend, async ({ port, app }) => {
+		await withRunningApp(extend, async ({ port, app, router }) => {
 			const file = app.FileManager.fromPath(
 				locreq.resolve("src/assets/logo.png")
 			);
 
 			let received_body: any;
 			const TEST_PATH = "/for-testing-purposes";
-			app.HTTPServer.router.post(
+			router.post(
 				TEST_PATH,
 				parseBody(), // important! used twice for tests. Do not remove.
 				parseBody(),

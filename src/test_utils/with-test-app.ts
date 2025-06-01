@@ -1,8 +1,12 @@
-import { v4 as uuid } from "uuid";
+import Router from "@koa/router";
 import getPort from "get-port";
+import { default as Koa } from "koa";
+import installQS from "koa-qs";
+import { v4 as uuid } from "uuid";
 import type { Environment } from "../app/config.js";
-import MockRestApi from "./rest-api.js";
+import handleError from "../http/handle-error.js";
 import MailcatcherAPI from "./mailcatcher.js";
+import MockRestApi from "./rest-api.js";
 import { TestApp } from "./test-app.js";
 
 export type TestAppConstructor<T extends TestApp = TestApp> = new (
@@ -22,6 +26,7 @@ type CallbackParams<FinalTestAppType extends TestApp> = {
 	app_class: TestAppConstructor<TestApp>;
 	uniq_id: string;
 	env: Environment;
+	router: Router;
 };
 
 type TestCallback<FinalTestAppType extends TestApp> = (
@@ -84,11 +89,21 @@ export async function withTestApp<FinalTestAppType extends TestApp>(
 		throw new Error("uniq_id, env, port, or base_url is missing.");
 	}
 	const test_app = new constructor(uniq_id, env, port, base_url);
+	const router = new Router();
+	const koa_app = new Koa();
+	installQS(koa_app);
+	koa_app.use(handleError());
+	koa_app.use(router.routes());
+	koa_app.context.$app = test_app;
+	const server = koa_app.listen(port);
+	test_app.on("started", () => {
+		test_app.initRouter(router);
+	});
 
-	if (auto_start) {
-		await test_app.start();
-	}
 	try {
+		if (auto_start) {
+			await test_app.start();
+		}
 		await fn({
 			app: test_app as FinalTestAppType,
 			port,
@@ -99,6 +114,7 @@ export async function withTestApp<FinalTestAppType extends TestApp>(
 			smtp_api_url,
 			mail_api: new MailcatcherAPI(smtp_api_url, test_app),
 			rest_api: new MockRestApi(base_url),
+			router,
 		});
 	} catch (e) {
 		console.error(e);
@@ -107,5 +123,6 @@ export async function withTestApp<FinalTestAppType extends TestApp>(
 		if (test_app.status !== "stopped") {
 			await test_app.stop();
 		}
+		server.close();
 	}
 }
