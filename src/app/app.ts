@@ -1,4 +1,5 @@
 import Router from "@koa/router";
+import type { default as Koa } from "koa";
 import assert from "assert";
 import Emittery from "emittery";
 import fs from "fs";
@@ -291,7 +292,7 @@ export abstract class App {
 		}
 	}
 
-	getFeedHTMLMetatags(): string {
+	async getFeedHTMLMetatags(ctx: Koa.Context): Promise<string> {
 		let result = "";
 		for (const collection of Object.values(this.collections)) {
 			if (collection.hasFeed()) {
@@ -299,7 +300,7 @@ export abstract class App {
 					href="/api/v1/collections/${collection.name}/feed"
 					type="application/atom+xml"
 					rel="alternate"
-					title="${this.manifest.name} - ${collection.name} feed"
+					title="${await collection.getFeedTitle(ctx)} feed"
 				/>`;
 			}
 		}

@@ -1,4 +1,5 @@
 import assert from "assert";
+import { default as Koa } from "koa";
 import { withRunningApp } from "../../test_utils/with-test-app.js";
 import { assertThrowsAsync } from "../../test_utils/assert-throws-async.js";
 import { App } from "../app.js";
@@ -59,7 +60,9 @@ describe("app", () => {
 					},
 
 				async ({ app, rest_api }) => {
-					const metatags = app.getFeedHTMLMetatags();
+					const metatags = await app.getFeedHTMLMetatags({
+						$app: app,
+					} as unknown as Koa.Context);
 					assert.strictEqual(
 						await prettier.format(metatags, { parser: "html" }),
 						await prettier.format(
@@ -67,7 +70,7 @@ describe("app", () => {
 								href="/api/v1/collections/posts/feed"
 								type="application/atom+xml"
 								rel="alternate"
-								title="testing app - posts feed"
+								title="testing app / posts feed"
 							/>`,
 							{ parser: "html" }
 						)
