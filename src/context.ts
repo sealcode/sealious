@@ -33,7 +33,7 @@ export default class Context {
 		return this.cache_entries[key] as Promise<T>;
 	}
 
-	async getUserData(app: App): Promise<CollectionItem | null> {
+	async getUserData(): Promise<CollectionItem | null> {
 		if (this.user_data) {
 			return this.user_data;
 		}
@@ -42,8 +42,18 @@ export default class Context {
 			return null;
 		}
 		const c = new SuperContext(this.app);
-		this.user_data = app.collections.users.getByID(c, this.user_id);
+		this.user_data = this.app.collections.users.getByID(c, this.user_id);
 		return this.user_data;
+	}
+
+	async getRoles(): Promise<string[]> {
+		const user_data = await this.getUserData();
+		if (!user_data) {
+			return [];
+		}
+		return (user_data.get("roles") as { role: string }[]).map(
+			({ role }) => role
+		);
 	}
 
 	toDBEntry() {
