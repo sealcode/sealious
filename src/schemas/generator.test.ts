@@ -64,10 +64,7 @@ describe("SchemaGenerator", () => {
 
 				const response = await rest_api.get("/docs/schema");
 
-				assert.equal(
-					JSON.stringify(parsed_file),
-					JSON.stringify(response)
-				);
+				assert.deepStrictEqual(response, parsed_file);
 			}
 		));
 });

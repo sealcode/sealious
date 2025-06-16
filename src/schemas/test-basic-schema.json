@@ -16,6 +16,18 @@
 						"type": "string",
 						"format": "password",
 						"default": null
+					},
+					"roles": {
+						"items": {
+							"properties": {
+								"role": {
+									"default": null,
+									"type": "string"
+								}
+							},
+							"type": "object"
+						},
+						"type": "array"
 					}
 				}
 			},

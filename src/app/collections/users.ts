@@ -14,6 +14,7 @@ export default class Users extends Collection {
 	fields = <const>{
 		username: new FieldTypes.Username(),
 		password: new FieldTypes.Password(),
+		roles: new FieldTypes.StructuredArray({ role: new FieldTypes.Text() }),
 	};
 
 	defaultPolicy: Policy = new Policies.Themselves();
