@@ -9,12 +9,16 @@ import {
 } from "../../main.js";
 import { BadContext } from "../../response/errors.js";
 import SecureHasher from "../../utils/secure-hasher.js";
+import Super from "../policy-types/super.js";
 
 export default class Users extends Collection {
 	fields = <const>{
 		username: new FieldTypes.Username(),
 		password: new FieldTypes.Password(),
-		roles: new FieldTypes.StructuredArray({ role: new FieldTypes.Text() }),
+		roles: new FieldTypes.SettableBy(
+			new FieldTypes.StructuredArray({ role: new FieldTypes.Text() }),
+			new Super()
+		),
 	};
 
 	defaultPolicy: Policy = new Policies.Themselves();
