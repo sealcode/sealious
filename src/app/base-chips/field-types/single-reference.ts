@@ -232,4 +232,8 @@ export default class SingleReference extends Field<string, string> {
 		}
 		return ret.fetch();
 	}
+
+	getAttachmentIDs(value: string): string[] {
+		return [value];
+	}
 }

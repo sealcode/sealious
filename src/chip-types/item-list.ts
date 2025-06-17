@@ -262,14 +262,14 @@ export default class ItemList<T extends Collection> {
 				`Loading attachments for ${field_name}`
 			);
 
-			const fieldName = collection.fields[field_name];
+			const field = collection.fields[field_name];
 
-			if (!fieldName) {
+			if (!field) {
 				throw Error("collection field is missing");
 			}
 
 			promises.push(
-				fieldName
+				field
 					.getAttachments(
 						this.context,
 						items.map(

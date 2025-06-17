@@ -438,6 +438,17 @@ export default class CollectionItem<T extends Collection = any> {
 		return this.collection.getByID(context, this.id);
 	}
 
+	getAttachmentIDs<FieldName extends keyof T["fields"]>(
+		field_name: FieldName
+	): string[] {
+		const value = this.body.getDecoded(field_name) as string | string[];
+		return (
+			this.collection.fields[field_name as string]?.getAttachmentIDs(
+				value
+			) || []
+		);
+	}
+
 	getAttachments<FieldName extends keyof T["fields"]>(
 		field_name: FieldName
 	): CollectionItem[] {
@@ -453,8 +464,7 @@ export default class CollectionItem<T extends Collection = any> {
 			throw new Error("Decode first!");
 		}
 
-		const value = this.body.getDecoded(field_name) as string | string[];
-		const ids = Array.isArray(value) ? value : [value];
+		const ids = this.getAttachmentIDs(field_name);
 		let attachments_source: Record<string, CollectionItem>;
 		if (this.parent_list) {
 			attachments_source = this.parent_list.attachments;

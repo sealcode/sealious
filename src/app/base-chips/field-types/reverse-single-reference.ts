@@ -247,4 +247,8 @@ export default class ReverseSingleReference extends CachedValue<
 		// that becomes this field's value
 		return item.id;
 	}
+
+	getAttachmentIDs(value: string[]): string[] {
+		return value;
+	}
 }

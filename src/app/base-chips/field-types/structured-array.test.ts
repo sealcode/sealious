@@ -341,4 +341,48 @@ describe("structured-array", () => {
 				});
 			}
 		));
+
+	it("should support attachments", async () =>
+		withRunningApp(
+			(testapp) =>
+				class extends testapp {
+					collections = {
+						...App.BaseCollections,
+						products: new (class extends Collection {
+							fields = {
+								name: new FieldTypes.Text(),
+							};
+						})(),
+						invoices: new (class extends Collection {
+							fields = {
+								entries: new StructuredArray({
+									product: new FieldTypes.SingleReference(
+										"products"
+									),
+								}),
+								product: new FieldTypes.SingleReference(
+									"products"
+								),
+							};
+						})(),
+					};
+				},
+			async ({ app }) => {
+				const pen = await app.collections.products.suCreate({
+					name: "pen",
+				});
+				await app.collections.invoices.suCreate({
+					entries: [{ product: pen.id }],
+				});
+				const list = app.collections.invoices
+					.suList()
+					.attach({ entries: { product: true }, product: true });
+				const result = await list.fetch();
+				assert.strictEqual(result.items.length, 1);
+				assert.strictEqual(
+					result.items[0]?.getAttachments("entries")[0]?.get("name"),
+					"pen"
+				);
+			}
+		));
 });

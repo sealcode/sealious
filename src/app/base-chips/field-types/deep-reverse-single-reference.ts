@@ -146,9 +146,8 @@ export class DeepReverseSingleReference extends ReverseSingleReference {
 		);
 
 		// eslint-disable-next-line @typescript-eslint/await-thenable
-		const targetCollection = await this.app.collections[
-			this.target_collection
-		];
+		const targetCollection =
+			await this.app.collections[this.target_collection];
 
 		if (!targetCollection) {
 			throw new Error("Target collection is missing");
@@ -235,5 +234,9 @@ export class DeepReverseSingleReference extends ReverseSingleReference {
 		// this returns what need to be stored as one of the values in the array
 		// that becomes this field's value
 		return item.get(this.intermediary_field_that_points_there) as string;
+	}
+
+	getAttachmentIDs(value: string[]): string[] {
+		return value;
 	}
 }

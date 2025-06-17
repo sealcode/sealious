@@ -331,4 +331,8 @@ export abstract class Field<
 	getPostgreSqlFieldDefinitions(): string[] {
 		return [`"${this.name}" JSONB`];
 	}
+
+	getAttachmentIDs(value: DecodedType): string[] {
+		return [];
+	}
 }
