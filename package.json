@@ -3,7 +3,7 @@
 	"homepage": "http://sealious.github.io/",
 	"version": "0.21.4",
 	"description": "A declarative framework for fast & easy app development.",
-	"main": "./lib/src/main.js",
+	"main": "./lib/main.js",
 	"types": "./@types/src/main.d.ts",
 	"type": "module",
 	"engines": {
@@ -17,7 +17,7 @@
 		"build": "rm -rf ./lib @types && tsc",
 		"watch": "npm run build -- --watch",
 		"instrument": "npm run build && rm -fr .xunit coverage lib-instrumented && ./node_modules/.bin/nyc instrument --exclude \"\" lib lib-instrumented",
-		"test-reports": "npm run instrument && docker-compose up -d db mailcatcher  && ./node_modules/.bin/nyc  --exclude \"\" ./node_modules/.bin/mocha --recursive --timeout=10000 --require source-map-support/register  --reporter xunit --reporter-option output=.xunit 'lib-instrumented/src/**/*.test.js' && nyc report --reporter clover --exclude \"\"",
+		"test-reports": "npm run instrument && docker-compose up -d db mailcatcher  && ./node_modules/.bin/nyc  --exclude \"\" ./node_modules/.bin/mocha --recursive --timeout=10000 --require source-map-support/register  --reporter xunit --reporter-option output=.xunit 'lib-instrumented/**/*.test.js' && nyc report --reporter clover --exclude \"\"",
 		"cover-html": "rm -rf coverate/lcov-report && npm run test-reports && nyc report --reporter lcov --exclude \"\"  && xdg-open coverage/lcov-report/index.html",
 		"docs": "typedoc --out docs src --exclude '**/*+(test).ts' --mode file --toc Collection,Field,Policy,App --categorizeByGroup false --stripInternal"
 	},

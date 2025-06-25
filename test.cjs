@@ -29,7 +29,7 @@ if (args["test-report"]) {
 	];
 }
 
-const mocha_files = ["lib/src/**/*.test.js"];
+const mocha_files = ["lib/**/*.test.js"];
 
 let command = [mocha, ...mocha_options, ...mocha_files];
 
