@@ -19,7 +19,8 @@
 		"verbatimModuleSyntax": true,
 		"skipLibCheck": true,
 		"allowSyntheticDefaultImports": true,
-		"emitDeclarationOnly": false
+		"emitDeclarationOnly": true,
+		"noEmit": false
 	},
 	"include": ["src/**/*"]
 }

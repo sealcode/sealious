@@ -27,9 +27,26 @@ async function build(watch = false) {
       rmSync('lib', { recursive: true, force: true });
       rmSync('@types', { recursive: true, force: true });
       
-      console.log('📝 Compiling TypeScript...');
-      // Compile TypeScript files and generate declarations
-      execSync('tsc', { stdio: 'inherit' });
+      console.log('📝 Type checking and generating declarations...');
+      // Use tsc only for type checking and declaration generation
+      execSync('tsc --emitDeclarationOnly --noEmit false', { stdio: 'inherit' });
+      
+      console.log('⚡ Transpiling TypeScript with esbuild...');
+      // Use esbuild for TypeScript transpilation
+      const transpileConfig = {
+        entryPoints: ['src/**/*.ts'],
+        bundle: false,
+        platform: 'node',
+        format: 'esm',
+        sourcemap: true,
+        target: 'esnext',
+        outdir: 'lib',
+        minify: false,
+        loader: {
+          '.ts': 'ts'
+        }
+      };
+      await esbuild.build(transpileConfig);
     }
     
     console.log('📦 Creating main entry point...');
