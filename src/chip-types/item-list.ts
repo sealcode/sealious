@@ -75,16 +75,6 @@ export default class ItemList<T extends Collection> {
 	constructor(collection: T, context: Context) {
 		this.context = context;
 		this.collection = collection;
-		this.await_before_fetch = [
-			this.collection
-				.getPolicy("list")
-				.getRestrictingQuery(context)
-				.then((query) => {
-					const pipeline = query.toPipeline();
-					return pipeline;
-				})
-				.then((stages) => this.aggregation_stages.push(...stages)),
-		];
 	}
 
 	filter(filter?: FilterT<T>): ItemList<T> {
@@ -283,12 +273,25 @@ export default class ItemList<T extends Collection> {
 		return attachments;
 	}
 
+	async addPolicyStagesToPipeline() {
+		const method = this._ids?.length > 0 ? "show" : "list";
+		const stages = await this.collection
+			.getPolicy(method)
+			.getRestrictingQuery(this.context)
+			.then((query) => {
+				const pipeline = query.toPipeline();
+				return pipeline;
+			});
+		this.aggregation_stages.push(...stages);
+	}
+
 	/**
 	 * execute crated database request
 	 */
 	async fetch(
 		{ is_http_api_request } = { is_http_api_request: false }
 	): Promise<ItemListResult<T>> {
+		await this.addPolicyStagesToPipeline();
 		const result = await this.collection
 			.getPolicy("show")
 			.check(this.context);
@@ -318,6 +321,7 @@ export default class ItemList<T extends Collection> {
 				this._ids.indexOf(a.id) < this._ids.indexOf(b.id) ? -1 : 1
 			);
 		}
+		items = items.filter((e) => !!e);
 		const attachments = await this.fetchAttachments(items);
 		return new ItemListResult(
 			items,

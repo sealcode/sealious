@@ -383,29 +383,28 @@ export default class CollectionItem<T extends Collection = any> {
 		}
 		this.attachments = {};
 		const promises = [];
-		for (const field of Object.values(this.collection.fields)) {
-			promises.push(
-				field
-					.getAttachments(
-						context,
-						[
-							this.get(
-								field.name as Fieldnames<typeof this.collection>
-							),
-						],
-						attachment_options[field.name as keyof T["fields"]],
-						(format || {})[field.name] || null
-					)
-					.then((attachmentsList) => {
-						if (!attachmentsList.empty) {
-							this.fields_with_attachments.push(field.name);
-						}
-						this.attachments = {
-							...this.attachments,
-							...attachmentsList.flattenWithAttachments(),
-						};
-					})
-			);
+		for (const field_name of Object.keys(attachment_options)) {
+			const field = this.collection.fields[field_name];
+			if (!field) {
+				throw new Error(
+					`Unknown field: ${field_name} in ${this.collection.name}`
+				);
+			}
+			const promise = field
+				.getAttachments(
+					context,
+					[this.get(field.name as any)],
+					attachment_options[field.name as keyof T["fields"]],
+					(format || {})[field.name] || null
+				)
+				.then((attachmentsList) => {
+					this.fields_with_attachments.push(field.name);
+					this.attachments = {
+						...this.attachments,
+						...attachmentsList.flattenWithAttachments(),
+					};
+				});
+			promises.push(promise);
 		}
 		await Promise.all(promises);
 		this.attachments_loaded = true;
@@ -459,7 +458,7 @@ export default class CollectionItem<T extends Collection = any> {
 		} else {
 			throw new Error("Attachments list could not be reached");
 		}
-		return ids.map((id) => attachments_source[id]);
+		return ids.map((id) => attachments_source[id]).filter((e) => !!e);
 	}
 
 	setParentList(list: ItemListResult<T>) {
