@@ -308,4 +308,48 @@ describe("CollectionItem", () => {
 				ala.get("markdown").padStart(10);
 			}
 		));
+
+	it("Should not throw an error claiming the attachments for a field were not loaded if they in fact were loaded but the results are empty", async () =>
+		withRunningApp(
+			(test_app) =>
+				class extends test_app {
+					collections = {
+						...App.BaseCollections,
+						posts: new (class extends Collection {
+							fields = {
+								title: new FieldTypes.Text(),
+								comments: new FieldTypes.ReverseSingleReference(
+									{
+										referencing_collection: "comments",
+										referencing_field: "post",
+									}
+								),
+							};
+						})(),
+						comments: new (class extends Collection {
+							fields = {
+								content: new FieldTypes.Text(),
+								post: new FieldTypes.SingleReference("posts"),
+							};
+						})(),
+					};
+				},
+			async ({ app }) => {
+				const { id: item_id } = await app.collections.posts.suCreate({
+					title: "How to jump",
+				});
+				const item = await app.collections.posts.suGetByID(item_id);
+
+				await item.loadAttachments(
+					new app.SuperContext(),
+					{
+						comments: true,
+					},
+					{}
+				);
+
+				const attachments = item.getAttachments("comments");
+				assert.deepStrictEqual(attachments, []);
+			}
+		));
 });
