@@ -1,6 +1,6 @@
 import assert, { strictEqual, deepStrictEqual } from "assert";
 import Int from "../app/base-chips/field-types/int.js";
-import { App, Collection, FieldTypes, Query } from "../main.js";
+import { App, Collection, FieldTypes, Policies, Query } from "../main.js";
 import { sleep } from "../test_utils/sleep.js";
 import { TestApp } from "../test_utils/test-app.js";
 import { withRunningApp } from "../test_utils/with-test-app.js";
@@ -208,6 +208,67 @@ describe("ItemList", () => {
 					items[0]!.getAttachments("reference_to_b").length,
 					0
 				);
+			}
+		));
+
+	it("should use the 'show' policy when using .ids()", async () =>
+		withRunningApp(
+			(test_app) => {
+				return class extends test_app {
+					collections = {
+						...TestApp.BaseCollections,
+						posts: new (class extends Collection {
+							name = "posts";
+							fields = {
+								title: new FieldTypes.Text(),
+							};
+							policies = {
+								list: new Policies.Noone(),
+								show: new Policies.Public(),
+							};
+						})(),
+					};
+				};
+			},
+			async ({ app }) => {
+				const post = await app.collections.posts.suCreate({
+					title: "Hello",
+				});
+				const { items } = await app.collections.posts
+					.list(new app.Context())
+					.ids([post.id])
+					.fetch();
+				assert.strictEqual(items.length, 1);
+			}
+		));
+
+	it("should use the 'LIST' policy when using .list() without .ids()", async () =>
+		withRunningApp(
+			(test_app) => {
+				return class extends test_app {
+					collections = {
+						...TestApp.BaseCollections,
+						posts: new (class extends Collection {
+							name = "posts";
+							fields = {
+								title: new FieldTypes.Text(),
+							};
+							policies = {
+								list: new Policies.Noone(),
+								show: new Policies.Public(),
+							};
+						})(),
+					};
+				};
+			},
+			async ({ app }) => {
+				const post = await app.collections.posts.suCreate({
+					title: "Hello",
+				});
+				const { items } = await app.collections.posts
+					.list(new app.Context())
+					.fetch();
+				assert.strictEqual(items.length, 0);
 			}
 		));
 });
