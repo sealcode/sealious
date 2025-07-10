@@ -24,9 +24,9 @@ async function build(watch = false) {
       rmSync('lib', { recursive: true, force: true });
       rmSync('@types', { recursive: true, force: true });
       
-      console.log('📝 Type checking and generating declarations...');
-      // Use tsc only for type checking and declaration generation
-      execSync('tsc --emitDeclarationOnly --noEmit false', { stdio: 'inherit' });
+      console.log('📝 Generating type declarations...');
+      // Use tsc only for declaration generation (no type checking)
+      execSync('tsc --emitDeclarationOnly --noEmit', { stdio: 'inherit' });
       
       console.log('⚡ Transpiling TypeScript with esbuild...');
       // Use esbuild for TypeScript transpilation

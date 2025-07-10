@@ -12,8 +12,8 @@
 	"scripts": {
 		"test-debug": "npm run test-cmd -- --debug",
 		"test-cmd": "node test.cjs",
-		"pretest": "npm run build",
-		"test": "npm run typecheck && npm run test-cmd -- ",
+		"pretest": "npm run typecheck && npm run build",
+		"test": "npm run test-cmd -- ",
 		"build": "node scripts/build.js",
 		"typecheck": "tsc --noEmit",
 		"watch": "node scripts/build.js --watch",
