@@ -1,4 +1,3 @@
-import { execSync } from 'child_process';
 import { rmSync } from 'fs';
 import esbuild from 'esbuild';
 
@@ -23,10 +22,6 @@ async function build(watch = false) {
       // Clean up build directories
       rmSync('lib', { recursive: true, force: true });
       rmSync('@types', { recursive: true, force: true });
-      
-      console.log('📝 Generating type declarations...');
-      // Use tsc only for declaration generation (no type checking)
-      execSync('tsc --emitDeclarationOnly --noEmit', { stdio: 'inherit' });
       
       console.log('⚡ Transpiling TypeScript with esbuild...');
       // Use esbuild for TypeScript transpilation
