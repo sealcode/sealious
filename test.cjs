@@ -1,12 +1,11 @@
 const mri = require("mri");
 const { spawn } = require("child_process");
+const path = require("path");
 
 const argv = process.argv.slice(2);
 const args = mri(argv);
 
-const bin_dir = "./node_modules/.bin/";
-
-const mocha = bin_dir + "mocha";
+const mocha = path.join(__dirname, "node_modules", ".bin", "mocha");
 
 let mocha_options = [
 	"--recursive",

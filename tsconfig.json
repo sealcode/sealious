@@ -18,7 +18,9 @@
 		"sourceMap": true,
 		"verbatimModuleSyntax": true,
 		"skipLibCheck": true,
-		"allowSyntheticDefaultImports": true
+		"allowSyntheticDefaultImports": true,
+		"emitDeclarationOnly": true,
+		"noEmit": false
 	},
 	"include": ["src/**/*"]
 }
