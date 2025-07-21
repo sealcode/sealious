@@ -15,6 +15,7 @@
 		"pretest": "npm run typecheck && npm run build",
 		"test": "npm run test-cmd -- ",
 		"build": "node scripts/build.js",
+		"prepare": "npm run build",
 		"postbuild": "npm run build-types",
 		"build-types": "tsc --emitDeclarationonly",
 		"typecheck": "tsc --noEmit",
