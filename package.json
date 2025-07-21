@@ -4,7 +4,7 @@
 	"version": "0.21.5",
 	"description": "A declarative framework for fast & easy app development.",
 	"main": "./lib/main.js",
-	"types": "./@types/src/main.d.ts",
+	"types": "./@types/main.d.ts",
 	"type": "module",
 	"engines": {
 		"node": ">=21.0"
