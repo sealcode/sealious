@@ -15,6 +15,8 @@
 		"pretest": "npm run typecheck && npm run build",
 		"test": "npm run test-cmd -- ",
 		"build": "node scripts/build.js",
+		"postbuild": "npm run build-types",
+		"build-types": "tsc --emitDeclarationonly",
 		"typecheck": "tsc --noEmit",
 		"watch": "node scripts/build.js --watch",
 		"instrument": "npm run build && rm -fr .xunit coverage lib-instrumented && ./node_modules/.bin/nyc instrument --exclude \"\" lib lib-instrumented",
