@@ -1,3 +1,4 @@
+import { is, predicates } from "@sealcode/ts-predicates";
 import type { App } from "./app/app.js";
 import type { CollectionItem } from "./main.js";
 
@@ -51,9 +52,18 @@ export default class Context {
 		if (!user_data) {
 			return [];
 		}
-		return (user_data.get("roles") as { role: string }[]).map(
-			({ role }) => role
-		);
+		const roles = user_data.get("roles");
+		if (
+			!is(
+				roles,
+				predicates.array(predicates.shape({ role: predicates.string }))
+			)
+		) {
+			throw new Error(
+				`Unexpected error when trying to read roles of the user. Expected {role: string}[], got: ${roles}`
+			);
+		}
+		return (roles as { role: string }[]).map(({ role }) => role);
 	}
 
 	toDBEntry() {
