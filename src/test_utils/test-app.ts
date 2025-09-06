@@ -50,7 +50,7 @@ export class TestApp extends App {
 		public manifest = {
 			name: "testing app",
 			logo: locreq.resolve("src/assets/logo.png"),
-			default_language: "pl",
+			default_language: "en",
 			version: "0.0.0-test",
 			base_url,
 			colors: {

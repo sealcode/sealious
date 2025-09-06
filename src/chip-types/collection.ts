@@ -9,7 +9,7 @@ import parseBody from "../http/parse-body.js";
 import { BadContext, NotFound } from "../response/errors.js";
 import type CalculatedField from "./calculated-field.js";
 import CollectionItem, { type ItemMetadata } from "./collection-item.js";
-import CollectionItemBody from "./collection-item-body.js";
+import { CollectionItemBody } from "./collection-item-body.js";
 import type Field from "./field.js";
 import type {
 	FieldsetEncoded,

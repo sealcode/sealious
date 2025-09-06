@@ -14,9 +14,9 @@ export type ItemFieldsOutput<T extends Collection> = {
 	[field in FieldNames<T>]: ExtractFieldDecoded<T["fields"][field]>;
 };
 
-export default class CollectionItemBody<
-	T extends Collection = any
-> extends Fieldset<T["fields"]> {
+export class CollectionItemBody<T extends Collection = any> extends Fieldset<
+	T["fields"]
+> {
 	constructor(
 		public collection: T,
 		public raw_input: Partial<FieldsetInput<T["fields"]>> = {},

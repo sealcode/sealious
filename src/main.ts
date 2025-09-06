@@ -41,4 +41,4 @@ export {
 	type CollectionValidationResult,
 	type Fieldnames,
 } from "./chip-types/collection.js";
-export { default as CollectionItemBody } from "./chip-types/collection-item-body.js";
+export { CollectionItemBody } from "./chip-types/collection-item-body.js";

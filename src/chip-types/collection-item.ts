@@ -1,4 +1,7 @@
-import Collection, { type Fieldnames } from "./collection.js";
+import Collection, {
+	type CollectionValidationResult,
+	type Fieldnames,
+} from "./collection.js";
 import type Context from "../context.js";
 import {
 	DeveloperError,
@@ -11,7 +14,7 @@ import type { AttachmentOptions } from "./item-list.js";
 import type { PolicyDecision } from "./policy.js";
 import isEmpty from "../utils/is-empty.js";
 import type { Fieldset, FieldsetInput, FieldsetOutput } from "./fieldset.js";
-import CollectionItemBody from "./collection-item-body.js";
+import { CollectionItemBody } from "./collection-item-body.js";
 import type { ItemListResult } from "./item-list-result.js";
 
 export type ItemMetadata = {
@@ -74,7 +77,7 @@ export default class CollectionItem<T extends Collection = any> {
 			.check(context, async () => this);
 	}
 
-	private async throwIfInvalid(
+	public async throwIfInvalid(
 		action: "create" | "edit",
 		context: Context,
 		replace_mode: boolean //if true, meaning that if a field has no value, it should be deleted
@@ -282,10 +285,11 @@ export default class CollectionItem<T extends Collection = any> {
 
 	async getDecodedBody(
 		context: Context,
-		format: Parameters<Fieldset<T["fields"]>["decode"]>[1]
+		format: Parameters<Fieldset<T["fields"]>["decode"]>[1],
+		is_http: boolean = false
 	) {
 		if (!this.body.is_decoded) {
-			await this.body.decode(context, format);
+			await this.body.decode(context, format, is_http);
 		}
 		return this.body.decoded;
 	}
