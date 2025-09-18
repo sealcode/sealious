@@ -4,6 +4,7 @@ export * as Policies from "./app/policy-types/policy-types.js";
 export {
 	default as Collection,
 	type CollectionInput,
+	type CollectionInputWithAllKeys,
 } from "./chip-types/collection.js";
 export { Field, type ExtractFieldDecoded } from "./chip-types/field-base.js";
 export * as FieldTypes from "./app/base-chips/field-types/field-types.js";
