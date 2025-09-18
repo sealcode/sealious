@@ -240,6 +240,14 @@ export default class CollectionItem<T extends Collection = any> {
 		return this;
 	}
 
+	/** Ensures that every field value is considered. This is useful for forms,
+        where you can create a form with all fields for a collection, then add a
+        new field to the collection and want to be notified by typescript about
+        all forms that need to be updated */
+	setMultipleExtraSafe(values: FieldsetInput<T["fields"]>): this {
+		return this.setMultiple(values);
+	}
+
 	replace(values: Partial<FieldsetInput<T["fields"]>>) {
 		this.body = CollectionItemBody.empty<T>(this.collection);
 		this.setMultiple(values);
