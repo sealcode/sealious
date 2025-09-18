@@ -26,6 +26,18 @@ export type FieldsetInput<T extends Record<string, Field<any, any, any>>> = {
 		: field]?: ExtractFieldInput<T[field]>;
 };
 
+export type FieldsetInputWithAllKeys<
+	T extends Record<string, Field<any, any, any>>,
+> = {
+	[field in keyof T & string as T[field] extends RequiredField<any, any, any>
+		? field
+		: never]: ExtractFieldInput<T[field]>;
+} & {
+	[field in keyof T & string as T[field] extends RequiredField<any, any, any>
+		? never
+		: field]: ExtractFieldInput<T[field]> | undefined;
+};
+
 export type FieldsetEncoded<T extends Record<string, Field<any, any, any>>> = {
 	[field in keyof T]: ExtractFieldStorage<T[field]>;
 };

@@ -14,6 +14,7 @@ import type Field from "./field.js";
 import type {
 	FieldsetEncoded,
 	FieldsetInput,
+	FieldsetInputWithAllKeys,
 	FieldsetOutput,
 } from "./fieldset.js";
 import ItemList, { type SortParams } from "./item-list.js";
@@ -42,6 +43,8 @@ export type CollectionOutput<T extends Collection> = FieldsetOutput<
 >;
 
 export type CollectionInput<T extends Collection> = FieldsetInput<T["fields"]>;
+export type CollectionInputWithAllKeys<T extends Collection> =
+	FieldsetInputWithAllKeys<T["fields"]>;
 
 export type CollectionEncoded<T extends Collection> = FieldsetEncoded<
 	T["fields"]
@@ -92,7 +95,7 @@ export default abstract class Collection {
 		return this.create(new this.app.SuperContext(), data);
 	}
 
-	/* the "unsafe" flavor of CRUD functions are meant for cases where you want
+	/** the "unsafe" flavor of CRUD functions are meant for cases where you want
 	to just get the errror message and parse it - for example, when you want to
 	get a nice error that can be used to display errors in a form */
 	async suCreateUnsafe(
@@ -104,6 +107,17 @@ export default abstract class Collection {
 	async create(
 		context: Context,
 		data: CollectionInput<this>
+	): Promise<CollectionItem<this>> {
+		return this.make(data).save(context);
+	}
+
+	/** extra safe = ensures that ALL fields are present, even if optional (if
+	 empty, specify 'undefined') as value.  Useful for collection forms where
+	 you might add a collection field in the future and don't want to forget to
+	 handle it in the form, as well */
+	async createExtraSafe(
+		context: Context,
+		data: CollectionInputWithAllKeys<this>
 	): Promise<CollectionItem<this>> {
 		return this.make(data).save(context);
 	}
