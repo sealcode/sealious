@@ -111,4 +111,12 @@ describe("coordinates", () => {
 			);
 		});
 	});
+
+	it("registers null as an empty value and doesn't try to parse it as coordinates", async () => {
+		await withRunningApp(extend, async ({ app }): Promise<void> => {
+			await app.collections.coords.suCreate({
+				coordField: null,
+			});
+		});
+	});
 });

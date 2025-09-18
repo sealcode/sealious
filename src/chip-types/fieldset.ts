@@ -23,7 +23,7 @@ export type FieldsetInput<T extends Record<string, Field<any, any, any>>> = {
 } & {
 	[field in keyof T & string as T[field] extends RequiredField<any, any, any>
 		? never
-		: field]?: ExtractFieldInput<T[field]>;
+		: field]?: ExtractFieldInput<T[field]> | null;
 };
 
 export type FieldsetInputWithAllKeys<
@@ -133,7 +133,7 @@ export class Fieldset<Fields extends Record<string, Field<any, any, any>>> {
 				continue;
 			}
 
-			if (to_encode === undefined) {
+			if (to_encode === undefined || to_encode === null) {
 				new_encoded[field_name] = null as any;
 				continue;
 			}
@@ -174,14 +174,18 @@ export class Fieldset<Fields extends Record<string, Field<any, any, any>>> {
 		)) {
 			const field = this.fields?.[field_name];
 
+			const encoded = this.encoded;
 			if (!field) {
 				continue;
 			}
-			const encoded = this.encoded;
-			if (!field) {
-				throw new Error("field name is missing");
-			}
 
+			if (encoded[field_name] == null) {
+				this.decoded = {
+					...this.decoded,
+					[field_name]: null,
+				};
+				continue;
+			}
 			promises.push(
 				field
 					.decode(

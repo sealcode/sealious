@@ -264,11 +264,16 @@ export default class CachedValue<
 
 	async decode(
 		context: Context,
-		db_value: { timestamp: number; value: StorageType },
+		db_value: { timestamp: number; value: StorageType } | null,
 		old_value: any,
 		format: any
 	) {
-		return super.decode(context, db_value.value as any, old_value, format);
+		return super.decode(
+			context,
+			db_value === null ? null : (db_value?.value as any),
+			old_value,
+			format
+		);
 	}
 
 	async isProperValue(
