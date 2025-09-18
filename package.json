@@ -1,7 +1,7 @@
 {
 	"name": "sealious",
 	"homepage": "http://sealious.github.io/",
-	"version": "0.21.13",
+	"version": "0.21.14",
 	"description": "A declarative framework for fast & easy app development.",
 	"main": "./lib/main.js",
 	"types": "./@types/main.d.ts",
