@@ -14,8 +14,7 @@
 					"username": { "type": "string", "default": null },
 					"password": {
 						"type": "string",
-						"format": "password",
-						"default": null
+						"format": "password"
 					},
 					"roles": {
 						"items": {

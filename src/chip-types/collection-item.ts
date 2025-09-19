@@ -198,23 +198,23 @@ export default class CollectionItem<T extends Collection = any> {
 		context.app.Logger.debug2("ITEM", "Gathering default values");
 		const promises = [];
 		for (const field_name of Collection.getFieldnames(this.collection)) {
-			const fieldName = this.collection.fields[field_name];
+			const field = this.collection.fields[field_name];
 
-			if (!fieldName) {
+			if (!field) {
 				throw new Error(`field is missing: "${field_name}"`);
 			}
 
 			if (
 				isEmpty(this.body.getInput(field_name)) &&
 				isEmpty(this.body.getEncoded(field_name)) &&
-				fieldName.hasDefaultValue()
+				field.hasDefaultValue()
 			) {
 				context.app.Logger.debug3(
 					"ITEM",
 					`Gathering default values/${field_name}`
 				);
 				promises.push(
-					fieldName.getDefaultValue(context).then((value) => {
+					field.getDefaultValue(context).then((value) => {
 						this.set(field_name, value);
 					})
 				);

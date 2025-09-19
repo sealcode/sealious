@@ -152,9 +152,13 @@ export abstract class Field<
 	async getOpenApiSchema(context: Context): Promise<Record<string, unknown>> {
 		return {
 			...OpenApiTypeMapping[this.open_api_type],
-			default:
-				this.hasDefaultValue?.() &&
-				(await this.getDefaultValue(context)),
+			...(this.hasDefaultValue?.()
+				? {
+						default:
+							this.hasDefaultValue?.() &&
+							(await this.getDefaultValue(context)),
+					}
+				: {}),
 			// nullable: ? // not sure if/when applicable
 			// readOnly: ? // not sure if/when applicable
 		};

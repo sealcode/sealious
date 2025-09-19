@@ -31,4 +31,8 @@ export default class Password extends Field<string> {
 	getPostgreSqlFieldDefinitions(): string[] {
 		return [`"${this.name}" VARCHAR`];
 	}
+
+	hasDefaultValue(): boolean {
+		return false;
+	}
 }
