@@ -229,7 +229,9 @@ export default class CollectionItem<T extends Collection = any> {
 		field_value: FieldsetInput<T["fields"]>[FieldName],
 		blessed_symbol?: symbol
 	): CollectionItem<T> {
-		this.body.set(field_name, field_value, blessed_symbol);
+		if (field_value !== undefined) {
+			this.body.set(field_name, field_value, blessed_symbol);
+		}
 		return this;
 	}
 

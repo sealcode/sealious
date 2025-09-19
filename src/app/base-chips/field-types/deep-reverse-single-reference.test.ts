@@ -294,4 +294,61 @@ describe("deep-reverse-single-reference", () => {
 			);
 		}
 	});
+
+	it("doesn't change value when passed 'undefined' via .set", async () => {
+		await withRunningApp(
+			(TestClass) =>
+				class extends TestClass {
+					collections = {
+						...TestApp.BaseCollections,
+						articles: new (class extends Collection {
+							fields = {
+								title: new Text(),
+								categories: new DeepReverseSingleReference(
+									"article_category"
+								),
+							};
+						})(),
+						categories: new (class extends Collection {
+							fields = {
+								name: new Text(),
+							};
+						})(),
+						article_category: new (class extends Collection {
+							fields = {
+								article: new SingleReference("articles"),
+								category: new SingleReference("categories"),
+							};
+						})(),
+					};
+				},
+			async ({ app }) => {
+				const category1 = await app.collections.categories.suCreate({
+					name: "category1",
+				});
+				const article = await app.collections.articles.suCreate({
+					title: "title",
+				});
+
+				await app.collections.article_category.suCreate({
+					article: article.id,
+					category: category1.id,
+				});
+
+				const context = new app.SuperContext();
+				console.debug(
+					"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
+				);
+				article.setMultiple({ categories: undefined });
+				await article.save(context);
+				const article_again = await app.collections.articles.suGetByID(
+					article.id
+				);
+				assert.strictEqual(
+					(article_again.get("categories") as string[]).length,
+					1
+				);
+			}
+		);
+	});
 });
