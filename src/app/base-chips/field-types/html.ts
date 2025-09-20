@@ -5,6 +5,7 @@ import Text from "./text.js";
  * **Params**: see {@link TextStorage}
  */
 export default class Html extends Text {
+	typeName = "html";
 	getTypeName = () => "html";
 	async encode(_: any, input: string) {
 		if (input === null) {
