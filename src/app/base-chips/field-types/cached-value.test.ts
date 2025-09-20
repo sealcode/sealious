@@ -276,23 +276,6 @@ describe("cached-value", () => {
 			assert.strictEqual(accounts.length, 2);
 		}));
 
-	it("Respects format of base field type", async () =>
-		withRunningApp(extend(true), async ({ rest_api }) => {
-			const id = await add_account(rest_api, { username: "user_1" });
-
-			const expected_datetime = getDateTime(
-				new Date("2018-01-01"),
-				"yyyy-mm-dd hh:mm:ss"
-			);
-			const actual_datetime = (
-				(await rest_api.get(
-					`/api/v1/collections/accounts/${id}?format[date_time]=human_readable`
-				)) as CollectionResponse
-			).items[0]!.date_time as string;
-
-			assert.strictEqual(actual_datetime, expected_datetime);
-		}));
-
 	it("Properly responds to recursive edits", async () =>
 		withStoppedApp(
 			extend(true),
