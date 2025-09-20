@@ -384,7 +384,7 @@ describe("reverse-single-reference", () => {
 				});
 				await app.collections.dog_photos.suCreate({
 					dog: leon.id,
-					photo: app.FileManager.fromPath(
+					photo: app.fileManager.fromPath(
 						locreq.resolve(
 							"src/app/base-chips/field-types/default-image.jpg"
 						)

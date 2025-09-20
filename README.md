@@ -51,7 +51,6 @@ const app = new (class extends App {
             port: 20723,
             db_name: "sealious-playground",
         },
-        upload_path: locreq.resolve("uploaded_files"),
         email: {
             from_address: "sealious-playground@example.com",
             from_name: "Sealious playground app",

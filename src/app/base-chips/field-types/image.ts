@@ -50,7 +50,7 @@ export default class Image extends FileStorage {
 	): void {
 		super.setParams({
 			get_default_file: async () =>
-				this.app.FileManager.fromPath(
+				this.app.fileManager.fromPath(
 					locreq.resolve(
 						"src/app/base-chips/field-types/default-image.jpg"
 					)
@@ -74,14 +74,14 @@ export default class Image extends FileStorage {
 			format = is_http_api_request ? "url" : "file";
 		}
 		if (format === "file") {
-			return context.app.FileManager.fromToken(db_value);
+			return context.app.fileManager.fromToken(db_value);
 		}
 		if (format === "url") {
-			const file = await context.app.FileManager.fromToken(db_value);
+			const file = await context.app.fileManager.fromToken(db_value);
 			return `${context.app.manifest.base_url}${file.getURL()}`;
 		}
 		if (format === "path") {
-			const file = await context.app.FileManager.fromToken(db_value);
+			const file = await context.app.fileManager.fromToken(db_value);
 			return file.getURL();
 		}
 		return db_value;

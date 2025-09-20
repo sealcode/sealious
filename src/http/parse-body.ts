@@ -13,7 +13,7 @@ export default function parseBody(file_manager?: FileManager): Middleware {
 		}
 		if (!file_manager) {
 			// we use it as an argument to be able to use this middleware sometimes without a Sealious App
-			file_manager = ctx.$app.FileManager;
+			file_manager = ctx.$app.fileManager;
 		}
 		if (!file_manager) {
 			throw new Error("Missing file manager");

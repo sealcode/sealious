@@ -30,6 +30,7 @@ import _locreq from "locreq";
 import { UPLOADED_FILES_BASE_URL } from "./consts.js";
 import { FileManager } from "@sealcode/file-manager";
 import openApiSchema from "../http/routes/open-api-schema.js";
+import type { KoaResponsiveImageRouter } from "koa-responsive-image-router";
 const locreq = _locreq(module_dirname(import.meta.url));
 
 const default_config = JSON.parse(
@@ -45,7 +46,8 @@ export abstract class App {
 	/** The current status of the app */
 	status: "stopped" | "running" | "starting" | "stopping";
 	private emitter = new Emittery();
-	public FileManager: FileManager;
+	public fileManager: FileManager;
+	public imageRouter: KoaResponsiveImageRouter;
 
 	/** The base collections including users, registration intents, etc */
 	static BaseCollections = BaseCollections;
@@ -104,8 +106,16 @@ export abstract class App {
 	 * URL, logo or the main color of the app. This is public
 	 * information.
 	 */
-	constructor() {
+	constructor({
+		fileManager,
+		imageRouter,
+	}: {
+		fileManager: FileManager;
+		imageRouter: KoaResponsiveImageRouter;
+	}) {
 		this.ConfigManager = new ConfigManager();
+		this.fileManager = fileManager;
+		this.imageRouter = imageRouter;
 
 		for (const key in default_config) {
 			this.ConfigManager.setDefault(
@@ -151,19 +161,6 @@ export abstract class App {
 
 		this.ConfigManager.setRoot(this.config);
 
-		const promises = [];
-		const uploadPath = this.ConfigManager.get("upload_path");
-
-		assert(uploadPath, "'upload_path' not set in config");
-		if (!fs.existsSync(uploadPath)) {
-			fs.mkdirSync(uploadPath, { recursive: false });
-		}
-		if (!this.FileManager) {
-			this.FileManager = new FileManager(
-				uploadPath,
-				UPLOADED_FILES_BASE_URL
-			);
-		}
 		this.Logger.setLevel(this.ConfigManager.get("logger").level);
 		this.i18n = i18nFactory(this.manifest.default_language);
 		new Manifest(this.manifest).validate();
@@ -174,7 +171,7 @@ export abstract class App {
 			),
 			`"core.environment" config should be either "dev" or "production"`
 		);
-
+		const promises = [];
 		for (const [name, collection] of Object.entries(this.collections)) {
 			promises.push(collection.init(this, name));
 		}

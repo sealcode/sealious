@@ -34,7 +34,7 @@ describe("file", () => {
 			async ({ app, rest_api }) => {
 				const context = new SuperContext(app);
 				const buff = Buffer.from("Hello world!", "utf-8");
-				const file = app.FileManager.fromData(buff, "txt");
+				const file = app.fileManager.fromData(buff, "txt");
 
 				const response = await app.collections.with_file.create(
 					context,
@@ -100,7 +100,7 @@ describe("file", () => {
 				const person = await app.collections.people.create(context, {
 					name: "Ben",
 				});
-				const file = app.FileManager.fromPath(
+				const file = app.fileManager.fromPath(
 					locreq.resolve("package.json")
 				);
 				const response = await app.collections.photos.create(context, {
@@ -136,7 +136,7 @@ describe("file", () => {
 					},
 				async ({ app }) => {
 					await app.collections.photos.suCreate({
-						photo: app.FileManager.fromPath(
+						photo: app.fileManager.fromPath(
 							locreq.resolve(
 								"src/app/base-chips/field-types/default-image.jpg"
 							)

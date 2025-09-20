@@ -6,6 +6,9 @@ import type { Environment } from "../app/config.js";
 import type { LoggerLevel } from "../app/logger.js";
 import LoggerMailer from "../email/logger-mailer.js";
 import { module_dirname } from "../utils/module_filename.js";
+import { FileManager } from "@sealcode/file-manager";
+import { UPLOADED_FILES_BASE_URL } from "../app/consts.js";
+import type { KoaResponsiveImageRouter } from "koa-responsive-image-router";
 
 export class TestApp extends App {
 	clear_database_on_stop: boolean = true;
@@ -16,7 +19,6 @@ export class TestApp extends App {
 		port: number,
 		base_url: string,
 		public config = {
-			upload_path: "/tmp/sealious-uploads",
 			datastore_mongo: {
 				host: process.env.SEALIOUS_DB_HOST || "127.0.0.1",
 				password: "sealious-test",
@@ -67,7 +69,15 @@ export class TestApp extends App {
 				})
 			: new LoggerMailer()
 	) {
-		super();
+		const fileManager = new FileManager(
+			"/tmp/sealious-uploads",
+			UPLOADED_FILES_BASE_URL
+		);
+
+		super({
+			fileManager,
+			imageRouter: {} as unknown as KoaResponsiveImageRouter,
+		});
 	}
 
 	async start() {

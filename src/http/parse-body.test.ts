@@ -185,7 +185,7 @@ describe("parseBody", () => {
 
 	it("resolves files by their token into a proper FilePointer", async () => {
 		await withRunningApp(extend, async ({ port, app, router }) => {
-			const file = app.FileManager.fromPath(
+			const file = app.fileManager.fromPath(
 				locreq.resolve("src/assets/logo.png")
 			);
 
@@ -231,7 +231,7 @@ PNG
 
 	it("handles gracefully a case where parseBody is called twice", async () => {
 		await withRunningApp(extend, async ({ port, app, router }) => {
-			const file = app.FileManager.fromPath(
+			const file = app.fileManager.fromPath(
 				locreq.resolve("src/assets/logo.png")
 			);
 

@@ -113,7 +113,7 @@ describe("deep-reverse-single-reference", () => {
 					name: "Leon",
 				});
 				let photo = await app.collections.photos.suCreate({
-					photo: app.FileManager.fromPath(
+					photo: app.fileManager.fromPath(
 						locreq.resolve(
 							"src/app/base-chips/field-types/default-image.jpg"
 						)

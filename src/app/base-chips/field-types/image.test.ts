@@ -23,7 +23,7 @@ describe("FieldTypes.Image", () => {
 				},
 			async ({ app }) => {
 				await app.collections.images.create(new app.SuperContext(), {
-					image: app.FileManager.fromPath(
+					image: app.fileManager.fromPath(
 						locreq.resolve("src/assets/logo.png")
 					),
 				});
@@ -52,7 +52,7 @@ describe("FieldTypes.Image", () => {
 			async ({ app }) => {
 				await app.collections.images.create(new app.SuperContext(), {
 					image: [
-						app.FileManager.fromPath(
+						app.fileManager.fromPath(
 							locreq.resolve("src/assets/logo.png")
 						),
 					],
@@ -82,7 +82,7 @@ describe("FieldTypes.Image", () => {
 			async ({ app, rest_api }) => {
 				await app.collections.images.create(new app.SuperContext(), {
 					image: [
-						app.FileManager.fromPath(
+						app.fileManager.fromPath(
 							locreq.resolve("src/assets/logo.png")
 						),
 					],
@@ -116,7 +116,7 @@ describe("FieldTypes.Image", () => {
 			async ({ app }) => {
 				await app.collections.images.create(new app.SuperContext(), {
 					image: [
-						app.FileManager.fromPath(
+						app.fileManager.fromPath(
 							locreq.resolve("src/assets/logo.png")
 						),
 					],

@@ -5,8 +5,8 @@ uploaded_files.get("/:bucket/:filename", async (ctx) => {
 	if (!filenameParams) {
 		throw Error("filename param is missing");
 	}
-	const file = await ctx.$app.FileManager.fromToken(
-		ctx.$app.FileManager.encodeToken(
+	const file = await ctx.$app.fileManager.fromToken(
+		ctx.$app.fileManager.encodeToken(
 			ctx.params.bucket == "persistent",
 			filenameParams,
 			filenameParams
