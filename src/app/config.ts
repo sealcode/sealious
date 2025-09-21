@@ -42,7 +42,6 @@ export type Config = {
 		from_address: string;
 		from_name: string;
 	};
-	upload_path: string;
 	app: {
 		version: string;
 	};

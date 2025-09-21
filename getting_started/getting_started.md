@@ -74,7 +74,6 @@ const config = {
     datastore_mongo: {
         port: 27018,
     },
-    upload_path: path.resolve("./uploaded_files"),
 };
 const manifest = {
     name: "What Seal Do?",
