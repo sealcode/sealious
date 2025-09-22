@@ -103,7 +103,7 @@ export class PhoneNumber extends Field<
 	PhoneNumberValue | [country_code: string, number: string] | string,
 	{ country_code: string; number: string }
 > {
-	typeName: string;
+	typeName: "phone-number";
 
 	open_api_type: OpenApiTypes.STR;
 
