@@ -33,7 +33,7 @@ export class ItemDraft<
 	C extends Collection,
 	InputType extends FieldsetInput<C["fields"]> = FieldsetInput<C["fields"]>,
 > extends Field<ItemDraftObject<C>, InputType> {
-	typeName = "boolean";
+	typeName = "item-draft";
 	target_collection: C;
 
 	open_api_type: OpenApiTypes = OpenApiTypes.BOOL;
