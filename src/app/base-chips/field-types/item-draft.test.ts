@@ -40,7 +40,7 @@ function extend(t: TestAppConstructor) {
 	const drafts = new (class extends Collection {
 		name = "drafts";
 		fields = {
-			draft: new FieldTypes.ItemDraft(articles),
+			draft: new FieldTypes.ItemDraft<typeof articles>("articles"),
 		};
 	})();
 	return class extends t {

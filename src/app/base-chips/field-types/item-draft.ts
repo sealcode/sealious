@@ -1,4 +1,3 @@
-import { CollectionItemBody } from "../../../chip-types/collection-item-body.js";
 import type Collection from "../../../chip-types/collection.js";
 import Field, { type ValidationResult } from "../../../chip-types/field.js";
 import type {
@@ -8,6 +7,7 @@ import type {
 import type Context from "../../../context.js";
 import { FieldsError } from "../../../response/errors.js";
 import { OpenApiTypes } from "../../../schemas/open-api-types.js";
+import type { App } from "../../app.js";
 
 export class ItemDraftObject<C extends Collection> {
 	constructor(
@@ -34,11 +34,20 @@ export class ItemDraft<
 	InputType extends FieldsetInput<C["fields"]> = FieldsetInput<C["fields"]>,
 > extends Field<ItemDraftObject<C>, InputType> {
 	typeName = "boolean";
+	target_collection: C;
 
 	open_api_type: OpenApiTypes = OpenApiTypes.BOOL;
 
-	constructor(public target_collection: C) {
+	constructor(public target_collection_name: string) {
 		super();
+	}
+
+	async init(app: App): Promise<void> {
+		app.on("started", () => {
+			this.target_collection = app.collections[
+				this.target_collection_name
+			] as C;
+		});
 	}
 
 	async hasIndex(): Promise<boolean> {
