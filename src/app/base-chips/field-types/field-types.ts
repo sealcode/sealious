@@ -39,3 +39,4 @@ export * from "./enum-multiple.js";
 export * from "./uuid.js";
 export * from "./structured-array.js";
 export * from "./item-draft.js";
+export * from "./phone-number.js";

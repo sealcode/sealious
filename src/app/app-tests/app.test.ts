@@ -59,7 +59,7 @@ describe("app", () => {
 						};
 					},
 
-				async ({ app, rest_api }) => {
+				async ({ app }) => {
 					const metatags = await app.getFeedHTMLMetatags({
 						$app: app,
 					} as unknown as Koa.Context);

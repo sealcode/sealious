@@ -113,5 +113,11 @@ export const translations = {
 		`Procotol ${protocol} is not accepted by this field. Allowed protocols are: [${protocols.join(
 			", "
 		)}]`,
+	phone_number_error_should_have_space: () =>
+		"Country code and phone number should be space-separated",
+	phone_number_error_unknown_country_code: (code: string) =>
+		`Invalid country code: ${code}`,
+	phone_number_error_has_to_be_string_or_object: () =>
+		`Phone number input has to be a string or object ({country_code: string, number: string})`,
 };
 export default translations;

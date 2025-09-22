@@ -16,6 +16,7 @@ import isEmpty from "../utils/is-empty.js";
 import type { Fieldset, FieldsetInput, FieldsetOutput } from "./fieldset.js";
 import { CollectionItemBody } from "./collection-item-body.js";
 import type { ItemListResult } from "./item-list-result.js";
+import { FieldValue } from "../app/base-chips/field-types/field-value.js";
 
 export type ItemMetadata = {
 	modified_at: number;
@@ -356,7 +357,17 @@ export default class CollectionItem<T extends Collection = any> {
 	}
 
 	serializeBody(): { id: string } & FieldsetOutput<T["fields"]> {
-		return { id: this.id, ...this.body.decoded } as {
+		return {
+			id: this.id,
+			...Object.fromEntries(
+				Object.entries(this.body.decoded).map(([key, value]) => [
+					key,
+					value instanceof FieldValue
+						? value.getRestAPIValue()
+						: value,
+				])
+			),
+		} as {
 			id: string;
 		} & FieldsetOutput<T["fields"]>;
 	}

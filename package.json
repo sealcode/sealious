@@ -61,6 +61,7 @@
 		"color": "latest",
 		"color-hash": "^1.0.3",
 		"commonmark": "^0.31.0",
+		"country-codes-list": "^2.0.0",
 		"cron": "^2.1.0",
 		"csv-stringify": "^6.4.5",
 		"deepmerge": "^4.2.2",

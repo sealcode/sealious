@@ -123,5 +123,7 @@ export const translations = {
 		`Protokół ${protocol} nie jest akceptowany przez to pole. Dozwolone protokoły: [${protocols.join(
 			", "
 		)}]`,
+	phone_number_error_should_have_space: () =>
+		"Kod kraju (np. +48) powinien być oddzielony od reszty numeru telefonu spacją",
 };
 export default translations;
