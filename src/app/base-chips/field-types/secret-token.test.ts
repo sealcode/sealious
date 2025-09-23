@@ -6,25 +6,7 @@ import {
 import { App, Collection, FieldTypes, Policies } from "../../../main.js";
 import { sleep } from "../../../test_utils/sleep.js";
 
-const URL = "/api/v1/collections/boolseals";
-
-function extend(t: TestAppConstructor) {
-	const boolseals = new (class extends Collection {
-		name = "boolseals";
-		fields = {
-			is_old: FieldTypes.Required(new FieldTypes.Boolean()),
-		};
-		defaultPolicy = new Policies.Public();
-	})();
-	return class extends t {
-		collections = {
-			...App.BaseCollections,
-			boolseals,
-		};
-	};
-}
-
-describe("boolean", () => {
+describe("secret-token", () => {
 	it("Allows to insert values considered correct", async () =>
 		withRunningApp(
 			function (t: TestAppConstructor) {
