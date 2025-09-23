@@ -36,7 +36,7 @@ export default abstract class HybridField<
 		ctx: Context,
 		old_value: StorageType | undefined,
 		new_value: InputType
-	) => ValidationResult;
+	) => Promise<ValidationResult>;
 
 	constructor(base_field: T) {
 		super();

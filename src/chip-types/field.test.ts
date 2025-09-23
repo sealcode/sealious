@@ -16,7 +16,7 @@ describe("field class", () => {
 								fields = {
 									timestamp:
 										new FieldTypes.Int().setTransitionChecker(
-											(_, old_value, new_value) => {
+											async (_, old_value, new_value) => {
 												return old_value == undefined ||
 													parseInt(
 														String(new_value)
@@ -59,7 +59,7 @@ describe("field class", () => {
 									title: new FieldTypes.Text(),
 									timestamp:
 										new FieldTypes.Int().setTransitionChecker(
-											() => {
+											async () => {
 												call_count++;
 												return {
 													valid: true,

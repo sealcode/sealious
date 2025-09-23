@@ -94,14 +94,14 @@ export abstract class Field<
 		ctx: Context,
 		old_value: StorageType | undefined,
 		new_value: InputType
-	) => ValidationResult = () => ({ valid: true });
+	) => Promise<ValidationResult> = async () => ({ valid: true });
 
 	setTransitionChecker(
 		checker: (
 			ctx: Context,
 			old_value: StorageType,
 			new_value: InputType
-		) => ValidationResult
+		) => Promise<ValidationResult>
 	): this {
 		this.transitionChecker = checker;
 		return this;

@@ -98,7 +98,7 @@ describe("settable-by", () => {
 								title: new FieldTypes.Text(),
 								timestamp: new FieldTypes.SettableBy(
 									new FieldTypes.Int().setTransitionChecker(
-										(_, old_value, new_value) => {
+										async (_, old_value, new_value) => {
 											return old_value == undefined ||
 												parseInt(String(new_value)) >
 													old_value
