@@ -52,7 +52,7 @@ export default class Context {
 		if (!user_data) {
 			return [];
 		}
-		const roles = user_data.get("roles");
+		const roles = user_data.get("roles") || [];
 		if (
 			!is(
 				roles,
