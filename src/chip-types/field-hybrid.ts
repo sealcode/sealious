@@ -1,7 +1,12 @@
 import Field from "./field.js";
 
 import type Context from "../context.js";
-import type { App, Collection, ItemListResult } from "../main.js";
+import type {
+	App,
+	Collection,
+	ItemListResult,
+	ValidationResult,
+} from "../main.js";
 import { OpenApiTypes } from "../schemas/open-api-types.js";
 
 /*
@@ -21,17 +26,33 @@ export default abstract class HybridField<
 	T extends Field<InnerParsedType, InnerInputType, InnerStorageType>,
 > extends Field<ParsedType, InputType, StorageType> {
 	virtual_field: T;
-
 	open_api_type = OpenApiTypes.NONE;
 
 	async getOpenApiSchema(context: Context): Promise<Record<string, unknown>> {
 		return await this.virtual_field.getOpenApiSchema(context);
 	}
 
+	transitionChecker: (
+		ctx: Context,
+		old_value: StorageType | undefined,
+		new_value: InputType
+	) => ValidationResult;
+
 	constructor(base_field: T) {
 		super();
 		this.virtual_field = base_field;
 		this.open_api_type = base_field.open_api_type;
+		this.transitionChecker = (
+			ctx: Context,
+			old_value: StorageType | undefined,
+			new_value: InputType
+		) => {
+			return this.virtual_field.transitionChecker(
+				ctx,
+				old_value as InnerStorageType,
+				new_value as unknown as InnerInputType
+			);
+		};
 	}
 
 	setName(name: string) {
