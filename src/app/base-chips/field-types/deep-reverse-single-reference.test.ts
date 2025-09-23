@@ -336,9 +336,6 @@ describe("deep-reverse-single-reference", () => {
 				});
 
 				const context = new app.SuperContext();
-				console.debug(
-					"@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
-				);
 				article.setMultiple({ categories: undefined });
 				await article.save(context);
 				const article_again = await app.collections.articles.suGetByID(

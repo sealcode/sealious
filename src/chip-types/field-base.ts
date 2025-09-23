@@ -90,6 +90,23 @@ export abstract class Field<
 	 * an error */
 	required: boolean;
 
+	transitionChecker: (
+		ctx: Context,
+		old_value: StorageType | undefined,
+		new_value: InputType
+	) => ValidationResult = () => ({ valid: true });
+
+	setTransitionChecker(
+		checker: (
+			ctx: Context,
+			old_value: StorageType,
+			new_value: InputType
+		) => ValidationResult
+	): this {
+		this.transitionChecker = checker;
+		return this;
+	}
+
 	/** Sets the collection @internal  */
 	setCollection(collection: Collection) {
 		this.collection = collection;
@@ -181,14 +198,21 @@ export abstract class Field<
 			return Field.invalid(`Missing value for field '${this.name}'.`);
 		} else if (isEmpty(new_value)) {
 			return Field.valid();
-		} else {
-			return this.isProperValue(
-				context,
-				new_value,
-				old_value,
-				new_value_blessing_token
-			);
 		}
+		const basic_validation = await this.isProperValue(
+			context,
+			new_value,
+			old_value,
+			new_value_blessing_token
+		);
+		if (!basic_validation.valid) {
+			return basic_validation;
+		}
+		return this.transitionChecker(
+			context,
+			old_value as StorageType,
+			new_value as InputType
+		);
 	}
 
 	/** Decides how to store the given value in the database, based on

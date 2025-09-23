@@ -537,6 +537,30 @@ app.getFeedHTMLMetatags()
 
 to the content of the `<head>` tag of your HTML page.
 
+### How to validate field value transition 
+
+You can use .setTransitionChecker method on each field to add custom
+logic that will be decide every time this field changes value, whether
+or not this change is allowed:
+
+```
+lang=ts
+new (class extends Collection {
+  fields = {
+    timestamp: new FieldTypes.Int().setTransitionChecker(
+      (_, old_value, new_value) => {
+        return old_value == undefined || parseInt(String(new_value)) > old_value
+          ? { valid: true }
+          : {
+              valid: false,
+              reason: "timestamps cannot go back in time",
+            };
+      },
+    ),
+  };
+})();
+```
+
 ## Development
 
 To run test outside of docker, run:
