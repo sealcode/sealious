@@ -4,7 +4,13 @@ import {
 	type TestAppConstructor,
 	withRunningApp,
 } from "../../../test_utils/with-test-app.js";
-import { App, Collection, FieldTypes, Policies } from "../../../main.js";
+import {
+	App,
+	Collection,
+	Context,
+	FieldTypes,
+	Policies,
+} from "../../../main.js";
 import { TestApp } from "../../../test_utils/test-app.js";
 import { post } from "../../../test_utils/http_request.js";
 
@@ -126,6 +132,36 @@ describe("settable-by", () => {
 				await assertThrowsAsync(async () => {
 					event.set("timestamp", 0);
 					await event.save(new app.SuperContext());
+				});
+			}
+		);
+	});
+
+	it("lets create an item with an empty value when setting the value is forbidden", async () => {
+		await withRunningApp(
+			(t) =>
+				class extends t {
+					collections = {
+						...App.BaseCollections,
+						history: new (class extends Collection {
+							fields = {
+								title: new FieldTypes.Text(),
+								event: new FieldTypes.SettableBy(
+									new FieldTypes.Text(),
+									new Policies.Noone()
+								),
+							};
+						})(),
+					};
+				},
+			async ({ app }) => {
+				const user = await app.collections.users.suCreate({
+					username: "test",
+					password: "testtest",
+				});
+				const context = new Context(app, Date.now(), user.id);
+				await app.collections.history.create(context, {
+					title: "Some title",
 				});
 			}
 		);
