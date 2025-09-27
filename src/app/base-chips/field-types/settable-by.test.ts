@@ -10,9 +10,12 @@ import {
 	Context,
 	FieldTypes,
 	Policies,
+	Policy,
+	QueryTypes,
 } from "../../../main.js";
 import { TestApp } from "../../../test_utils/test-app.js";
 import { post } from "../../../test_utils/http_request.js";
+import Users from "../../collections/users.js";
 
 function extend(t: TestAppConstructor) {
 	return class extends t {
@@ -138,31 +141,131 @@ describe("settable-by", () => {
 	});
 
 	it("lets create an item with an empty value when setting the value is forbidden", async () => {
+		class Roles extends Policy {
+			static type_name = "roles";
+			allowed_roles: string[];
+			constructor(allowed_roles: string[]) {
+				super(allowed_roles);
+				this.allowed_roles = allowed_roles;
+			}
+
+			async countMatchingRoles(context: Context) {
+				const user_id = context.user_id as string;
+				context.app.Logger.debug2(
+					"ROLES",
+					"Checking the roles for user",
+					user_id
+				);
+				const roles = await context.getRoles();
+
+				return this.allowed_roles.filter((allowed_role) =>
+					roles.includes(allowed_role)
+				).length;
+			}
+
+			async _getRestrictingQuery(context: Context) {
+				if (context.is_super) {
+					return new QueryTypes.AllowAll();
+				}
+				if (context.user_id === null) {
+					return new QueryTypes.DenyAll();
+				}
+
+				const matching_roles_count =
+					await this.countMatchingRoles(context);
+
+				return matching_roles_count > 0
+					? new QueryTypes.AllowAll()
+					: new QueryTypes.DenyAll();
+			}
+
+			async checkerFunction(context: Context) {
+				if (context.user_id === null) {
+					return Policy.deny(
+						context.app.i18n("policy_logged_in_deny")
+					);
+				}
+				const matching_roles_count =
+					await this.countMatchingRoles(context);
+
+				return matching_roles_count > 0
+					? Policy.allow(
+							context.app.i18n("policy_roles_allow", [
+								this.allowed_roles.join(", "),
+							])
+						)
+					: Policy.deny(
+							context.app.i18n("policy_roles_deny", [
+								this.allowed_roles.join(", "),
+							])
+						);
+			}
+		}
+
+		class _Users extends Users {
+			fields = {
+				...App.BaseCollections.users.fields,
+				email: new FieldTypes.Email().setRequired(true),
+				roles: new FieldTypes.SettableBy(
+					new FieldTypes.StructuredArray({
+						role: new FieldTypes.Text(),
+					}),
+					new Roles(["admin"])
+				),
+				type: new FieldTypes.DisallowUpdate(
+					new FieldTypes.Enum(<const>["organization", "worker"])
+				),
+				phone: new FieldTypes.PhoneNumber(),
+				refcode: new FieldTypes.Text(),
+				real_name: new FieldTypes.Text(),
+				real_surname: new FieldTypes.Text(),
+			};
+
+			defaultPolicy = new Policies.Or([
+				new Policies.Themselves(),
+				new Roles(["admin"]),
+			]);
+
+			policies = {
+				create: new Policies.Public(),
+				show: new Policies.Or([
+					new Policies.Themselves(),
+					new Roles(["admin"]),
+				]),
+			};
+		}
+
 		await withRunningApp(
-			(t) =>
-				class extends t {
+			(t) => {
+				return class extends t {
 					collections = {
 						...App.BaseCollections,
+						users: new _Users(),
 						history: new (class extends Collection {
 							fields = {
 								title: new FieldTypes.Text(),
 								event: new FieldTypes.SettableBy(
-									new FieldTypes.Text(),
-									new Policies.Noone()
+									new FieldTypes.StructuredArray({
+										type: new FieldTypes.Text(),
+									}),
+									new Roles(["admin"])
 								),
 							};
 						})(),
 					};
-				},
+				};
+			},
 			async ({ app }) => {
 				const user = await app.collections.users.suCreate({
 					username: "test",
 					password: "testtest",
+					email: "test@test.com",
 				});
 				const context = new Context(app, Date.now(), user.id);
-				await app.collections.history.create(context, {
+				const item = await app.collections.history.create(context, {
 					title: "Some title",
 				});
+				console.log(item);
 			}
 		);
 	});
