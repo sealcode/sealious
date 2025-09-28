@@ -285,7 +285,7 @@ describe("collection", () => {
 					async (e) => {
 						assert.strictEqual(
 							e.message,
-							guestContext.app.i18n("policy_owner_deny")
+							`You're not the user who created this item`
 						);
 					}
 				);

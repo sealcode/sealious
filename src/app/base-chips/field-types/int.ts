@@ -49,18 +49,18 @@ export abstract class IntStorage<
 			isNaN(number)
 		) {
 			return Field.invalid(
-				context.app.i18n("invalid_integer", [new_value])
+				context.i18n`Value '${new_value}' is not a int number format.`
 			);
 		}
 
 		if (this.min !== undefined && number < this.min) {
 			return Field.invalid(
-				context.app.i18n("too_small_integer", [number, this.min])
+				context.i18n`Value ${number} should be larger than or equal to ${this.min}.`
 			);
 		}
 		if (this.max !== undefined && number > this.max) {
 			return Field.invalid(
-				context.app.i18n("too_big_integer", [number, this.max])
+				context.i18n`Value ${number} should be smaller than or equal to ${this.max}.`
 			);
 		}
 		return Field.valid();

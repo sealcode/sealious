@@ -111,7 +111,7 @@ describe("AndPolicy", () => {
 				(e) => {
 					assert.equal(
 						e.response.data.message,
-						app.i18n("policy_noone_deny")
+						new app.Context().i18n`Noone is allowed.`
 					);
 				}
 			);

@@ -36,7 +36,7 @@ export default class Image extends FileStorage {
 			input = input[0];
 		}
 		if (!input.mimetype.startsWith("image/")) {
-			return Field.invalid(context.app.i18n("invalid_image"));
+			return Field.invalid(context.i18n`Only image files are allowed.`);
 		}
 		return Field.valid();
 	}

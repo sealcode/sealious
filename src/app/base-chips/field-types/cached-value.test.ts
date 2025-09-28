@@ -11,7 +11,6 @@ import {
 	Context,
 	FieldTypes,
 	RefreshCondition,
-	SuperContext,
 } from "../../../main.js";
 import { assertThrowsAsync } from "../../../test_utils/assert-throws-async.js";
 import type MockRestApi from "../../../test_utils/rest-api.js";
@@ -258,7 +257,7 @@ describe("cached-value", () => {
 					assert.strictEqual(
 						//@eslint-ignore
 						error.data.field_messages.number.message,
-						app.i18n("too_small_integer", [value, MIN_VALUE])
+						`Value ${value} should be larger than or equal to ${MIN_VALUE}.`
 					);
 				}
 			);

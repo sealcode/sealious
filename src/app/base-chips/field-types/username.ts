@@ -17,7 +17,7 @@ export default class Username extends TextStorage {
 		}
 		if (me_synonyms.indexOf(new_value) !== -1) {
 			return Field.invalid(
-				context.app.i18n("invalid_username", [new_value])
+				context.i18n`'${new_value}' is a reserved keyword. Please pick another username.`
 			);
 		}
 
@@ -27,7 +27,7 @@ export default class Username extends TextStorage {
 			.fetch();
 
 		if (!response.empty) {
-			return Field.invalid(context.app.i18n("username_taken"));
+			return Field.invalid(context.i18n`Username already taken.`);
 		}
 		return Field.valid();
 	}

@@ -7,6 +7,7 @@ export default function extract_context(): Middleware {
 	return async function (ctx, next) {
 		const config = ctx.$app.ConfigManager.get("www-server");
 		const cookie_name = config["session-cookie-name"];
+		const accepted_languages = ctx.acceptsLanguages() as string[];
 		let session_id: string | undefined = ctx.cookies.get(cookie_name);
 		const timestamp = Date.now();
 		if (ctx.$context) {
@@ -32,7 +33,11 @@ export default function extract_context(): Middleware {
 		}
 
 		if (!session_id) {
-			ctx.$context = new Context({ app: ctx.$app, timestamp });
+			ctx.$context = new Context({
+				app: ctx.$app,
+				timestamp,
+				accepted_languages,
+			});
 		} else {
 			const sessions = await ctx.$app.collections.sessions
 				.suList()
@@ -55,6 +60,7 @@ export default function extract_context(): Middleware {
 				timestamp,
 				user_id,
 				session_id,
+				accepted_languages,
 			});
 		}
 		await next();

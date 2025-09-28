@@ -50,11 +50,8 @@ describe("users-who-can", () => {
 			assert.equal(response.status, 401);
 			assert.equal(
 				data.message,
-				app.i18n("policy_users_who_can_deny", [
-					"create",
-					"bricks",
-					app.i18n("policy_noone_deny"),
-				])
+				new app.Context()
+					.i18n`You can't ${"create"} ${"bricks"} - because '${new app.Context().i18n`Noone is allowed.`}'.`
 			);
 		}));
 

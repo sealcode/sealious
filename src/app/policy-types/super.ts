@@ -13,9 +13,13 @@ export default class Super extends Policy {
 	}
 	async checkerFunction(context: Context) {
 		if (context.is_super) {
-			return Policy.allow(context.app.i18n("policy_super_allow"));
+			return Policy.allow(
+				context.i18n`This method was ran with a supercontext.`
+			);
 		} else {
-			return Policy.deny(context.app.i18n("policy_super_deny"));
+			return Policy.deny(
+				context.i18n`This method was not ran with a supercontext.`
+			);
 		}
 	}
 	isItemSensitive = async (_: Context) => false;

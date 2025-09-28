@@ -37,9 +37,7 @@ export default class Enum<S> extends Field<string> {
 			return Field.valid();
 		} else {
 			return Field.invalid(
-				context.app.i18n("invalid_enum", [
-					this.getAllowedValues(context.app).join(),
-				])
+				context.i18n`Allowed values: ${this.getAllowedValues(context.app).join(",")}`
 			);
 		}
 	}

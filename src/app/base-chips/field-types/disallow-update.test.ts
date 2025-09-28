@@ -54,7 +54,7 @@ describe("disallow-update", () => {
 				(error) => {
 					assert.deepStrictEqual(
 						error.response.data.data.field_messages.age.message,
-						app.i18n("invalid_integer", [age])
+						"Value 'abc' is not a int number format."
 					);
 				}
 			);
@@ -68,7 +68,7 @@ describe("disallow-update", () => {
 				(error) =>
 					assert.deepEqual(
 						error.response.data.data.field_messages.age.message,
-						app.i18n("too_small_integer", [age, 0])
+						"Value -2 should be larger than or equal to 0."
 					)
 			);
 		}));
@@ -89,7 +89,7 @@ describe("disallow-update", () => {
 				(error) =>
 					assert.deepEqual(
 						error.response.data.data.field_messages.age.message,
-						app.i18n("invalid_update")
+						`You cannot change a previously set value.`
 					)
 			);
 		}));
@@ -106,7 +106,7 @@ describe("disallow-update", () => {
 					assert.deepEqual(
 						error.response.data.data.field_messages.attribute
 							.message,
-						app.i18n("invalid_update")
+						`You cannot change a previously set value.`
 					);
 				}
 			);

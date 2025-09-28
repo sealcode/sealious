@@ -1,6 +1,7 @@
 import { is, predicates } from "@sealcode/ts-predicates";
 import type { App } from "./app/app.js";
 import type { CollectionItem } from "./main.js";
+import { interpolate } from "./utils/interpolate.js";
 
 export default class Context<TheApp extends App = App> {
 	timestamp: number;
@@ -12,7 +13,9 @@ export default class Context<TheApp extends App = App> {
 	is_super = false;
 	original_context: Context | null;
 	cache_entries: Record<string, unknown>;
-	language: string;
+
+	/** in order from most prefered to least */
+	accepted_languages: string[];
 	app: TheApp;
 
 	constructor({
@@ -20,13 +23,21 @@ export default class Context<TheApp extends App = App> {
 		timestamp = Date.now(),
 		user_id,
 		session_id,
+		accepted_languages,
 	}: {
 		app: TheApp;
 		timestamp?: number;
 		user_id?: string | null;
 		session_id?: string | null;
+		accepted_languages?: string[];
 	}) {
 		this.app = app;
+		if (accepted_languages) {
+			this.accepted_languages = accepted_languages;
+		} else {
+			this.accepted_languages = [this.app.manifest.default_language];
+		}
+
 		this.original_context = this;
 		this.loading_user_data = false;
 		this.timestamp = timestamp;
@@ -81,6 +92,41 @@ export default class Context<TheApp extends App = App> {
 			user_id: this.user_id,
 			session_id: this.session_id,
 		};
+	}
+
+	getI18nKey(static_fragments: TemplateStringsArray) {
+		return static_fragments.join("{}");
+	}
+
+	i18n(
+		static_fragments: TemplateStringsArray,
+		...values: (string | number)[]
+	): string {
+		const key = this.getI18nKey(static_fragments);
+		let translation;
+		for (const lang of this.accepted_languages) {
+			if (this.app.translations[lang]?.[key]) {
+				translation = this.app.translations[lang]?.[key];
+				break;
+			}
+		}
+		if (!translation) {
+			translation =
+				this.app.translations[this.app.manifest.default_language]?.[
+					key
+				];
+		}
+		if (!translation) {
+			return interpolate(
+				static_fragments,
+				values.map((e) => String(e))
+			);
+		}
+		if (typeof translation == "string") {
+			return translation;
+		} else {
+			return translation(...values.map((e) => String(e)));
+		}
 	}
 }
 

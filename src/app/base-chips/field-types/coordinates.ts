@@ -38,7 +38,7 @@ export default class Coordinates extends Field<
 		) {
 			return Field.valid();
 		} else {
-			return Field.invalid(ctx.app.i18n("invalid_coordinates"));
+			return Field.invalid(ctx.i18n`Invalid coordinates`);
 		}
 	}
 

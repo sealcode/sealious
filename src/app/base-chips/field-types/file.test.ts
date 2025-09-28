@@ -49,7 +49,6 @@ describe("file", () => {
 					.format({ file: "url" })
 					.fetch();
 
-				console.log("file.test.ts:53", item!.get("file"));
 				const api_response = await rest_api.get(
 					item!.get("file") as string
 				);

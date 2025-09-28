@@ -43,19 +43,12 @@ export default class UsersWhoCan extends Policy {
 		if (result.allowed) {
 			context.app.Logger.debug3("UsersWhoCan", "allowed", { policy });
 			return Policy.allow(
-				context.app.i18n("policy_users_who_can_allow", [
-					this.action_name,
-					this.target_collection_name,
-				])
+				context.i18n`You can run action '${this.action_name}' on collection '${this.target_collection_name}'.`
 			);
 		} else {
 			context.app.Logger.debug3("UsersWhoCan", "denied");
 			return Policy.deny(
-				context.app.i18n("policy_users_who_can_deny", [
-					this.action_name,
-					this.target_collection_name,
-					result?.reason,
-				])
+				context.i18n`You can't ${this.action_name} ${this.target_collection_name} - because '${result?.reason}'.`
 			);
 		}
 	}

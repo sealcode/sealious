@@ -55,7 +55,7 @@ describe("single_reference", () => {
 						assert.equal(
 							e.response.data.data.field_messages.reference_to_b
 								.message,
-							app.i18n("invalid_single_reference", ["B"])
+							`You don't have access to specified resource from collection 'B' or it's absent.`
 						)
 				);
 			}));
@@ -80,7 +80,7 @@ describe("single_reference", () => {
 						assert.equal(
 							e.response.data.data.field_messages
 								.filtered_reference_to_b.message,
-							app.i18n("invalid_single_reference", ["B"])
+							`You don't have access to specified resource from collection 'B' or it's absent.`
 						)
 				);
 			}));

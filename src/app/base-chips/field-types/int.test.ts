@@ -28,7 +28,7 @@ describe("int", () => {
 	};
 
 	function assertFormatIsNotAccepted(provided_value: any) {
-		return withRunningApp(extend(), async ({ app, base_url }) => {
+		return withRunningApp(extend(), async ({ base_url }) => {
 			await assertThrowsAsync(
 				() =>
 					post(`${base_url}/api/v1/collections/${COLLECTION_NAME}`, {
@@ -37,7 +37,7 @@ describe("int", () => {
 				(e) => {
 					equal(
 						e.response.data.data.field_messages.age.message,
-						app.i18n("invalid_integer", [provided_value])
+						`Value '${provided_value}' is not a int number format.`
 					);
 				}
 			);
@@ -84,7 +84,7 @@ describe("int", () => {
 					(e) => {
 						equal(
 							e.response?.data?.data?.field_messages.age.message,
-							app.i18n("too_small_integer", [age, min])
+							`Value ${age} should be larger than or equal to ${min}.`
 						);
 					}
 				);
@@ -100,7 +100,7 @@ describe("int", () => {
 					(e) => {
 						equal(
 							e.response?.data?.data?.field_messages.age.message,
-							app.i18n("too_big_integer", [age, max])
+							`Value ${age} should be smaller than or equal to ${max}.`
 						);
 					}
 				);

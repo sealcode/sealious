@@ -23,7 +23,9 @@ export default class Float<Decoded = number> extends Field<
 	): Promise<ValidationResult> {
 		const test = parseFloat(input.toString());
 		if (test === null || isNaN(test) || isNaN(input) === true) {
-			return Field.invalid(context.app.i18n("invalid_float", [input]));
+			return Field.invalid(
+				context.i18n`Value '${input}' is not a float number format.`
+			);
 		} else {
 			return Field.valid();
 		}

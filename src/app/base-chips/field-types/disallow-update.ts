@@ -5,7 +5,7 @@ export default class DisallowUpdate<
 	DecodedType,
 	InputType,
 	StorageType,
-	T extends Field<DecodedType, InputType, StorageType>
+	T extends Field<DecodedType, InputType, StorageType>,
 > extends HybridField<
 	DecodedType,
 	InputType,
@@ -35,6 +35,8 @@ export default class DisallowUpdate<
 				new_value_blessing_token
 			);
 		}
-		return Field.invalid(context.app.i18n("invalid_update"));
+		return Field.invalid(
+			context.i18n`You cannot change a previously set value.`
+		);
 	}
 }

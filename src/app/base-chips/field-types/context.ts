@@ -14,7 +14,9 @@ export default class ContextField extends Field<
 		if (value instanceof Context) {
 			return Field.valid();
 		} else {
-			return Field.invalid(context.app.i18n("invalid_context"));
+			return Field.invalid(
+				context.i18n`Provided value is not an instance of Sealious.Context.`
+			);
 		}
 	}
 

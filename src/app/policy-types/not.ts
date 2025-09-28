@@ -12,9 +12,8 @@ export default class Not extends Policy {
 
 	async _getRestrictingQuery(context: Context) {
 		//assuming "not" can take only one access strategy as a parameter
-		const query = await this.strategy_to_negate.getRestrictingQuery(
-			context
-		);
+		const query =
+			await this.strategy_to_negate.getRestrictingQuery(context);
 		return new Query.Not(query);
 	}
 	async isItemSensitive(context: Context) {
@@ -33,7 +32,7 @@ export default class Not extends Policy {
 		}
 		if (result.allowed) {
 			return Policy.deny(
-				context.app.i18n("policy_not_allow", [result.reason])
+				context.i18n`It's not true that '${result.reason}'. `
 			);
 		}
 		return Policy.allow(`it's not true that "${result.reason}"`);

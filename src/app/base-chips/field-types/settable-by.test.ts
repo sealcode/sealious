@@ -55,7 +55,7 @@ describe("settable-by", () => {
 				(e) =>
 					assert.equal(
 						e.response.data.data.field_messages.any.message,
-						app.i18n("policy_noone_deny")
+						`Noone is allowed.`
 					)
 			);
 		}));
@@ -89,7 +89,7 @@ describe("settable-by", () => {
 				(e) => {
 					assert.equal(
 						e.response.data.data.field_messages.any.message,
-						app.i18n("invalid_integer", [value])
+						`Value '${value}' is not a int number format.`
 					);
 				}
 			);
@@ -180,23 +180,17 @@ describe("settable-by", () => {
 
 			async checkerFunction(context: Context) {
 				if (context.user_id === null) {
-					return Policy.deny(
-						context.app.i18n("policy_logged_in_deny")
-					);
+					return Policy.deny(`You are not logged in.`);
 				}
 				const matching_roles_count =
 					await this.countMatchingRoles(context);
 
 				return matching_roles_count > 0
 					? Policy.allow(
-							context.app.i18n("policy_roles_allow", [
-								this.allowed_roles.join(", "),
-							])
+							`You have one of the roles: ${this.allowed_roles.join(", ")}.`
 						)
 					: Policy.deny(
-							context.app.i18n("policy_roles_deny", [
-								this.allowed_roles.join(", "),
-							])
+							`You don't have any of the roles: ${this.allowed_roles.join(", ")}.`
 						);
 			}
 		}
@@ -261,10 +255,9 @@ describe("settable-by", () => {
 					email: "test@test.com",
 				});
 				const context = new app.Context({ user_id: user.id });
-				const item = await app.collections.history.create(context, {
+				await app.collections.history.create(context, {
 					title: "Some title",
 				});
-				console.log(item);
 			}
 		);
 	});

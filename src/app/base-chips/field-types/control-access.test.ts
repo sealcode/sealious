@@ -5,13 +5,7 @@ import {
 	withRunningApp,
 } from "../../../test_utils/with-test-app.js";
 import { assertThrowsAsync } from "../../../test_utils/assert-throws-async.js";
-import {
-	App,
-	Collection,
-	Context,
-	FieldTypes,
-	Policies,
-} from "../../../main.js";
+import { App, Collection, FieldTypes, Policies } from "../../../main.js";
 import type MockRestApi from "../../../test_utils/rest-api.js";
 import type {
 	CollectionResponse,
@@ -139,10 +133,7 @@ describe("control-access", () => {
 					assert.strictEqual(
 						e?.response?.data?.data?.field_messages?.private
 							?.message,
-						app.i18n("too_short_text", [
-							too_short_text,
-							MIN_TEXT_LENGTH,
-						])
+						`Text '${too_short_text}' is too short, minimum length is ${3} chars.`
 					)
 			);
 		}));
@@ -194,7 +185,7 @@ describe("control-access", () => {
 				(e) =>
 					assert.strictEqual(
 						e.response.data.data.field_messages.private.message,
-						app.i18n("policy_logged_in_deny")
+						`You are not logged in.`
 					)
 			);
 		}));

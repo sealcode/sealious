@@ -17,7 +17,9 @@ export default class Datetime extends IntStorage {
 	async isProperValue(context: Context, value: number | string) {
 		const int_result = await super.isProperValue(context, value);
 		if (!int_result.valid) {
-			return Field.invalid(context.app.i18n("invalid_datetime", [value]));
+			return Field.invalid(
+				context.i18n`Value '${value}' is not datetime format. Only timestamps are accepted.`
+			);
 		}
 		return int_result;
 	}

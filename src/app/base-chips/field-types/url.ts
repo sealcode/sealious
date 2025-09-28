@@ -39,10 +39,9 @@ export default class Url extends Field<string> {
 			!this.params.allowed_origins.includes(url.hostname)
 		) {
 			return Field.invalid(
-				context.app.i18n("not_allowed_domain", [
-					url.hostname,
-					this.params.allowed_origins,
-				])
+				context.i18n`Domain ${url.hostname} is not allowed here. Allowed domains are: [${this.params.allowed_origins.join(
+					", "
+				)}]`
 			);
 		}
 
@@ -51,10 +50,9 @@ export default class Url extends Field<string> {
 			!allowed_protocols.includes(url.protocol)
 		) {
 			return Field.invalid(
-				context.app.i18n("not_allowed_protocol", [
-					url.protocol,
-					this.params.allowed_protocols,
-				])
+				context.i18n`Procotol ${url.protocol} is not accepted by this field. Allowed protocols are: [${this.params.allowed_protocols.join(
+					", "
+				)}]`
 			);
 		}
 

@@ -37,7 +37,9 @@ export abstract class FileStorage extends Field<
 			return Field.valid();
 		}
 
-		return Field.invalid(context.app.i18n("invalid_file_storage"));
+		return Field.invalid(
+			context.i18n`This value should be a file upload or an instance of the File object.`
+		);
 	}
 
 	setParams(params: {

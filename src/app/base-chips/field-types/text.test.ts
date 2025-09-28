@@ -67,11 +67,13 @@ describe("text", () => {
 			});
 			await assert_creation_error({
 				resource: { surname: false },
-				message: app.i18n("invalid_text", [false, typeof false]),
+				message: new app.Context()
+					.i18n`Type of ${String(false)} is ${"boolean"}, not string.`,
 			});
 			await assert_creation_error({
 				resource: { surname: {} },
-				message: app.i18n("invalid_text", [{}, typeof {}]),
+				message: new app.Context()
+					.i18n`Type of ${String({})} is ${"object"}, not string.`,
 			});
 		}));
 
@@ -88,12 +90,14 @@ describe("text", () => {
 				let text = "lo";
 				await assert_creation_error({
 					resource: { surname: text },
-					message: app.i18n("too_short_text", [text, min]),
+					message: new app.Context()
+						.i18n`Text '${text}' is too short, minimum length is ${String(min)} chars.`,
 				});
 				text = "abcdefghijk";
 				await assert_creation_error({
 					resource: { surname: text },
-					message: app.i18n("too_long_text", [text, max]),
+					message: new app.Context()
+						.i18n`Text '${text}' has exceeded max length of ${String(max)} chars.`,
 				});
 			}
 		);

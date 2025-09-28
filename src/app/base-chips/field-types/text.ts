@@ -44,23 +44,17 @@ export default class Text extends TextStorage {
 		context.app.Logger.debug2("TEXT STORAGE", "isProperValue", input);
 		if (typeof input !== "string") {
 			return Field.invalid(
-				context.app.i18n("invalid_text", [input, typeof input])
+				context.i18n`Type of ${input} is ${typeof input}, not string.`
 			);
 		}
 		if (this.params.min_length && input.length < this.params.min_length) {
 			return Field.invalid(
-				context.app.i18n("too_short_text", [
-					input,
-					this.params.min_length,
-				])
+				context.i18n`Text '${input}' is too short, minimum length is ${String(this.params.min_length)} chars.`
 			);
 		}
 		if (this.params.max_length && input.length > this.params.max_length) {
 			return Field.invalid(
-				context.app.i18n("too_long_text", [
-					input,
-					this.params.max_length,
-				])
+				context.i18n`Text '${input}' has exceeded max length of ${String(this.params.max_length)} chars.`
 			);
 		}
 		return Field.valid();

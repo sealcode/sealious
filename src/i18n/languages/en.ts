@@ -75,9 +75,6 @@ export const translations = {
 	policy_if_allow: (filter_name: string): string =>
 		`Item passes '${filter_name}' filter.`,
 	policy_public_allow: (): string => `Everyone is allowed.`,
-	policy_themselves_allow: (): string => `You are the user in question.`,
-	policy_themselves_deny: (user_id: string): string =>
-		`You are not the user of ID '${user_id}'.`,
 	policy_roles_allow: (roles: string): string =>
 		`You have one of the roles: ${roles}.`,
 	policy_roles_deny: (roles: string): string =>
@@ -85,9 +82,8 @@ export const translations = {
 	policy_logged_in_allow: (): string => `You are logged in.`,
 	policy_logged_in_deny: (): string => `You are not logged in.`,
 	policy_owner_allow: (): string => `You have created this item.`,
-	policy_owner_deny: (): string => `You are not who created this item.`,
 	policy_not_allow: (reason: string): string =>
-		`It's not true that '${reason}'.`,
+		`It's not true that '${reason}'. `,
 	policy_super_allow: (): string =>
 		`This method was ran with a supercontext.`,
 	policy_super_deny: (): string =>
@@ -100,24 +96,10 @@ export const translations = {
 		reason: string
 	): string => `You can't ${action} ${collection} - because '${reason}'.`,
 	policy_allow: (): string => `Super-context is always allowed.`,
-	policy_user_referenced_in_field_allow: (field: string): string =>
-		`You are the user mentioned in field '${field}'`,
-	policy_user_referenced_in_field_deny: (field: string): string =>
-		`You are not the user mentioned in field ${field}.`,
 	policy_noone_deny: (): string => `Noone is allowed.`,
-	not_allowed_domain: (domain: string, domains: string[]): string =>
-		`Domain ${domain} is not allowed here. Allowed domains are: [${domains.join(
-			", "
-		)}]`,
 	not_allowed_protocol: (protocol: string, protocols: string[]): string =>
 		`Procotol ${protocol} is not accepted by this field. Allowed protocols are: [${protocols.join(
 			", "
 		)}]`,
-	phone_number_error_should_have_space: () =>
-		"Country code and phone number should be space-separated",
-	phone_number_error_unknown_country_code: (code: string) =>
-		`Invalid country code: ${code}`,
-	phone_number_error_has_to_be_string_or_object: () =>
-		`Phone number input has to be a string or object ({country_code: string, number: string})`,
 };
 export default translations;

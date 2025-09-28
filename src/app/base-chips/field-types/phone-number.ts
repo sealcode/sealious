@@ -29,9 +29,7 @@ export class PhoneNumberValue extends FieldValue {
 		);
 		if (!countryData) {
 			throw new Error(
-				ctx.app.i18n("phone_number_error_unknown_country_code", [
-					value.country_code,
-				])
+				ctx.i18n`Invalid country code: ${value.country_code}`
 			);
 		}
 		const number = value.number.replaceAll(/[^0-9]/g, "");
@@ -41,7 +39,7 @@ export class PhoneNumberValue extends FieldValue {
 	static fromString(ctx: Context, value: string) {
 		if (!value.includes(" ")) {
 			throw new Error(
-				ctx.app.i18n("phone_number_error_should_have_space")
+				ctx.i18n`Country code and phone number should be space-separated`
 			);
 		}
 		const [country_code, ...rest] = value.split(" ");
@@ -75,7 +73,7 @@ export class PhoneNumberValue extends FieldValue {
 			return PhoneNumberValue.fromObject(ctx, value);
 		}
 		throw new Error(
-			ctx.app.i18n("phone_number_error_has_to_be_string_or_object")
+			ctx.i18n`Phone number input has to be a string or object ({country_code: string, number: string})`
 		);
 	}
 

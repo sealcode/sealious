@@ -69,9 +69,7 @@ export default class SingleReference extends Field<string, string> {
 			results.length > 0
 				? Field.valid()
 				: Field.invalid(
-						context.app.i18n("invalid_single_reference", [
-							this.getTargetCollection(context).name,
-						])
+						context.i18n`You don't have access to specified resource from collection '${this.getTargetCollection(context).name}' or it's absent.`
 					);
 
 		context.app.Logger.debug2(

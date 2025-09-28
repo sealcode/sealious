@@ -54,7 +54,7 @@ export default abstract class Policy {
 			1
 		);
 		if (context.is_super) {
-			return Policy.allow(context.app.i18n("policy_allow"));
+			return Policy.allow(context.i18n`Super-context is always allowed.`);
 		}
 
 		const is_item_sensitive = await this.isItemSensitive(context);

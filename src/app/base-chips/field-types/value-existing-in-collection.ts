@@ -1,5 +1,5 @@
 import Field from "../../../chip-types/field.js";
-import { type Context, type App, SuperContext } from "../../../main.js";
+import { type App, type Context } from "../../../main.js";
 import { OpenApiTypes } from "../../../schemas/open-api-types.js";
 import type { ExtractTail } from "../../../utils/extract-tail.js";
 
@@ -54,11 +54,7 @@ export default class ValueExistingInCollection extends Field<unknown> {
 
 		if (sealious_response.empty) {
 			return Field.invalid(
-				context.app.i18n("invalid_existing_value", [
-					collection.name,
-					field.name,
-					new_value,
-				])
+				context.i18n`No ${collection.name} with ${field.name} set to ${String(new_value)}.`
 			);
 		}
 		return Field.valid();

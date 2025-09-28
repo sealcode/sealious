@@ -12,7 +12,9 @@ export default class Password extends Field<string> {
 	async isProperValue(context: Context, input: string) {
 		return input.length >= MIN_LENGTH
 			? Field.valid()
-			: Field.invalid(context.app.i18n("invalid_password", [MIN_LENGTH]));
+			: Field.invalid(
+					context.i18n`Password must have at least ${String(MIN_LENGTH)} characters.`
+				);
 	}
 
 	async encode(_: Context, input: string) {

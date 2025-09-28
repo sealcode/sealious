@@ -12,7 +12,7 @@ import extractContext from "../http/extract-context.js";
 import logo from "../http/routes/logo.js";
 import sessionRouter from "../http/routes/session.js";
 import uploaded_files from "../http/routes/uploaded-files.js";
-import { i18nFactory, MetadataFactory } from "../main.js";
+import { MetadataFactory } from "../main.js";
 import { module_dirname } from "../utils/module_filename.js";
 import BaseCollections from "./collections/base-collections.js";
 import type LongRunningProcessEvents from "./collections/long-running-process-events.js";
@@ -54,11 +54,6 @@ export abstract class App {
 
 	/** The manifest assigned to this app. Stores things like the app name, domain, logo*/
 	abstract manifest: ManifestData;
-
-	strings: Record<string, Translation> = {};
-
-	/** The function that's used to generate translated versions of phrases */
-	i18n: (phrase_id: string, params?: unknown[]) => string;
 
 	/** ConfigManager instance. It serves the config based on default
 	 * values and the config object provided to the app constructor */
@@ -103,16 +98,12 @@ export abstract class App {
 	abstract config: PartialConfig;
 	public mailer: Mailer = new LoggerMailer();
 
-	/** The app constructor.
-	 *
-	 * @param custom_config Specify the details, such as database
-	 * address and the port to listen on. This is private information
-	 * and won't be shown to user. See {@link Config}
-	 *
-	 * @param manifest Specify additional information, such as the
-	 * URL, logo or the main color of the app. This is public
-	 * information.
-	 */
+	public translations: Record<
+		string,
+		| undefined
+		| Record<string, string | ((...values: string[]) => string) | undefined>
+	> = {};
+
 	constructor({
 		fileManager,
 		imageRouter,
@@ -175,7 +166,6 @@ export abstract class App {
 		this.ConfigManager.setRoot(this.config);
 
 		this.Logger.setLevel(this.ConfigManager.get("logger").level);
-		this.i18n = i18nFactory(this.manifest.default_language);
 		new Manifest(this.manifest).validate();
 		this.status = "starting";
 		assert(
@@ -286,22 +276,6 @@ export abstract class App {
 		router.get("/docs/schema", openApiSchema);
 	}
 
-	getString(
-		key: string,
-		params: any[],
-		default_translation: Translation
-	): string {
-		let value = this.strings[key];
-		if (!value && value !== "") {
-			value = default_translation;
-		}
-		if (typeof value == "string") {
-			return value;
-		} else {
-			return value(...params);
-		}
-	}
-
 	async getFeedHTMLMetatags(ctx: Koa.Context): Promise<string> {
 		let result = "";
 		for (const collection of Object.values(this.collections)) {
@@ -315,5 +289,28 @@ export abstract class App {
 			}
 		}
 		return result;
+	}
+
+	addTranslations(
+		new_translations_per_language: Record<
+			string,
+			| undefined
+			| Record<
+					string,
+					string | ((...values: string[]) => string) | undefined
+			  >
+		>
+	) {
+		for (const [language, translations] of Object.entries(
+			new_translations_per_language
+		)) {
+			if (!this.translations[language]) {
+				this.translations[language] = {};
+			}
+			this.translations[language] = {
+				...this.translations[language],
+				...translations,
+			};
+		}
 	}
 }

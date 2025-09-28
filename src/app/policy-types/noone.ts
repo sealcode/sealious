@@ -8,7 +8,7 @@ export default class Noone extends Policy {
 		return new DenyAll();
 	}
 	async checkerFunction(context: Context) {
-		return Policy.deny(context.app.i18n("policy_noone_deny"));
+		return Policy.deny(context.i18n`Noone is allowed.`);
 	}
 	isItemSensitive = async () => false;
 }

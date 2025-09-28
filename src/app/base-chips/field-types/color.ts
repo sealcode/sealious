@@ -16,7 +16,7 @@ export default class Color extends Field<string> {
 			}
 			return Field.valid();
 		} catch (e) {
-			return Field.invalid(context.app.i18n("invalid_color"));
+			return Field.invalid(context.i18n`Couldn't parse the color.`);
 		}
 	}
 

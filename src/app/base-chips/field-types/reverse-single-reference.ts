@@ -1,19 +1,19 @@
-import {
-	Field,
-	Context,
-	CollectionItem,
-	App,
-	Collection,
-} from "../../../main.js";
 import ItemList, {
 	type AttachmentOptions,
 } from "../../../chip-types/item-list.js";
-import { CachedValue } from "./field-types.js";
-import { CollectionRefreshCondition } from "../../event-description.js";
+import {
+	App,
+	Collection,
+	CollectionItem,
+	Context,
+	Field,
+} from "../../../main.js";
 import {
 	OpenApiTypeMapping,
 	OpenApiTypes,
 } from "../../../schemas/open-api-types.js";
+import { CollectionRefreshCondition } from "../../event-description.js";
+import { CachedValue } from "./field-types.js";
 
 export class ListOfIDs extends Field<[]> {
 	typeName = "list-of-ids";
@@ -31,7 +31,7 @@ export class ListOfIDs extends Field<[]> {
 	async isProperValue(context: Context) {
 		return context.is_super
 			? Field.valid()
-			: Field.invalid(context.app.i18n("read_only_field"));
+			: Field.invalid(context.i18n`This is a read-only field.`);
 	}
 }
 

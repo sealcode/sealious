@@ -52,7 +52,7 @@ describe("json-object", () => {
 		}));
 
 	it("Doesn't allow to post a primitive", async () =>
-		withRunningApp(extend, async ({ app, rest_api }) => {
+		withRunningApp(extend, async ({ rest_api }) => {
 			await assertThrowsAsync(
 				() =>
 					rest_api.post("/api/v1/collections/seals", {
@@ -62,7 +62,7 @@ describe("json-object", () => {
 				(e) =>
 					assert.equal(
 						e.response.data.data.field_messages.metadata.message,
-						app.i18n("invalid_json_object")
+						`Value is not an object.`
 					)
 			);
 		}));

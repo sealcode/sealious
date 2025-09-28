@@ -7,7 +7,7 @@ export default class Public extends Policy {
 		return new AllowAll();
 	}
 	async checkerFunction(context: Context) {
-		return Policy.allow(context.app.i18n("policy_public_allow"));
+		return Policy.allow(context.i18n`Everyone is allowed.`);
 	}
 	isItemSensitive = async () => false;
 }

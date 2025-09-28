@@ -13,12 +13,10 @@ export default class JsonObject extends Field<Record<string, unknown>> {
 		try {
 			stringified_value = JSON.stringify(new_value);
 		} catch (e) {
-			return Field.invalid(
-				context.app.i18n("invalid_json_object", [new_value])
-			);
+			return Field.invalid(context.i18n`Value is not an object.`);
 		}
 		if (!stringified_value.startsWith("{")) {
-			return Field.invalid(context.app.i18n("invalid_json_object"));
+			return Field.invalid(context.i18n`Value is not an object.`);
 		}
 		return Field.valid();
 	}

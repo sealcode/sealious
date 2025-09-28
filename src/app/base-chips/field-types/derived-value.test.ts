@@ -164,7 +164,7 @@ describe("derived-value", () => {
 				fields: ["username", "surname"],
 				deriving_fn: async (_, __, ___: string, ____: string) => str,
 			}),
-			async ({ app, rest_api }) => {
+			async ({ rest_api }) => {
 				await assertThrowsAsync(
 					async () => {
 						await rest_api.post("/api/v1/collections/people", {
@@ -176,7 +176,7 @@ describe("derived-value", () => {
 						assert.deepStrictEqual(
 							error.response.data.data.field_messages
 								.name_and_surname.message,
-							app.i18n("invalid_text", [str, typeof str])
+							`Type of ${str} is ${"number"}, not string.`
 						);
 					}
 				);

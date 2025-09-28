@@ -97,9 +97,7 @@ describe("OwnerPolicy", () => {
 					(error) => {
 						assert.strictEqual(
 							error.message,
-							ownerContext.app.i18n("policy_not_allow", [
-								ownerContext.app.i18n("policy_owner_allow"),
-							])
+							"It's not true that 'You have created this item.'. "
 						);
 					}
 				);

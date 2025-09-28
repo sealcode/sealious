@@ -34,7 +34,7 @@ export default class Boolean extends Field<boolean, InputType> {
 		) {
 			return Field.valid();
 		}
-		return Field.invalid(ctx.app.i18n("invalid_boolean", [value]));
+		return Field.invalid(ctx.i18n`Value '${value}' is not boolean format.`);
 	}
 
 	async encode(_: Context, value: InputType | null) {

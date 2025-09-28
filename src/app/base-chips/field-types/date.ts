@@ -37,7 +37,9 @@ export default class DateField extends Field<string, string | number, number> {
 			regex.test(date_in_string) === false ||
 			isNaN(Date.parse(date_in_string))
 		) {
-			return Field.invalid(context.app.i18n("invalid_date", [value]));
+			return Field.invalid(
+				context.i18n`Value '${value}' is not date calendar format. Expected value in standard IS0 8601 (YYYY-MM-DD) format.`
+			);
 		}
 		return Field.valid();
 	}

@@ -14,7 +14,9 @@ export default class Email extends Field<string> {
 		if (email.test(value) || value === "") {
 			return Field.valid();
 		} else {
-			return Field.invalid(context.app.i18n("invalid_email", [value]));
+			return Field.invalid(
+				context.i18n`${value} is a not valid e-mail address.`
+			);
 		}
 	}
 
