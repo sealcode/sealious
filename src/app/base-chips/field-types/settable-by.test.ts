@@ -43,7 +43,7 @@ function extend(t: TestAppConstructor) {
 
 describe("settable-by", () => {
 	it("should not allow any value when rejected by access strategy", async () =>
-		withRunningApp(extend, async ({ app, base_url }) => {
+		withRunningApp(extend, async ({ base_url }) => {
 			await assertThrowsAsync(
 				() =>
 					post(
@@ -79,7 +79,7 @@ describe("settable-by", () => {
 		}));
 
 	it("should not allow invalid value when access strategy allows", async () =>
-		withRunningApp(extend, async ({ app, base_url }) => {
+		withRunningApp(extend, async ({ base_url }) => {
 			const value = "thing";
 			await assertThrowsAsync(
 				() =>
@@ -106,7 +106,7 @@ describe("settable-by", () => {
 								title: new FieldTypes.Text(),
 								timestamp: new FieldTypes.SettableBy(
 									new FieldTypes.Int().setTransitionChecker(
-										async (_, old_value, new_value) => {
+										async ({ old_value, new_value }) => {
 											return old_value == undefined ||
 												parseInt(String(new_value)) >
 													old_value

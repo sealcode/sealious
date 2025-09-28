@@ -16,7 +16,10 @@ describe("field class", () => {
 								fields = {
 									timestamp:
 										new FieldTypes.Int().setTransitionChecker(
-											async (_, old_value, new_value) => {
+											async ({
+												old_value,
+												new_value,
+											}) => {
 												return old_value == undefined ||
 													new_value > old_value
 													? { valid: true }

@@ -352,4 +352,29 @@ describe("CollectionItem", () => {
 				assert.deepStrictEqual(attachments, []);
 			}
 		));
+
+	describe(".get()", () => {
+		it("returns the currently stored value, not the one temporarily set with .set", async () =>
+			withRunningApp(
+				(test_app) =>
+					class extends test_app {
+						collections = {
+							...App.BaseCollections,
+							posts: new (class extends Collection {
+								fields = {
+									title: new FieldTypes.Text(),
+								};
+							})(),
+						};
+					},
+				async ({ app }) => {
+					const post = await app.collections.posts.suCreate({
+						title: "old",
+					});
+					post.set("title", "new");
+					await post.decode(new app.SuperContext());
+					assert.strictEqual(post.get("title"), "old");
+				}
+			));
+	});
 });

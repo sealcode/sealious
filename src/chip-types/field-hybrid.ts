@@ -5,6 +5,7 @@ import type {
 	App,
 	Collection,
 	ItemListResult,
+	TransitionChecker,
 	ValidationResult,
 } from "../main.js";
 import { OpenApiTypes } from "../schemas/open-api-types.js";
@@ -32,26 +33,26 @@ export default abstract class HybridField<
 		return await this.virtual_field.getOpenApiSchema(context);
 	}
 
-	transitionChecker: (
-		ctx: Context,
-		old_value: StorageType | undefined,
-		new_value: ParsedType
-	) => Promise<ValidationResult>;
+	transitionChecker: TransitionChecker<StorageType, ParsedType>;
 
 	constructor(base_field: T) {
 		super();
 		this.virtual_field = base_field;
 		this.open_api_type = base_field.open_api_type;
-		this.transitionChecker = (
-			ctx: Context,
-			old_value: StorageType | undefined,
-			new_value: ParsedType
-		) => {
-			return this.virtual_field.transitionChecker(
-				ctx,
-				old_value as InnerStorageType,
-				new_value as unknown as InnerParsedType
-			);
+		this.transitionChecker = ({
+			context,
+			old_value,
+			new_value,
+		}: {
+			context: Context;
+			old_value: StorageType | undefined;
+			new_value: ParsedType;
+		}) => {
+			return this.virtual_field.transitionChecker({
+				context,
+				old_value: old_value as InnerStorageType,
+				new_value: new_value as unknown as InnerParsedType,
+			});
 		};
 	}
 

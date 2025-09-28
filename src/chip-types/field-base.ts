@@ -9,6 +9,7 @@ import type { App } from "../app/app.js";
 import { ItemListResult } from "./item-list-result.js";
 
 import { OpenApiTypeMapping, OpenApiTypes } from "../schemas/open-api-types.js";
+import type CollectionItem from "./collection-item.js";
 
 export type Depromisify<T> = T extends Promise<infer V> ? V : T;
 
@@ -31,6 +32,12 @@ export type ExtractFieldInput<F extends Field<unknown, unknown, unknown>> =
 
 export type ExtractFieldStorage<F extends Field<unknown, unknown, unknown>> =
 	F extends Field<unknown, unknown, infer T> ? T : never;
+
+export type TransitionChecker<StorageType, DecodedType> = (params: {
+	context: Context;
+	old_value: StorageType | undefined;
+	new_value: DecodedType;
+}) => Promise<ValidationResult>;
 
 export type RequiredField<DecodedType, InputType, StorageType> = Field<
 	DecodedType,
@@ -90,18 +97,11 @@ export abstract class Field<
 	 * an error */
 	required: boolean;
 
-	transitionChecker: (
-		ctx: Context,
-		old_value: StorageType | undefined,
-		new_value: DecodedType
-	) => Promise<ValidationResult> = async () => ({ valid: true });
+	transitionChecker: TransitionChecker<StorageType, DecodedType> =
+		async () => ({ valid: true });
 
 	setTransitionChecker(
-		checker: (
-			ctx: Context,
-			old_value: StorageType,
-			new_value: DecodedType
-		) => Promise<ValidationResult>
+		checker: TransitionChecker<StorageType, DecodedType>
 	): this {
 		this.transitionChecker = checker;
 		return this;
@@ -216,11 +216,11 @@ export abstract class Field<
 			{},
 			false
 		);
-		return this.transitionChecker(
+		return this.transitionChecker({
 			context,
-			old_value as StorageType,
-			decoded as DecodedType
-		);
+			old_value: old_value as StorageType,
+			new_value: decoded as DecodedType,
+		});
 	}
 
 	/** Decides how to store the given value in the database, based on
