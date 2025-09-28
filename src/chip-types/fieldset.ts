@@ -248,10 +248,6 @@ export class Fieldset<Fields extends Record<string, Field<any, any, any>>> {
 				// field does not exist
 				continue;
 			}
-			if (!field) {
-				throw new Error("field name is missing");
-			}
-
 			promises.push(
 				field
 					.checkValue(

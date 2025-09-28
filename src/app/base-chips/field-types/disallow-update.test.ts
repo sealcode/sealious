@@ -111,4 +111,18 @@ describe("disallow-update", () => {
 				}
 			);
 		}));
+
+	it("rejects a new value if the old value is `null`", () =>
+		withRunningApp(extend, async ({ app }) => {
+			const item = await app.collections.constseals.create(
+				new app.Context(),
+				{
+					age: 33,
+					attribute: 5,
+				}
+			);
+			console.log("created");
+			item.set("age", null);
+			await assertThrowsAsync(() => item.save(new app.Context()));
+		}));
 });

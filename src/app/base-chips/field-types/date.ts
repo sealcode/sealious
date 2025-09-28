@@ -29,6 +29,9 @@ export default class DateField extends Field<string, string | number, number> {
 	}
 
 	async isProperValue(context: Context, value: string) {
+		if (value == null) {
+			return Field.valid();
+		}
 		const date_in_string = value.toString();
 
 		const regex = /^([0-9]{4})-(0?[1-9]|1[0-2])-([0-2]?[0-9]|30|31)$/; // granulation_per_day

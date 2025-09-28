@@ -196,8 +196,6 @@ export abstract class Field<
 	): Promise<ValidationResult> {
 		if (isEmpty(new_value) && this.required) {
 			return Field.invalid(`Missing value for field '${this.name}'.`);
-		} else if (isEmpty(new_value)) {
-			return Field.valid();
 		}
 		const basic_validation = await this.isProperValue(
 			context,

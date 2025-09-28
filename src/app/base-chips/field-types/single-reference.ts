@@ -43,6 +43,9 @@ export default class SingleReference extends Field<string, string> {
 	}
 
 	async isProperValue(context: Context, input: string) {
+		if (input == null) {
+			return Field.valid();
+		}
 		context.app.Logger.debug2("SINGLE REFERENCE", "isProperValue?", input);
 		const filter = this.filter || {};
 		if (input === "") {

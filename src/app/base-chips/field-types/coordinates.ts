@@ -27,6 +27,9 @@ export default class Coordinates extends Field<
 		ctx: Context,
 		value: CoordinatesFieldInputType
 	): Promise<ValidationResult> {
+		if (value == null) {
+			return Field.valid();
+		}
 		if (typeof value === "string" && value.split(",").length === 2) {
 			return Field.valid();
 		} else if (Array.isArray(value) && value.length === 2) {
@@ -45,7 +48,10 @@ export default class Coordinates extends Field<
 	async encode(
 		_: Context,
 		value: CoordinatesFieldInputType
-	): Promise<GeoJSONPoint> {
+	): Promise<GeoJSONPoint | null> {
+		if (value == null) {
+			return null;
+		}
 		if (typeof value === "string") {
 			const coords = value.split(",").map(parseFloat);
 			const [lat, lon] = [coords[0], coords[1]];
@@ -83,7 +89,10 @@ export default class Coordinates extends Field<
 		db_value: unknown,
 		__: unknown,
 		format?: FormatType
-	): Promise<CoordinatesFieldInputType> {
+	): Promise<CoordinatesFieldInputType | null> {
+		if (db_value === null) {
+			return null;
+		}
 		if (
 			!hasShape(
 				{

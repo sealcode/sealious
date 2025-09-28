@@ -42,6 +42,9 @@ export default class Text extends TextStorage {
 	 * @internal  */
 	async isProperValue(context: Context, input: string) {
 		context.app.Logger.debug2("TEXT STORAGE", "isProperValue", input);
+		if (input == null) {
+			return Field.valid();
+		}
 		if (typeof input !== "string") {
 			return Field.invalid(
 				context.i18n`Type of ${input} is ${typeof input}, not string.`
