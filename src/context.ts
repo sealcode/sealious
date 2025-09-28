@@ -2,7 +2,7 @@ import { is, predicates } from "@sealcode/ts-predicates";
 import type { App } from "./app/app.js";
 import type { CollectionItem } from "./main.js";
 
-export default class Context {
+export default class Context<TheApp extends App = App> {
 	timestamp: number;
 	ip: string | null;
 	user_id: string | null;
@@ -12,13 +12,21 @@ export default class Context {
 	is_super = false;
 	original_context: Context | null;
 	cache_entries: Record<string, unknown>;
+	language: string;
+	app: TheApp;
 
-	constructor(
-		public app: App,
-		timestamp: number = Date.now(),
-		user_id?: string | null,
-		session_id?: string | null
-	) {
+	constructor({
+		app,
+		timestamp = Date.now(),
+		user_id,
+		session_id,
+	}: {
+		app: TheApp;
+		timestamp?: number;
+		user_id?: string | null;
+		session_id?: string | null;
+	}) {
+		this.app = app;
 		this.original_context = this;
 		this.loading_user_data = false;
 		this.timestamp = timestamp;
@@ -42,7 +50,7 @@ export default class Context {
 		if (this.user_id === null) {
 			return null;
 		}
-		const c = new SuperContext(this.app);
+		const c = new SuperContext({ app: this.app });
 		this.user_data = this.app.collections.users.getByID(c, this.user_id);
 		return this.user_data;
 	}
@@ -76,7 +84,7 @@ export default class Context {
 	}
 }
 
-export class SuperContext extends Context {
+export class SuperContext<TheApp extends App = App> extends Context<TheApp> {
 	is_super = true;
 
 	cache<T>(_key: string, getter: () => Promise<T>): Promise<T> {

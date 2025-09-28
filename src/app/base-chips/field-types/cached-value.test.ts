@@ -1,18 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import assert from "assert";
-import {
-	withStoppedApp,
-	withRunningApp,
-	type TestAppConstructor,
-} from "../../../test_utils/with-test-app.js";
-import { assertThrowsAsync } from "../../../test_utils/assert-throws-async.js";
-import { getDateTime } from "../../../utils/get-datetime.js";
-import type MockRestApi from "../../../test_utils/rest-api.js";
-import { TestApp } from "../../../test_utils/test-app.js";
-import CachedValue from "./cached-value.js";
-import Int from "./int.js";
-import { sleep } from "../../../test_utils/sleep.js";
 import type Field from "../../../chip-types/field.js";
+import type { ItemListResult } from "../../../chip-types/item-list-result.js";
 import {
 	App,
 	ClockEventDescription,
@@ -24,12 +13,22 @@ import {
 	RefreshCondition,
 	SuperContext,
 } from "../../../main.js";
+import { assertThrowsAsync } from "../../../test_utils/assert-throws-async.js";
+import type MockRestApi from "../../../test_utils/rest-api.js";
 import type {
 	CollectionResponse,
 	ItemCreatedResponse,
 	ItemResponse,
 } from "../../../test_utils/rest-api.js";
-import type { ItemListResult } from "../../../chip-types/item-list-result.js";
+import { sleep } from "../../../test_utils/sleep.js";
+import { TestApp } from "../../../test_utils/test-app.js";
+import {
+	withRunningApp,
+	withStoppedApp,
+	type TestAppConstructor,
+} from "../../../test_utils/with-test-app.js";
+import CachedValue from "./cached-value.js";
+import Int from "./int.js";
 
 const action_to_status: { [name: string]: string } = {
 	create: "created",
@@ -560,11 +559,7 @@ describe("cached-value", () => {
 														.fetch();
 												return items.map((i) => i.id);
 											},
-											(app: App) =>
-												new SuperContext(
-													app,
-													Date.now()
-												)
+											(app: App) => new app.SuperContext()
 										),
 									],
 									get_value: async (_item) => {
@@ -658,7 +653,7 @@ describe("cached-value", () => {
 						};
 					},
 				async ({ app }) => {
-					const context = new Context(app);
+					const context = new app.Context();
 					let product = await app.collections.products.create(
 						context,
 						{

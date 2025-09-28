@@ -49,8 +49,8 @@ describe("long running process", () => {
 					username: "two",
 					password: "secretsecret",
 				});
-				const context_one = new Context(app, Date.now(), user_one.id);
-				const context_two = new Context(app, Date.now(), user_two.id);
+				const context_one = new Context({ app, user_id: user_one.id });
+				const context_two = new Context({ app, user_id: user_two.id });
 				const lrp = new LongRunningProcess(
 					context_one,
 					async (lrp: LongRunningProcess) => {

@@ -231,7 +231,7 @@ describe("control-access", () => {
 				},
 			async ({ app }) => {
 				const task = await app.collections.tasks.create(
-					new Context(app, new Date().getTime(), null, null),
+					new app.Context(),
 					{ title: "" }
 				);
 				assert.strictEqual(task.get("done"), false);

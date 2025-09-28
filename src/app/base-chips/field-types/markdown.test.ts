@@ -1,5 +1,5 @@
 import assert from "assert";
-import { Collection, SuperContext } from "../../../main.js";
+import { Collection } from "../../../main.js";
 import { TestApp } from "../../../test_utils/test-app.js";
 import { withRunningApp } from "../../../test_utils/with-test-app.js";
 import Markdown from "./markdown.js";
@@ -23,7 +23,7 @@ const testFormating = (
 			};
 		},
 		async ({ app }) => {
-			const context = new SuperContext(app);
+			const context = new app.SuperContext();
 
 			const response = await app.collections.post.create(context, {
 				content: input,

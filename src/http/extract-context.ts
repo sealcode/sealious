@@ -32,7 +32,7 @@ export default function extract_context(): Middleware {
 		}
 
 		if (!session_id) {
-			ctx.$context = new Context(ctx.$app, timestamp, null, null);
+			ctx.$context = new Context({ app: ctx.$app, timestamp });
 		} else {
 			const sessions = await ctx.$app.collections.sessions
 				.suList()
@@ -50,12 +50,12 @@ export default function extract_context(): Middleware {
 				"User for this request is",
 				user_id
 			);
-			ctx.$context = new Context(
-				ctx.$app,
+			ctx.$context = new Context({
+				app: ctx.$app,
 				timestamp,
 				user_id,
-				session_id
-			);
+				session_id,
+			});
 		}
 		await next();
 	};

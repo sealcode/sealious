@@ -1,8 +1,6 @@
 import assert from "assert";
-
 import _locreq from "locreq";
 import Collection from "../../../chip-types/collection.js";
-import Context, { SuperContext } from "../../../context.js";
 import { FieldTypes } from "../../../main.js";
 import { TestApp } from "../../../test_utils/test-app.js";
 import { withRunningApp } from "../../../test_utils/with-test-app.js";
@@ -32,7 +30,7 @@ describe("file", () => {
 				};
 			},
 			async ({ app, rest_api }) => {
-				const context = new SuperContext(app);
+				const context = new app.SuperContext();
 				const buff = Buffer.from("Hello world!", "utf-8");
 				const file = app.fileManager.fromData(buff, "txt");
 
@@ -96,7 +94,7 @@ describe("file", () => {
 					username: "user",
 					password: "useruser",
 				});
-				const context = new Context(app, Date.now(), user.id);
+				const context = new app.Context({ user_id: user.id });
 				const person = await app.collections.people.create(context, {
 					name: "Ben",
 				});

@@ -32,7 +32,7 @@ describe("url", () => {
 			(test_app) => create_app_with_url(test_app, {}),
 			async ({ app }) => {
 				const wb = await app.collections.website.create(
-					new SuperContext(app),
+					new app.SuperContext(),
 					{
 						url: "https://example.com/",
 					}
@@ -52,7 +52,7 @@ describe("url", () => {
 			async ({ app }) => {
 				await assertThrowsAsync(async () => {
 					await app.collections.website.create(
-						new SuperContext(app),
+						new app.SuperContext(),
 						{
 							url: "https://example.com/",
 						}
@@ -69,7 +69,7 @@ describe("url", () => {
 			async ({ app }) => {
 				await assertThrowsAsync(async () => {
 					await app.collections.website.create(
-						new SuperContext(app),
+						new app.SuperContext(),
 						{
 							url: "http://example.com/",
 						}

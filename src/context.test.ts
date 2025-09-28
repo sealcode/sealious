@@ -17,7 +17,7 @@ describe("context", () => {
 						roles: [{ role: "admin" }],
 					}
 				);
-				const context = new Context(app, Date.now(), user.id);
+				const context = new Context({ app, user_id: user.id });
 				assert.deepStrictEqual(await context.getRoles(), ["admin"]);
 			}
 		);

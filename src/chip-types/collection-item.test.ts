@@ -27,7 +27,7 @@ describe("CollectionItem", () => {
 					title: "title",
 				});
 				entry.set("title", "title2");
-				await entry.save(new SuperContext(app));
+				await entry.save(new SuperContext({ app }));
 				const { items: entries } = await app.collections.entries
 					.suList()
 					.fetch();
@@ -48,7 +48,7 @@ describe("CollectionItem", () => {
 								await super.init(app, name);
 								this.on("after:create", async ([_, entry]) => {
 									entry.set("title", "title-overwritten");
-									await entry.save(new SuperContext(app));
+									await entry.save(new SuperContext({ app }));
 								});
 							}
 						})(),
@@ -58,7 +58,7 @@ describe("CollectionItem", () => {
 				const entry = await app.collections.entries.suCreate({
 					title: "title",
 				});
-				await entry.save(new SuperContext(app));
+				await entry.save(new SuperContext({ app }));
 				const { items: entries } = await app.collections.entries
 					.suList()
 					.fetch();

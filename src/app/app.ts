@@ -88,10 +88,17 @@ export abstract class App {
 	};
 
 	/** A shorthand-way to create a new SuperContext: `new app.SuperContext()`. */
-	public SuperContext: new () => SuperContext;
+	public SuperContext: new (
+		params?: Omit<
+			ConstructorParameters<typeof SuperContext<this>>[0],
+			"app"
+		>
+	) => SuperContext<this>;
 
 	/** A shorthand-way to create a new context: `new app.Context()`. */
-	public Context: new () => Context;
+	public Context: new (
+		params?: Omit<ConstructorParameters<typeof Context<this>>[0], "app">
+	) => Context<this>;
 
 	abstract config: PartialConfig;
 	public mailer: Mailer = new LoggerMailer();
@@ -133,19 +140,25 @@ export abstract class App {
 
 		const app = this;
 		/** Shorthand way to create a {@link SuperContext} */
-		this.SuperContext = class extends SuperContext {
-			/** This constructor does not take any parameters as the
-			 * {@link App} instance is automatically filled in */
-			constructor() {
-				super(app);
+		this.SuperContext = class extends SuperContext<this> {
+			constructor(
+				params: Omit<
+					ConstructorParameters<typeof SuperContext<typeof app>>["0"],
+					"app"
+				> = {}
+			) {
+				super({ app, ...params });
 			}
 		};
 		/** Shorthand way to create a {@link Context} */
-		this.Context = class extends Context {
-			/** This constructor does not take any parameters as the
-			 * {@link App} instance is automatically filled in */
-			constructor() {
-				super(app);
+		this.Context = class extends Context<this> {
+			constructor(
+				params: Omit<
+					ConstructorParameters<typeof Context<typeof app>>["0"],
+					"app"
+				> = {}
+			) {
+				super({ app, ...params });
 			}
 		};
 	}

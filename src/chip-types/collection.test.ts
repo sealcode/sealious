@@ -1,21 +1,17 @@
 import { hasShape, predicates } from "@sealcode/ts-predicates";
 import assert from "assert";
+import prettier from "prettier";
 import Int from "../app/base-chips/field-types/int.js";
-import { App, CollectionItem, Context, FieldTypes, Policies } from "../main.js";
+import { App, Context, FieldTypes, Policies } from "../main.js";
 import { assertThrowsAsync } from "../test_utils/assert-throws-async.js";
+import { sleep } from "../test_utils/sleep.js";
 import type { TestApp } from "../test_utils/test-app.js";
 import {
-	type TestAppConstructor,
 	withRunningApp,
 	withStoppedApp,
+	type TestAppConstructor,
 } from "../test_utils/with-test-app.js";
-import Collection, {
-	type FieldEntryMapping,
-	type Fieldnames,
-	type FieldToFeedMappingEntry,
-} from "./collection.js";
-import prettier from "prettier";
-import { sleep } from "../test_utils/sleep.js";
+import Collection, { type FieldEntryMapping } from "./collection.js";
 
 type Policies = Collection["policies"];
 
@@ -233,11 +229,10 @@ describe("collection", () => {
 						username: "Adam",
 					});
 
-					const guestContext = new Context(
+					const guestContext = new Context({
 						app,
-						new Date().getTime(),
-						guest.id
-					);
+						user_id: guest.id,
+					});
 					await assertThrowsAsync(
 						async () => {
 							await app.collections.coins.getByID(
@@ -275,11 +270,10 @@ describe("collection", () => {
 					username: "Adam",
 				});
 
-				const guestContext = new Context(
+				const guestContext = new Context({
 					app,
-					new Date().getTime(),
-					guest.id
-				);
+					user_id: guest.id,
+				});
 				await assertThrowsAsync(
 					async () => {
 						await app.collections.coins.getByID(

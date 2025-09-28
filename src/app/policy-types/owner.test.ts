@@ -45,21 +45,9 @@ describe("OwnerPolicy", () => {
 				username: "Guest",
 			});
 
-			const ownerContext = new Context(
-				app,
-				new Date().getTime(),
-				owner.id
-			);
-			const guestContext = new Context(
-				app,
-				new Date().getTime(),
-				guest.id
-			);
-			const notLoggedInContext = new Context(
-				app,
-				new Date().getTime(),
-				null
-			);
+			const ownerContext = new Context({ app, user_id: owner.id });
+			const guestContext = new Context({ app, user_id: guest.id });
+			const notLoggedInContext = new Context({ app });
 
 			await app.collections.numbers.create(ownerContext, { number: 12 });
 
@@ -92,16 +80,8 @@ describe("OwnerPolicy", () => {
 					username: "Guest",
 				});
 
-				const ownerContext = new Context(
-					app,
-					new Date().getTime(),
-					owner.id
-				);
-				const guestContext = new Context(
-					app,
-					new Date().getTime(),
-					guest.id
-				);
+				const ownerContext = new Context({ app, user_id: owner.id });
+				const guestContext = new Context({ app, user_id: guest.id });
 
 				const item = await app.collections.numbers.create(
 					ownerContext,

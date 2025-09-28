@@ -110,7 +110,7 @@ describe("users", () => {
 				});
 				assert.strictEqual(
 					await Users.passwordMatches(
-						new Context(app),
+						new Context({ app }),
 						"user",
 						"wrong-password"
 					),
@@ -125,7 +125,7 @@ describe("users", () => {
 				});
 				assert.strictEqual(
 					await Users.passwordMatches(
-						new Context(app),
+						new Context({ app }),
 						"user",
 						"password123"
 					),

@@ -96,7 +96,6 @@ describe("settable-by", () => {
 		}));
 
 	it("uses the transition checker from the inner field", async () => {
-		let call_count = 0;
 		await withRunningApp(
 			(t) =>
 				class extends t {
@@ -261,7 +260,7 @@ describe("settable-by", () => {
 					password: "testtest",
 					email: "test@test.com",
 				});
-				const context = new Context(app, Date.now(), user.id);
+				const context = new app.Context({ user_id: user.id });
 				const item = await app.collections.history.create(context, {
 					title: "Some title",
 				});

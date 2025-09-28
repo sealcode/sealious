@@ -288,13 +288,13 @@ describe("SameAsForResourceInField", () => {
 					username: "user1",
 					password: "user1user1",
 				});
-				const user1_context = new Context(app, Date.now(), user1.id);
+				const user1_context = new Context({ app, user_id: user1.id });
 
 				const user2 = await app.collections.users.suCreate({
 					username: "user2",
 					password: "user2user2",
 				});
-				const user2_context = new Context(app, Date.now(), user2.id);
+				const user2_context = new Context({ app, user_id: user2.id });
 
 				const org1 = await app.collections.organizations.suCreate({
 					name: "org1",
@@ -492,7 +492,7 @@ describe("SameAsForResourceInField", () => {
 					result: "I'm an invisible job",
 				});
 				const { items: user_visible_jobs } = await app.collections.jobs
-					.list(new Context(app, Date.now(), user.id))
+					.list(new Context({ app, user_id: user.id }))
 					.fetch();
 				assert.strictEqual(user_visible_jobs.length, 1);
 			}
