@@ -89,5 +89,42 @@ describe("field class", () => {
 				}
 			);
 		});
+
+		it("doesn't call the transition checker if the value didn't change (was empty and is empty)", async () => {
+			await withRunningApp(
+				(t) =>
+					class extends t {
+						collections = {
+							...App.BaseCollections,
+							history: new (class extends Collection {
+								fields = {
+									title: new FieldTypes.Text(),
+
+									// this is the field that will be kept empty
+									parent: new FieldTypes.SingleReference(
+										"history"
+									).setTransitionChecker(() => {
+										throw new Error(
+											"THIS SHOULD NEVER RUN"
+										);
+									}),
+								};
+							})(),
+						};
+					},
+				async ({ app }) => {
+					const event = await app.collections.history.suCreate({
+						title: "big bang",
+					});
+
+					event.set("title", "second bang");
+					await event.save(new app.SuperContext());
+
+					// but not three
+					event.set("title", "bankg returns");
+					await event.save(new app.SuperContext()); // if the transition checker is triggered here, it will throw an error
+				}
+			);
+		});
 	});
 });

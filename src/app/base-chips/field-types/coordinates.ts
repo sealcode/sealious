@@ -90,7 +90,7 @@ export default class Coordinates extends Field<
 		__: unknown,
 		format?: FormatType
 	): Promise<CoordinatesFieldInputType | null> {
-		if (db_value === null) {
+		if (db_value === null || db_value === undefined) {
 			return null;
 		}
 		if (

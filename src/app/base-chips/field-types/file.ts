@@ -89,7 +89,7 @@ export default class FileField extends FileStorage {
 		format?: "url" | "file",
 		is_http_api_request = false
 	) {
-		if (db_value === null) {
+		if (db_value === null || db_value == undefined) {
 			return null;
 		}
 		const file = await context.app.fileManager.fromToken(db_value);

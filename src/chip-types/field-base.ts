@@ -33,9 +33,9 @@ export type ExtractFieldInput<F extends Field<unknown, unknown, unknown>> =
 export type ExtractFieldStorage<F extends Field<unknown, unknown, unknown>> =
 	F extends Field<unknown, unknown, infer T> ? T : never;
 
-export type TransitionChecker<StorageType, DecodedType> = (params: {
+export type TransitionChecker<DecodedType> = (params: {
 	context: Context;
-	old_value: StorageType | undefined;
+	old_value: DecodedType | undefined;
 	new_value: DecodedType;
 }) => Promise<ValidationResult>;
 
@@ -97,12 +97,11 @@ export abstract class Field<
 	 * an error */
 	required: boolean;
 
-	transitionChecker: TransitionChecker<StorageType, DecodedType> =
-		async () => ({ valid: true });
+	transitionChecker: TransitionChecker<DecodedType> = async () => ({
+		valid: true,
+	});
 
-	setTransitionChecker(
-		checker: TransitionChecker<StorageType, DecodedType>
-	): this {
+	setTransitionChecker(checker: TransitionChecker<DecodedType>): this {
 		this.transitionChecker = checker;
 		return this;
 	}
@@ -214,9 +213,20 @@ export abstract class Field<
 			{},
 			false
 		);
+		const old_value_decoded = await this.decode(
+			context,
+			old_value as StorageType,
+			old_value as StorageType,
+			{},
+			false
+		);
+		if (old_value == new_value) {
+			// don't run transition checker, the value didn't change
+			return { valid: true };
+		}
 		return this.transitionChecker({
 			context,
-			old_value: old_value as StorageType,
+			old_value: old_value_decoded as DecodedType,
 			new_value: decoded as DecodedType,
 		});
 	}
@@ -236,8 +246,8 @@ export abstract class Field<
 		context: Context,
 		storage_value: StorageType,
 		old_value: any,
-		format_params: any,
-		is_http_api_request = false
+		_format_params: any,
+		_is_http_api_request = false
 	): Promise<DecodedType | null> {
 		context.app.Logger.debug3("FIELD DECODE", this.name, {
 			storage_value,
@@ -304,10 +314,10 @@ export abstract class Field<
 	}
 
 	async getAttachments(
-		context: Context,
-		values: any[], // this method gets called once for multiple resources, to limit the number of queries. Field values of all the resources are passed in this array
+		_context: Context,
+		_values: any[], // this method gets called once for multiple resources, to limit the number of queries. Field values of all the resources are passed in this array
 		attachment_options: any,
-		format_params: any
+		_format_params: any
 	): Promise<ItemListResult<any>> {
 		if (attachment_options !== undefined) {
 			throw new BadSubjectAction(
@@ -366,7 +376,7 @@ export abstract class Field<
 		return [`"${this.name}" JSONB`];
 	}
 
-	getAttachmentIDs(value: DecodedType): string[] {
+	getAttachmentIDs(_value: DecodedType): string[] {
 		return [];
 	}
 }
