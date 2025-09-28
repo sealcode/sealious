@@ -139,7 +139,7 @@ describe("settable-by", () => {
 		);
 	});
 
-	it("lets create an item with an empty value when setting the value is forbidden", async () => {
+	it("allows creating an item with an empty value when setting the value is forbidden", async () => {
 		class Roles extends Policy {
 			static type_name = "roles";
 			allowed_roles: string[];
@@ -205,13 +205,6 @@ describe("settable-by", () => {
 					}),
 					new Roles(["admin"])
 				),
-				type: new FieldTypes.DisallowUpdate(
-					new FieldTypes.Enum(<const>["organization", "worker"])
-				),
-				phone: new FieldTypes.PhoneNumber(),
-				refcode: new FieldTypes.Text(),
-				real_name: new FieldTypes.Text(),
-				real_surname: new FieldTypes.Text(),
 			};
 
 			defaultPolicy = new Policies.Or([
@@ -257,6 +250,44 @@ describe("settable-by", () => {
 				const context = new app.Context({ user_id: user.id });
 				await app.collections.history.create(context, {
 					title: "Some title",
+				});
+			}
+		);
+	});
+
+	it("cooperates with item-sensitive access policies", async () => {
+		await withRunningApp(
+			(t) =>
+				class extends t {
+					collections = {
+						...App.BaseCollections,
+						history: new (class extends Collection {
+							fields = {
+								title: new FieldTypes.Text(),
+								label: new FieldTypes.SettableBy(
+									new FieldTypes.Text(),
+									new Policies.Owner()
+								),
+							};
+						})(),
+					};
+				},
+			async ({ app }) => {
+				const user1 = await app.collections.users.suCreate({
+					username: "user1",
+				});
+				const user2 = await app.collections.users.suCreate({
+					username: "user2",
+				});
+
+				const event = await app.collections.history.create(
+					new app.Context({ user_id: user1.id }),
+					{ title: "some event" }
+				);
+
+				await assertThrowsAsync(async () => {
+					event.set("label", "some label from another person");
+					await event.save(new app.Context({ user_id: user2.id }));
 				});
 			}
 		);

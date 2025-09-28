@@ -87,7 +87,8 @@ export default class CollectionItem<T extends Collection = any> {
 		const { valid, errors } = await this.body.validate(
 			context,
 			this.original_body,
-			replace_mode
+			replace_mode,
+			this
 		);
 		await this.gatherDefaultValues(context);
 		context.app.Logger.debug3("ITEM", "Saving item/validation result", {

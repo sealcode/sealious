@@ -1,5 +1,5 @@
 import ValueExistingInCollection from "./value-existing-in-collection.js";
-import { Context, Field } from "../../../main.js";
+import { CollectionItem, Context, Field } from "../../../main.js";
 import { OpenApiTypes } from "../../../schemas/open-api-types.js";
 
 export default class ValueNotExistingInCollection extends ValueExistingInCollection {
@@ -8,14 +8,16 @@ export default class ValueNotExistingInCollection extends ValueExistingInCollect
 	async isProperValue(
 		context: Context,
 		new_value: unknown,
-		old_value: unknown
+		old_value: unknown,
+		_blessing: unknown,
+		item: CollectionItem | undefined
 	) {
 		const field = this.getField(context.app);
 		if (!field) {
 			throw new Error("field is missing");
 		}
 
-		await field.checkValue(context, new_value, old_value, null);
+		await field.checkValue(context, new_value, old_value, null, item);
 		if (this.include_forbidden) {
 			context = new this.app.SuperContext();
 		}

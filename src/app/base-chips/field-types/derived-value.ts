@@ -26,7 +26,7 @@ export type DerivingFn<DecodedType> = (
 export default class DerivedValue<
 	ParsedType,
 	InputType,
-	T extends Field<ParsedType, any, any>
+	T extends Field<ParsedType, any, any>,
 > extends HybridField<
 	ParsedType,
 	InputType,
@@ -148,7 +148,8 @@ export default class DerivedValue<
 		context: Context,
 		new_value: Parameters<T["checkValue"]>[1],
 		old_value: Parameters<T["checkValue"]>[2],
-		new_value_blessing_token: symbol | null
+		new_value_blessing_token: symbol | null,
+		item: CollectionItem | undefined
 	): Promise<ValidationResult> {
 		if (
 			!isEmpty(new_value) &&
@@ -161,7 +162,8 @@ export default class DerivedValue<
 			context,
 			new_value,
 			old_value,
-			new_value_blessing_token
+			new_value_blessing_token,
+			item
 		);
 	}
 

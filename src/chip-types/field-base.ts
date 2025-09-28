@@ -184,14 +184,16 @@ export abstract class Field<
 		context: Context,
 		new_value: unknown,
 		old_value: unknown,
-		new_value_blessing_token: symbol | null
+		new_value_blessing_token: symbol | null,
+		item: CollectionItem | undefined
 	): Promise<ValidationResult>;
 
 	public async checkValue(
 		context: Context,
 		new_value: unknown,
 		old_value: unknown,
-		new_value_blessing_token: symbol | null
+		new_value_blessing_token: symbol | null,
+		item: CollectionItem | undefined
 	): Promise<ValidationResult> {
 		if (isEmpty(new_value) && this.required) {
 			return Field.invalid(`Missing value for field '${this.name}'.`);
@@ -200,7 +202,8 @@ export abstract class Field<
 			context,
 			new_value,
 			old_value,
-			new_value_blessing_token
+			new_value_blessing_token,
+			item
 		);
 		if (!basic_validation.valid) {
 			return basic_validation;

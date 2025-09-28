@@ -1,4 +1,5 @@
 import type Context from "../context.js";
+import type CollectionItem from "./collection-item.js";
 import type {
 	ExtractFieldDecoded,
 	ExtractFieldInput,
@@ -227,7 +228,8 @@ export class Fieldset<Fields extends Record<string, Field<any, any, any>>> {
 	async validate(
 		context: Context,
 		original_body: Fieldset<Fields>,
-		replace_mode: boolean //if true, meaning that if a field has no value, it should be deleted
+		replace_mode: boolean, //if true, meaning that if a field has no value, it should be deleted
+		item: CollectionItem | undefined
 	): Promise<{
 		valid: boolean;
 		errors: { [f in keyof Fields]?: { message: string } };
@@ -256,7 +258,8 @@ export class Fieldset<Fields extends Record<string, Field<any, any, any>>> {
 							field_name as keyof FieldsetInput<Fields>
 						],
 						original_body.encoded[field_name],
-						this.blessings[field_name] || null
+						this.blessings[field_name] || null,
+						item
 					)
 					.then(async (result) => {
 						if (!result.valid) {

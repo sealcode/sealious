@@ -46,12 +46,14 @@ export class StructuredArray<
 	async isProperElement(
 		context: Context,
 		element: unknown,
-		index: number
+		index: number,
+		item: CollectionItem | undefined
 	): Promise<{ valid: boolean; reason: string }> {
 		const orig_result = await super.isProperElement(
 			context,
 			element,
-			index
+			index,
+			item
 		);
 		if (!orig_result.valid) {
 			return orig_result;
@@ -64,7 +66,8 @@ export class StructuredArray<
 		const result = await fieldset.validate(
 			context,
 			new Fieldset(this.subfields),
-			true
+			true,
+			item
 		);
 		if (result.valid) {
 			return { valid: true, reason: "no validation errors" };

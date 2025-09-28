@@ -1,4 +1,4 @@
-import { Field, Context } from "../../../main.js";
+import { Field, Context, CollectionItem } from "../../../main.js";
 import { HybridField } from "../../../chip-types/field.js";
 
 export default class DisallowUpdate<
@@ -20,7 +20,8 @@ export default class DisallowUpdate<
 		context: Context,
 		new_value: Parameters<T["checkValue"]>[1],
 		old_value?: Parameters<T["checkValue"]>[2],
-		new_value_blessing_token: symbol | null = null
+		new_value_blessing_token: symbol | null = null,
+		item: CollectionItem | undefined = undefined
 	) {
 		context.app.Logger.debug3(
 			"DISALLOW-UPDATE",
@@ -32,7 +33,8 @@ export default class DisallowUpdate<
 				new context.app.SuperContext(),
 				new_value,
 				old_value,
-				new_value_blessing_token
+				new_value_blessing_token,
+				item
 			);
 		}
 		return Field.invalid(

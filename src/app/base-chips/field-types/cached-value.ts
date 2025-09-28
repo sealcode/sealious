@@ -280,14 +280,16 @@ export default class CachedValue<
 		context: Context,
 		new_value: Parameters<T["checkValue"]>[1],
 		old_value: Parameters<T["checkValue"]>[2],
-		new_value_blessing_token: symbol | null
+		new_value_blessing_token: symbol | null,
+		item: CollectionItem | undefined
 	): Promise<ValidationResult> {
 		if (this.virtual_derived) {
 			return this.virtual_derived.isProperValue(
 				context,
 				new_value,
 				old_value,
-				new_value_blessing_token
+				new_value_blessing_token,
+				item
 			);
 		}
 		if (!isEmpty(new_value) && !context.is_super) {
@@ -297,7 +299,8 @@ export default class CachedValue<
 			context,
 			new_value,
 			old_value,
-			new_value_blessing_token
+			new_value_blessing_token,
+			item
 		);
 	}
 

@@ -1,5 +1,5 @@
 import Field from "../../../chip-types/field.js";
-import { type App, type Context } from "../../../main.js";
+import { CollectionItem, type App, type Context } from "../../../main.js";
 import { OpenApiTypes } from "../../../schemas/open-api-types.js";
 import type { ExtractTail } from "../../../utils/extract-tail.js";
 
@@ -25,7 +25,9 @@ export default class ValueExistingInCollection extends Field<unknown> {
 	async isProperValue(
 		context: Context,
 		new_value: unknown,
-		old_value: unknown
+		old_value: unknown,
+		_blessing: unknown,
+		item: CollectionItem | undefined
 	) {
 		const field = this.getField(context.app);
 
@@ -38,7 +40,8 @@ export default class ValueExistingInCollection extends Field<unknown> {
 			context,
 			new_value,
 			old_value,
-			null
+			null,
+			item
 		);
 		if (!result.valid) {
 			return result;

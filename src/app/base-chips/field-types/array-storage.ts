@@ -5,7 +5,12 @@ import {
 	predicates,
 } from "@sealcode/ts-predicates";
 import type { ActionName } from "../../../action.js";
-import { Field, Context, type ValidationResult } from "../../../main.js";
+import {
+	Field,
+	Context,
+	type ValidationResult,
+	CollectionItem,
+} from "../../../main.js";
 
 export type ArrayStorageInput<ContentType> = ContentType[];
 
@@ -25,7 +30,8 @@ export abstract class ArrayStorage<
 	async isProperElement(
 		_context: Context,
 		element: unknown,
-		_index: number
+		_index: number,
+		item: CollectionItem | undefined
 	): Promise<{ valid: boolean; reason: string }> {
 		if (is(element, this.value_predicate)) {
 			return { valid: true, reason: "Matches predicate" };
@@ -34,10 +40,14 @@ export abstract class ArrayStorage<
 		}
 	}
 
-	async validateElements(context: Context, elements: unknown[]) {
+	async validateElements(
+		context: Context,
+		elements: unknown[],
+		item: CollectionItem | undefined
+	) {
 		const results = await Promise.all(
 			elements.map((value, index) =>
-				this.isProperElement(context, value, index)
+				this.isProperElement(context, value, index, item)
 			)
 		);
 		if (results.some((result) => !result.valid)) {
@@ -56,7 +66,8 @@ export abstract class ArrayStorage<
 		context: Context,
 		new_value: unknown,
 		old_value: T[] | undefined,
-		_new_value_blessing_token: symbol | null
+		_new_value_blessing_token: symbol | null,
+		item: CollectionItem | undefined
 	): Promise<ValidationResult> {
 		if (is(new_value, predicates.object) && !Array.isArray(new_value)) {
 			if (old_value === undefined) {
@@ -74,7 +85,8 @@ export abstract class ArrayStorage<
 				}
 				const result = await this.validateElements(
 					context,
-					new_value.data
+					new_value.data,
+					item
 				);
 				if (!result.valid) {
 					return result;
@@ -92,7 +104,7 @@ export abstract class ArrayStorage<
 				reason: `${new_value} is not an array of objects`,
 			};
 		}
-		const result = await this.validateElements(context, new_value);
+		const result = await this.validateElements(context, new_value, item);
 		if (!result.valid) {
 			return result;
 		}

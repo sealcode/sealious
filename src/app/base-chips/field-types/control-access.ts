@@ -1,4 +1,4 @@
-import { Field, Context, Policy, App } from "../../../main.js";
+import { Field, Context, Policy, App, CollectionItem } from "../../../main.js";
 import {
 	type ExtractFieldDecoded,
 	type ExtractFieldInput,
@@ -13,7 +13,7 @@ type Params<DecodedType> = {
 };
 
 export default class ControlAccess<
-	T extends Field<any, any, any>
+	T extends Field<any, any, any>,
 > extends HybridField<
 	ExtractFieldInput<T>,
 	ExtractFieldDecoded<T>,
@@ -40,7 +40,8 @@ export default class ControlAccess<
 		context: Context,
 		new_value: Parameters<T["checkValue"]>[1],
 		old_value: Parameters<T["checkValue"]>[2],
-		new_value_blessing_token: symbol | null
+		new_value_blessing_token: symbol | null,
+		item: CollectionItem | undefined
 	) {
 		if (!context.is_super) {
 			const result = await this.edit_strategy.check(context);
@@ -53,7 +54,8 @@ export default class ControlAccess<
 			context,
 			new_value,
 			old_value,
-			new_value_blessing_token
+			new_value_blessing_token,
+			item
 		);
 	}
 

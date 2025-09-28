@@ -2,6 +2,7 @@ import type Context from "../context.js";
 import type {
 	App,
 	Collection,
+	CollectionItem,
 	ItemListResult,
 	TransitionChecker,
 } from "../main.js";
@@ -92,13 +93,15 @@ export default abstract class HybridField<
 		context: Context,
 		new_value: Parameters<T["checkValue"]>[1],
 		old_value: Parameters<T["checkValue"]>[2],
-		new_value_blessing_token: symbol | null
+		new_value_blessing_token: symbol | null,
+		item: CollectionItem | undefined
 	) {
 		return this.virtual_field.checkValue(
 			context,
 			new_value,
 			old_value,
-			new_value_blessing_token
+			new_value_blessing_token,
+			item
 		);
 	}
 
