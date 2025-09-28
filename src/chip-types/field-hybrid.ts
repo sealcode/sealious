@@ -35,7 +35,7 @@ export default abstract class HybridField<
 	transitionChecker: (
 		ctx: Context,
 		old_value: StorageType | undefined,
-		new_value: InputType
+		new_value: ParsedType
 	) => Promise<ValidationResult>;
 
 	constructor(base_field: T) {
@@ -45,12 +45,12 @@ export default abstract class HybridField<
 		this.transitionChecker = (
 			ctx: Context,
 			old_value: StorageType | undefined,
-			new_value: InputType
+			new_value: ParsedType
 		) => {
 			return this.virtual_field.transitionChecker(
 				ctx,
 				old_value as InnerStorageType,
-				new_value as unknown as InnerInputType
+				new_value as unknown as InnerParsedType
 			);
 		};
 	}

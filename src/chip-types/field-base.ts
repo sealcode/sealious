@@ -93,14 +93,14 @@ export abstract class Field<
 	transitionChecker: (
 		ctx: Context,
 		old_value: StorageType | undefined,
-		new_value: InputType
+		new_value: DecodedType
 	) => Promise<ValidationResult> = async () => ({ valid: true });
 
 	setTransitionChecker(
 		checker: (
 			ctx: Context,
 			old_value: StorageType,
-			new_value: InputType
+			new_value: DecodedType
 		) => Promise<ValidationResult>
 	): this {
 		this.transitionChecker = checker;
@@ -208,10 +208,18 @@ export abstract class Field<
 		if (!basic_validation.valid) {
 			return basic_validation;
 		}
+		const encoded = await this.encode(context, new_value as InputType);
+		const decoded = await this.decode(
+			context,
+			encoded as StorageType,
+			old_value,
+			{},
+			false
+		);
 		return this.transitionChecker(
 			context,
 			old_value as StorageType,
-			new_value as InputType
+			decoded as DecodedType
 		);
 	}
 

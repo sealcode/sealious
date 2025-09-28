@@ -18,9 +18,7 @@ describe("field class", () => {
 										new FieldTypes.Int().setTransitionChecker(
 											async (_, old_value, new_value) => {
 												return old_value == undefined ||
-													parseInt(
-														String(new_value)
-													) > old_value
+													new_value > old_value
 													? { valid: true }
 													: {
 															valid: false,

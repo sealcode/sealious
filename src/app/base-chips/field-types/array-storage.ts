@@ -6,26 +6,11 @@ import {
 } from "@sealcode/ts-predicates";
 import type { ActionName } from "../../../action.js";
 import { Field, Context, type ValidationResult } from "../../../main.js";
-import { Insert } from "./array-actions/insert.js";
-import { Remove } from "./array-actions/remove.js";
-import { Replace } from "./array-actions/replace.js";
-import { Swap } from "./array-actions/swap.js";
 
-export type ArrayStorageAction<ContentType> = (
-	| { remove: number }
-	| { swap: [number, number] }
-	| {
-			insert: { value?: ContentType; index?: number | string };
-	  }
-	| {}
-) & { data?: ContentType[] };
-
-export type ArrayStorageInput<ContentType> =
-	| ContentType[]
-	| ArrayStorageAction<ContentType>;
+export type ArrayStorageInput<ContentType> = ContentType[];
 
 export abstract class ArrayStorage<
-	T extends string | number | Record<string, unknown>
+	T extends string | number | Record<string, unknown>,
 > extends Field<T[], ArrayStorageInput<T>> {
 	constructor(public value_predicate: Predicate) {
 		super();
@@ -80,30 +65,6 @@ export abstract class ArrayStorage<
 					reason: "The value is an array action description, but this array field does not yet have a value",
 				};
 			}
-			let found_matching_action = false;
-			for (const Action of [Remove, Swap, Insert, Replace]) {
-				const action = new Action(
-					this.value_predicate,
-					this.isProperElement.bind(this)
-				);
-				const result = await action.validate(
-					context,
-					new_value,
-					old_value || []
-				);
-				if (result.valid) {
-					found_matching_action = true;
-					break;
-				}
-			}
-			if (!found_matching_action) {
-				return {
-					valid: false,
-					reason: `No action matches the description: ${JSON.stringify(
-						new_value
-					)}`,
-				};
-			}
 			if (hasFieldOfType(new_value, "data", predicates.any)) {
 				if (!is(new_value.data, predicates.array(predicates.object))) {
 					return {
@@ -139,38 +100,12 @@ export abstract class ArrayStorage<
 	}
 
 	async encode(
-		context: Context,
+		_context: Context,
 		value: ArrayStorageInput<T> | null,
-		old_value: T[]
+		_old_value: T[]
 	): Promise<T[]> {
 		if (value === null) {
 			return [];
-		}
-		if (!Array.isArray(value)) {
-			const value_to_modify = value.data ? value.data : old_value;
-			let result = value_to_modify;
-			const empty_element = await this.getEmptyElement(context);
-			for (const Action of [Remove, Swap, Insert, Replace]) {
-				const action = new Action(
-					this.value_predicate,
-					this.isProperElement.bind(this)
-				);
-				const parsed_action = await action.parse(
-					context,
-					value,
-					result,
-					empty_element
-				);
-				if (parsed_action) {
-					result = await action.run(
-						context,
-						parsed_action as any,
-						result,
-						empty_element
-					);
-				}
-			}
-			return result;
 		}
 		return value;
 	}
