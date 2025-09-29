@@ -292,4 +292,30 @@ describe("settable-by", () => {
 			}
 		);
 	});
+
+	it("allows creating a resource when passing an undefined value to a non-settable field", async () => {
+		await withRunningApp(
+			(t) =>
+				class extends t {
+					collections = {
+						...App.BaseCollections,
+						history: new (class extends Collection {
+							fields = {
+								title: new FieldTypes.Text(),
+								label: new FieldTypes.SettableBy(
+									new FieldTypes.Text(),
+									new Policies.Owner()
+								),
+							};
+						})(),
+					};
+				},
+			async ({ app }) => {
+				await app.collections.history.create(new app.Context(), {
+					title: "some event",
+					label: undefined, // this is important - we're testing what happens when the key is present, but the value set explicitly to undefined. This should not throw an error, but just ignore the label value
+				});
+			}
+		);
+	});
 });

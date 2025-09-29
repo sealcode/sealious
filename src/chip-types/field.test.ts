@@ -126,5 +126,28 @@ describe("field class", () => {
 				}
 			);
 		});
+
+		it("throws when a required field is missing a value", async () => {
+			await withRunningApp(
+				(t) =>
+					class extends t {
+						collections = {
+							...App.BaseCollections,
+							history: new (class extends Collection {
+								fields = {
+									title: new FieldTypes.Text().setRequired(
+										true
+									),
+								};
+							})(),
+						};
+					},
+				async ({ app }) => {
+					await assertThrowsAsync(() =>
+						app.collections.history.suCreate({} as any)
+					);
+				}
+			);
+		});
 	});
 });

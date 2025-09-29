@@ -250,26 +250,28 @@ export class Fieldset<Fields extends Record<string, Field<any, any, any>>> {
 				// field does not exist
 				continue;
 			}
-			promises.push(
-				field
-					.checkValue(
-						context,
-						this.raw_input[
-							field_name as keyof FieldsetInput<Fields>
-						],
-						original_body.encoded[field_name],
-						this.blessings[field_name] || null,
-						item
-					)
-					.then(async (result) => {
-						if (!result.valid) {
-							valid = false;
-							errors[field_name] = {
-								message: result.reason as string,
-							};
-						}
-					})
-			);
+			const input =
+				this.raw_input[field_name as keyof FieldsetInput<Fields>];
+			if (input === undefined && !field.required) {
+				continue;
+			}
+			const promise = field
+				.checkValue(
+					context,
+					input,
+					original_body.encoded[field_name],
+					this.blessings[field_name] || null,
+					item
+				)
+				.then(async (result) => {
+					if (!result.valid) {
+						valid = false;
+						errors[field_name] = {
+							message: result.reason as string,
+						};
+					}
+				});
+			promises.push(promise);
 		}
 		await Promise.all(promises);
 		return { valid, errors };

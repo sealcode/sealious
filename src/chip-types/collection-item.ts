@@ -90,11 +90,11 @@ export default class CollectionItem<T extends Collection = any> {
 			replace_mode,
 			this
 		);
-		await this.gatherDefaultValues(context);
 		context.app.Logger.debug3("ITEM", "Saving item/validation result", {
 			valid,
 			errors,
 		});
+		await this.gatherDefaultValues(context);
 		if (!valid) {
 			throw new FieldsError(this.collection, errors);
 		}

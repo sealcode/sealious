@@ -112,7 +112,7 @@ describe("disallow-update", () => {
 			);
 		}));
 
-	it("rejects a new value if the old value is `null`", () =>
+	it("rejects a new null value if the old value is non-null", () =>
 		withRunningApp(extend, async ({ app }) => {
 			const item = await app.collections.constseals.create(
 				new app.Context(),
