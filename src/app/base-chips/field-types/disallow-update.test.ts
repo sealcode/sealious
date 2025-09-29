@@ -4,6 +4,9 @@ import {
 	Collection,
 	FieldTypes,
 	Policies,
+	App,
+	CollectionItem,
+	type ValidationResult,
 } from "../../../main.js";
 
 import assert from "assert";
@@ -14,6 +17,7 @@ import {
 import { assertThrowsAsync } from "../../../test_utils/assert-throws-async.js";
 import { TestApp } from "../../../test_utils/test-app.js";
 import { OpenApiTypes } from "../../../schemas/open-api-types.js";
+import DisallowUpdate from "./disallow-update.js";
 
 const url = "/api/v1/collections/constseals";
 
@@ -121,8 +125,44 @@ describe("disallow-update", () => {
 					attribute: 5,
 				}
 			);
-			console.log("created");
 			item.set("age", null);
 			await assertThrowsAsync(() => item.save(new app.Context()));
 		}));
+
+	it("rejects a new null value if the old value is non-null", () =>
+		withRunningApp(
+			(t) =>
+				class extends t {
+					collections = {
+						...App.BaseCollections,
+						numbers: new (class extends Collection {
+							fields = {
+								value: new DisallowUpdate(
+									new (class extends Field<number> {
+										typeName: "number-with-context";
+										open_api_type: OpenApiTypes;
+										async isProperValue(
+											context: Context
+										): Promise<ValidationResult> {
+											if (!context.user_id) {
+												return {
+													valid: false,
+													reason: "User id missing",
+												};
+											}
+											return { valid: true };
+										}
+									})()
+								),
+							};
+						})(),
+					};
+				},
+			async ({ app }) => {
+				const item = await app.collections.numbers.create(
+					new app.Context({ user_id: "some-user" }),
+					{ value: 42 }
+				);
+			}
+		));
 });

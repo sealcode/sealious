@@ -30,7 +30,7 @@ export default class DisallowUpdate<
 		);
 		if (old_value === undefined) {
 			return this.virtual_field.checkValue(
-				new context.app.SuperContext(),
+				context,
 				new_value,
 				old_value,
 				new_value_blessing_token,
