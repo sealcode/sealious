@@ -1,9 +1,20 @@
 import assert from "assert";
 import { Collection, FieldTypes } from "../main.js";
 import { TestApp } from "../test_utils/test-app.js";
-import { withRunningApp } from "../test_utils/with-test-app.js";
-import PostrgresDatastore from "./datastore-postgres.js";
+import {
+	withRunningApp,
+	type TestAppConstructor,
+} from "../test_utils/with-test-app.js";
+import PostgresDatastore from "./datastore-postgres.js";
 import PostgresClient from "./postgres-client.js";
+
+// While creating tests for database these commands might be usefull
+// docker ps
+// docker exec -i <CONTAINER_ID> psql - navigate trough postgres with commandline
+// docker exec -i <CONTAINER_ID> psql -U postgres -c "\l" - show all databases created in postgres container
+// docker exec -i <CONTAINER_ID> psql -U postgres -d sealious-test -c "\dt" - show all created tables in sealious test database
+// docker exec -i <CONTAINER_ID> psql -U postgres -d sealious-test -c "\d <table_name>" - show table schema of created table in sealious test database
+// docker exec -i <CONTAINER_ID> psql -U postgres -d sealious-test -c "<SQL_QUERY>" - execute single SQL command in sealious test database
 
 describe("datastorepostgres", () => {
 	it("should connect to database", async () =>
@@ -11,15 +22,15 @@ describe("datastorepostgres", () => {
 			const config = app.ConfigManager.get("datastore_postgres");
 
 			if (!config) {
-				assert.ok(false);
+				throw new Error("No postgres config");
 			}
 
-			await PostrgresDatastore.executePlainQuery(
+			await PostgresDatastore.executePlainQuery(
 				app,
 				config,
 				`DROP DATABASE IF EXISTS "${config.db_name}"`
 			);
-			const datastore = new PostrgresDatastore(app);
+			const datastore = new PostgresDatastore(app);
 			await datastore.start();
 			await datastore.stop();
 		}));
@@ -43,15 +54,15 @@ describe("datastorepostgres", () => {
 				const config = app.ConfigManager.get("datastore_postgres");
 
 				if (!config) {
-					assert.ok(false);
+					throw new Error("No postgres config");
 				}
 
-				await PostrgresDatastore.executePlainQuery(
+				await PostgresDatastore.executePlainQuery(
 					app,
 					config,
 					`DROP DATABASE IF EXISTS "${config.db_name}"`
 				);
-				const datastore = new PostrgresDatastore(app);
+				const datastore = new PostgresDatastore(app);
 				await datastore.start();
 				await datastore.stop();
 
@@ -86,22 +97,88 @@ describe("datastorepostgres", () => {
 					(row) => row.data_type
 				);
 
-				assert.deepEqual(tables, [
-					"users",
-					"sessions",
-					"long_running_processes",
-					"long_running_process_events",
-					"dogs",
-				]);
-				assert.deepEqual(columns, [
-					"age",
-					"name:original",
-					"name:safe",
-				]);
+				assert.deepEqual(
+					tables.sort(),
+					[
+						"users",
+						"sessions",
+						"long_running_processes",
+						"long_running_process_events",
+						"dogs",
+					].sort()
+				);
+				assert.deepEqual(
+					columns.sort(),
+					["age", "id", "name:original", "name:safe"].sort()
+				);
 				assert.ok(dataTypes.includes("integer"));
 				assert.ok(dataTypes.includes("text"));
 
 				await tmpClient.end();
 			}
 		));
+
+	describe("Reference tests", () => {
+		function extend(t: TestAppConstructor) {
+			const A = new (class extends Collection {
+				name = "A";
+				fields = {
+					reference_to_b: new FieldTypes.SingleReference("B"),
+				};
+			})();
+			const B = new (class extends Collection {
+				name = "B";
+				fields = {
+					number: new FieldTypes.Int(),
+					// To check if a circular dependency doesn't break the DB creation process.
+					reference_to_a: new FieldTypes.SingleReference("A"),
+				};
+			})();
+
+			return class extends t {
+				collections = {
+					...TestApp.BaseCollections,
+					A,
+					B,
+				};
+			};
+		}
+
+		it("Should be able to join columns by single reference field", () =>
+			withRunningApp(extend, async ({ app }) => {
+				const config = app.ConfigManager.get("datastore_postgres");
+
+				if (!config) {
+					throw new Error("No postgres config");
+				}
+
+				await PostgresDatastore.executePlainQuery(
+					app,
+					config,
+					`DROP DATABASE IF EXISTS "${config.db_name}"`
+				);
+				const datastore = new PostgresDatastore(app);
+				await datastore.start();
+
+				const response = await datastore
+					.getClient()
+					.executeQuery(
+						app,
+						"SELECT * FROM A JOIN B ON a.reference_to_b = b.id"
+					);
+				// We are merging two tables, and each table has a field called 'id', which is why we expect to have two occurrences.
+				assert.deepEqual(
+					response.fields.map((f) => f.name).sort(),
+					[
+						"id",
+						"number",
+						"reference_to_a",
+						"id",
+						"reference_to_b",
+					].sort()
+				);
+
+				await datastore.stop();
+			}));
+	});
 });

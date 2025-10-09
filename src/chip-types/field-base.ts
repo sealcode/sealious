@@ -123,6 +123,9 @@ export abstract class Field<
 		if (name.includes(":")) {
 			throw new Error("Field names cannot contain the `:` character.");
 		}
+		if (name.startsWith("fk_")) {
+			throw new Error("Field names cannot start wtih `fk_`.");
+		}
 		this.name = name;
 	}
 
@@ -377,6 +380,14 @@ export abstract class Field<
 
 	getPostgreSqlFieldDefinitions(): string[] {
 		return [`"${this.name}" JSONB`];
+	}
+
+	getPostgreSqlConstraintFieldDefinitions(): string[] {
+		return [];
+	}
+
+	getPostgreSqlShouldFieldBeCreatedInitially(): boolean {
+		return true;
 	}
 
 	getAttachmentIDs(_value: DecodedType): string[] {

@@ -234,6 +234,20 @@ export default class SingleReference extends Field<string, string> {
 		return ret.fetch();
 	}
 
+	getPostgreSqlFieldDefinitions(): string[] {
+		return [`"${this.name}" VARCHAR(255)`];
+	}
+
+	getPostgreSqlConstraintFieldDefinitions(): string[] {
+		return [
+			`fk_${this.name} FOREIGN KEY ("${this.name}") REFERENCES ${this.target_collection}("id")`,
+		];
+	}
+
+	getPostgreSqlShouldFieldBeCreatedInitially(): boolean {
+		return false;
+	}
+
 	getAttachmentIDs(value: string): string[] {
 		return [value];
 	}

@@ -7,15 +7,15 @@ import type {
 } from "mongodb";
 import pg from "pg";
 import type { App, Config, Field } from "../main.js";
-import type { OutputOptions } from "./datastore.js";
-import Datastore from "./datastore-abstract.js";
-import type { QueryStage } from "./query-stage.js";
 import asyncForEach from "../utils/async-foreach.js";
+import Datastore from "./datastore-abstract.js";
+import type { OutputOptions } from "./datastore.js";
 import PostgresClient from "./postgres-client.js";
+import type { QueryStage } from "./query-stage.js";
 
 export type PostgresConfig = Config["datastore_postgres"];
 
-export default class PostrgresDatastore extends Datastore {
+export default class PostgresDatastore extends Datastore {
 	client: PostgresClient;
 
 	async start(): Promise<void> {
@@ -45,6 +45,10 @@ export default class PostrgresDatastore extends Datastore {
 
 	async stop(): Promise<void> {
 		await this.client?.end();
+	}
+
+	getClient() {
+		return this.client;
 	}
 
 	find(
@@ -95,13 +99,72 @@ export default class PostrgresDatastore extends Datastore {
 			async (collection) => {
 				const fields = Object.values(
 					collection.fields as Record<string, Field<any, any, any>>
+				).filter((field) =>
+					field.getPostgreSqlShouldFieldBeCreatedInitially()
 				);
+				const fieldDefs = [
+					'"id" VARCHAR(255) PRIMARY KEY',
+					...fields.flatMap((field) =>
+						field.getPostgreSqlFieldDefinitions()
+					),
+				];
 				const sql = `CREATE TABLE IF NOT EXISTS ${
 					collection.name
-				} (\n ${fields
-					.flatMap((field) => field.getPostgreSqlFieldDefinitions())
-					.join(",\n")} \n)`;
+				} (\n ${fieldDefs.join(",\n")} \n)`;
 				await this.client.executeQuery(this.app, sql);
+			}
+		);
+		await asyncForEach(
+			Object.values(this.app.collections),
+			async (collection) => {
+				const fields = Object.values(
+					collection.fields as Record<string, Field<any, any, any>>
+				).filter(
+					(field) =>
+						!field.getPostgreSqlShouldFieldBeCreatedInitially()
+				);
+
+				for (const field of fields) {
+					const fieldDefs = field.getPostgreSqlFieldDefinitions();
+					const constraintDefs =
+						field.getPostgreSqlConstraintFieldDefinitions();
+
+					const columnsDeclarations = fieldDefs.map(
+						(fieldDef) =>
+							`ALTER TABLE ${collection.name} ADD COLUMN IF NOT EXISTS ${fieldDef};`
+					);
+					const constraintDeclarations: [string, string][] =
+						constraintDefs.map((conDef) => [
+							`SELECT COUNT(*) FROM pg_constraint WHERE conname='fk_${field.name}';`,
+							`ALTER TABLE ${collection.name} ADD CONSTRAINT ${conDef};`,
+						]);
+
+					if (columnsDeclarations.length) {
+						await Promise.all(
+							columnsDeclarations.map((colD) =>
+								this.client.executeQuery(this.app, colD)
+							)
+						);
+						await Promise.all(
+							constraintDeclarations.map(
+								async ([checkQuery, createQuery]) => {
+									const checkQuerRes =
+										await this.client.executeQuery(
+											this.app,
+											checkQuery
+										);
+									const constraintExists = Number(checkQuerRes.rows[0]?.count) > 0;
+									if (!constraintExists) {
+										return this.client.executeQuery(
+											this.app,
+											createQuery
+										);
+									}
+								}
+							)
+						);
+					}
+				}
 			}
 		);
 	}

@@ -248,6 +248,15 @@ export default class ReverseSingleReference extends CachedValue<
 		return item.id;
 	}
 
+	getPostgreSqlFieldDefinitions(): string[] {
+		// no columns to be created, single-refrence will create neccessery fields
+		return [];
+	}
+
+	getPostgreSqlShouldFieldBeCreatedInitially(): boolean {
+		return false;
+	}
+
 	getAttachmentIDs(value: string[]): string[] {
 		return value;
 	}

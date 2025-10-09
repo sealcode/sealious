@@ -236,6 +236,15 @@ export class DeepReverseSingleReference extends ReverseSingleReference {
 		return item.get(this.intermediary_field_that_points_there) as string;
 	}
 
+	getPostgreSqlFieldDefinitions(): string[] {
+		// no columns to be created, single-refrence will create neccessery fields
+		return [];
+	}
+
+	getPostgreSqlShouldFieldBeCreatedInitially(): boolean {
+		return false;
+	}
+
 	getAttachmentIDs(value: string[]): string[] {
 		return value;
 	}
