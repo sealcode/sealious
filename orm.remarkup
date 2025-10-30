@@ -197,6 +197,18 @@ const { items } = await app.collections.items
 The order of the methods in chain is not significant, aside from the fact that
 `fetch` has to be at the end of the chain.
 
+### Listing one item
+
+Comparable to `fetch` method you can use `fetchOne` which returns exactly one item, or null if value is not found:
+
+```
+const item = await app.collections.numbers
+  .suList()
+  .filter({ item: { "<": 10 } })
+  .sort({ item: "desc" })
+  .fetchOne();
+```
+
 ## Creating an item in a database
 
 ```

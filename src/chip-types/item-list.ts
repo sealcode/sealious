@@ -345,6 +345,18 @@ export default class ItemList<T extends Collection> {
 		);
 	}
 
+	/**
+	 * execute crated database request and return one item
+	 */
+	async fetchOne(
+		{ is_http_api_request } = { is_http_api_request: false }
+	): Promise<CollectionItem<T> | null> {
+		this.paginate({ items: 1 });
+		const result = await this.fetch({ is_http_api_request });
+
+		return result.items[0] || null;
+	}
+
 	async toCSV(): Promise<string> {
 		const result = await this.fetch();
 		const rows = [Collection.getFieldnames(this.collection)];

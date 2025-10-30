@@ -271,4 +271,84 @@ describe("ItemList", () => {
 				assert.strictEqual(items.length, 0);
 			}
 		));
+
+	describe("fetchOne method", () => {
+		it("should return the first item in correct order", async () =>
+			withRunningApp(
+				(test_app) =>
+					class extends test_app {
+						collections = {
+							...App.BaseCollections,
+							articles: new (class Items extends Collection {
+								fields = {
+									title: new FieldTypes.Text(),
+								};
+							})(),
+						};
+					},
+				async ({ app }) => {
+					const texts = ["first", "second", "third"];
+
+					for (let i = 0; i < texts.length; i++) {
+						await app.collections.articles.suCreate({
+							title: texts[i],
+						});
+					}
+
+					const item = await app.collections.articles
+						.suList()
+						.sort({ title: "asc" })
+						.fetchOne();
+
+					const itemDescended = await app.collections.articles
+						.suList()
+						.sort({ title: "desc" })
+						.fetchOne();
+
+					assert.strictEqual(item!.get("title"), "first");
+					assert.strictEqual(itemDescended!.get("title"), "third");
+				}
+			));
+
+		it("should return the first item or null depends on filter formula", async () =>
+			withRunningApp(
+				(test_app) =>
+					class extends test_app {
+						collections = {
+							...App.BaseCollections,
+							numbers: new (class Items extends Collection {
+								fields = {
+									item: new FieldTypes.Int(),
+								};
+							})(),
+						};
+					},
+				async ({ app }) => {
+					const items = [
+						1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16,
+						17, 18, 19, 20,
+					];
+
+					for (let i = 0; i < items.length; i++) {
+						await app.collections.numbers.suCreate({
+							item: items[i],
+						});
+					}
+
+					const itemFilteredNotFound = await app.collections.numbers
+						.suList()
+						.filter({ item: { ">": 20 } })
+						.fetchOne();
+
+					const itemFilteredFound = await app.collections.numbers
+						.suList()
+						.filter({ item: { "<": 10 } })
+						.sort({ item: "desc" })
+						.fetchOne();
+
+					assert.strictEqual(itemFilteredNotFound, null);
+					assert.strictEqual(itemFilteredFound!.get("item"), 9);
+				}
+			));
+	});
 });
