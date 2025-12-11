@@ -6,22 +6,25 @@ import {
 	Context,
 	CollectionItem,
 	Queries,
+	SpecialFilters,
 } from "../../main.js";
 import type { PolicyDefinition } from "../../chip-types/policy.js";
+
+type IFPolicyFilter = [string, { [key: string]: unknown }] | string;
 
 export default class If extends Policy {
 	static type_name = "if";
 	collection_name: string;
-	filter_name: string;
+	filter: IFPolicyFilter;
 	strategy_when: { [key in "true" | "false"]: Policy };
 	constructor(
 		collection_name: string,
-		special_filter_name: string,
+		special_filter: IFPolicyFilter,
 		when_true: PolicyDefinition,
 		when_false: PolicyDefinition = Policies.Noone
 	) {
-		super([collection_name, special_filter_name, when_true, when_false]);
-		this.filter_name = special_filter_name;
+		super([collection_name, special_filter, when_true, when_false]);
+		this.filter = special_filter;
 		this.collection_name = collection_name;
 		this.strategy_when = {
 			true: Policy.fromDefinition(when_true),
@@ -31,10 +34,17 @@ export default class If extends Policy {
 
 	getFilter(app: App): SpecialFilter {
 		const collection = app.collections[this.collection_name];
-		if (collection) {
-			return collection.getNamedFilter(this.filter_name);
+		if (collection && typeof this.filter === "string") {
+			return collection.getNamedFilter(this.filter);
+		} else if (collection && Array.isArray(this.filter)) {
+			const specialFilter = new SpecialFilters.Matches(
+				this.collection_name,
+				this.filter[1]
+			);
+			specialFilter.init(app);
+			return specialFilter;
 		} else {
-			throw new Error("collection is missing");
+			throw new Error("incorrect filter shape or collection is missing");
 		}
 	}
 
@@ -73,7 +83,7 @@ export default class If extends Policy {
 			return Policy.deny(this.getFilter(context.app).getNopassReason());
 		}
 		return Policy.allow(
-			context.i18n`Item passes '${this.filter_name}' filter.`
+			context.i18n`Item passes '${typeof this.filter === "string" ? this.filter : this.filter[0]}' filter.`
 		);
 	}
 	isItemSensitive = async () => true;

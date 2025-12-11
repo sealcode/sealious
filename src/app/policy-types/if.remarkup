@@ -9,8 +9,10 @@ use a different policy.
 -   `collection_name: string` - due to implementation complexities, you have to pass the
     collection name to this policy. It's the name of the collection that this
     policy is attached to.
--   `special_filter_name: string` - which filter from the collection to use when
+-   `special_filter`
+	1) name: string - which filter from the collection to use when
     segmenting the items
+	2) entire filter shape: `[name: string, {[key: string]}: unknown]` - first position is filter name, second is fliter shape
 -   `when_true: Policy` - Policy to use when the special filter matches a given item
 
 -   `when_false: Policy` - Policy to use when the special filter doesn't match a given Item
@@ -19,6 +21,8 @@ use a different policy.
 
 The below app will make non-negative number public, but negative numbers will
 only be visible to logged-in users.
+
+### Version with only filter name provided
 
 ```
 lang=typescript
@@ -41,6 +45,34 @@ class extends App {
 				defaultPolicy = new Policies.If(
 					"numbers",
 					"negative",
+					Policies.LoggedIn,
+					Policies.Public,
+				);
+			})(),
+		};
+	};
+```
+
+### Version with filter name and filter shape provided
+
+```
+lang=typescript
+class extends App {
+		collections = {
+			...App.BaseCollections,
+			numbers: new (class extends Collection {
+				fields = {
+					number: new FieldTypes.Int(),
+					number_str: new FieldTypes.Text(),
+				};
+				defaultPolicy = new Policies.If(
+					"numbers",
+					[
+						"negative", 
+						{
+							number: { "<": 0 },
+						}
+					],
 					Policies.LoggedIn,
 					Policies.Public,
 				);

@@ -191,4 +191,61 @@ describe("if", () => {
 				assert.strictEqual(logged_in_result.items.length, 3);
 			}
 		));
+
+	describe("variant with entire filter as an argument instead of filter name alone", () => {
+		it("should work properly with a boolean field set to false", async () =>
+			withRunningApp(
+				(test_app) =>
+					class extends test_app {
+						collections = {
+							...TestApp.BaseCollections,
+							tasks: new (class extends Collection {
+								fields = {
+									title: new FieldTypes.Text(),
+									done: new FieldTypes.Boolean(),
+								};
+								policies = {
+									list: new Policies.If(
+										"tasks",
+										[
+											"todo",
+											{
+												done: false,
+											},
+										],
+										new Policies.Public(),
+										new Policies.Noone()
+									),
+								};
+							})(),
+						};
+					},
+				async ({ app }) => {
+					await app.collections.tasks.suCreate({
+						title: "Task 1",
+						done: false,
+					});
+					await app.collections.tasks.suCreate({
+						title: "Task 2",
+						done: true,
+					});
+					await app.collections.tasks.suCreate({
+						title: "Task 3",
+						done: false,
+					});
+					await app.collections.tasks.suCreate({
+						title: "Task 4",
+						done: true,
+					});
+
+					const { items } = await app.collections.tasks
+						.list(new app.Context())
+						.fetch();
+
+					assert.strictEqual(items.length === 2, true);
+					assert.strictEqual(items[0]?.get("title"), "Task 1");
+					assert.strictEqual(items[1]?.get("title"), "Task 3");
+				}
+			));
+	});
 });
