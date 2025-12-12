@@ -1,4 +1,4 @@
-import { withRunningApp } from "../test_utils/with-test-app.js";
+import { withRunningApp, withStoppedApp } from "../test_utils/with-test-app.js";
 import { assertThrowsAsync } from "../test_utils/assert-throws-async.js";
 import assert from "assert";
 
@@ -9,12 +9,14 @@ describe("datastore", () => {
 
 	it("timeouts with incorrect config", async () => {
 		const fakePort = 20725;
-		process.env.SEALIOUS_DB_PORT = "20725";
 		await assertThrowsAsync(
 			async () => {
-				await withRunningApp(
+				await withStoppedApp(
 					(app) => app,
-					async () => null
+					async ({ app }) => {
+						app.config.datastore_mongo.port = fakePort;
+						await app.start();
+					}
 				);
 			},
 			(e: Error) => {
