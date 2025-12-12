@@ -43,6 +43,60 @@ describe("app", () => {
 		});
 	});
 
+	describe("rss feed variants", () => {
+		it("generates valid links for all variants", async () => {
+			return withRunningApp(
+				(t) =>
+					class extends t {
+						collections = {
+							...App.BaseCollections,
+							posts: new (class extends Collection {
+								fields = {
+									title: new FieldTypes.Text(),
+									content: new FieldTypes.Text(),
+								};
+							})(),
+						};
+					},
+
+				async ({ app }) => {
+					app.manifest.rss_variants = [
+						["light", "dark"],
+						["mobile", "desktop"],
+					];
+
+					const expected_links = [
+						["light", "mobile"],
+						["light", "desktop"],
+						["dark", "mobile"],
+						["dark", "desktop"],
+					].map((variant) => {
+						const param = variant.join("+");
+						return /* HTML */ `<link
+							href="/api/v1/collections/posts/feed?variant=${param}"
+							type="application/atom+xml"
+							rel="alternate"
+							title="testing app / posts feed (${param})"
+						/>`;
+					});
+
+					const metatags = await app.getFeedHTMLMetatags({
+						$app: app,
+					} as unknown as Koa.Context);
+
+					const expected_metatags = expected_links.join("");
+
+					assert.strictEqual(
+						await prettier.format(metatags, { parser: "html" }),
+						await prettier.format(expected_metatags, {
+							parser: "html",
+						})
+					);
+				}
+			);
+		});
+	});
+
 	describe("atom feed", () => {
 		it("generates a valid XML feed for a list of blog items", async () =>
 			withRunningApp(

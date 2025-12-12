@@ -9,6 +9,7 @@ import { module_dirname } from "../utils/module_filename.js";
 import { FileManager } from "@sealcode/file-manager";
 import { UPLOADED_FILES_BASE_URL } from "../app/consts.js";
 import type { KoaResponsiveImageRouter } from "koa-responsive-image-router";
+import type { ManifestData } from "../app/manifest.js";
 
 export class TestApp extends App {
 	clear_database_on_stop: boolean = true;
@@ -59,7 +60,7 @@ export class TestApp extends App {
 				primary: "#4d394b",
 			},
 			admin_email: "admin@example.com",
-		},
+		} as ManifestData,
 		public mailer = env == "production"
 			? new SMTPMailer({
 					host: process.env.SEALIOUS_SMTP_HOST || "127.0.0.1",

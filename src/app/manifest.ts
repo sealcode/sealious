@@ -7,6 +7,7 @@ export interface ManifestData {
 	default_language: string;
 	base_url: string;
 	admin_email: string;
+	rss_variants?: string[][];
 	colors: { primary: string };
 }
 
@@ -18,6 +19,7 @@ export default class Manifest implements ManifestData {
 	base_url: string;
 	admin_email: string;
 	colors: { primary: string };
+	rss_variants?: string[][];
 	constructor(public data: ManifestData) {
 		Object.assign(this, data);
 	}

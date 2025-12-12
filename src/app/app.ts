@@ -1,3 +1,4 @@
+/* eslint-disable no-await-in-loop */
 import Router from "@koa/router";
 import type { default as Koa } from "koa";
 import assert from "assert";
@@ -277,17 +278,51 @@ export abstract class App {
 	}
 
 	async getFeedHTMLMetatags(ctx: Koa.Context): Promise<string> {
+		const rss_variants = this.manifest.rss_variants;
 		let result = "";
 		for (const collection of Object.values(this.collections)) {
 			if (collection.hasFeed()) {
-				result += /* HTML */ `<link
-					href="/api/v1/collections/${collection.name}/feed"
-					type="application/atom+xml"
-					rel="alternate"
-					title="${await collection.getFeedTitle(ctx)} feed"
-				/>`;
+				if (rss_variants?.length && rss_variants?.length > 0) {
+					for (const variant of this.cartesianProduct(rss_variants)) {
+						const param = variant.join("+");
+
+						result += /* HTML */ `<link
+							href="/api/v1/collections/${collection.name}/feed?variant=${param}"
+							type="application/atom+xml"
+							rel="alternate"
+							title="${await collection.getFeedTitle(
+								ctx
+							)} feed (${param})"
+						/>`;
+					}
+				} else {
+					result += /* HTML */ `<link
+						href="/api/v1/collections/${collection.name}/feed"
+						type="application/atom+xml"
+						rel="alternate"
+						title="${await collection.getFeedTitle(ctx)} feed"
+					/>`;
+				}
 			}
 		}
+		return result;
+	}
+
+	cartesianProduct<T>(arrays: T[][]): T[][] {
+		let result: T[][] = [[]];
+
+		for (const arr of arrays) {
+			const new_array: T[][] = [];
+
+			for (const prefix of result) {
+				for (const value of arr) {
+					new_array.push([...prefix, value]);
+				}
+			}
+
+			result = new_array;
+		}
+
 		return result;
 	}
 
