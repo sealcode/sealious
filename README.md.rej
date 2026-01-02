@@ -1,0 +1,17 @@
+diff a/README.md b/README.md	(rejected hunks)
+@@ -68,6 +68,15 @@
+ 
+ This ensures that when your module is installed as a dependency, the parent project will automatically know where to find your controllers and styles.
+ 
++## Build Notifier Port Configuration
++
++When running `sealgen build --watch`, the build notifier monitors the Sealious app by sending requests to the app's URL. The port is automatically detected from your app configuration:
++
++1. **Primary source**: The port is read from `dist/back/config.js` (the compiled version of your app's config file)
++2. **Environment variable fallback**: If the config file doesn't exist or doesn't export a `PORT`, it falls back to the `SEALIOUS_PORT` environment variable
++3. **Default fallback**: If neither is available, it defaults to port `8080`
++
++The build notifier will use the same port that your Sealious app is configured to listen on ensuring proper communication during development,
+ 
+ ### Attributions
+ 
