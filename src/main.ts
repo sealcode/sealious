@@ -42,3 +42,4 @@ export {
 	type Fieldnames,
 } from "./chip-types/collection.js";
 export { CollectionItemBody } from "./chip-types/collection-item-body.js";
+export * from "./schemas/open-api-types.js";
