@@ -1,12 +1,12 @@
 import { hasShape, predicates } from "@sealcode/ts-predicates";
 import { Context, Field, type ValidationResult } from "../../../main.js";
 import { OpenApiTypes } from "../../../schemas/open-api-types.js";
+import { CoordsValue } from "./coords-value.js";
 
 export type CoordinatesFieldInputType =
 	| string
 	| number[]
 	| { lat: number; lon: number };
-type FormatType = "string" | "tuple" | "object";
 type GeoJSONPoint = { type: "Point"; coordinates: number[] };
 
 /** A field for coordinates, to handle values in diffrent form and store them in normalized GeoJSON format.
@@ -15,7 +15,7 @@ type GeoJSONPoint = { type: "Point"; coordinates: number[] };
  */
 
 export default class Coordinates extends Field<
-	CoordinatesFieldInputType,
+	CoordsValue,
 	CoordinatesFieldInputType,
 	GeoJSONPoint
 > {
@@ -84,12 +84,7 @@ export default class Coordinates extends Field<
 		}
 	}
 
-	async decode(
-		_: Context,
-		db_value: unknown,
-		__: unknown,
-		format?: FormatType
-	): Promise<CoordinatesFieldInputType | null> {
+	async decode(_: Context, db_value: unknown): Promise<CoordsValue | null> {
 		if (db_value === null || db_value === undefined) {
 			return null;
 		}
@@ -113,27 +108,8 @@ export default class Coordinates extends Field<
 			throw new Error("db value is not vnvalid GeoJSON object");
 		}
 
-		if (format === "string") {
-			return `${dbValueCasted.coordinates[0]},${dbValueCasted.coordinates[1]}`;
-		} else if (format === "tuple") {
-			return dbValueCasted.coordinates;
-		} else if (format === "object") {
-			if (
-				dbValueCasted.coordinates[0] === undefined ||
-				dbValueCasted.coordinates[1] === undefined
-			) {
-				throw new Error(
-					"coordinate provided in dbValueCasted is missing"
-				);
-			}
-
-			return {
-				lat: dbValueCasted.coordinates[0],
-				lon: dbValueCasted.coordinates[1],
-			};
-		} else {
-			return dbValueCasted.coordinates;
-		}
+		const coordinates = dbValueCasted.coordinates as [number, number];
+		return new CoordsValue(coordinates);
 	}
 
 	getPostgreSqlFieldDefinitions(): string[] {

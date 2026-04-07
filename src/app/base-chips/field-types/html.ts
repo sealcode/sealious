@@ -11,16 +11,6 @@ export default class Html extends Text {
 		if (input === null) {
 			return null;
 		}
-		const { default: sanitizeHtml } = await import("sanitize-html"); //putting it here not to slow down `new Sealious.app()`
-		return {
-			original: input,
-			safe: sanitizeHtml(input, {
-				allowedTags: sanitizeHtml.defaults.allowedTags.concat([
-					"img",
-					"h1",
-					"h2",
-				]),
-			}),
-		};
+		return input;
 	}
 }

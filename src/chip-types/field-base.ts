@@ -216,14 +216,12 @@ export abstract class Field<
 			context,
 			encoded as StorageType,
 			old_value,
-			{},
 			false
 		);
 		const old_value_decoded = await this.decode(
 			context,
 			old_value as StorageType,
 			old_value as StorageType,
-			{},
 			false
 		);
 		if (old_value == new_value) {
@@ -247,12 +245,11 @@ export abstract class Field<
 		return value as any;
 	}
 
-	/** Reverse to the {@link Field.encode} function. Takes what's inside the database and returns the value in a given format */
+	/** Reverse to the {@link Field.encode} function. Takes what's inside the database and returns the decoded value */
 	async decode(
 		context: Context,
 		storage_value: StorageType,
 		old_value: any,
-		_format_params: any,
 		_is_http_api_request = false
 	): Promise<DecodedType | null> {
 		context.app.Logger.debug3("FIELD DECODE", this.name, {
@@ -322,8 +319,7 @@ export abstract class Field<
 	async getAttachments(
 		_context: Context,
 		_values: any[], // this method gets called once for multiple resources, to limit the number of queries. Field values of all the resources are passed in this array
-		attachment_options: any,
-		_format_params: any
+		attachment_options: any
 	): Promise<ItemListResult<any>> {
 		if (attachment_options !== undefined) {
 			throw new BadSubjectAction(

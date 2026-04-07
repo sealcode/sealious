@@ -20,7 +20,8 @@
 		"skipLibCheck": true,
 		"allowSyntheticDefaultImports": true,
 		"emitDeclarationOnly": true,
-		"noEmit": false
+		"noEmit": false,
+		"types": ["mocha"]
 	},
 	"include": ["src/**/*"]
 }

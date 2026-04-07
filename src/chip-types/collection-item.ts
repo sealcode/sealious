@@ -16,7 +16,7 @@ import isEmpty from "../utils/is-empty.js";
 import type { Fieldset, FieldsetInput, FieldsetOutput } from "./fieldset.js";
 import { CollectionItemBody } from "./collection-item-body.js";
 import type { ItemListResult } from "./item-list-result.js";
-import { FieldValue } from "../app/base-chips/field-types/field-value.js";
+import type { FieldValue } from "../app/base-chips/field-types/field-value.js";
 
 export type ItemMetadata = {
 	modified_at: number;
@@ -162,7 +162,7 @@ export default class CollectionItem<T extends Collection = any> {
 				...encoded,
 				_metadata: this._metadata,
 			});
-			await this.decode(context, {}, is_http_api_request);
+			await this.decode(context, is_http_api_request);
 			this.save_mode = "update";
 			await this.collection.emit("after:create", [context, this]);
 		} else {
@@ -186,13 +186,13 @@ export default class CollectionItem<T extends Collection = any> {
 					$set: { ...encoded, _metadata: this._metadata },
 				}
 			);
-			await this.decode(context, {}, is_http_api_request);
+			await this.decode(context, is_http_api_request);
 			await this.collection.emit("after:edit", [context, this]);
 		}
 		this.body.clearChangedFields();
 		this.original_body = this.body;
 		this.body = this.body.copy();
-		await this.decode(context, {}, is_http_api_request);
+		await this.decode(context, is_http_api_request);
 		return this;
 	}
 
@@ -295,13 +295,9 @@ export default class CollectionItem<T extends Collection = any> {
 		}
 	}
 
-	async getDecodedBody(
-		context: Context,
-		format: Parameters<Fieldset<T["fields"]>["decode"]>[1],
-		is_http: boolean = false
-	) {
+	async getDecodedBody(context: Context, is_http: boolean = false) {
 		if (!this.body.is_decoded) {
-			await this.body.decode(context, format, is_http);
+			await this.body.decode(context, is_http);
 		}
 		return this.body.decoded;
 	}
@@ -350,10 +346,9 @@ export default class CollectionItem<T extends Collection = any> {
 
 	async decode(
 		context: Context,
-		format: { [field_name: string]: any } = {},
 		is_http_api_request = false
 	): Promise<CollectionItem<T>> {
-		await this.body.decode(context, format, is_http_api_request);
+		await this.body.decode(context, is_http_api_request);
 		return this;
 	}
 
@@ -361,23 +356,35 @@ export default class CollectionItem<T extends Collection = any> {
 		return {
 			id: this.id,
 			...Object.fromEntries(
-				Object.entries(this.body.decoded).map(([key, value]) => [
-					key,
-					value instanceof FieldValue
-						? value.getRestAPIValue()
-						: value,
-				])
+				Object.entries(this.body.decoded).map(([key, value]) => {
+					if (
+						value &&
+						typeof value === "object" &&
+						"getRestAPIValue" in value &&
+						typeof value.getRestAPIValue === "function"
+					) {
+						return [key, (value as FieldValue).getRestAPIValue()];
+					}
+					if (
+						value &&
+						typeof value === "object" &&
+						"getURL" in value &&
+						typeof value.getURL === "function"
+					) {
+						return [
+							key,
+							(value as { getURL: () => string }).getURL(),
+						];
+					}
+					return [key, value];
+				})
 			),
 		} as {
 			id: string;
 		} & FieldsetOutput<T["fields"]>;
 	}
 
-	async safeLoadAttachments(
-		context: Context,
-		attachment_options: unknown,
-		format: Parameters<Fieldset<T["fields"]>["decode"]>[1]
-	) {
+	async safeLoadAttachments(context: Context, attachment_options: unknown) {
 		if (attachment_options === undefined) {
 			attachment_options = {};
 		}
@@ -397,15 +404,13 @@ export default class CollectionItem<T extends Collection = any> {
 		}
 		return this.loadAttachments(
 			context,
-			attachment_options as AttachmentOptions<T>,
-			format
+			attachment_options as AttachmentOptions<T>
 		);
 	}
 
 	async loadAttachments(
 		context: Context,
-		attachment_options: AttachmentOptions<T> = {},
-		format: Parameters<Fieldset<T["fields"]>["decode"]>[1]
+		attachment_options: AttachmentOptions<T> = {}
 	): Promise<this> {
 		// TODO: This function is kinda like a duplicate of `fetchAttachments` from ItemList?
 		if (this.attachments_loaded) {
@@ -428,8 +433,7 @@ export default class CollectionItem<T extends Collection = any> {
 							field.name as Fieldnames<typeof this.collection>
 						),
 					],
-					attachment_options[field.name as keyof T["fields"]],
-					(format || {})[field.name] || null
+					attachment_options[field.name as keyof T["fields"]]
 				)
 				.then((attachmentsList) => {
 					this.fields_with_attachments.push(field.name);

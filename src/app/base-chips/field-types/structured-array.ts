@@ -93,8 +93,7 @@ export class StructuredArray<
 	async getAttachments(
 		context: Context,
 		values: any[], // this method gets called once for multiple resources, to limit the number of queries. Field values of all the resources are passed in this array
-		attachment_options: Record<string, unknown>,
-		format_params: any
+		attachment_options: Record<string, unknown>
 	): Promise<ItemListResult<any>> {
 		let all_items: CollectionItem<any>[] = [];
 		if (!attachment_options) {
@@ -111,8 +110,7 @@ export class StructuredArray<
 				(values as { [subfield_name]: string }[][])
 					.flat()
 					.map((value) => value[subfield_name]),
-				attachment_options?.[subfield_name] || {},
-				format_params?.[subfield_name] || null
+				attachment_options?.[subfield_name] || {}
 			);
 			all_items = [...all_items, ...new_items];
 		}

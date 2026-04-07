@@ -5,6 +5,7 @@ import {
 } from "../../../test_utils/with-test-app.js";
 import { App, Collection, FieldTypes, Policies } from "../../../main.js";
 import { sleep } from "../../../test_utils/sleep.js";
+import { getFieldValueString } from "../../../test_utils/get-field-value-string.js";
 
 describe("secret-token", () => {
 	it("Allows to insert values considered correct", async () =>
@@ -44,7 +45,10 @@ describe("secret-token", () => {
 					.paginate({ items: 1 })
 					.fetch();
 				assert.strictEqual(filtered_items.length, 1);
-				assert.strictEqual(filtered_items[0]!.get("secret"), secret);
+				assert.strictEqual(
+					getFieldValueString(filtered_items[0]!.get("secret")),
+					getFieldValueString(secret)
+				);
 			}
 		));
 });

@@ -8,11 +8,11 @@ import type { CollectionItem, Context } from "../../../main.js";
 import type Policy from "../../../chip-types/policy.js";
 
 export default class SettableBy<T extends Field<any, any>> extends HybridField<
-	ExtractFieldInput<T>,
 	ExtractFieldDecoded<T>,
+	ExtractFieldInput<T>,
 	ExtractFieldStorage<T>,
-	ExtractFieldInput<T>,
 	ExtractFieldDecoded<T>,
+	ExtractFieldInput<T>,
 	ExtractFieldStorage<T>,
 	T
 > {

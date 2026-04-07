@@ -2,11 +2,12 @@ import assert from "assert";
 import { Collection } from "../../../main.js";
 import { MockRestApi } from "../../../test_utils/test-utils.js";
 import { App } from "../../app.js";
-import Image from "./image.js";
+import ImageField from "./image.js";
 import _locreq from "locreq";
 import { module_dirname } from "../../../utils/module_filename.js";
 import { withRunningApp } from "../../../test_utils/with-test-app.js";
-import { FilePointer } from "@sealcode/file-manager";
+import { PathFilePointer } from "@sealcode/file-manager";
+import { ImageValue } from "./image-value.js";
 const locreq = _locreq(module_dirname(import.meta.url));
 
 describe("FieldTypes.Image", () => {
@@ -17,7 +18,7 @@ describe("FieldTypes.Image", () => {
 					collections = {
 						...App.BaseCollections,
 						images: new (class extends Collection {
-							fields = { image: new Image() };
+							fields = { image: new ImageField() };
 						})(),
 					};
 				},
@@ -31,10 +32,11 @@ describe("FieldTypes.Image", () => {
 					items: [item],
 				} = await app.collections.images
 					.list(new app.SuperContext())
-					.format({ image: "file" })
 					.fetch();
 
-				assert(item!.get("image") instanceof FilePointer);
+				const imageValue = item!.get("image");
+				assert.ok(imageValue instanceof ImageValue);
+				assert(imageValue.toFile() instanceof PathFilePointer);
 			}
 		));
 
@@ -45,7 +47,7 @@ describe("FieldTypes.Image", () => {
 					collections = {
 						...App.BaseCollections,
 						images: new (class extends Collection {
-							fields = { image: new Image() };
+							fields = { image: new ImageField() };
 						})(),
 					};
 				},
@@ -61,10 +63,11 @@ describe("FieldTypes.Image", () => {
 					items: [item],
 				} = await app.collections.images
 					.list(new app.SuperContext())
-					.format({ image: "file" })
 					.fetch();
 
-				assert(item!.get("image") instanceof FilePointer);
+				const imageValue = item!.get("image");
+				assert.ok(imageValue instanceof ImageValue);
+				assert(imageValue.toFile() instanceof PathFilePointer);
 			}
 		));
 
@@ -75,7 +78,7 @@ describe("FieldTypes.Image", () => {
 					collections = {
 						...App.BaseCollections,
 						images: new (class extends Collection {
-							fields = { image: new Image() };
+							fields = { image: new ImageField() };
 						})(),
 					};
 				},
@@ -91,13 +94,11 @@ describe("FieldTypes.Image", () => {
 					items: [item],
 				} = await app.collections.images
 					.list(new app.SuperContext())
-					.format({ image: "path" })
 					.fetch();
 
-				const response = await rest_api.get(
-					item!.get("image") as string
-				);
-
+				const imageValue = item!.get("image");
+				assert.ok(imageValue instanceof ImageValue);
+				const response = await rest_api.get(imageValue.toPath());
 				assert(!!response);
 			}
 		));
@@ -109,7 +110,7 @@ describe("FieldTypes.Image", () => {
 					collections = {
 						...App.BaseCollections,
 						images: new (class extends Collection {
-							fields = { image: new Image() };
+							fields = { image: new ImageField() };
 						})(),
 					};
 				},
@@ -126,14 +127,16 @@ describe("FieldTypes.Image", () => {
 					items: [item],
 				} = await app.collections.images
 					.list(new app.SuperContext())
-					.format({ image: "url" })
-					.fetch();
+					.fetch({ is_http_api_request: true });
+
+				const imageValue = item!.get("image");
+				assert.ok(imageValue instanceof ImageValue);
 
 				const response = await MockRestApi.getWithFullUrl(
-					item!.get("image") as string
+					imageValue.toUrl()
 				);
 
-				assert(response.status === 200);
+				assert.strictEqual(response.status, 200);
 			}
 		));
 });

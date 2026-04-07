@@ -15,7 +15,7 @@ import {
 import { CollectionRefreshCondition } from "../../event-description.js";
 import { CachedValue } from "./field-types.js";
 
-export class ListOfIDs extends Field<[]> {
+export class ListOfIDs extends Field<string[]> {
 	typeName = "list-of-ids";
 	open_api_type = OpenApiTypes.NONE;
 
@@ -216,8 +216,7 @@ export default class ReverseSingleReference extends CachedValue<
 	async getAttachments(
 		context: Context,
 		target_id_lists: string[][],
-		attachment_options?: AttachmentOptions<any>,
-		format: any = {}
+		attachment_options?: AttachmentOptions<any>
 	) {
 		context.app.Logger.debug2(
 			"REVERSE SINGLE REFERENCE",
@@ -232,9 +231,6 @@ export default class ReverseSingleReference extends CachedValue<
 			this.getReferencingCollection(),
 			context
 		).ids(merged_ids);
-		if (format) {
-			ret.format(format);
-		}
 		if (typeof attachment_options === "object") {
 			ret.attach(attachment_options);
 		}

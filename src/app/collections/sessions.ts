@@ -55,7 +55,7 @@ export default class Sessions extends Collection {
 		}
 
 		const [user] = await this.app.Datastore.find("users", {
-			"username.safe": username,
+			username: username,
 		});
 
 		if (!user) {

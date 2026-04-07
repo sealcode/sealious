@@ -5,6 +5,7 @@ import { withRunningApp } from "../../../test_utils/with-test-app.js";
 import { DeepReverseSingleReference } from "./deep-reverse-single-reference.js";
 import SingleReference from "./single-reference.js";
 import Text from "./text.js";
+import { ImageValue } from "./image-value.js";
 
 import _locreq from "locreq";
 import { module_dirname } from "../../../utils/module_filename.js";
@@ -127,14 +128,14 @@ describe("deep-reverse-single-reference", () => {
 					await app.collections.dogs
 						.suList()
 						.ids([leon.id])
-						.format({ photos: { photo: "url" } })
 						.attach({ photos: true })
-						.fetch()
+						.fetch({ is_http_api_request: true })
 				).items[0]!;
-				assert.strictEqual(
-					typeof leon.getAttachments("photos")[0]!.get("photo"),
-					"string"
-				);
+				const photoValue = leon
+					.getAttachments("photos")[0]!
+					.get("photo");
+				assert.ok(photoValue instanceof ImageValue);
+				assert(photoValue.toUrl().startsWith("http"));
 			}
 		);
 	});

@@ -7,11 +7,13 @@ import Field from "../../../chip-types/field.js";
 import type Context from "../../../context.js";
 import { OpenApiTypes } from "../../../schemas/open-api-types.js";
 
-export abstract class FileStorage extends Field<
-	FilePointer | string,
-	FilePointer | [FilePointer],
-	string
-> {
+export abstract class FileStorage<
+	DecodedType = FilePointer | string,
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	_InputType = FilePointer | [FilePointer],
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	_StorageType = string,
+> extends Field<DecodedType, FilePointer | [FilePointer], string> {
 	handles_large_data = true;
 
 	open_api_type: OpenApiTypes = OpenApiTypes.URI_REF;
@@ -80,26 +82,26 @@ export abstract class FileStorage extends Field<
  * **Params**:
  * - `get_default_file` - ()=>Promise<{@link File}> - if no file is provided, then this file will be used in it's stead
  */
-export default class FileField extends FileStorage {
+export default class FileField extends FileStorage<
+	FilePointer | string,
+	FilePointer | [FilePointer],
+	string
+> {
 	typeName = "file";
 	async decode(
 		context: Context,
 		db_value: string | null,
-		__: any,
-		format?: "url" | "file",
+		_old_value: unknown,
 		is_http_api_request = false
 	) {
 		if (db_value === null || db_value == undefined) {
 			return null;
 		}
 		const file = await context.app.fileManager.fromToken(db_value);
-		if (format == undefined) {
-			format = is_http_api_request ? "url" : "file";
-		}
-		if (format == "file") {
-			return file;
-		} else {
+		if (is_http_api_request) {
 			return file.getURL();
+		} else {
+			return file;
 		}
 	}
 }

@@ -1,7 +1,7 @@
 import { Field, Context } from "../../../main.js";
 import { OpenApiTypes } from "../../../schemas/open-api-types.js";
 
-type InputType = boolean | "false" | "true" | "1" | "0" | 1 | 0;
+type BooleanInputType = boolean | "false" | "true" | "1" | "0" | 1 | 0;
 
 /** A field that can be either true or false. Built to handle a variety of inputs.
  *
@@ -9,7 +9,7 @@ type InputType = boolean | "false" | "true" | "1" | "0" | 1 | 0;
  *
  * **Accepted values**: accepts actual booleans, strings (`"true"`, `"false"`) and the numbers `1` and `0`
  */
-export default class Boolean extends Field<boolean, InputType> {
+export default class Boolean extends Field<boolean, BooleanInputType, boolean> {
 	typeName = "boolean";
 
 	open_api_type: OpenApiTypes = OpenApiTypes.BOOL;
@@ -18,7 +18,7 @@ export default class Boolean extends Field<boolean, InputType> {
 		return true;
 	}
 
-	async isProperValue(ctx: Context, value: InputType) {
+	async isProperValue(ctx: Context, value: BooleanInputType) {
 		if (typeof value === "boolean") {
 			return Field.valid();
 		}
@@ -37,7 +37,7 @@ export default class Boolean extends Field<boolean, InputType> {
 		return Field.invalid(ctx.i18n`Value '${value}' is not boolean format.`);
 	}
 
-	async encode(_: Context, value: InputType | null) {
+	async encode(_: Context, value: BooleanInputType | null) {
 		if (value === null) {
 			return null;
 		} else if (typeof value === "boolean") {
@@ -56,7 +56,10 @@ export default class Boolean extends Field<boolean, InputType> {
 		throw new Error("invalid value");
 	}
 
-	async getMatchQueryValue(context: Context, filter: "" | null | InputType) {
+	async getMatchQueryValue(
+		context: Context,
+		filter: "" | null | BooleanInputType
+	) {
 		if (filter === "") {
 			return { $exists: false };
 		} else if (filter === null) {

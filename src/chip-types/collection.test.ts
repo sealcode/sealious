@@ -692,10 +692,32 @@ describe("collection", () => {
 								mapFieldsToFeed(): FieldEntryMapping<this> {
 									return {
 										...super.mapFieldsToFeed(),
-										title: async (_ctx, item) =>
-											item.get("feedTitle") ||
-											item.get("title") ||
-											"Untitled",
+										title: async (_ctx, item) => {
+											const feedTitle =
+												item.get("feedTitle");
+											const title = item.get("title");
+											if (
+												feedTitle &&
+												typeof feedTitle.getHTMLSafe ===
+													"function"
+											) {
+												return feedTitle.getHTMLSafe();
+											}
+											if (
+												title &&
+												typeof title.getHTMLSafe ===
+													"function"
+											) {
+												return title.getHTMLSafe();
+											}
+											if (feedTitle) {
+												return String(feedTitle);
+											}
+											if (title) {
+												return String(title);
+											}
+											return "Untitled";
+										},
 									};
 								}
 							})(),

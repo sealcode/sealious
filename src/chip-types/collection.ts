@@ -21,6 +21,7 @@ import ItemList, { type SortParams } from "./item-list.js";
 import type Policy from "./policy.js";
 import type SpecialFilter from "./special-filter.js";
 import type { CollectionProperties } from "../schemas/generator.js";
+import { TextValue } from "../app/base-chips/field-types/text-value.js";
 
 export type CollectionEvent =
 	| "before:create"
@@ -382,7 +383,7 @@ export default abstract class Collection {
 			const item = this.make();
 			item.setMultiple(ctx.request.body);
 			await item.save(ctx.$context, true);
-			await item.decode(ctx.$context, {}, true);
+			await item.decode(ctx.$context, true);
 			ctx.body = item.serializeBody();
 			ctx.status = 201;
 		});
@@ -393,21 +394,13 @@ export default abstract class Collection {
 				throw new Error("id is missing");
 			}
 
-			const [ret] = await this.list(ctx.$context)
-				.ids([id])
-				.safeFormat(ctx.query.format)
-				.fetch();
-			const format = ctx.query.format;
+			const [ret] = await this.list(ctx.$context).ids([id]).fetch();
 
 			if (!ret) {
 				throw new Error("ret is missing");
 			}
 
-			await ret.safeLoadAttachments(
-				ctx.$context,
-				ctx.query.attachments,
-				typeof format == "object" && format ? format : {}
-			);
+			await ret.safeLoadAttachments(ctx.$context, ctx.query.attachments);
 			ctx.body = ret.serialize();
 		});
 
@@ -572,10 +565,16 @@ export default abstract class Collection {
 				);
 			},
 			content: async (_, item) => {
-				return (
-					item.get("content" as unknown as Fieldnames<this>) ||
-					"Unknown content"
+				const content: unknown = item.get(
+					"content" as unknown as Fieldnames<this>
 				);
+				if (!content) {
+					return "Unknown content";
+				}
+				if (content instanceof TextValue) {
+					return content.getHTMLSafe();
+				}
+				return String(content);
 			},
 			published: async (_, item) => {
 				const fields_to_try = [

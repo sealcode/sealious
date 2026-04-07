@@ -7,6 +7,7 @@ import { assertThrowsAsync } from "../../../test_utils/assert-throws-async.js";
 import Collection, {
 	type CollectionValidationResult,
 } from "../../../chip-types/collection.js";
+import { getFieldValueString } from "../../../test_utils/get-field-value-string.js";
 import {
 	App,
 	CollectionItemBody,
@@ -102,6 +103,9 @@ describe("itemDraft", () => {
 			await draft?.finalize(new app.Context());
 			const { items } = await app.collections.articles.suList().fetch();
 			assert.strictEqual(items.length, 1);
-			assert.strictEqual(items[0]?.get("title"), "TITLE");
+			assert.strictEqual(
+				getFieldValueString(items[0]?.get("title")),
+				"TITLE"
+			);
 		}));
 });

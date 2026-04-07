@@ -5,6 +5,7 @@ import {
 	type TestAppConstructor,
 	withRunningApp,
 } from "../../../test_utils/with-test-app.js";
+import { CoordsValue } from "./coords-value.js";
 
 const extend = (t: TestAppConstructor) =>
 	class extends t {
@@ -79,36 +80,30 @@ describe("coordinates", () => {
 			});
 			const response = await app.collections.coords
 				.list(new app.SuperContext())
-				.format({ coordField: "string" })
 				.fetch();
-			assert.strictEqual(
-				response.items[0]!.get("coordField"),
-				testCoordsString
-			);
+			const firstValue = response.items[0]!.get("coordField");
+			assert.ok(firstValue instanceof CoordsValue);
+			assert.deepStrictEqual(firstValue?.toTuple(), testCoordsTuple);
 
 			await app.collections.coords.suCreate({
 				coordField: testCoordsTuple,
 			});
 			const response2 = await app.collections.coords
 				.list(new app.SuperContext())
-				.format({ coordField: "tuple" })
 				.fetch();
-			assert.notStrictEqual(
-				response2.items[0]!.get("coordField"),
-				testCoordsTuple
-			);
+			const secondValue = response2.items[0]!.get("coordField");
+			assert.ok(secondValue instanceof CoordsValue);
+			assert.deepStrictEqual(secondValue?.toTuple(), testCoordsTuple);
 
 			await app.collections.coords.suCreate({
 				coordField: testCoordsObject,
 			});
 			const response3 = await app.collections.coords
 				.list(new app.SuperContext())
-				.format({ coordField: "object" })
 				.fetch();
-			assert.notStrictEqual(
-				response3.items[0]!.get("coordField"),
-				testCoordsObject
-			);
+			const thirdValue = response3.items[0]!.get("coordField");
+			assert.ok(thirdValue instanceof CoordsValue);
+			assert.deepStrictEqual(thirdValue?.toTuple(), testCoordsTuple);
 		});
 	});
 

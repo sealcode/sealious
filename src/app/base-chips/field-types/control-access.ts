@@ -7,9 +7,9 @@ import {
 	HybridField,
 } from "../../../chip-types/field.js";
 
-type Params<DecodedType> = {
+type Params<InputType, DecodedType> = {
 	target_policies: { [key in "show" | "edit"]: Policy };
-	value_when_not_allowed: DecodedType | null;
+	value_when_not_allowed: InputType | DecodedType | null;
 };
 
 export default class ControlAccess<
@@ -26,10 +26,16 @@ export default class ControlAccess<
 	typeName = "control-access";
 	edit_strategy: Policy;
 	show_strategy: Policy;
-	value_when_not_allowed: ExtractFieldDecoded<T> | null;
+	value_when_not_allowed:
+		| ExtractFieldInput<T>
+		| ExtractFieldDecoded<T>
+		| null;
 	app: App;
 
-	constructor(base_field: T, params: Params<ExtractFieldDecoded<T>>) {
+	constructor(
+		base_field: T,
+		params: Params<ExtractFieldInput<T>, ExtractFieldDecoded<T>>
+	) {
 		super(base_field);
 		this.edit_strategy = params.target_policies.edit;
 		this.show_strategy = params.target_policies.show;
@@ -63,7 +69,7 @@ export default class ControlAccess<
 		context: Context,
 		value_in_db: ExtractFieldStorage<T>,
 		old_value: ExtractFieldDecoded<T>,
-		format_params: ExtractParams<T>
+		is_http_api_request = false
 	) {
 		if (!context.is_super) {
 			context.app.Logger.debug2(
@@ -96,7 +102,7 @@ export default class ControlAccess<
 			context,
 			value_in_db,
 			old_value,
-			format_params
+			is_http_api_request
 		);
 		return ret;
 	}

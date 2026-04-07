@@ -3,14 +3,13 @@ import Field, { type ValidationResult } from "../../../chip-types/field.js";
 import type Context from "../../../context.js";
 import type { OpenApiTypes } from "../../../schemas/open-api-types.js";
 import * as countryCodes from "country-codes-list";
-import { FieldValue } from "./field-value.js";
+import type { FieldValue } from "./field-value.js";
 
-export class PhoneNumberValue extends FieldValue {
+export class PhoneNumberValue implements FieldValue {
 	constructor(
 		public country_code: string,
 		public number: string
 	) {
-		super();
 		this.number = number.replaceAll(/[^0-9]/g, "");
 	}
 

@@ -2,13 +2,14 @@ import assert from "assert";
 import {
 	App,
 	Collection,
+	CollectionItemBody,
 	Context,
-	Fieldset,
 	FieldTypes,
 	SuperContext,
 } from "../main.js";
 import { assertThrowsAsync } from "../test_utils/assert-throws-async.js";
 import { withRunningApp } from "../test_utils/with-test-app.js";
+import { getFieldValueString } from "../test_utils/get-field-value-string.js";
 
 describe("CollectionItem", () => {
 	it("first inserts, then updates on successive .save() calls", async () =>
@@ -32,7 +33,10 @@ describe("CollectionItem", () => {
 					.suList()
 					.fetch();
 				assert.strictEqual(entries.length, 1);
-				assert.strictEqual(entries[0]!.get("title"), "title2");
+				assert.strictEqual(
+					getFieldValueString(entries[0]!.get("title")),
+					"title2"
+				);
 			}
 		));
 
@@ -46,10 +50,16 @@ describe("CollectionItem", () => {
 							fields = { title: new FieldTypes.Text() };
 							async init(app: App, name: string) {
 								await super.init(app, name);
-								this.on("after:create", async ([_, entry]) => {
-									entry.set("title", "title-overwritten");
-									await entry.save(new SuperContext({ app }));
-								});
+								this.on(
+									"after:create",
+									// eslint-disable-next-line @typescript-eslint/no-unused-vars
+									async ([_context, entry]) => {
+										entry.set("title", "title-overwritten");
+										await entry.save(
+											new SuperContext({ app })
+										);
+									}
+								);
 							}
 						})(),
 					};
@@ -64,7 +74,7 @@ describe("CollectionItem", () => {
 					.fetch();
 				assert.strictEqual(entries.length, 1);
 				assert.strictEqual(
-					entries[0]!.get("title"),
+					getFieldValueString(entries[0]!.get("title")),
 					"title-overwritten"
 				);
 			}
@@ -130,11 +140,17 @@ describe("CollectionItem", () => {
 							fields = {
 								color: new FieldTypes.Color(),
 							};
-							async validate(_: Context, body: Fieldset<any>) {
+							async validate(
+								_context: Context,
+								new_body: CollectionItemBody<any>,
+								_old_body: CollectionItemBody<any>,
+								_action: "create" | "edit"
+							) {
+								const colorInput = new_body.getInput("color");
 								if (
-									(body.getInput("color") as string).includes(
-										"green"
-									)
+									colorInput &&
+									typeof colorInput === "string" &&
+									colorInput.includes("green")
 								) {
 									return [
 										{
@@ -195,7 +211,10 @@ describe("CollectionItem", () => {
 				ala.set("spirit_animal", "kot");
 				await ala.save(new app.SuperContext());
 				ala = await app.collections.entries.suGetByID(ala.id);
-				assert.strictEqual(ala.get("spirit_animal"), "kot");
+				assert.strictEqual(
+					getFieldValueString(ala.get("spirit_animal")),
+					"kot"
+				);
 			}
 		));
 
@@ -301,11 +320,11 @@ describe("CollectionItem", () => {
 					.ids([ala.id])
 					.fetch();
 
-				ala_result!.get("string")?.padStart(0, "0");
+				ala_result!.get("string")?.getHTMLSafe().padStart(0, "0");
 				ala_result!.get("number")?.toExponential(2);
 				ala.get("number")?.toExponential(2);
 				ala.get("required_number").toExponential(2);
-				ala.get("markdown").padStart(10);
+				ala.get("markdown")?.toMarkdown().padStart(10);
 			}
 		));
 
@@ -340,13 +359,9 @@ describe("CollectionItem", () => {
 				});
 				const item = await app.collections.posts.suGetByID(item_id);
 
-				await item.loadAttachments(
-					new app.SuperContext(),
-					{
-						comments: true,
-					},
-					{}
-				);
+				await item.loadAttachments(new app.SuperContext(), {
+					comments: true,
+				});
 
 				const attachments = item.getAttachments("comments");
 				assert.deepStrictEqual(attachments, []);
@@ -373,7 +388,10 @@ describe("CollectionItem", () => {
 					});
 					post.set("title", "new");
 					await post.decode(new app.SuperContext());
-					assert.strictEqual(post.get("title"), "old");
+					assert.strictEqual(
+						getFieldValueString(post.get("title")),
+						"old"
+					);
 				}
 			));
 	});

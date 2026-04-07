@@ -11,6 +11,7 @@ import FileField from "./file.js";
 import ReverseSingleReference from "./reverse-single-reference.js";
 import SingleReference from "./single-reference.js";
 import Text from "./text.js";
+import { ImageValue } from "./image-value.js";
 
 const locreq = _locreq(module_dirname(import.meta.url));
 
@@ -46,8 +47,7 @@ describe("file", () => {
 				} = await app.collections.with_file
 					.list(context)
 					.ids([response.id])
-					.format({ file: "url" })
-					.fetch();
+					.fetch({ is_http_api_request: true });
 
 				const api_response = await rest_api.get(
 					item!.get("file") as string
@@ -109,8 +109,7 @@ describe("file", () => {
 				} = await app.collections.photos
 					.list(context)
 					.ids([response.id])
-					.format({ file: "url" })
-					.fetch();
+					.fetch({ is_http_api_request: true });
 
 				await rest_api.get(item!.get("file") as string);
 			}
@@ -142,12 +141,12 @@ describe("file", () => {
 					const photo2 = (
 						await app.collections.photos
 							.suList()
-							.format({ photo: "url" })
-							.fetch()
+							.fetch({ is_http_api_request: true })
 					).items[0];
-					const url = photo2!.get("photo");
-					assert.strictEqual(typeof url, "string");
-					const response = await fetch(url as string);
+					const photoValue = photo2!.get("photo");
+					assert.ok(photoValue instanceof ImageValue);
+					const url = photoValue.toUrl();
+					const response = await fetch(url);
 					assert.equal(
 						response.headers.get("content-type"),
 						"image/jpeg"

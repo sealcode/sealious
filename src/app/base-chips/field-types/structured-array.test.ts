@@ -5,6 +5,7 @@ import { assertThrowsAsync } from "../../../test_utils/test-utils.js";
 import { withRunningApp } from "../../../test_utils/with-test-app.js";
 import { App } from "../../app.js";
 import { StructuredArray } from "./structured-array.js";
+import { getFieldValueString } from "../../../test_utils/get-field-value-string.js";
 
 describe("structured-array", () => {
 	it("accepts a simple valid value and rejects an invalid one", async () =>
@@ -137,7 +138,11 @@ describe("structured-array", () => {
 				const result = await list.fetch();
 				assert.strictEqual(result.items.length, 1);
 				assert.strictEqual(
-					result.items[0]?.getAttachments("entries")[0]?.get("name"),
+					getFieldValueString(
+						result.items[0]
+							?.getAttachments("entries")[0]
+							?.get("name")
+					),
 					"pen"
 				);
 			}

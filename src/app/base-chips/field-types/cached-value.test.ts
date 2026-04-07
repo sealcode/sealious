@@ -93,7 +93,7 @@ const extend =
 							items[0]!.get(
 								"name"
 							) as keyof typeof action_to_status
-						];
+						]!;
 					},
 					refresh_on: make_refresh_on(),
 					initial_value: "created",
@@ -562,7 +562,7 @@ describe("cached-value", () => {
 										),
 									],
 									get_value: async (_item) => {
-										return count.next().value;
+										return count.next().value as number;
 									},
 								}),
 							};

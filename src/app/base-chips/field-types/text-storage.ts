@@ -3,14 +3,15 @@ import escape from "escape-html";
 import { hasShape, is, predicates } from "@sealcode/ts-predicates";
 
 import { OpenApiTypes } from "../../../schemas/open-api-types.js";
+import { TextValue } from "./text-value.js";
 
-type TextStorageFormat = { original: string; safe: string };
-type TextFormatParam = keyof TextStorageFormat;
+type LegacyTextStorageFormat = { original: string; safe: string };
+type TextStorageFormat = string | LegacyTextStorageFormat;
 
 export default abstract class TextStorage extends Field<
+	TextValue,
 	string,
-	string,
-	TextStorageFormat
+	string
 > {
 	open_api_type: OpenApiTypes = OpenApiTypes.STR;
 
@@ -22,20 +23,19 @@ export default abstract class TextStorage extends Field<
 		if (input === null) {
 			return null;
 		}
-		const ret = {
-			original: input,
-			safe: escape(input),
-		};
-		context.app.Logger.debug3("TEXT FIELD", "encode/return", ret);
-		return ret;
+		context.app.Logger.debug3("TEXT FIELD", "encode/return", input);
+		return input;
 	}
 
-	private makeOriginalOrSafeQuery(
+	private makeTextQuery(
 		value_path: string,
 		text_value: string | { $regex: string; $options: string }
 	) {
 		return {
 			$or: [
+				{
+					[`${value_path}`]: text_value,
+				},
 				{
 					[`${value_path}.original`]: text_value,
 				},
@@ -67,15 +67,15 @@ export default abstract class TextStorage extends Field<
 				$options: "i",
 			};
 
-			return this.makeOriginalOrSafeQuery(value_path, filter_in_query);
+			return this.makeTextQuery(value_path, filter_in_query);
 		} else if (typeof filter_value === "string") {
 			filter_in_query = filter_value;
-			return this.makeOriginalOrSafeQuery(value_path, filter_in_query);
+			return this.makeTextQuery(value_path, filter_in_query);
 		} else if (is(filter_value, predicates.array(predicates.string))) {
 			// array
 			return {
 				$or: filter_value.map((value) =>
-					this.makeOriginalOrSafeQuery(value_path, value)
+					this.makeTextQuery(value_path, value)
 				),
 			};
 		} else {
@@ -98,22 +98,21 @@ export default abstract class TextStorage extends Field<
 
 	async decode(
 		context: Context,
-		db_value: TextStorageFormat | null,
+		db_value: TextStorageFormat | null | undefined,
 		__: any,
-		format?: TextFormatParam
-	): Promise<string | null> {
-		if (db_value === null) {
+		_is_http_api_request = false
+	): Promise<TextValue | null> {
+		if (db_value === null || db_value === undefined) {
 			return null;
 		}
-		context.app.Logger.debug2("TEXT FIELD", "decode", { db_value, format });
-		let ret;
-		if (db_value === null || db_value === undefined) {
-			ret = db_value;
-		} else if (!format) {
-			ret = db_value.safe;
+		context.app.Logger.debug2("TEXT FIELD", "decode", { db_value });
+		let original: string;
+		if (typeof db_value === "string") {
+			original = db_value;
 		} else {
-			ret = db_value[format] || db_value.safe;
+			original = db_value.original;
 		}
+		const ret = new TextValue(original);
 		context.app.Logger.debug3("TEXT FIELD", "decode/return", ret);
 		return ret;
 	}

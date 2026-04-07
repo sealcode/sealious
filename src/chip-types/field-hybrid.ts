@@ -109,27 +109,25 @@ export default abstract class HybridField<
 		context: Context,
 		storage_value: StorageType,
 		old_value: Parameters<T["decode"]>[2],
-		format: Parameters<T["decode"]>[3]
+		is_http_api_request = false
 	) {
 		return this.virtual_field.decode(
 			context,
 			storage_value as unknown as InnerStorageType,
 			old_value,
-			format
+			is_http_api_request
 		) as ParsedType;
 	}
 
 	async getAttachments(
 		context: Context,
 		values: any[],
-		attachment_options: any,
-		format: Parameters<T["decode"]>[3]
+		attachment_options: any
 	): Promise<ItemListResult<any>> {
 		return this.virtual_field.getAttachments(
 			context,
 			values,
-			attachment_options,
-			format
+			attachment_options
 		);
 	}
 

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import type {
 	Field,
 	App,
@@ -20,13 +21,25 @@ todo: make the deriving_fn more type-safe by reading the types of the fields?
 export type DerivingFn<DecodedType> = (
 	context: Context,
 	item: CollectionItem,
-	...args: any[]
+	...args: unknown[]
 ) => Promise<DecodedType>;
 
+function isDecodedWithOriginal(
+	value: unknown
+): value is { getOriginal: () => unknown } {
+	return (
+		typeof value === "object" &&
+		value !== null &&
+		"getOriginal" in value &&
+		typeof (value as { getOriginal: unknown }).getOriginal === "function"
+	);
+}
+
 export default class DerivedValue<
-	ParsedType,
-	InputType,
-	T extends Field<ParsedType, any, any>,
+	T extends Field<any, any, any>,
+	ParsedType = T extends Field<infer P, any, any> ? P : never,
+	InputType = T extends Field<any, infer I, any> ? I : never,
+	FunctionOutput extends InputType = InputType,
 > extends HybridField<
 	ParsedType,
 	InputType,
@@ -39,14 +52,14 @@ export default class DerivedValue<
 	typeName = "derived-value";
 
 	fields: string[];
-	deriving_fn: DerivingFn<ParsedType>;
+	deriving_fn: DerivingFn<FunctionOutput>;
 	private blessed_symbol = Symbol();
 
 	constructor(
 		base_field: T,
 		params: {
 			fields: string[];
-			deriving_fn: DerivingFn<ParsedType>;
+			deriving_fn: DerivingFn<FunctionOutput>;
 		}
 	) {
 		super(base_field);
@@ -127,10 +140,17 @@ export default class DerivedValue<
 			context.app.Logger.debug("DERIVED VALUE", "Handling before:edit", {
 				item_body: item.body,
 			});
-			const derived_fn_args = await Promise.all(
-				this.fields.map((field_name) =>
-					item.getDecoded(field_name, context)
-				)
+			const derived_fn_args: unknown[] = await Promise.all(
+				this.fields.map(async (field_name) => {
+					const value: unknown = await item.getDecoded(
+						field_name,
+						context
+					);
+					if (isDecodedWithOriginal(value)) {
+						return value.getOriginal();
+					}
+					return value;
+				})
 			);
 			const derived_value = await this.deriving_fn(
 				context,

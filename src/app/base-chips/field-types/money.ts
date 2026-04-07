@@ -1,30 +1,21 @@
 import type { Context } from "../../../main.js";
 import Float from "./float.js";
+import { MoneyValue } from "./money-value.js";
 
-export default class Money extends Float<number | string> {
+export default class Money extends Float<MoneyValue> {
 	typeName = "money";
 
 	async decode(
 		context: Context,
-		db_value: number | null,
-		__: number,
-		format?: "string"
-	): Promise<number | string | null> {
+		db_value: number | null
+	): Promise<MoneyValue | null> {
 		context.app.Logger.debug2("FIELD MONEY", "decode", {
 			db_value,
-			format,
 		});
 		if (db_value === null || db_value === undefined) {
-			return db_value;
+			return null;
 		}
-		if (format === undefined) {
-			return db_value;
-		}
-		if (format === "string") {
-			const value = new Number(db_value);
-			return value.toFixed(2);
-		}
-		return db_value;
+		return new MoneyValue(db_value);
 	}
 
 	getPostgreSqlFieldDefinitions(): string[] {

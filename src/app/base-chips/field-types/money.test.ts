@@ -5,6 +5,7 @@ import {
 	type TestAppConstructor,
 	withRunningApp,
 } from "../../../test_utils/with-test-app.js";
+import { MoneyValue } from "./money-value.js";
 
 function extend(t: TestAppConstructor) {
 	return class extends t {
@@ -26,10 +27,12 @@ describe("money", () => {
 			await app.collections.wallet.suCreate({ simoleon: 1 });
 			const response = await app.collections.wallet
 				.list(new app.SuperContext())
-				.format({ simoleon: "string" })
 				.fetch();
 
-			assert.strictEqual(response.items[0]!.get("simoleon"), "1.00");
+			const value = response.items[0]!.get("simoleon");
+			assert.ok(value instanceof MoneyValue);
+			assert.strictEqual(value?.toNumber(), 1);
+			assert.strictEqual(value?.toString(), "1.00");
 		}));
 
 	it("should correctly format with two decimal points float value", async () =>
@@ -37,10 +40,12 @@ describe("money", () => {
 			await app.collections.wallet.suCreate({ simoleon: 14.43 });
 			const response = await app.collections.wallet
 				.list(new app.SuperContext())
-				.format({ simoleon: "string" })
 				.fetch();
 
-			assert.strictEqual(response.items[0]!.get("simoleon"), "14.43");
+			const value = response.items[0]!.get("simoleon");
+			assert.ok(value instanceof MoneyValue);
+			assert.strictEqual(value?.toNumber(), 14.43);
+			assert.strictEqual(value?.toString(), "14.43");
 		}));
 
 	it("should correctly format with more than two decimal points float value", async () =>
@@ -48,9 +53,11 @@ describe("money", () => {
 			await app.collections.wallet.suCreate({ simoleon: 53.1423 });
 			const response = await app.collections.wallet
 				.list(new app.SuperContext())
-				.format({ simoleon: "string" })
 				.fetch();
 
-			assert.strictEqual(response.items[0]!.get("simoleon"), "53.14");
+			const value = response.items[0]!.get("simoleon");
+			assert.ok(value instanceof MoneyValue);
+			assert.strictEqual(value?.toNumber(), 53.1423);
+			assert.strictEqual(value?.toString(), "53.14");
 		}));
 });

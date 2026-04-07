@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import assert from "assert";
 import {
 	App,
@@ -18,6 +17,8 @@ import {
 import _locreq from "locreq";
 import { module_dirname } from "../../../utils/module_filename.js";
 const locreq = _locreq(module_dirname(import.meta.url));
+import { getFieldValueString } from "../../../test_utils/get-field-value-string.js";
+import { ImageValue } from "./image-value.js";
 
 const extend = (with_reverse = true, clear_database = true) =>
 	function (t: TestAppConstructor) {
@@ -61,6 +62,7 @@ describe("reverse-single-reference", () => {
 
 		for (const b of bs) {
 			for (let i = 1; i <= (b.get("number") as number); i++) {
+				// eslint-disable-next-line no-await-in-loop
 				await app.collections.A!.suCreate({
 					reference_to_b: b.id,
 					pairity: i % 2 ? "odd" : "even",
@@ -318,17 +320,19 @@ describe("reverse-single-reference", () => {
 				);
 				const db_response = await app.collections.users
 					.suList()
+					// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
 					.attach({
 						organizations: { organization: true },
-					} as unknown as any)
+					} as any)
 					.fetch();
 				assert.strictEqual(
-					db_response.items[0]!.getAttachments(
-						/* @ts-ignore */
-						"organizations"
-					)[0]!
-						.getAttachments("organization")[0]!
-						.get("name"),
+					getFieldValueString(
+						db_response.items[0]!.getAttachments(
+							"organizations"
+						)[0]!
+							.getAttachments("organization")[0]!
+							.get("name")
+					),
 					"org"
 				);
 
@@ -339,17 +343,16 @@ describe("reverse-single-reference", () => {
 				});
 				const db_response2 = await app.collections.users
 					.suList()
+					// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
 					.ids([user2.id])
+					// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
 					.attach({
 						organizations: { organization: true },
-					} as unknown as any)
+					} as any)
 					.fetch();
 
 				assert.deepStrictEqual(
-					db_response2.items[0]!.getAttachments(
-						/* @ts-ignore */
-						"organizations"
-					),
+					db_response2.items[0]!.getAttachments("organizations"),
 					[]
 				);
 			}
@@ -394,14 +397,13 @@ describe("reverse-single-reference", () => {
 					await app.collections.dogs
 						.suList()
 						.ids([leon.id])
-						.format({ photos: { photo: "url" } })
 						.attach({ photos: true })
-						.fetch()
+						.fetch({ is_http_api_request: true })
 				).items[0]!;
-				assert.strictEqual(
-					typeof leon.getAttachments("photos")[0]!.get("photo"),
-					"string"
-				);
+				const photoValue = leon
+					.getAttachments("photos")[0]!
+					.get("photo");
+				assert.ok(photoValue instanceof ImageValue);
 			}
 		);
 	});

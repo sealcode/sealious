@@ -88,9 +88,7 @@ way.
 -   `storage_value: any` - the `encode`d value. Might come from the database, but
     encoding can also be ran on items that are not yet saved
 -   `old_value: any` - the current value in the database, if the item has not been saved yet.
--   `format_params: any` - the format params provided with the request by the
-    user. They can be of any shape and form. You can use it to further customize
-    how the value is presented in the response
+-   `is_http_api_request: boolean` - whether the decoder runs for an HTTP response (customize the returned shape if needed).
 
 ## Examples
 

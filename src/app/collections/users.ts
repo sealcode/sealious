@@ -56,7 +56,7 @@ export default class Users extends Collection {
 		password: string
 	) {
 		const [user] = await context.app.Datastore.find("users", {
-			"username.safe": username,
+			username: username,
 		});
 		if (!user || !user.password) {
 			return false;

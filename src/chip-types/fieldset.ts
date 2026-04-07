@@ -161,12 +161,10 @@ export class Fieldset<Fields extends Record<string, Field<any, any, any>>> {
 
 	async decode(
 		context: Context,
-		format: { [field_name: string]: any } = {},
 		is_http_api_request = false
 	): Promise<Fieldset<Fields>> {
 		if (this.is_decoded) return this;
 		context.app.Logger.debug3("ITEM BODY", "Decoding item", {
-			format,
 			body: this.encoded,
 		});
 		const promises: Promise<any>[] = [];
@@ -193,7 +191,6 @@ export class Fieldset<Fields extends Record<string, Field<any, any, any>>> {
 						context,
 						encoded[field_name],
 						null,
-						format?.[field_name],
 						is_http_api_request
 					)
 					.then((decoded_value) => {

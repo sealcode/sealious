@@ -141,12 +141,17 @@ export class LongRunningProcess<
 		}
 		const events = lrp_item
 			.getAttachments("events")
-			.map((e: CollectionItem<LongRunningProcessEvents>) => ({
-				type: e.get("type"),
-				message: e.get("message"),
-				timestamp: e.get("timestamp") as number,
-				progress: e.get("progress"),
-			}))
+			.map((e: CollectionItem<LongRunningProcessEvents>) => {
+				const messageValue = e.get("message");
+				// messageValue will always be a TextValue instance (which extends String)
+				const message = messageValue.toString();
+				return {
+					type: e.get("type"),
+					message,
+					timestamp: e.get("timestamp") as number,
+					progress: e.get("progress"),
+				};
+			})
 			.sort(({ timestamp: t1 }, { timestamp: t2 }) =>
 				!t1 || !t2 ? 0 : t1 > t2 ? 1 : -1
 			);

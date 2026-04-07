@@ -23,9 +23,9 @@ type GetValue<DecodedValue> = (
 	item: CollectionItem
 ) => Promise<DecodedValue>;
 
-type CachedValueSettings<InputType, DecodedType> = {
+type CachedValueSettings<InputType> = {
 	refresh_on: RefreshCondition[];
-	get_value: GetValue<DecodedType>;
+	get_value: GetValue<InputType>;
 	initial_value: InputType | null;
 	derive_from?: string[];
 };
@@ -33,7 +33,7 @@ type CachedValueSettings<InputType, DecodedType> = {
 export default class CachedValue<
 	DecodedType,
 	StorageType,
-	T extends Field<any, any, any>,
+	T extends Field<DecodedType, any, any>,
 > extends HybridField<
 	DecodedType,
 	ExtractFieldInput<T>,
@@ -52,14 +52,15 @@ export default class CachedValue<
 	hasDefaultValue: () => true;
 	private initial_value: ExtractFieldInput<T> | null;
 	private virtual_derived: DerivedValue<
+		T,
 		DecodedType,
 		ExtractFieldInput<T>,
-		T
+		ExtractFieldInput<T>
 	> | null = null; // sometimes it's necessary to have a field react to both the changes in local fields, as well as changes in cron/another collection
 
 	constructor(
 		base_field: T,
-		public params: CachedValueSettings<ExtractFieldInput<T>, DecodedType>
+		public params: CachedValueSettings<ExtractFieldInput<T>>
 	) {
 		super(base_field);
 		super.setParams(params);
@@ -266,13 +267,13 @@ export default class CachedValue<
 		context: Context,
 		db_value: { timestamp: number; value: StorageType } | null,
 		old_value: any,
-		format: any
+		is_http_api_request = false
 	) {
 		return super.decode(
 			context,
 			db_value === null ? null : (db_value?.value as any),
 			old_value,
-			format
+			is_http_api_request
 		);
 	}
 

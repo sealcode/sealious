@@ -11,6 +11,7 @@ import {
 import { assertThrowsAsync } from "../../test_utils/assert-throws-async.js";
 import type MockRestApi from "../../test_utils/rest-api.js";
 import { TestApp } from "../../test_utils/test-app.js";
+import { getFieldValueString } from "../../test_utils/get-field-value-string.js";
 import {
 	type TestAppConstructor,
 	withRunningApp,
@@ -338,7 +339,10 @@ describe("SameAsForResourceInField", () => {
 					.fetch();
 
 				assert.strictEqual(projects1.length, 1);
-				assert.strictEqual(projects1[0]!.get("name"), "project1");
+				assert.strictEqual(
+					getFieldValueString(projects1[0]!.get("name")),
+					"project1"
+				);
 				assert.strictEqual(projects1[0]!.id, project.id);
 				assert.strictEqual(projects1[0]!.get("organization"), org1.id);
 

@@ -1,10 +1,5 @@
 import Collection from "./collection.js";
-import {
-	BadContext,
-	NotFound,
-	BadSubjectAction,
-	ValidationError,
-} from "../response/errors.js";
+import { BadContext, NotFound, BadSubjectAction } from "../response/errors.js";
 import type { QueryStage } from "../datastore/query-stage.js";
 import sealious_to_mongo_sort_param from "../utils/mongo-sorts.js";
 import { stringify as csvStringify } from "csv-stringify/sync";
@@ -35,17 +30,12 @@ export type SortParams<T extends Collection> = Partial<
 	}>
 >;
 
-type FormatParam<T extends Collection> = Partial<{
-	[key in keyof T["fields"]]: any;
-}>;
-
 type AllInOneParams<T extends Collection> = {
 	search: Parameters<ItemList<T>["search"]>[0];
 	sort: Parameters<ItemList<T>["sort"]>[0];
 	filter: Parameters<ItemList<T>["filter"]>[0];
 	pagination: Parameters<ItemList<T>["paginate"]>[0];
 	attachments: Parameters<ItemList<T>["attach"]>[0];
-	format: Parameters<ItemList<T>["format"]>[0];
 };
 
 /** Which fields to fetch attachments for. Can be nested, as one
@@ -60,7 +50,6 @@ export default class ItemList<T extends Collection> {
 	public fields_with_attachments_fetched: string[] = [];
 	private _attachments_options: AttachmentOptions<T> = {};
 	private _filter: FilterT<T>;
-	private _format: FormatParam<T>;
 	private _ids: string[];
 	private _search: string;
 	private _sort: SortParams<T>;
@@ -114,39 +103,6 @@ export default class ItemList<T extends Collection> {
 					);
 				});
 			this.await_before_fetch.push(promise);
-		}
-		return this;
-	}
-
-	validateFormatParam(format: unknown): FormatParam<T> {
-		if (format === undefined) {
-			return {};
-		}
-		if (typeof format !== "object") {
-			throw new ValidationError("Format should be a proper object");
-		}
-		for (const key in format) {
-			if (!(key in this.collection.fields)) {
-				throw new ValidationError(
-					`Invalid field name in filter: ${key}`
-				);
-			}
-		}
-		return format as FormatParam<T>;
-	}
-
-	// this method should only be used when dealing with user input. Otherwise use the `format` method, as it's type safe and any issues should arise during the build process
-	safeFormat(format: unknown): this {
-		this.validateFormatParam(format);
-		return this.format(format as FormatParam<T>);
-	}
-
-	format(format?: FormatParam<T>): this {
-		if (this._format) {
-			throw new Error("Already formatted!");
-		}
-		if (format) {
-			this._format = format;
 		}
 		return this;
 	}
@@ -228,7 +184,6 @@ export default class ItemList<T extends Collection> {
 		//can be called multiple times
 		for (const [field_name] of Object.entries(attachment_options)) {
 			if (!this.collection.fields[field_name]) {
-				field_name;
 				throw new NotFound(
 					`Given field ${field_name} is not declared in collection!`
 				);
@@ -267,14 +222,12 @@ export default class ItemList<T extends Collection> {
 						),
 						this._attachments_options[
 							field_name as keyof T["fields"]
-						],
-						this._format?.[field_name]
+						]
 					)
 					.then((attachmentsList) => {
-						// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 						attachments = {
 							...attachments,
-							// eslint-disable-next-line @typescript-eslint/no-unsafe-call,  @typescript-eslint/no-unsafe-member-access
+
 							...attachmentsList.flattenWithAttachments(),
 						};
 						this.context.app.Logger.debug3(
@@ -324,11 +277,9 @@ export default class ItemList<T extends Collection> {
 		for (const document of documents) {
 			const item = this.collection.createFromDB(document);
 			item_promises.push(
-				item.decode(
-					this.context,
-					this._format,
-					is_http_api_request
-				) as Promise<CollectionItem<T>>
+				item.decode(this.context, is_http_api_request) as Promise<
+					CollectionItem<T>
+				>
 			);
 		}
 		let items = await Promise.all(item_promises);
@@ -338,6 +289,17 @@ export default class ItemList<T extends Collection> {
 			);
 		}
 		const attachments = await this.fetchAttachments(items);
+		if (is_http_api_request) {
+			const decodePromises = Object.values(attachments).map(
+				(attachment) => {
+					if (attachment.body.is_decoded) {
+						attachment.body.is_decoded = false;
+					}
+					return attachment.decode(this.context, is_http_api_request);
+				}
+			);
+			await Promise.all(decodePromises);
+		}
 		return new ItemListResult(
 			items,
 			this.fields_with_attachments_fetched,
@@ -398,8 +360,7 @@ export default class ItemList<T extends Collection> {
 			.paginate(params.pagination)
 			.sort(params?.sort)
 			.search(params?.search)
-			.attach(params?.attachments)
-			.format(params?.format);
+			.attach(params?.attachments);
 	}
 
 	private getSortingStages() {

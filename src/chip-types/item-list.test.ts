@@ -4,6 +4,7 @@ import { App, Collection, FieldTypes, Policies, Query } from "../main.js";
 import { sleep } from "../test_utils/sleep.js";
 import { TestApp } from "../test_utils/test-app.js";
 import { withRunningApp } from "../test_utils/with-test-app.js";
+import { getFieldValueString } from "../test_utils/get-field-value-string.js";
 
 class Entries extends Collection {
 	fields = {
@@ -37,14 +38,14 @@ describe("ItemList", () => {
 					.sort({ "_metadata.modified_at": "desc" })
 					.fetch();
 
-				strictEqual(desc[0]!.get("name"), "newer");
-				strictEqual(desc[1]!.get("name"), "older");
+				strictEqual(getFieldValueString(desc[0]!.get("name")), "newer");
+				strictEqual(getFieldValueString(desc[1]!.get("name")), "older");
 				const { items: asc } = await app.collections.entries
 					.suList()
 					.sort({ "_metadata.modified_at": "asc" })
 					.fetch();
-				strictEqual(asc[0]!.get("name"), "older");
-				strictEqual(asc[1]!.get("name"), "newer");
+				strictEqual(getFieldValueString(asc[0]!.get("name")), "older");
+				strictEqual(getFieldValueString(asc[1]!.get("name")), "newer");
 			}
 		));
 
@@ -305,8 +306,14 @@ describe("ItemList", () => {
 						.sort({ title: "desc" })
 						.fetchOne();
 
-					assert.strictEqual(item!.get("title"), "first");
-					assert.strictEqual(itemDescended!.get("title"), "third");
+					assert.strictEqual(
+						getFieldValueString(item!.get("title")),
+						"first"
+					);
+					assert.strictEqual(
+						getFieldValueString(itemDescended!.get("title")),
+						"third"
+					);
 				}
 			));
 

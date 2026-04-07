@@ -6,6 +6,7 @@ import {
 import { Collection, FieldTypes } from "../../../main.js";
 import { TestApp } from "../../../test_utils/test-app.js";
 import { post } from "../../../test_utils/http_request.js";
+import { getFieldValueString } from "../../../test_utils/get-field-value-string.js";
 
 const extend = (
 	text_params: ConstructorParameters<typeof FieldTypes.Text>[0] = {}
@@ -146,7 +147,10 @@ describe("text", () => {
 					.suList()
 					.filter({ surname: ["Johnson", "Smith"] })
 					.fetch();
-				assert.strictEqual(surname!.get("surname"), "Smith");
+				assert.strictEqual(
+					getFieldValueString(surname!.get("surname")),
+					"Smith"
+				);
 			}
 		));
 
@@ -192,7 +196,10 @@ describe("text", () => {
 					.filter({ surname: "Smith" })
 					.fetch();
 				assert.strictEqual(single_match.length, 1);
-				assert.strictEqual(single_match[0]!.get("surname"), "Smith");
+				assert.strictEqual(
+					getFieldValueString(single_match[0]!.get("surname")),
+					"Smith"
+				);
 			}
 		));
 
@@ -206,6 +213,9 @@ describe("text", () => {
 				.filter({ surname: "" })
 				.fetch();
 			assert.strictEqual(single_match.length, 1);
-			assert.strictEqual(single_match[0]!.get("surname"), "");
+			assert.strictEqual(
+				getFieldValueString(single_match[0]!.get("surname")),
+				""
+			);
 		}));
 });

@@ -8,5 +8,6 @@ export * from "./policy-types/create-policies-with-complex-pipeline.js";
 import { default as MockRestApi } from "./rest-api.js";
 export * from "./database-clear.js";
 import { default as MailcatcherAPI } from "./mailcatcher.js";
+export { getFieldValueString } from "./get-field-value-string.js";
 
 export { assertThrowsAsync, MockRestApi, MailcatcherAPI };

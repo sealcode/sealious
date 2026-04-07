@@ -15,6 +15,8 @@ import {
 import type { DerivingFn } from "./derived-value.js";
 import { sleep } from "../../../test_utils/sleep.js";
 import { TestApp } from "../../../test_utils/test-app.js";
+import { getFieldValueString } from "../../../test_utils/get-field-value-string.js";
+import type { TextValue } from "./text-value.js";
 
 const extend =
 	<T extends Field<any, any>>(
@@ -35,7 +37,7 @@ const extend =
 						surname: new FieldTypes.Text(),
 						name_and_surname: new FieldTypes.DerivedValue(
 							field,
-							// @ts-ignore
+							// @ts-expect-error messy types
 							{
 								...derived_value_params,
 							}
@@ -239,11 +241,10 @@ describe("derived-value", () => {
 										deriving_fn: async (
 											_,
 											__,
-
-											name: string
+											name: TextValue
 										) => {
 											await sleep(0);
-											return `${name} after sleep`;
+											return `${name.toString()} after sleep`;
 										},
 									}
 								),
@@ -321,7 +322,10 @@ describe("derived-value", () => {
 				const {
 					items: [newestEntry],
 				} = await app.collections.entries.suList().fetch();
-				assert.strictEqual(newestEntry!.get("title"), "title");
+				assert.strictEqual(
+					getFieldValueString(newestEntry!.get("title")),
+					"title"
+				);
 			}
 		));
 
@@ -365,7 +369,10 @@ describe("derived-value", () => {
 					.filter({ full_name: "Ala Makota" })
 					.fetch();
 				assert.strictEqual(items.length, 1);
-				assert.strictEqual(items[0]!.get("full_name"), "Ala Makota");
+				assert.strictEqual(
+					getFieldValueString(items[0]!.get("full_name")),
+					"Ala Makota"
+				);
 			}
 		));
 
@@ -375,7 +382,7 @@ describe("derived-value", () => {
 				class extends test_app {
 					collections = {
 						...App.BaseCollections,
-						entries: new (class extends Collection {
+						entries: new (class Entries extends Collection {
 							fields = {
 								name: new FieldTypes.Text(),
 								surname: new FieldTypes.Text(),
@@ -411,7 +418,14 @@ describe("derived-value", () => {
 					.search("makonia")
 					.fetch();
 				assert.strictEqual(items.length, 1);
-				assert.strictEqual(items[0]!.get("full_name"), "Artur Makonia");
+				const fullNameValue = items[0]!.get("full_name");
+				const fullNameString =
+					fullNameValue &&
+					typeof fullNameValue === "object" &&
+					"getHTMLSafe" in fullNameValue
+						? fullNameValue.getHTMLSafe()
+						: String(fullNameValue || "");
+				assert.strictEqual(fullNameString, "Artur Makonia");
 			}
 		));
 
@@ -455,8 +469,14 @@ describe("derived-value", () => {
 				ala.set("spirit_animal", "kot");
 				await ala.save(new app.SuperContext());
 				ala = await app.collections.entries.suGetByID(ala.id);
-				assert.strictEqual(ala.get("spirit_animal"), "kot");
-				assert.strictEqual(ala.get("full_name"), "Ala Lubikota");
+				assert.strictEqual(
+					getFieldValueString(ala.get("spirit_animal")),
+					"kot"
+				);
+				assert.strictEqual(
+					getFieldValueString(ala.get("full_name")),
+					"Ala Lubikota"
+				);
 			}
 		));
 });

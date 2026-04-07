@@ -21,7 +21,7 @@ export class ItemDraftObject<C extends Collection> {
 	): Promise<Partial<FieldsetOutput<C["fields"]>>> {
 		const item = this.target_collection.make();
 		item.setMultiple(this.input);
-		return await item.getDecodedBody(context, {}, is_for_http);
+		return await item.getDecodedBody(context, is_for_http);
 	}
 
 	async finalize(context: Context) {
@@ -97,8 +97,7 @@ export class ItemDraft<
 		context: Context,
 		storage_value: ItemDraftObject<C>,
 		old_value: any,
-		format_params: any,
-		is_http_api_request?: boolean
+		is_http_api_request = false
 	): Promise<ItemDraftObject<C> | null> {
 		const draft = new ItemDraftObject(
 			this.target_collection,
