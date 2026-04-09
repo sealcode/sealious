@@ -243,8 +243,14 @@ describe("if", () => {
 						.fetch();
 
 					assert.strictEqual(items.length === 2, true);
-					assert.strictEqual(items[0]?.get("title"), "Task 1");
-					assert.strictEqual(items[1]?.get("title"), "Task 3");
+					assert.strictEqual(
+						items[0]!.get("title")!.toString(),
+						"Task 1"
+					);
+					assert.strictEqual(
+						items[1]!.get("title")!.toString(),
+						"Task 3"
+					);
 				}
 			));
 	});
