@@ -1,5 +1,8 @@
 import { Field, Context, CollectionItem } from "../../../main.js";
-import { HybridField } from "../../../chip-types/field.js";
+import {
+	HybridField,
+	type ValidationResult,
+} from "../../../chip-types/field.js";
 
 export default class DisallowUpdate<
 	DecodedType,
@@ -16,6 +19,24 @@ export default class DisallowUpdate<
 	T
 > {
 	typeName = "disallow-update";
+	async builtinTransitionChecker(
+		context: Context,
+		old_value: DecodedType | undefined,
+		new_value: DecodedType
+	): Promise<ValidationResult> {
+		// forward to the inner type
+		if (old_value === undefined) {
+			return await this.virtual_field.builtinTransitionChecker(
+				context,
+				old_value,
+				new_value
+			);
+		}
+		return Field.invalid(
+			context.i18n`You cannot change a previously set value.`
+		);
+	}
+
 	async isProperValue(
 		context: Context,
 		new_value: Parameters<T["checkValue"]>[1],
@@ -28,17 +49,12 @@ export default class DisallowUpdate<
 			"Checking if this field already has a value",
 			{ new_value, old_value }
 		);
-		if (old_value === undefined) {
-			return this.virtual_field.checkValue(
-				context,
-				new_value,
-				old_value,
-				new_value_blessing_token,
-				item
-			);
-		}
-		return Field.invalid(
-			context.i18n`You cannot change a previously set value.`
+		return this.virtual_field.checkValue(
+			context,
+			new_value,
+			old_value,
+			new_value_blessing_token,
+			item
 		);
 	}
 }

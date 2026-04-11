@@ -101,6 +101,17 @@ export abstract class Field<
 		valid: true,
 	});
 
+	async builtinTransitionChecker(
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
+		_context: Context,
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
+		_old_value: DecodedType | undefined,
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
+		_new_value: DecodedType
+	): Promise<ValidationResult> {
+		return { valid: true };
+	}
+
 	setTransitionChecker(checker: TransitionChecker<DecodedType>): this {
 		this.transitionChecker = checker;
 		return this;
@@ -201,15 +212,17 @@ export abstract class Field<
 		if (isEmpty(new_value) && this.required) {
 			return Field.invalid(`Missing value for field '${this.name}'.`);
 		}
-		const basic_validation = await this.isProperValue(
-			context,
-			new_value,
-			old_value,
-			new_value_blessing_token,
-			item
-		);
-		if (!basic_validation.valid) {
-			return basic_validation;
+		if (!isEmpty(new_value) || this.required) {
+			const basic_validation = await this.isProperValue(
+				context,
+				new_value,
+				old_value,
+				new_value_blessing_token,
+				item
+			);
+			if (!basic_validation.valid) {
+				return basic_validation;
+			}
 		}
 		const encoded = await this.encode(context, new_value as InputType);
 		const decoded = await this.decode(
@@ -227,6 +240,15 @@ export abstract class Field<
 		if (old_value == new_value) {
 			// don't run transition checker, the value didn't change
 			return { valid: true };
+		}
+		const builtin_transition_check_result =
+			await this.builtinTransitionChecker(
+				context,
+				old_value_decoded as DecodedType,
+				decoded as DecodedType
+			);
+		if (!builtin_transition_check_result.valid) {
+			return builtin_transition_check_result;
 		}
 		return this.transitionChecker({
 			context,

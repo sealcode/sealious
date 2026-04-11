@@ -152,6 +152,27 @@ describe("types", () => {
 			}
 		);
 	});
+	it("Shouldn't throw when some not required fields are saved when not set", async () => {
+		await withRunningApp(
+			(t) =>
+				class extends t {
+					collections = {
+						...App.BaseCollections,
+						history: new (class extends Collection {
+							fields = {
+								i: new FieldTypes.Int(),
+								t: new FieldTypes.Text(),
+								blob: new FieldTypes.JsonObject(),
+							};
+						})(),
+					};
+				},
+			async ({ app }) => {
+				let obj = await app.collections.history.suCreate({});
+				await obj.save(new app.SuperContext());
+			}
+		);
+	});
 });
 
 describe("collection", () => {

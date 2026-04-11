@@ -249,9 +249,6 @@ export class Fieldset<Fields extends Record<string, Field<any, any, any>>> {
 			}
 			const input =
 				this.raw_input[field_name as keyof FieldsetInput<Fields>];
-			if (input === undefined && !field.required) {
-				continue;
-			}
 			const promise = field
 				.checkValue(
 					context,

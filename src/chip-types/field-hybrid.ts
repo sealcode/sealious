@@ -5,6 +5,7 @@ import type {
 	CollectionItem,
 	ItemListResult,
 	TransitionChecker,
+	ValidationResult,
 } from "../main.js";
 import { OpenApiTypes } from "../schemas/open-api-types.js";
 import Field from "./field.js";
@@ -63,6 +64,18 @@ export default abstract class HybridField<
 	setCollection(collection: Collection) {
 		super.setCollection(collection);
 		this.virtual_field.setCollection(collection);
+	}
+
+	async builtinTransitionChecker(
+		context: Context,
+		old_value: ParsedType | undefined,
+		new_value: ParsedType
+	): Promise<ValidationResult> {
+		return await this.virtual_field.builtinTransitionChecker(
+			context,
+			old_value as InnerParsedType,
+			new_value as unknown as InnerParsedType
+		);
 	}
 
 	async encode(
