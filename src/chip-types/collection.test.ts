@@ -173,6 +173,66 @@ describe("types", () => {
 			}
 		);
 	});
+	it("throws a ts error when a required field is missing in upsert", () => {
+		return withRunningApp(
+			(t: TestAppConstructor<TestApp>) =>
+				class TheApp extends t {
+					collections = {
+						...App.BaseCollections,
+						withRequired:
+							new (class withRequired extends Collection {
+								fields = {
+									some_id: new FieldTypes.Int(),
+									nonrequired: new FieldTypes.Int(),
+									required: new FieldTypes.Int().setRequired(
+										true
+									),
+								};
+							})(),
+					};
+				},
+			async ({ app }) => {
+				await app.collections.withRequired.upsert(
+					new app.SuperContext(),
+					"some_id",
+					[
+						{
+							some_id: 123,
+							required: 111, // try removing this
+						},
+					]
+				);
+			}
+		);
+	});
+	it("throws a ts error when the identity field is missing in upsert", () => {
+		return withRunningApp(
+			(t: TestAppConstructor<TestApp>) =>
+				class TheApp extends t {
+					collections = {
+						...App.BaseCollections,
+						withRequired:
+							new (class withRequired extends Collection {
+								fields = {
+									some_id: new FieldTypes.Int(),
+									nonrequired: new FieldTypes.Int(),
+								};
+							})(),
+					};
+				},
+			async ({ app }) => {
+				await app.collections.withRequired.upsert(
+					new app.SuperContext(),
+					"some_id",
+					[
+						{
+							some_id: 123, // try removing this
+						},
+					]
+				);
+			}
+		);
+	});
 });
 
 describe("collection", () => {

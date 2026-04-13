@@ -474,9 +474,12 @@ export default abstract class Collection {
 		C extends Collection,
 		IdentityField extends keyof CollectionInput<C>,
 	>(
+		this: C,
 		context: Context,
 		identify_by: IdentityField,
-		entries: ({ [key in IdentityField]: unknown } & CollectionInput<C>)[]
+		entries: (CollectionInput<C> & {
+			[key in IdentityField]: CollectionInput<C>[IdentityField];
+		})[]
 	): Promise<void> {
 		await Promise.all(
 			entries.map(async (entry) => {
