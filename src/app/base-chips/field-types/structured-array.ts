@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { predicates } from "@sealcode/ts-predicates";
 import type Field from "../../../chip-types/field.js";
 import { ArrayStorage } from "./array-storage.js";
@@ -10,7 +11,7 @@ import { ItemListResult } from "../../../chip-types/item-list-result.js";
 import type CollectionItem from "../../../chip-types/collection-item.js";
 
 export class StructuredArray<
-	Subfields extends Record<string, Field<unknown>>,
+	Subfields extends Record<string, Field<any>>,
 > extends ArrayStorage<FieldsetInput<Subfields>> {
 	typeName = "structured-array";
 

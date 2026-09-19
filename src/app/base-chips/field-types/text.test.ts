@@ -60,24 +60,6 @@ describe("text", () => {
 		};
 	}
 
-	it("shouldn't allow a value that isn't a string", async () =>
-		withRunningApp(extend(), async ({ app, base_url }) => {
-			const assert_creation_error = assert_creation_error_factory({
-				base_url,
-				collection: "surnames",
-			});
-			await assert_creation_error({
-				resource: { surname: false },
-				message: new app.Context()
-					.i18n`Type of ${String(false)} is ${"boolean"}, not string.`,
-			});
-			await assert_creation_error({
-				resource: { surname: {} },
-				message: new app.Context()
-					.i18n`Type of ${String({})} is ${"object"}, not string.`,
-			});
-		}));
-
 	it("should respect given min and max length", async () => {
 		const min = 3;
 		const max = 5;
@@ -205,7 +187,7 @@ describe("text", () => {
 
 	it("allows to filter by an empty value", async () =>
 		withRunningApp(extend(), async ({ app }) => {
-			const surname = await app.collections.surnames.suCreate({
+			await app.collections.surnames.suCreate({
 				surname: "",
 			});
 			const { items: single_match } = await app.collections.surnames
@@ -216,6 +198,23 @@ describe("text", () => {
 			assert.strictEqual(
 				getFieldValueString(single_match[0]!.get("surname")),
 				""
+			);
+		}));
+
+	it("accepts objects with a .toString() method", async () =>
+		withRunningApp(extend(), async ({ app }) => {
+			const the_surname = "Smith";
+			await app.collections.surnames.suCreate({
+				surname: { toString: () => the_surname },
+			});
+			const { items: single_match } = await app.collections.surnames
+				.suList()
+				.filter({ surname: the_surname })
+				.fetch();
+			assert.strictEqual(single_match.length, 1);
+			assert.strictEqual(
+				getFieldValueString(single_match[0]!.get("surname")),
+				the_surname
 			);
 		}));
 });

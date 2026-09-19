@@ -160,12 +160,31 @@ describe("derived-value", () => {
 		));
 
 	it("throws when the value returned from deriving_fn is unnacceptable by target_field_type of derived-value", async () => {
-		const str = 555;
 		await withRunningApp(
-			extend({
-				fields: ["username", "surname"],
-				deriving_fn: async (_, __, ___: string, ____: string) => str,
-			}),
+			(t: TestAppConstructor) => {
+				return class extends t {
+					collections = {
+						...TestApp.BaseCollections,
+						people: new (class extends Collection {
+							name = "people";
+							fields = {
+								username: new FieldTypes.Text(),
+								surname: new FieldTypes.Text(),
+								name_and_surname: new FieldTypes.DerivedValue(
+									new FieldTypes.Int(),
+									{
+										fields: ["age"],
+										deriving_fn: async () => {
+											return "NaN";
+										},
+									}
+								),
+								age: new FieldTypes.Int(),
+							};
+						})(),
+					};
+				};
+			},
 			async ({ rest_api }) => {
 				await assertThrowsAsync(
 					async () => {
@@ -178,7 +197,7 @@ describe("derived-value", () => {
 						assert.deepStrictEqual(
 							error.response.data.data.field_messages
 								.name_and_surname.message,
-							`Type of ${str} is ${"number"}, not string.`
+							`Value 'NaN' is not a int number format.`
 						);
 					}
 				);

@@ -1,5 +1,4 @@
 import { Field, Context } from "../../../main.js";
-import escape from "escape-html";
 import { hasShape, is, predicates } from "@sealcode/ts-predicates";
 
 import { OpenApiTypes } from "../../../schemas/open-api-types.js";
@@ -10,12 +9,15 @@ type TextStorageFormat = string | LegacyTextStorageFormat;
 
 export default abstract class TextStorage extends Field<
 	TextValue,
-	string,
+	string | { toString(): string },
 	string
 > {
 	open_api_type: OpenApiTypes = OpenApiTypes.STR;
 
-	async encode(context: Context, input: string | null) {
+	async encode(
+		context: Context,
+		input: string | { toString(): string } | null
+	) {
 		context.app.Logger.debug2("TEXT FIELD", "encode", {
 			name: this.name,
 			input,
@@ -24,7 +26,16 @@ export default abstract class TextStorage extends Field<
 			return null;
 		}
 		context.app.Logger.debug3("TEXT FIELD", "encode/return", input);
-		return input;
+		// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-explicit-any
+		if (typeof (input as any)?.toString == "function") {
+			const string = input.toString();
+			if (typeof string == "string") {
+				return string;
+			} else {
+				return "";
+			}
+		}
+		return input as string;
 	}
 
 	private makeTextQuery(

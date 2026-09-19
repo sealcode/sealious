@@ -14,21 +14,21 @@ export class ImageValue implements FieldValue {
 		return this.file;
 	}
 
-	toPath(): string {
-		return this.file.getURL();
+	async toPath(): Promise<string> {
+		return this.file.getPath();
 	}
 
-	toUrl(): string {
-		return `${this.base_url}${this.toPath()}`;
+	toUrl(with_host: boolean = true): string {
+		return `${with_host ? this.base_url : ""}${this.file.getURL()}`;
 	}
 
 	toString(): string {
-		return this.toPath();
+		return this.toUrl(true);
 	}
 
 	getRestAPIValue(): string | PathFilePointer {
 		return this.restPreference === "absolute"
-			? this.toUrl()
-			: this.toPath();
+			? this.toUrl(true)
+			: this.toUrl(false);
 	}
 }

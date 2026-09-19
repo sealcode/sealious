@@ -46,9 +46,18 @@ export default class Text extends TextStorage {
 			return Field.valid();
 		}
 		if (typeof input !== "string") {
-			return Field.invalid(
-				context.i18n`Type of ${input} is ${typeof input}, not string.`
-			);
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access
+			if (typeof (input as any).toString == "function") {
+				console.debug("text.ts:52");
+				const string = (input as { toString(): string }).toString();
+				if (typeof string == "string") {
+					input = string;
+				}
+			} else {
+				return Field.invalid(
+					context.i18n`Type of ${input} is ${typeof input}, not string.`
+				);
+			}
 		}
 		if (this.params.min_length && input.length < this.params.min_length) {
 			return Field.invalid(

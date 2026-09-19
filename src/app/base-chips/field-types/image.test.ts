@@ -98,7 +98,7 @@ describe("FieldTypes.Image", () => {
 
 				const imageValue = item!.get("image");
 				assert.ok(imageValue instanceof ImageValue);
-				const response = await rest_api.get(imageValue.toPath());
+				const response = await rest_api.get(imageValue.toUrl(false));
 				assert(!!response);
 			}
 		));

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import type Collection from "./collection.js";
 import type Context from "../context.js";
 import type { ActionName } from "../action.js";
@@ -13,25 +14,27 @@ import type CollectionItem from "./collection-item.js";
 
 export type Depromisify<T> = T extends Promise<infer V> ? V : T;
 
-export type ExtractParams<F extends Field<unknown, unknown, unknown>> =
-	Parameters<F["setParams"]>[0];
+export type ExtractParams<F extends Field<any, any, any>> = Parameters<
+	F["setParams"]
+>[0];
 
-export type ExtractFilterParams<F extends Field<unknown, unknown, unknown>> =
-	Parameters<F["getMatchQueryValue"]>[1];
+export type ExtractFilterParams<F extends Field<any, any, any>> = Parameters<
+	F["getMatchQueryValue"]
+>[1];
 
 export type ValidationResult = {
 	valid: boolean;
 	reason?: string;
 };
 
-export type ExtractFieldDecoded<F extends Field<unknown, unknown, unknown>> =
-	F extends Field<infer T, unknown, unknown> ? T : never;
+export type ExtractFieldDecoded<F extends Field<any, any, any>> =
+	F extends Field<infer T, any, any> ? T : never;
 
-export type ExtractFieldInput<F extends Field<unknown, unknown, unknown>> =
-	F extends Field<unknown, infer T, unknown> ? T : never;
+export type ExtractFieldInput<F extends Field<any, any, any>> =
+	F extends Field<any, infer T, any> ? T : never;
 
-export type ExtractFieldStorage<F extends Field<unknown, unknown, unknown>> =
-	F extends Field<unknown, unknown, infer T> ? T : never;
+export type ExtractFieldStorage<F extends Field<any, any, any>> =
+	F extends Field<any, any, infer T> ? T : never;
 
 export type TransitionChecker<DecodedType> = (params: {
 	context: Context;

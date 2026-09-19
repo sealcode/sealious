@@ -16,22 +16,21 @@ import {
 	Policies,
 } from "../../../main.js";
 
-const URL = "/api/v1/collections/boolseals";
-
 function extend(t: TestAppConstructor) {
 	const articles = new (class Articles extends Collection {
 		name = "articles";
 		fields = {
 			title: new FieldTypes.Text(),
+			year: new FieldTypes.Int(),
 		};
 		defaultPolicy = new Policies.Public();
 
 		async validate(
-			context: Context,
+			_context: Context,
 			new_body: CollectionItemBody<Articles>
 		): Promise<CollectionValidationResult> {
 			const title = new_body.getInput("title");
-			if (title && title.length > 5) {
+			if (title && title.toString().length > 5) {
 				return [{ error: "Title too long", fields: ["title"] }];
 			}
 			return [];
@@ -75,13 +74,13 @@ describe("itemDraft", () => {
 			await assertThrowsAsync(
 				() =>
 					app.collections.drafts.create(new app.Context(), {
-						draft: { title: 2 as any },
+						draft: { year: "NaN" },
 					}),
 				(error) =>
 					assert.deepStrictEqual(error.field_messages, {
 						draft: {
 							message:
-								'{"title":{"message":"Type of 2 is number, not string."}}',
+								'{"year":{"message":"Value \'NaN\' is not a int number format."}}',
 						},
 					})
 			);
