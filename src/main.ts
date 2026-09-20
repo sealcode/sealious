@@ -43,3 +43,4 @@ export {
 } from "./chip-types/collection.js";
 export { CollectionItemBody } from "./chip-types/collection-item-body.js";
 export * from "./schemas/open-api-types.js";
+export { ImageValue } from "./app/base-chips/field-types/image-value.js";
