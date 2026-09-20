@@ -18,6 +18,10 @@ export class ImageValue implements FieldValue {
 		return this.file.getPath();
 	}
 
+	async getPath(): Promise<string> {
+		return this.toPath();
+	}
+
 	toUrl(with_host: boolean = true): string {
 		return `${with_host ? this.base_url : ""}${this.file.getURL()}`;
 	}
