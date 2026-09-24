@@ -318,4 +318,19 @@ export default class CachedValue<
 		const baseFieldsDefs = this.base_field.getPostgreSqlFieldDefinitions();
 		return [...baseFieldsDefs, `"${this.name}:timestamp" TIMESTAMP`];
 	}
+
+	async getAggregationStages(context: Context, field_filter: unknown) {
+		return [
+			{
+				$match: {
+					// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+					[`${this.name}.value`]:
+						await this.virtual_field.getMatchQueryValue(
+							context,
+							field_filter
+						),
+				},
+			},
+		];
+	}
 }

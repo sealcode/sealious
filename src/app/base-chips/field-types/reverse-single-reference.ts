@@ -1,6 +1,7 @@
 import ItemList, {
 	type AttachmentOptions,
 } from "../../../chip-types/item-list.js";
+import type { MatchBody, QueryStage } from "../../../datastore/query-stage.js";
 import {
 	App,
 	Collection,
@@ -255,5 +256,49 @@ export default class ReverseSingleReference extends CachedValue<
 
 	getAttachmentIDs(value: string[]): string[] {
 		return value;
+	}
+
+	// this is basically a copy of the base fielt
+	// .getAggregationStages. Introducing a custom one inside HybridField broke
+	// stuff and this was thefastest way. Maybe there's a more elegant way to do
+	// this.
+	async getAggregationStages(
+		context: Context,
+		field_filter: unknown
+	): Promise<{ $match: { [x: string]: any } }[]> {
+		context.app.Logger.debug2(
+			"FIELD",
+			`${this.name}.getAggregationStages`,
+			field_filter
+		);
+		if (field_filter === undefined) return [];
+		const value_path = await this.getValuePath();
+		let $match: MatchBody = {};
+		if (field_filter === null) {
+			$match = {
+				$or: [
+					{ [value_path]: { $exists: false } },
+					{ [value_path]: null },
+				],
+			};
+		} else if (field_filter instanceof Array) {
+			$match = {
+				[value_path]: {
+					$in: await Promise.all(
+						// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+						field_filter.map((value) => this.encode(context, value))
+					),
+				},
+			};
+		} else {
+			$match = (await this.getMatchQuery(context, field_filter))!;
+
+			context.app.Logger.debug3("FIELD", "getAggregationStages", {
+				value_path,
+				$match,
+				field_type: this.typeName,
+			});
+		}
+		return [{ $match }];
 	}
 }
