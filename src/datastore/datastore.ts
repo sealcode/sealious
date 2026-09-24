@@ -26,7 +26,7 @@ export default class MongoDatastore extends Datastore {
 						config.username +
 						(config.password ? ":" + config.password : "") +
 						"@"
-				  }`
+					}`
 				: ""
 		}${config.host}:${config.port}/${config.db_name}`;
 
@@ -185,7 +185,7 @@ export default class MongoDatastore extends Datastore {
 				pipeline,
 				output_options,
 			},
-			6
+			12
 		);
 		this.app.Logger.debug3("DB", "The above aggregation returned", ret);
 		return ret as Record<string, any>[];
