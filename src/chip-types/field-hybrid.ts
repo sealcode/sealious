@@ -118,6 +118,10 @@ export default abstract class HybridField<
 		);
 	}
 
+	async getAggregationStages(context: Context, field_filter: unknown) {
+		return this.virtual_field.getAggregationStages(context, field_filter);
+	}
+
 	async decode(
 		context: Context,
 		storage_value: StorageType,
