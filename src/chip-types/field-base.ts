@@ -197,7 +197,7 @@ export abstract class Field<
 		};
 	}
 
-	protected abstract isProperValue(
+	abstract isProperValue(
 		context: Context,
 		new_value: unknown,
 		old_value: unknown,

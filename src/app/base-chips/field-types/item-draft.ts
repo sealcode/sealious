@@ -64,7 +64,7 @@ export class ItemDraft<
 		}
 	}
 
-	protected async isProperValue(
+	async isProperValue(
 		context: Context,
 		new_value: InputType,
 		_old_value: InputType,

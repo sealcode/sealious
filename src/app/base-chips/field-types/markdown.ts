@@ -21,7 +21,7 @@ export default class Markdown extends Field<MarkdownValue, string, string> {
 		return new MarkdownValue(db_value);
 	}
 
-	protected isProperValue(): Promise<ValidationResult> {
+	isProperValue(): Promise<ValidationResult> {
 		return Promise.resolve(Field.valid());
 	}
 }

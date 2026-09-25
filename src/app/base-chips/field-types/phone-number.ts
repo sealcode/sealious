@@ -104,7 +104,7 @@ export class PhoneNumber extends Field<
 
 	open_api_type: OpenApiTypes.STR;
 
-	protected async isProperValue(
+	async isProperValue(
 		context: Context,
 		new_value: unknown
 	): Promise<ValidationResult> {
