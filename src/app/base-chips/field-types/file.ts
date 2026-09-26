@@ -6,11 +6,12 @@ import {
 import Field from "../../../chip-types/field.js";
 import type Context from "../../../context.js";
 import { OpenApiTypes } from "../../../schemas/open-api-types.js";
+import type { ImageValue } from "./image-value.js";
 
 export abstract class FileStorage<
 	DecodedType = FilePointer | string,
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	_InputType = FilePointer | [FilePointer],
+	_InputType = FilePointer | [FilePointer] | ImageValue,
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	_StorageType = string,
 > extends Field<DecodedType, FilePointer | [FilePointer], string> {
@@ -51,7 +52,7 @@ export abstract class FileStorage<
 	}
 
 	async encode(_: Context, file: FilePointer | [FilePointer]) {
-		if (file === null) {
+		if (file === null || file == undefined) {
 			return null;
 		}
 		if (Array.isArray(file)) {
