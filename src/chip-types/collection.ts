@@ -480,7 +480,12 @@ export default abstract class Collection {
 		entries: (CollectionInput<C> & {
 			[key in IdentityField]: CollectionInput<C>[IdentityField];
 		})[]
-	): Promise<void> {
+	): Promise<{
+		created: CollectionItem<Collection>[];
+		modified: CollectionItem<Collection>[];
+	}> {
+		const created: CollectionItem<Collection>[] = [];
+		const modified: CollectionItem<Collection>[] = [];
 		await Promise.all(
 			entries.map(async (entry) => {
 				const collection = context.app.collections[this.name];
@@ -509,12 +514,15 @@ export default abstract class Collection {
 					if (has_changes) {
 						item.setMultiple(entry);
 						await item.save(context);
+						modified.push(item);
 					}
 				} else {
-					return collection.create(context, entry);
+					const new_item = await collection.create(context, entry);
+					created.push(new_item);
 				}
 			})
 		);
+		return { created, modified };
 	}
 
 	hasFeed(): boolean {

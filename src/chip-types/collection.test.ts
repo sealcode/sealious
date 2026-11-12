@@ -862,4 +862,38 @@ describe("collection", () => {
 				}
 			));
 	});
+
+	it("returns the created and modified items when calling upsert", () => {
+		return withRunningApp(
+			(t: TestAppConstructor<TestApp>) =>
+				class TheApp extends t {
+					collections = {
+						...App.BaseCollections,
+						people: new (class withRequired extends Collection {
+							fields = {
+								name: new FieldTypes.Text(),
+								age: new FieldTypes.Int(),
+							};
+						})(),
+					};
+				},
+			async ({ app }) => {
+				const alice = await app.collections.people.suCreate({
+					name: "Alice",
+					age: 33,
+				});
+				const { created, modified } =
+					await app.collections.people.upsert(
+						new app.SuperContext(),
+						"name",
+						[
+							{ name: "Alice", age: 44 },
+							{ name: "Bob", age: 45 },
+						]
+					);
+				assert.strictEqual(modified[0]!.id, alice.id);
+				assert.strictEqual(created.length, 1);
+			}
+		);
+	});
 });
