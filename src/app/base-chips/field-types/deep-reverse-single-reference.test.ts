@@ -349,4 +349,57 @@ describe("deep-reverse-single-reference", () => {
 			}
 		);
 	});
+
+	it("works when filtering the far collection by a list of ids", async () => {
+		await withRunningApp(
+			(TestClass) =>
+				class extends TestClass {
+					collections = {
+						...TestApp.BaseCollections,
+						articles: new (class extends Collection {
+							fields = {
+								title: new Text(),
+								categories: new DeepReverseSingleReference(
+									"article_category"
+								),
+							};
+						})(),
+						categories: new (class extends Collection {
+							fields = {
+								name: new Text(),
+							};
+						})(),
+						article_category: new (class extends Collection {
+							fields = {
+								article: new SingleReference("articles"),
+								category: new SingleReference("categories"),
+							};
+						})(),
+					};
+				},
+			async ({ app }) => {
+				const category1 = await app.collections.categories.suCreate({
+					name: "category1",
+				});
+				const article = await app.collections.articles.suCreate({
+					title: "title",
+				});
+
+				await app.collections.articles.suCreate({
+					title: "title2",
+				});
+
+				await app.collections.article_category.suCreate({
+					article: article.id,
+					category: category1.id,
+				});
+
+				const { items } = await app.collections.articles
+					.suList()
+					.filter({ categories: [category1.id] })
+					.fetch();
+				assert.strictEqual(items.length, 1);
+			}
+		);
+	});
 });

@@ -2,6 +2,7 @@ import ItemList, {
 	type AttachmentOptions,
 } from "../../../chip-types/item-list.js";
 import type Context from "../../../context.js";
+import type { MatchBody } from "../../../datastore/query-stage.js";
 import type { App, Collection, CollectionItem } from "../../../main.js";
 import ReverseSingleReference from "./reverse-single-reference.js";
 import SingleReference from "./single-reference.js";
@@ -243,5 +244,42 @@ export class DeepReverseSingleReference extends ReverseSingleReference {
 
 	getAttachmentIDs(value: string[]): string[] {
 		return value;
+	}
+
+	async getAggregationStages(
+		context: Context,
+		field_filter: unknown
+	): Promise<{ $match: { [x: string]: any } }[]> {
+		context.app.Logger.debug2(
+			"FIELD",
+			`${this.name}.getAggregationStages`,
+			field_filter
+		);
+		if (field_filter === undefined) return [];
+		const value_path = await this.getValuePath();
+		let $match: MatchBody = {};
+		if (field_filter === null) {
+			$match = {
+				$or: [
+					{ [value_path]: { $exists: false } },
+					{ [value_path]: null },
+				],
+			};
+		} else if (field_filter instanceof Array) {
+			$match = {
+				[value_path]: {
+					$in: field_filter,
+				},
+			};
+		} else {
+			$match = (await this.getMatchQuery(context, field_filter))!;
+
+			context.app.Logger.debug3("FIELD", "getAggregationStages", {
+				value_path,
+				$match,
+				field_type: this.typeName,
+			});
+		}
+		return [{ $match }];
 	}
 }

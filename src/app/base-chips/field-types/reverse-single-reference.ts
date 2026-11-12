@@ -260,7 +260,7 @@ export default class ReverseSingleReference extends CachedValue<
 
 	// this is basically a copy of the base fielt
 	// .getAggregationStages. Introducing a custom one inside HybridField broke
-	// stuff and this was thefastest way. Maybe there's a more elegant way to do
+	// stuff and this was the fastest way. Maybe there's a more elegant way to do
 	// this.
 	async getAggregationStages(
 		context: Context,
