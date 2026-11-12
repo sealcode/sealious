@@ -10,10 +10,11 @@ import type Context from "../../../context.js";
 import type { OpenApiTypes, CollectionItem } from "../../../main.js";
 import type { FieldValue } from "./field-value.js";
 
-type StructuredValue<Structure extends Record<string, any>> = Structure & {
-	getRestAPIValue(): Record<keyof Structure, unknown>;
-	toValue(): Record<keyof Structure, unknown>;
-};
+export type StructuredValue<Structure extends Record<string, any>> =
+	Structure & {
+		getRestAPIValue(): Record<keyof Structure, unknown>;
+		toValue(): Record<keyof Structure, unknown>;
+	};
 
 function makeStructuredValue<Structure extends Record<string, any>>(
 	data: Structure
