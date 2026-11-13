@@ -84,7 +84,11 @@ export default class DateField extends Field<string, string | number, number> {
 			if (value === undefined) {
 				continue;
 			}
-			new_filter[new_comparator] = parseInt(value, 10);
+			// eslint-disable-next-line no-await-in-loop
+			new_filter[new_comparator] = (await this.encode(
+				_,
+				value
+			)) as number;
 		}
 		return new_filter;
 	}
