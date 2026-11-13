@@ -540,11 +540,15 @@ export default abstract class Collection {
 		} as SortParams<this>;
 	}
 
-	async getFeedItems(ctx: Koa.Context): Promise<CollectionItem<this>[]> {
-		const { items } = await this.list(ctx.$context)
+	async getFeedItems(
+		ctx: Koa.Context,
+		customizeList: (list: ItemList<this>) => Promise<void> = async () => {}
+	): Promise<CollectionItem<this>[]> {
+		const list = this.list(ctx.$context)
 			.sort(await this.getFeedSortOrder(ctx))
-			.paginate({ items: await this.getFeedSize(ctx) })
-			.fetch();
+			.paginate({ items: await this.getFeedSize(ctx) });
+		await customizeList(list);
+		const { items } = await list.fetch();
 		return items;
 	}
 
@@ -663,8 +667,17 @@ export default abstract class Collection {
 		);
 	}
 
-	async getFeed(ctx: Koa.Context): Promise<string> {
-		const items = await this.getFeedItems(ctx);
+	async getFeed(
+		ctx: Koa.Context,
+		{
+			customizeList = async () => {},
+			title,
+		}: {
+			title?: string;
+			customizeList?: (list: ItemList<any>) => Promise<void>;
+		} = {}
+	): Promise<string> {
+		const items = await this.getFeedItems(ctx, customizeList);
 		const latest_item_timestamp = items
 			.map((e) => e._metadata.modified_at)
 			.sort()
@@ -675,7 +688,7 @@ export default abstract class Collection {
 		return /* HTML */ `<?xml version="1.0" encoding="utf-8"?>
 
 			<feed xmlns="http://www.w3.org/2005/Atom">
-				<title>${await this.getFeedTitle(ctx)}</title>
+				<title>${title || (await this.getFeedTitle(ctx))}</title>
 				<link
 					href="${ctx.$app.manifest
 						.base_url}/api/v1/collections/${this.name}/feed"
