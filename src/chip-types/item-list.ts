@@ -66,6 +66,11 @@ export default class ItemList<T extends Collection> {
 		this.collection = collection;
 	}
 
+	public addStage(stage: QueryStage): ItemList<T> {
+		this.aggregation_stages.push(stage);
+		return this;
+	}
+
 	filter(filter?: FilterT<T>): ItemList<T> {
 		if (this._filter) {
 			throw new Error("Filter already set");
