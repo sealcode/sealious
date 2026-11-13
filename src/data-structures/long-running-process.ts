@@ -159,12 +159,16 @@ export class LongRunningProcess<
 			throw new Error("no events found");
 		}
 		const latestEvent = events.at(-1)!;
+		const latestEventWithProgress = events
+			.reverse()
+			.filter((e) => e.progress != null)
+			.at(0);
 		return {
 			emitter: this.registry[lrp_item.id] || null,
 			events,
 			latestEvent,
 			state: lrp_item.get("state") as LPRState,
-			progress: latestEvent?.progress || 0,
+			progress: latestEventWithProgress?.progress || 0,
 		};
 	}
 }

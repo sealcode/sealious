@@ -37,6 +37,36 @@ describe("long running process", () => {
 		);
 	});
 
+	it("Loads progress from the latest event that did report progress", async () => {
+		await withRunningApp(
+			(t) => t,
+			async ({ app }) => {
+				const context = new app.SuperContext();
+				const lrp = new LongRunningProcess(
+					context,
+					async (lrp: LongRunningProcess) => {
+						await lrp.info("3", 0);
+						await sleep(100);
+						await lrp.info("2", 0.5);
+						await sleep(1);
+						await lrp.info("some log");
+						await sleep(100);
+						await lrp.info("1");
+						await sleep(1000);
+					},
+					[]
+				);
+				const lrp_id = await lrp.getID();
+				await sleep(250);
+				const { progress } = await LongRunningProcess.getByID(
+					context,
+					lrp_id
+				);
+				assert.strictEqual(progress, 0.5);
+			}
+		);
+	});
+
 	it("allows only the owner to access the event when set to user access mode", async () => {
 		await withRunningApp(
 			(t) => t,
