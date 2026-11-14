@@ -16,7 +16,11 @@ export default abstract class TextStorage extends Field<
 
 	async encode(
 		context: Context,
-		input: string | { toString(): string } | null
+		input:
+			| string
+			| { toString(): string }
+			| { getOriginal(): string }
+			| null
 	) {
 		context.app.Logger.debug2("TEXT FIELD", "encode", {
 			name: this.name,
@@ -26,6 +30,16 @@ export default abstract class TextStorage extends Field<
 			return null;
 		}
 		context.app.Logger.debug3("TEXT FIELD", "encode/return", input);
+		// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-explicit-any
+		if (typeof (input as any)?.getOriginal == "function") {
+			// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-explicit-any
+			const string = (input as any).getOriginal();
+			if (typeof string == "string") {
+				return string;
+			} else {
+				return "";
+			}
+		}
 		// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-explicit-any
 		if (typeof (input as any)?.toString == "function") {
 			const string = input.toString();

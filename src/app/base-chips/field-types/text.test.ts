@@ -217,4 +217,35 @@ describe("text", () => {
 				the_surname
 			);
 		}));
+
+	it("avoids escaping html twice", async () =>
+		withRunningApp(
+			function (t: TestAppConstructor) {
+				return class extends t {
+					collections = {
+						...TestApp.BaseCollections,
+						people: new (class extends Collection {
+							fields = {
+								name: new FieldTypes.Text(),
+							};
+						})(),
+					};
+				};
+			},
+			async ({ app }) => {
+				const item = await app.collections.people.suCreate({
+					name: "Alice & Bob",
+				});
+				const name = item.get("name");
+				item.set("name", name);
+				await item.save(new app.SuperContext());
+				const item_again = await app.collections.people.suGetByID(
+					item.id
+				);
+				assert.strictEqual(
+					item_again.get("name")!.toString(),
+					"Alice &amp; Bob"
+				);
+			}
+		));
 });
