@@ -476,7 +476,7 @@ export default abstract class Collection {
 	>(
 		this: C,
 		context: Context,
-		identify_by: IdentityField,
+		identify_by: IdentityField | IdentityField[],
 		entries: (CollectionInput<C> & {
 			[key in IdentityField]: CollectionInput<C>[IdentityField];
 		})[]
@@ -486,42 +486,51 @@ export default abstract class Collection {
 	}> {
 		const created: CollectionItem<Collection>[] = [];
 		const modified: CollectionItem<Collection>[] = [];
-		await Promise.all(
-			entries.map(async (entry) => {
-				const collection = context.app.collections[this.name];
-				if (!collection) {
-					throw new Error("collection is missing");
-				}
+		for (const entry of entries) {
+			const collection = context.app.collections[this.name];
+			if (!collection) {
+				throw new Error("collection is missing");
+			}
+			const filter = Array.isArray(identify_by)
+				? Object.fromEntries(
+						identify_by.map(
+							(name: keyof CollectionInput<C>) =>
+								<const>[name, entry[name]]
+						) as [string, keyof CollectionInput<C>][]
+					)
+				: { [identify_by]: entry[identify_by] };
 
-				const {
-					items: [item],
-				} = await collection
-					.list(context)
-					.filter({ [identify_by]: entry[identify_by] })
-					.paginate({ items: 1 })
-					.fetch();
-				if (item) {
-					let has_changes = false;
-					for (const key of Object.keys(
-						entry
-					) as (keyof typeof entry)[]) {
-						if (entry[key] != item.get(key as string)) {
-							has_changes = true;
-						} else {
-							delete entry[key];
-						}
+			const {
+				items: [item],
+				// eslint-disable-next-line no-await-in-loop
+			} = await collection
+				.list(context)
+				.filter(filter)
+				.paginate({ items: 1 })
+				.fetch();
+			if (item) {
+				let has_changes = false;
+				for (const key of Object.keys(
+					entry
+				) as (keyof typeof entry)[]) {
+					if (entry[key] != item.get(key as string)) {
+						has_changes = true;
+					} else {
+						delete entry[key];
 					}
-					if (has_changes) {
-						item.setMultiple(entry);
-						await item.save(context);
-						modified.push(item);
-					}
-				} else {
-					const new_item = await collection.create(context, entry);
-					created.push(new_item);
 				}
-			})
-		);
+				if (has_changes) {
+					item.setMultiple(entry);
+					// eslint-disable-next-line no-await-in-loop
+					await item.save(context);
+					modified.push(item);
+				}
+			} else {
+				// eslint-disable-next-line no-await-in-loop
+				const new_item = await collection.create(context, entry);
+				created.push(new_item);
+			}
+		}
 		return { created, modified };
 	}
 

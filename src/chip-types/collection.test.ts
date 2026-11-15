@@ -173,66 +173,6 @@ describe("types", () => {
 			}
 		);
 	});
-	it("throws a ts error when a required field is missing in upsert", () => {
-		return withRunningApp(
-			(t: TestAppConstructor<TestApp>) =>
-				class TheApp extends t {
-					collections = {
-						...App.BaseCollections,
-						withRequired:
-							new (class withRequired extends Collection {
-								fields = {
-									some_id: new FieldTypes.Int(),
-									nonrequired: new FieldTypes.Int(),
-									required: new FieldTypes.Int().setRequired(
-										true
-									),
-								};
-							})(),
-					};
-				},
-			async ({ app }) => {
-				await app.collections.withRequired.upsert(
-					new app.SuperContext(),
-					"some_id",
-					[
-						{
-							some_id: 123,
-							required: 111, // try removing this
-						},
-					]
-				);
-			}
-		);
-	});
-	it("throws a ts error when the identity field is missing in upsert", () => {
-		return withRunningApp(
-			(t: TestAppConstructor<TestApp>) =>
-				class TheApp extends t {
-					collections = {
-						...App.BaseCollections,
-						withRequired:
-							new (class withRequired extends Collection {
-								fields = {
-									some_id: new FieldTypes.Int(),
-									nonrequired: new FieldTypes.Int(),
-								};
-							})(),
-					};
-				},
-			async ({ app }) => {
-				await app.collections.withRequired.upsert(
-					new app.SuperContext(),
-					"some_id",
-					[
-						{
-							some_id: 123, // try removing this
-						},
-					]
-				);
-			}
-		);
-	});
 });
 
 describe("collection", () => {
@@ -614,6 +554,203 @@ describe("collection", () => {
 					);
 
 					assert.deepStrictEqual(changes, undefined);
+				}
+			));
+
+		it("throws a ts error when a required field is missing in upsert", () => {
+			return withRunningApp(
+				(t: TestAppConstructor<TestApp>) =>
+					class TheApp extends t {
+						collections = {
+							...App.BaseCollections,
+							withRequired:
+								new (class withRequired extends Collection {
+									fields = {
+										some_id: new FieldTypes.Int(),
+										nonrequired: new FieldTypes.Int(),
+										required:
+											new FieldTypes.Int().setRequired(
+												true
+											),
+									};
+								})(),
+						};
+					},
+				async ({ app }) => {
+					await app.collections.withRequired.upsert(
+						new app.SuperContext(),
+						"some_id",
+						[
+							{
+								some_id: 123,
+								required: 111, // try removing this
+							},
+						]
+					);
+				}
+			);
+		});
+
+		it("throws a ts error when the identity field is missing in upsert", () => {
+			return withRunningApp(
+				(t: TestAppConstructor<TestApp>) =>
+					class TheApp extends t {
+						collections = {
+							...App.BaseCollections,
+							withRequired:
+								new (class withRequired extends Collection {
+									fields = {
+										some_id: new FieldTypes.Int(),
+										nonrequired: new FieldTypes.Int(),
+									};
+								})(),
+						};
+					},
+				async ({ app }) => {
+					await app.collections.withRequired.upsert(
+						new app.SuperContext(),
+						"some_id",
+						[
+							{
+								some_id: 123, // try removing this
+							},
+						]
+					);
+				}
+			);
+		});
+
+		it("Allows identifying items by multiple fields", () =>
+			withRunningApp(
+				(t) =>
+					class extends t {
+						collections = {
+							...App.BaseCollections,
+							people: new (class extends Collection {
+								fields = {
+									name: new FieldTypes.Text(),
+									surname: new FieldTypes.Text(),
+									age: new FieldTypes.Int(),
+								};
+							})(),
+						};
+					},
+
+				async ({ app }) => {
+					await app.collections.people.upsert(
+						new app.SuperContext(),
+						["name", "surname"],
+						[
+							{
+								name: "John",
+								surname: "Smith",
+								age: 33,
+							},
+							{
+								name: "Alice",
+								surname: "Smith",
+								age: 44,
+							},
+						]
+					);
+					await app.collections.people.upsert(
+						new app.SuperContext(),
+						["name", "surname"],
+						[
+							{
+								name: "John",
+								surname: "Smith",
+								age: 34,
+							},
+						]
+					);
+					const { items: people } = await app.collections.people
+						.suList()
+						.sort({ age: "asc" })
+						.fetch();
+					assert.strictEqual(people.length, 2);
+					assert.strictEqual(people[0]!.get("age"), 34);
+					assert.strictEqual(
+						people[0]!.get("name")!.toString(),
+						"John"
+					);
+					assert.strictEqual(people[1]!.get("age"), 44);
+					assert.strictEqual(
+						people[1]!.get("name")!.toString(),
+						"Alice"
+					);
+				}
+			));
+
+		it("Doesn't duplicate items if they are specified multiple times", () =>
+			withRunningApp(
+				(t) =>
+					class extends t {
+						collections = {
+							...App.BaseCollections,
+							people: new (class extends Collection {
+								fields = {
+									name: new FieldTypes.Text(),
+									surname: new FieldTypes.Text(),
+									age: new FieldTypes.Int(),
+								};
+							})(),
+						};
+					},
+
+				async ({ app }) => {
+					await app.collections.people.upsert(
+						new app.SuperContext(),
+						["name", "surname"],
+						[
+							{
+								name: "John",
+								surname: "Smith",
+								age: 33,
+							},
+							{
+								name: "Alice",
+								surname: "Smith",
+								age: 44,
+							},
+						]
+					);
+					await app.collections.people.upsert(
+						new app.SuperContext(),
+						["name", "surname"],
+						[
+							{
+								name: "John",
+								surname: "Smith",
+								age: 34,
+							},
+							{
+								name: "John",
+								surname: "Smith",
+								age: 35,
+							},
+							{
+								name: "John",
+								surname: "Smith",
+								age: 36,
+							},
+						]
+					);
+					const { items: people } = await app.collections.people
+						.suList()
+						.sort({ age: "asc" })
+						.fetch();
+					assert.strictEqual(people.length, 2);
+					assert.strictEqual(people[0]!.get("age"), 36);
+					assert.strictEqual(
+						people[0]!.get("name")!.toString(),
+						"John"
+					);
+					assert.strictEqual(people[1]!.get("age"), 44);
+					assert.strictEqual(
+						people[1]!.get("name")!.toString(),
+						"Alice"
+					);
 				}
 			));
 	});
