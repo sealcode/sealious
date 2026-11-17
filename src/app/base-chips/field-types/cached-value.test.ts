@@ -1,3 +1,4 @@
+/* eslint-disable no-await-in-loop */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import assert from "assert";
 import type Field from "../../../chip-types/field.js";
@@ -704,6 +705,108 @@ describe("cached-value", () => {
 				}
 			));
 	});
+
+	it("allows sorting by the cached value", () =>
+		withRunningApp(
+			(test_app) =>
+				class extends test_app {
+					collections = {
+						...App.BaseCollections,
+						comments: new (class extends Collection {
+							fields = {
+								text: new FieldTypes.Text(),
+								product: new FieldTypes.SingleReference(
+									"products"
+								),
+							};
+						})(),
+						products: new (class extends Collection {
+							fields = {
+								name: new FieldTypes.Text(),
+								has_comments: new FieldTypes.CachedValue(
+									new FieldTypes.Boolean(),
+									{
+										refresh_on: [
+											new CollectionRefreshCondition(
+												"comments",
+												[
+													"after:create",
+													"after:edit",
+													"after:remove",
+												],
+												async ([, item]) => [
+													item.get(
+														"product"
+													) as string,
+												]
+											),
+										],
+										get_value: async (context, item) => {
+											const comments_count = (
+												await context.app.collections[
+													"comments"
+												]!.suList()
+													.filter({
+														product: item.id,
+													})
+													.fetch()
+											).items.length;
+											return comments_count > 0;
+										},
+										initial_value: false,
+									}
+								),
+							};
+						})(),
+					};
+				},
+			async ({ app }) => {
+				const context = new app.Context();
+				let product1 = await app.collections.products.create(context, {
+					name: "Hehe™ shampoo",
+				});
+				// necessary to rule out lucky janky random sort
+				for (let i = 1; i <= 30; i++) {
+					// eslint-disable-next-line @typescript-eslint/no-unused-vars
+					await app.collections.products.create(context, {
+						name: "Hehe™ No Comment",
+					});
+				}
+
+				let product3 = await app.collections.products.create(context, {
+					name: "Hehe™ toilet paper",
+				});
+				await app.collections.comments.create(context, {
+					product: product1.id,
+					text: "Typing words",
+				});
+				await app.collections.comments.create(context, {
+					product: product3.id, // product 2 intentionally left out
+					text: "Typing words",
+				});
+				await app.collections.comments.create(context, {
+					product: product3.id,
+					text: "Typing words",
+				});
+
+				// necessary to rule out lucky janky random sort
+				for (let i = 1; i <= 30; i++) {
+					// eslint-disable-next-line @typescript-eslint/no-unused-vars
+					await app.collections.products.create(context, {
+						name: "Hehe™ No Comment",
+					});
+				}
+				let { items } = await app.collections.products
+					.suList()
+					.sort({ has_comments: "desc" })
+					.paginate({ items: 3 })
+					.fetch();
+				assert.strictEqual(items.length, 3);
+				assert.strictEqual(items[0]!.get("has_comments"), true);
+				assert.strictEqual(items[1]!.get("has_comments"), true);
+				assert.strictEqual(items[2]!.get("has_comments"), false);
+			}
+		));
 });
 
 function make_refresh_on(): RefreshCondition[] {

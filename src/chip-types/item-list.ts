@@ -283,7 +283,7 @@ export default class ItemList<T extends Collection> {
 			);
 		}
 		let items = await Promise.all(item_promises);
-		if (this._ids) {
+		if (this._ids && !this.is_sorted) {
 			items = items.sort((a, b) =>
 				this._ids.indexOf(a.id) < this._ids.indexOf(b.id) ? -1 : 1
 			);
@@ -341,7 +341,7 @@ export default class ItemList<T extends Collection> {
 		this.await_before_fetch = [];
 		return [
 			...this.aggregation_stages,
-			...this.getSortingStages(),
+			...(await this.getSortingStages()),
 			...this.getPaginationStages(),
 		];
 	}
@@ -363,7 +363,7 @@ export default class ItemList<T extends Collection> {
 			.attach(params?.attachments);
 	}
 
-	private getSortingStages() {
+	private async getSortingStages() {
 		if (!this.is_sorted) {
 			return [];
 		}
@@ -383,7 +383,11 @@ export default class ItemList<T extends Collection> {
 					)}. Available sort keys are: ${available_sort_keys}.`
 				);
 			}
-			$sort[field_name] = mongo_sort_param as -1 | 1;
+			$sort[
+				// eslint-disable-next-line no-await-in-loop
+				(await this.collection.fields[field_name]?.getValuePath()) ||
+					field_name
+			] = mongo_sort_param as -1 | 1;
 		}
 		return [{ $sort }];
 	}

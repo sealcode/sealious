@@ -63,12 +63,12 @@ export default class MongoDatastore extends Datastore {
 		const indexes: { [field: string]: number }[] = [{ id: 1 }];
 		const text_index: { [field: string]: "text" } = {};
 		for (const field_name in collection.fields) {
-			const fieldName = collection.fields[field_name];
-			if (!fieldName) {
+			const field = collection.fields[field_name];
+			if (!field) {
 				throw Error("collection field is missing ");
 			}
 
-			const index_answer = await fieldName.hasIndex();
+			const index_answer = await field.hasIndex();
 			if (index_answer === false) {
 				continue;
 			}
