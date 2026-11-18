@@ -1,3 +1,4 @@
+/* eslint-disable no-await-in-loop */
 import assert, { strictEqual, deepStrictEqual } from "assert";
 import Int from "../app/base-chips/field-types/int.js";
 import { App, Collection, FieldTypes, Policies, Query } from "../main.js";
@@ -5,6 +6,7 @@ import { sleep } from "../test_utils/sleep.js";
 import { TestApp } from "../test_utils/test-app.js";
 import { withRunningApp } from "../test_utils/with-test-app.js";
 import { getFieldValueString } from "../test_utils/get-field-value-string.js";
+import Float from "../app/base-chips/field-types/float.js";
 
 class Entries extends Collection {
 	fields = {
@@ -166,6 +168,45 @@ describe("ItemList", () => {
 					result2.items.map(({ id }) => id),
 					[two.id, one.id]
 				);
+			}
+		));
+
+	it("should return the items in the order they were provided in the .ids() function and work with pagination", async () =>
+		withRunningApp(
+			(test_app) =>
+				class extends test_app {
+					collections = {
+						...App.BaseCollections,
+						entries: new (class extends Collection {
+							fields = {
+								number: new Float(),
+							};
+						})(),
+					};
+				},
+			async ({ app }) => {
+				const numbers = [];
+				for (let i = 1; i < 20; i++) {
+					numbers.push(
+						await app.collections.entries.suCreate({
+							number: i,
+						})
+					);
+				}
+				const result1 = await app.collections.entries
+					.suList()
+					.ids([
+						numbers[5]!.id,
+						numbers[2]!.id,
+						numbers[7]!.id,
+						numbers[3]!.id,
+						numbers[4]!.id,
+						numbers[0]!.id,
+					])
+					.paginate({ items: 2, page: 1 })
+					.fetch();
+				assert.strictEqual(result1.items[0]!.id, numbers[5]!.id);
+				assert.strictEqual(result1.items[1]!.id, numbers[2]!.id);
 			}
 		));
 

@@ -363,8 +363,21 @@ export default class ItemList<T extends Collection> {
 			.attach(params?.attachments);
 	}
 
-	private async getSortingStages() {
+	private async getSortingStages(): Promise<QueryStage[]> {
 		if (!this.is_sorted) {
+			if (this._ids?.length) {
+				return [
+					{
+						$addFields: {
+							__order: { $indexOfArray: [this._ids, "$id"] },
+						},
+					} as QueryStage,
+					// 3. Sort by that temporary index field in ascending order
+					{ $sort: { __order: 1 } },
+					// 4. Remove the temporary field from the final output
+					{ $project: { __order: 0 } } as QueryStage,
+				];
+			}
 			return [];
 		}
 		const $sort: { [field_name: string]: -1 | 1 } = {};
